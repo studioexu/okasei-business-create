@@ -41,7 +41,7 @@
 			> .vertical-line {
 				height: 36px;
 				width: 1px;
-				background: #ccc;
+				background: var(--gray);
 				margin: 0 32px;
 			}
 

@@ -1,5 +1,4 @@
 <script lang="ts" context="module">
-	import { onMount } from 'svelte'
 	import { page } from '$app/stores'
 	import Header from '@/views/Header.svelte'
 	import Sidebar from '@/views/Sidebar.svelte'
@@ -18,11 +17,13 @@
 		history: '変更履歴',
 		settings: '設定'
 	}
+
+	const authority = 'admin'
 </script>
 
 {#if path !== '/' && path !== null}
-	<Header {title} authority="admin" id="000000" name="山田太郎" />
-	<Sidebar {path} />
+	<Header {title} {authority} id="000000" name="山田太郎" />
+	<Sidebar {path} {authority} />
 {/if}
 <slot />
 
@@ -31,7 +32,7 @@
 		--primary-color: #0093d0;
 		--background-color: #b7eaff;
 		--black: #595857;
-    --gray: #7b7c7d;
+		--gray: #7b7c7d;
 	}
 
 	:global(*) {
@@ -69,7 +70,7 @@
 		font-size: 18px;
 		margin: 0 auto;
 		text-align: center;
-    cursor: pointer;
+		cursor: pointer;
 	}
 
 	:global(input) {

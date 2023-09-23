@@ -1,25 +1,28 @@
 <script lang="ts" context="module">
+	import { onMount } from 'svelte'
 	import { page } from '$app/stores'
 	import Header from '@/views/Header.svelte'
 	import Sidebar from '@/views/Sidebar.svelte'
 </script>
 
 <script lang="ts">
-	const path: string | null = $page.route.id
+	$: path = $page.url.pathname
+	$: slicedPath = path ? path.slice(1) : path
+	$: title = slicedPath && titles.hasOwnProperty(slicedPath) ? titles[slicedPath] : ''
+
 	const titles: Record<string, string> = {
 		users: '社員一覧',
 		customers: '顧客管理',
 		purchases: '買取一覧',
-		negotiations: '商談一覧'
+		negotiations: '商談一覧',
+		history: '変更履歴',
+		settings: '設定'
 	}
-
-	const slicedPath = path ? path.slice(1) : path
-	const title = slicedPath && titles.hasOwnProperty(slicedPath) ? titles[slicedPath] : ''
 </script>
 
 {#if path !== '/' && path !== null}
 	<Header {title} authority="admin" id="000000" name="山田太郎" />
-	<Sidebar />
+	<Sidebar {path} />
 {/if}
 <slot />
 
@@ -47,8 +50,9 @@
 		overscroll-behavior-x: none;
 	}
 
+	:global(p),
 	:global(span),
-	:global(p) {
+	:global(li) {
 		font-size: 18px;
 		color: var(--text-color);
 	}

@@ -1,19 +1,22 @@
-<script lang="ts" context="module"></script>
-
 <script lang="ts">
-	export let pageTitle: string
+	export let title: string
+	export let authority: string
+	export let id: string
+	export let name: string
 </script>
 
 <header class="header">
 	<div class="left">
 		<img class="logo" src="./../../logo.svg" alt="logo" />
 		<span class="vertical-line" />
-		<span class="large">{pageTitle}</span>
+		<h1 class="font-large">{title}</h1>
 	</div>
 	<div class="right">
-		<span>管理者</span>
-		<span>000000</span>
-		<span>山田太郎</span>
+		{#if authority === 'admin'}
+			<span class="authority">管理者</span>
+		{/if}
+		<span>社員番号: {id}</span>
+		<span>名前: {name}</span>
 	</div>
 </header>
 
@@ -24,7 +27,7 @@
 		justify-content: space-between;
 		height: 60px;
 		background: #fff;
-		margin: 0 32px;
+		padding: 0 64px;
 
 		> .left {
 			display: flex;
@@ -42,12 +45,25 @@
 				margin: 0 32px;
 			}
 
-			> .large {
-				color: #0093d0;
+			> .font-large {
+				color: var(--primary-color);
 			}
 		}
 
-		> right {
+		> .right {
+			display: flex;
+			align-items: center;
+
+			span:not(.authority) {
+				margin-left: 16px;
+			}
+
+			.authority {
+				background: var(--primary-color);
+				color: #fff;
+				padding: 4px 8px;
+				border-radius: 100px;
+			}
 		}
 	}
 </style>

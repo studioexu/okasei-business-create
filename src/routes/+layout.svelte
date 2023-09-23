@@ -30,7 +30,8 @@
 	:root {
 		--primary-color: #0093d0;
 		--background-color: #b7eaff;
-		--text-color: #383c3c;
+		--black: #595857;
+    --gray: #7b7c7d;
 	}
 
 	:global(*) {
@@ -52,9 +53,27 @@
 
 	:global(p),
 	:global(span),
-	:global(li) {
+	:global(li),
+	:global(input) {
 		font-size: 18px;
-		color: var(--text-color);
+		color: var(--black);
+	}
+
+	:global(button),
+	:global(fieldset) {
+		border: none;
+	}
+
+	:global(button) {
+		display: block;
+		font-size: 18px;
+		margin: 0 auto;
+		text-align: center;
+    cursor: pointer;
+	}
+
+	:global(input) {
+		outline: none;
 	}
 
 	:global(.font-large) {

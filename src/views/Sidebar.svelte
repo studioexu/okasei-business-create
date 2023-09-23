@@ -4,6 +4,7 @@
 
 <script lang="ts">
 	export let path: string
+	export let authority: string
 
 	const menus: { path: string; text: string }[] = [
 		{ path: 'users', text: '社員一覧' },
@@ -13,6 +14,8 @@
 		{ path: 'history', text: '変更履歴' },
 		{ path: 'settings', text: '設定' }
 	]
+
+	if (authority !== 'admin') menus.shift()
 </script>
 
 <nav class="nav">

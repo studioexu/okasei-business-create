@@ -21,7 +21,7 @@
 <style>
 	:root {
 		--primary-color: #0093d0;
-		--background-color: #b7eaff;
+		--background-color: #d0f1ff;
 		--black: #595857;
 		--gray: #7b7c7d;
 	}

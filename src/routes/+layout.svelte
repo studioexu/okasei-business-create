@@ -5,24 +5,15 @@
 </script>
 
 <script lang="ts">
-	$: path = $page.url.pathname
-	$: slicedPath = path ? path.slice(1) : path
-	$: title = slicedPath && titles.hasOwnProperty(slicedPath) ? titles[slicedPath] : ''
+	export const ssr = false
 
-	const titles: Record<string, string> = {
-		users: '社員一覧',
-		customers: '顧客管理',
-		purchases: '買取一覧',
-		negotiations: '商談一覧',
-		history: '変更履歴',
-		settings: '設定'
-	}
+	$: path = $page.url.pathname
 
 	const authority = 'admin'
 </script>
 
 {#if path !== '/' && path !== null}
-	<Header {title} {authority} id="000000" name="山田太郎" />
+	<Header {path} {authority} id="000000" name="山田太郎" />
 	<Sidebar {path} {authority} />
 {/if}
 <slot />

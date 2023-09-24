@@ -3,7 +3,7 @@
 
 	const loadSvg = ({ path, color }: { path: string; color?: string }): Promise<HTMLElement> => {
 		try {
-			return fetch(`${path}.svg`)
+			return fetch(`icons/${path}.svg`)
 				.then(res => res.text())
 				.then(text => {
 					const svg = new DOMParser().parseFromString(text, 'image/svg+xml').documentElement

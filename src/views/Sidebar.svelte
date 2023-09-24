@@ -71,21 +71,23 @@
 				&:last-of-type {
 					margin-bottom: 0px;
 				}
+
+				&:hover {
+					opacity: 0.5;
+				}
 			}
 
 			.active {
 				background: #fff;
 				color: var(--primary-color);
+
+				&:hover {
+					opacity: 1;
+				}
 			}
 
 			.invisible {
 				display: none;
-
-				// > :global(.svg-icon) {
-				// 	width: 0;
-				// 	height: 0;
-				// 	visibility: hidden;
-				// }
 			}
 		}
 
@@ -94,6 +96,10 @@
 			bottom: 64px;
 			color: #fff;
 			padding: 0 24px;
+
+			&:hover {
+				opacity: 0.5;
+			}
 		}
 
 		a {

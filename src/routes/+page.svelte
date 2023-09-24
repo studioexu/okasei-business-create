@@ -6,7 +6,7 @@
 	$: isHidden = true
 </script>
 
-<main class="login">
+<div class="login">
 	<div class="left">
 		<img class="logo" src="./../../logo.svg" alt="logo" />
 	</div>
@@ -32,7 +32,7 @@
 		<span class="horizontal-line" />
 		<button class="password-btn">パスワード変更</button>
 	</div>
-</main>
+</div>
 
 <style lang="scss">
 	.login {

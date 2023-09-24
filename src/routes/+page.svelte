@@ -12,19 +12,19 @@
 	</div>
 	<div class="right">
 		<fieldset class="fieldset">
-			<Icon icon={{ path: 'icons/user', color: '#595857' }} />
+			<Icon icon={{ path: 'user', color: '#595857' }} />
 			<input type="text" placeholder="社員番号" />
 		</fieldset>
 		<fieldset class="fieldset">
-			<Icon icon={{ path: 'icons/password', color: '#595857' }} />
+			<Icon icon={{ path: 'password', color: '#595857' }} />
 			<input type={isHidden ? 'password' : 'text'} placeholder="パスワード" />
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<span on:click={() => (isHidden = !isHidden)}>
 				{#if isHidden}
-					<Icon icon={{ path: 'icons/eye-slash', color: '#595857' }} />
+					<Icon icon={{ path: 'eye-slash', color: '#595857' }} />
 				{:else}
-					<Icon icon={{ path: 'icons/eye', color: '#595857' }} />
+					<Icon icon={{ path: 'eye', color: '#595857' }} />
 				{/if}
 			</span>
 		</fieldset>
@@ -94,8 +94,12 @@
 			.login-btn,
 			.password-btn {
 				width: 320px;
-				border-radius: 100px;
+				border-radius: 16px;
 				padding: 16px 24px;
+
+				&:hover {
+					opacity: 0.5;
+				}
 			}
 
 			.login-btn {

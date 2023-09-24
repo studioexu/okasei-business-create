@@ -12,11 +12,13 @@
 	const authority = 'admin'
 </script>
 
-{#if path !== '/' && path !== null}
+{#if path !== '/'}
 	<Header {path} {authority} id="000000" name="山田太郎" />
 	<Sidebar {path} {authority} />
 {/if}
-<slot />
+<main class:main={path !== '/'}>
+	<slot />
+</main>
 
 <style>
 	:root {
@@ -71,5 +73,14 @@
 	:global(.font-large) {
 		font-size: 21px;
 		font-weight: bold;
+	}
+
+	.main {
+		position: absolute;
+		top: 64px;
+		left: 200px;
+		width: calc(100vw - 200px);
+		height: calc(100vh - 64px);
+		padding: 32px;
 	}
 </style>

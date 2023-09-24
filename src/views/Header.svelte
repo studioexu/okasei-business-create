@@ -1,8 +1,33 @@
 <script lang="ts">
-	export let title: string
+	export let path: string
 	export let authority: string
 	export let id: string
 	export let name: string
+
+	$: title = titles.filter(obj => {
+		if (
+			(typeof obj.path === 'string' && obj.path === path) ||
+			(typeof obj.path !== 'string' && obj.path.test(path))
+		)
+			return obj.title
+	})[0].title
+
+	const titles: { path: string | RegExp; title: string }[] = [
+		{ path: '/users', title: '社員一覧' },
+		{ path: '/users/new', title: '社員情報編集' },
+		{ path: /\/users\/+/, title: '新規社員登録' },
+		{ path: '/customers', title: '顧客一覧' },
+		{ path: '/customers/new', title: '顧客情報編集' },
+		{ path: /\/customers\/+/, title: '新規顧客登録' },
+		{ path: '/purchases', title: '買取一覧' },
+		{ path: '/purchases/new', title: '新規買取登録' },
+		{ path: /\/customers\/+/, title: '買取情報編集' },
+		{ path: '/negotiations', title: '商談一覧' },
+		{ path: '/negotiations/new', title: '新規商談登録' },
+		{ path: /\/negotiations\/+/, title: '商談情報編集' },
+		{ path: '/history', title: '変更履歴' },
+		{ path: '/settings', title: '設定' }
+	]
 </script>
 
 <header class="header">

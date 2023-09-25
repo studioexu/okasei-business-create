@@ -48,6 +48,7 @@
 	:global(p),
 	:global(span),
 	:global(li),
+	:global(fieldset),
 	:global(input) {
 		font-size: 18px;
 		color: var(--black);

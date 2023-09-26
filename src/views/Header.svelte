@@ -26,7 +26,8 @@
 		{ path: '/negotiations/new', title: '新規商談登録' },
 		{ path: /\/negotiations\/+/, title: '商談情報編集' },
 		{ path: '/history', title: '変更履歴' },
-		{ path: '/settings', title: '設定' }
+		{ path: '/settings', title: '設定' },
+		{ path: '/kanban', title: 'Kanbanテスト' }
 	]
 </script>
 

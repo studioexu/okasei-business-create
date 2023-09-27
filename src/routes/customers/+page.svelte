@@ -4,7 +4,6 @@
 	import Input from './components/Input.svelte'
 	import TableRow from './components/TableRow.svelte'
 	import { data } from './data/data.js'
-	import BedConfiguration from './new/BedConfiguration.svelte'
 
 	interface CompanyInfo {
 		customerNumber: 'string'
@@ -16,10 +15,9 @@
 		status: 'string'
 		updateDate: 'string'
 	}
-	let dataToDisplay: any[]
-	// let pageArray: string[] = ['1', '2', '3', '4', '5']
-	let pageArray: string[] = []
 
+	let dataToDisplay: any[] = []
+	let pageArray: string[] = []
 	let currentPage: number = 1
 	let numberOfPages = Math.ceil(data.length / 6)
 	let lastDataIndex = 5
@@ -27,19 +25,10 @@
 	$: lastDataIndex = currentPage * 5
 	$: firstDataIndex = lastDataIndex - 5
 
-	// $: numberOfPages = console.log(numberOfPages)
-	console.log(numberOfPages)
-
+	/**
+	 * Update the page navigation in the footer according to the current page.
+	 *  */
 	const updateNavPage = () => {
-		// if (currentPage > parseInt(pageArray[4]) && parseInt(pageArray[4]) !== numberOfPages) {
-		// 	pageArray = []
-		// 	for (let i = currentPage; i <= currentPage + 4; i++) {
-		// 		pageArray.push(i.toString())
-		// 	}
-
-		// 	return
-		// }
-
 		if (currentPage >= numberOfPages - 4 && currentPage <= numberOfPages) {
 			pageArray = []
 			for (let i = numberOfPages - 4; i <= numberOfPages; i++) {
@@ -72,34 +61,28 @@
 			}
 			return
 		}
-
-		// if (currentPage + 4 <= numberOfPages) {
-		// 	for (let i = numberOfPages - 4; i <= numberOfPages; i++) {
-		// 		pageArray.push(i.toString())
-		// 	}
-		// 	return
-		// }
 	}
 
-	updateNavPage()
+	/**
+	 * Update the data display according the current page.
+	 */
 
 	const updateDataToDisplay = () => {
-		// console.log(firstDataIndex)
-
 		dataToDisplay = []
 		for (let i = firstDataIndex; i <= lastDataIndex; i++) {
 			dataToDisplay = [...dataToDisplay, data[i]]
 		}
-
-		// console.log(dataToDisplay)
 	}
 
+	updateNavPage()
 	updateDataToDisplay()
 
+	/**
+	 * When user click on the next button, it updates the current page as well as the data to display and the page navigation if necessary.
+	 */
 	const handleNext = () => {
+		//if the current page is equal to the number of pages (i.e. the maximum number), we don't need to update
 		if (currentPage === numberOfPages) {
-			console.log('hello')
-
 			return
 		}
 		currentPage += 1
@@ -107,7 +90,11 @@
 		updateNavPage()
 	}
 
+	/**
+	 * When user click on the previous button, it updates the current page as well as the data to display and the page navigation if necessary.
+	 */
 	const handlePrevious = () => {
+		//if the current page is equal to 1 (i.e. the first page), we don't need to update
 		if (currentPage === 1) {
 			return
 		}
@@ -116,6 +103,10 @@
 		updateNavPage()
 	}
 
+	/**
+	 * Upadte the current page according the clicked button value, and update the data to display and the page navigation accordingly.
+	 * @param e
+	 */
 	const handlePageClick = (e: any) => {
 		currentPage = parseInt(e.target.value)
 		updateDataToDisplay()

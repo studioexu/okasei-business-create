@@ -1,9 +1,13 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
+	import Icon from '@/components/Icon.svelte'
 	import Input from './components/Input.svelte'
 	import TableRow from './components/TableRow.svelte'
 	import { data } from './data/data.js'
+
+	let customerNumber = ''
+	let newData: any[] = data
 
 	interface CompanyInfo {
 		customerNumber: 'string'
@@ -19,16 +23,28 @@
 	let dataToDisplay: any[] = []
 	let pageArray: string[] = []
 	let currentPage: number = 1
-	let numberOfPages = Math.ceil(data.length / 6)
-	let lastDataIndex = 5
-	let firstDataIndex = 0
-	$: lastDataIndex = currentPage * 5
-	$: firstDataIndex = lastDataIndex - 5
+	let numberOfPages = Math.ceil(newData.length / 6)
+
+	$: lastDataIndex = currentPage * 6 - 1 >= data.length - 1 ? data.length - 1 : currentPage * 6 - 1
+	$: firstDataIndex = currentPage === 1 ? 0 : (currentPage - 1) * 6
+	$: numberOfPages = Math.ceil(newData.length / 6)
+
+	$: updateDataToDisplay(newData, firstDataIndex, lastDataIndex)
+	$: updateNavPage(numberOfPages, currentPage)
 
 	/**
 	 * Update the page navigation in the footer according to the current page.
 	 *  */
-	const updateNavPage = () => {
+	const updateNavPage = (numberOfPage: number, currentPage: number) => {
+		if (numberOfPages <= 5) {
+			pageArray = []
+			for (let i = 1; i <= numberOfPages; i++) {
+				pageArray.push(i.toString())
+			}
+
+			return
+		}
+
 		if (currentPage >= numberOfPages - 4 && currentPage <= numberOfPages) {
 			pageArray = []
 			for (let i = numberOfPages - 4; i <= numberOfPages; i++) {
@@ -66,16 +82,14 @@
 	/**
 	 * Update the data display according the current page.
 	 */
-
-	const updateDataToDisplay = () => {
+	const updateDataToDisplay = (data: any[], firstDataIndex: number, lastDataIndex: number) => {
 		dataToDisplay = []
+		console.log(firstDataIndex)
+
 		for (let i = firstDataIndex; i <= lastDataIndex; i++) {
 			dataToDisplay = [...dataToDisplay, data[i]]
 		}
 	}
-
-	updateNavPage()
-	updateDataToDisplay()
 
 	/**
 	 * When user click on the next button, it updates the current page as well as the data to display and the page navigation if necessary.
@@ -86,8 +100,10 @@
 			return
 		}
 		currentPage += 1
-		updateDataToDisplay()
-		updateNavPage()
+		console.log(firstDataIndex)
+
+		// updateDataToDisplay(data)
+		// updateNavPage()
 	}
 
 	/**
@@ -99,8 +115,8 @@
 			return
 		}
 		currentPage -= 1
-		updateDataToDisplay()
-		updateNavPage()
+		// updateDataToDisplay(data)
+		// updateNavPage()
 	}
 
 	/**
@@ -109,22 +125,44 @@
 	 */
 	const handlePageClick = (e: any) => {
 		currentPage = parseInt(e.target.value)
-		updateDataToDisplay()
-		updateNavPage()
+		// updateDataToDisplay(data)
+		// updateNavPage()
+	}
+
+	const filterData = (data: any[], filterType: string, input: string) => {
+		return data.filter(customer => {
+			// console.log(customer.customerNumber.includes(input))
+			return customer.customerNumber.includes(input)
+		})
+	}
+
+	const handleEdit = (e: any) => {
+		// console.log('hello')
+		// console.log(customerNumber)
+		// console.log(data.length)
+
+		newData = filterData(data, 'customer-Number', customerNumber)
+		// updateDataToDisplay(newData)
+		console.log(newData)
 	}
 </script>
 
 <section class="section section--customers-management" id="customers-management">
 	<header class="section__header">
 		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>
-		<div class="search-menu">
-			<Input name={'facility-name'} label={'施設名'} />
-			<Input name={'facility-name'} label={'医療機関番号'} />
-			<Input name={'facility-name'} label={'郵便番号'} />
-			<Input name={'facility-name'} label={'電話番号'} />
+		<form class="search-menu">
+			<Input additionalClass={'txt--lg'} name={'facility-name'} label={'施設名'} />
+			<Input
+				additionalClass={'txt--sm'}
+				name={'customer-number'}
+				label={'医療機関番号'}
+				bind:value={customerNumber}
+			/>
+			<Input additionalClass={'txt--sm'} name={'postalcode'} label={'郵便番号'} />
+			<Input additionalClass={'txt--md'} name={'phone'} label={'電話番号'} />
 
-			<button class="btn btn--search">検索</button>
-		</div>
+			<button class="btn btn--search" on:click={handleEdit}>検索</button>
+		</form>
 
 		<label for="checkbox"
 			><input
@@ -162,7 +200,10 @@
 
 	<footer class="section__footer">
 		<div class="table-navigation">
-			<button class="btn btn--prev" on:click={handlePrevious}>prev</button>
+			<button class="btn btn--prev" on:click={handlePrevious}>
+				<Icon icon={{ path: 'chevron-right', color: '#595857' }} />
+			</button>
+
 			<ul class="page-list">
 				{#each pageArray as page}
 					<li class="page-list-item">
@@ -174,7 +215,10 @@
 					</li>
 				{/each}
 			</ul>
-			<button class="btn btn--next" on:click={handleNext}>next</button>
+
+			<button class="btn btn--next" on:click={handleNext}
+				><Icon icon={{ path: 'chevron-right', color: '#595857' }} />
+			</button>
 		</div>
 	</footer>
 </section>
@@ -226,6 +270,7 @@
 			height: 25px;
 			width: 25px;
 			border-radius: 100%;
+			transition: all 300ms;
 
 			&.current {
 				background-color: #2fa8e1;
@@ -241,7 +286,10 @@
 
 	.search-menu {
 		display: flex;
-		justify-content: space-between;
+		justify-content: flex-start;
+		flex-wrap: wrap;
+		gap: 1vw;
+		margin-bottom: 1.5rem;
 	}
 
 	.checkbox {
@@ -275,5 +323,25 @@
 		display: flex;
 		justify-content: space-between;
 		gap: 18px;
+	}
+
+	.btn--next,
+	.btn--prev {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		width: 1.5rem;
+		height: 1.5rem;
+		border: 1px solid #5b5a5a;
+		background-color: transparent;
+		transition: background-color 300ms;
+
+		&:hover {
+			background-color: #fff;
+		}
+	}
+
+	.btn--prev {
+		transform: rotate(180deg);
 	}
 </style>

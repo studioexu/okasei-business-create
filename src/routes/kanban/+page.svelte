@@ -1,8 +1,34 @@
 <script lang="ts">
 	$: boards = [
-		{ id: 'todo', tasks: [{ id: 'task1', title: 'Title', status: 'todo' }], text: 'Todo' },
-		{ id: 'in-progress', tasks: [], text: 'In progress' },
-		{ id: 'done', tasks: [], text: 'Done' }
+		{
+			id: 'todo',
+			tasks: [
+				{ id: 'task7', title: 'Title7', status: 'todo' },
+				{ id: 'task10', title: 'Title10', status: 'todo' },
+				{ id: 'task11', title: 'Title11', status: 'todo' }
+			],
+			text: 'Todo'
+		},
+		{
+			id: 'in-progress',
+			tasks: [
+				{ id: 'task6', title: 'Title6', status: 'in-progress' },
+				{ id: 'task8', title: 'Title8', status: 'in-progress' },
+				{ id: 'task9', title: 'Title9', status: 'in-progress' }
+			],
+			text: 'In progress'
+		},
+		{
+			id: 'done',
+			tasks: [
+				{ id: 'task1', title: 'Title1', status: 'done' },
+				{ id: 'task2', title: 'Title2', status: 'done' },
+				{ id: 'task3', title: 'Title3', status: 'done' },
+				{ id: 'task4', title: 'Title4', status: 'done' },
+				{ id: 'task5', title: 'Title5', status: 'done' }
+			],
+			text: 'Done'
+		}
 	]
 
 	$: currentTask = ''
@@ -11,6 +37,7 @@
 	$: hoveringBoard = 0
 
 	const dragEnter = (event: Event, index: number) => {
+		console.log(<HTMLElement>event.target)
 		const id = (<HTMLElement>event.target).getAttribute('id')
 
 		if (id && currentTask !== '' && boards.map(board => board.id).includes(id)) {
@@ -26,23 +53,26 @@
 	const drop = (index: number) => {
 		let task: { id: string; title: string; status: string } | undefined
 
-		boards[currentBoard].tasks = boards[currentBoard].tasks?.filter(
-			(localTask: { id: string; title: string; status: string }) => {
-				if (localTask.id !== currentTask) return localTask
+		if (currentBoard !== newBoard) {
+			boards[currentBoard].tasks = boards[currentBoard].tasks?.filter(
+				(localTask: { id: string; title: string; status: string }) => {
+					if (localTask.id !== currentTask) return localTask
 
-				task = localTask
-			}
-		)
+					task = localTask
+				}
+			)
 
-		if (task) {
-			task.status = boards[newBoard].id
-			let tasks = boards[newBoard].tasks
-			if (tasks) {
-				tasks?.push(task)
-				boards[index].tasks = [...tasks]
+			if (task) {
+				task.status = boards[newBoard].id
+				let tasks = boards[newBoard].tasks
+				if (tasks) {
+					tasks?.push(task)
+					boards[index].tasks = [...tasks]
+				}
 			}
 		}
 
+		task = undefined
 		currentTask = ''
 		currentBoard = 0
 		newBoard = 0
@@ -52,6 +82,10 @@
 	const dragStart = (event: Event, index: number) => {
 		currentTask = (<HTMLElement>event.target).getAttribute('id') ?? ''
 		currentBoard = index
+	}
+
+	const click = (id: string) => {
+		alert(`Task ID: ${id} がクリックされました`)
 	}
 </script>
 
@@ -67,17 +101,18 @@
 			on:drop={() => drop(index)}
 		>
 			<span>{board.text}</span>
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			{#each board.tasks as task}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
 				<div
 					class="task"
 					id={task.id}
 					draggable={true}
 					on:dragstart={event => dragStart(event, index)}
 					on:dragover={dragOver}
+					on:click={() => click(task.id)}
 				>
 					<p>{task.title}</p>
-          <span>{task.status}</span>
+					<span>{task.status}</span>
 				</div>
 			{/each}
 		</div>

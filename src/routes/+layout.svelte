@@ -5,8 +5,6 @@
 </script>
 
 <script lang="ts">
-	export const ssr = false
-
 	$: path = $page.url.pathname
 
 	const authority = 'admin'

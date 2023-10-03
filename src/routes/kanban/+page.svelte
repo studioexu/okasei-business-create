@@ -78,12 +78,15 @@
 		)
 
 		if (task) {
-			task.status = boards[newBoard].id
+			if (currentBoard !== newBoard) task.status = boards[newBoard].id
 			let tasks = boards[newBoard].tasks
 
-			if (tasks && hoveringTask.index) {
-				tasks.splice(isUpper ? hoveringTask.index : hoveringTask.index + 1, 0, task)
-				boards[index].tasks = [...tasks]
+			if (tasks.length >= 0 && hoveringTask.index !== null) {
+				if (isUpper && hoveringTask.index === 0) boards[index].tasks = [task, ...tasks]
+				else {
+					tasks.splice(hoveringTask.index, 0, task)
+					boards[index].tasks = [...tasks]
+				}
 			}
 		}
 

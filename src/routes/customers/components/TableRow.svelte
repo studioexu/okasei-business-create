@@ -1,34 +1,61 @@
 <script lang="ts">
 	import Icon from '@/components/Icon.svelte'
+	import { loadData, deleteItem } from '../utils/actions'
 	export let customerNumber: string = ''
 	export let facilityName: string = ''
 	export let address = { prefecture: '', city: '' }
 	export let status: string = ''
 	export let updateDate: string = ''
-	export let index: number
+	export let id: string = ''
+
+	export let data: any[] = []
+	export let newData: any[] = []
+	$: data
+
+	const handleDeleteItem = async (e: any) => {
+		const customerId = e.target.closest('.btn').id
+		deleteItem(customerId, 'http://localhost:3000/customers/').then(
+			(data = await loadData('http://localhost:3000/customers/'))
+		)
+	}
+
+	//We update newData, so that it displays the right information
+	$: newData = data
 </script>
 
-<tr class="row" id={index.toString()}>
+<!-- <a class="customer-link" href="/customers/{id}"> -->
+<tr class="row">
 	<td class="data customer-number">{customerNumber}</td>
 	<td class="data facility-name">{facilityName}</td>
 	<td class="data address">{address.prefecture}県{address.city}市</td>
 	<td class="data status">{status}</td>
 	<td class="data update-date">{updateDate}</td>
-	<td class="data update"
-		><button class="btn btn--update"><Icon icon={{ path: 'notepad', color: '#2FA8E1' }} /></button
-		></td
-	>
-	<td class="data erase"
-		><button class="btn btn--erase"><Icon icon={{ path: 'trash-bin', color: '#2FA8E1' }} /></button
-		></td
-	>
+	<td class="data update">
+		<a class="btn btn--update" href="/customers/{id}">
+			<Icon icon={{ path: 'notepad', color: '#2FA8E1' }} />
+		</a>
+	</td>
+	<td class="data erase">
+		<button class="btn btn--erase" on:click={handleDeleteItem} {id}>
+			<Icon icon={{ path: 'trash-bin', color: '#2FA8E1' }} />
+		</button>
+	</td>
 </tr>
 
+<!-- </a> -->
+
 <style lang="scss">
+	.customer-link {
+		width: 100%;
+	}
 	.data {
 		text-align: left;
 		padding: 18px calc((27 / 1366) * 100vw);
 		border-bottom: #2fa8e1 1px solid;
+	}
+
+	.row:last-child .data {
+		border: none;
 	}
 
 	.btn {

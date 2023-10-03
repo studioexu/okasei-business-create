@@ -1,31 +1,65 @@
-<script lang="ts" context="module"></script>
+<script lang="ts" context="module">
+	export interface CompanyInfo {
+		id: string
+		customerNumber: string
+		branchNumber: string
+		facilityName: string
+		kana: string
+		facilityNumber: string
+		businessType: string
+		address: {
+			postalCode: string
+			prefecture: string
+			city: string
+			address1: string
+			address2: string
+			phoneNumber: string
+			fax: string
+		}
+		numberOfEmployees: string
+		homepage: string
+		numberOfFacilities: string
+		foundation: {
+			month: string
+			year: string
+			founder: string
+		}
+		bedding: [{ department: string; quantity: string }, { department: string; quantity: string }]
+		registration: {
+			status: string
+			registrationDate: string
+			lastUpdated: string
+		}
+		update: {
+			status: string
+			lastUpdated: string
+		}
+	}
+</script>
 
 <script lang="ts">
-	import Icon from '@/components/Icon.svelte'
-	import Input from './components/Input.svelte'
-	import TableRow from './components/TableRow.svelte'
-	import { data } from './data/data.js'
+	import Table from './components/Table.svelte'
+	import TableNavigation from './components/TableNavigation.svelte'
+	import SearchMenu from './components/SearchMenu.svelte'
+	import { onMount } from 'svelte'
+	import { loadData } from './utils/actions'
+	let data: CompanyInfo[] = []
+	let newData: CompanyInfo[] = data
 
-	let customerNumber = ''
-	let newData: any[] = data
+	console.log(data)
 
-	interface CompanyInfo {
-		customerNumber: 'string'
-		facilityName: 'string'
-		address: {
-			prefecture: 'string'
-			city: 'string'
-		}
-		status: 'string'
-		updateDate: 'string'
-	}
+	//Set the default data
+	onMount(async () => {
+		data = await loadData('http://localhost:3000/customers')
+		newData = await loadData('http://localhost:3000/customers')
+	})
 
-	let dataToDisplay: any[] = []
+	let dataToDisplay: CompanyInfo[] = []
 	let pageArray: string[] = []
 	let currentPage: number = 1
-	let numberOfPages = Math.ceil(newData.length / 6)
 
-	$: lastDataIndex = currentPage * 6 - 1 >= data.length - 1 ? data.length - 1 : currentPage * 6 - 1
+	$: lastDataIndex =
+		currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1
 	$: firstDataIndex = currentPage === 1 ? 0 : (currentPage - 1) * 6
 	$: numberOfPages = Math.ceil(newData.length / 6)
 
@@ -35,13 +69,12 @@
 	/**
 	 * Update the page navigation in the footer according to the current page.
 	 *  */
-	const updateNavPage = (numberOfPage: number, currentPage: number) => {
+	const updateNavPage = (numberOfPages: number, currentPage: number) => {
 		if (numberOfPages <= 5) {
 			pageArray = []
 			for (let i = 1; i <= numberOfPages; i++) {
 				pageArray.push(i.toString())
 			}
-
 			return
 		}
 
@@ -66,7 +99,6 @@
 			for (let i = 1; i <= 5; i++) {
 				pageArray.push(i.toString())
 			}
-
 			return
 		}
 
@@ -84,85 +116,16 @@
 	 */
 	const updateDataToDisplay = (data: any[], firstDataIndex: number, lastDataIndex: number) => {
 		dataToDisplay = []
-		console.log(firstDataIndex)
-
 		for (let i = firstDataIndex; i <= lastDataIndex; i++) {
 			dataToDisplay = [...dataToDisplay, data[i]]
 		}
-	}
-
-	/**
-	 * When user click on the next button, it updates the current page as well as the data to display and the page navigation if necessary.
-	 */
-	const handleNext = () => {
-		//if the current page is equal to the number of pages (i.e. the maximum number), we don't need to update
-		if (currentPage === numberOfPages) {
-			return
-		}
-		currentPage += 1
-		console.log(firstDataIndex)
-
-		// updateDataToDisplay(data)
-		// updateNavPage()
-	}
-
-	/**
-	 * When user click on the previous button, it updates the current page as well as the data to display and the page navigation if necessary.
-	 */
-	const handlePrevious = () => {
-		//if the current page is equal to 1 (i.e. the first page), we don't need to update
-		if (currentPage === 1) {
-			return
-		}
-		currentPage -= 1
-		// updateDataToDisplay(data)
-		// updateNavPage()
-	}
-
-	/**
-	 * Upadte the current page according the clicked button value, and update the data to display and the page navigation accordingly.
-	 * @param e
-	 */
-	const handlePageClick = (e: any) => {
-		currentPage = parseInt(e.target.value)
-		// updateDataToDisplay(data)
-		// updateNavPage()
-	}
-
-	const filterData = (data: any[], filterType: string, input: string) => {
-		return data.filter(customer => {
-			// console.log(customer.customerNumber.includes(input))
-			return customer.customerNumber.includes(input)
-		})
-	}
-
-	const handleEdit = (e: any) => {
-		// console.log('hello')
-		// console.log(customerNumber)
-		// console.log(data.length)
-
-		newData = filterData(data, 'customer-Number', customerNumber)
-		// updateDataToDisplay(newData)
-		console.log(newData)
 	}
 </script>
 
 <section class="section section--customers-management" id="customers-management">
 	<header class="section__header">
 		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>
-		<form class="search-menu">
-			<Input additionalClass={'txt--lg'} name={'facility-name'} label={'施設名'} />
-			<Input
-				additionalClass={'txt--sm'}
-				name={'customer-number'}
-				label={'医療機関番号'}
-				bind:value={customerNumber}
-			/>
-			<Input additionalClass={'txt--sm'} name={'postalcode'} label={'郵便番号'} />
-			<Input additionalClass={'txt--md'} name={'phone'} label={'電話番号'} />
-
-			<button class="btn btn--search" on:click={handleEdit}>検索</button>
-		</form>
+		<SearchMenu {data} bind:newData />
 
 		<label for="checkbox"
 			><input
@@ -175,55 +138,18 @@
 	</header>
 
 	<div class="section__main">
-		<table class="customer-list">
-			<thead
-				><tr class="row"
-					><th>顧客番号</th><th>施設名</th><th>住所</th><th>状態</th><th>登録日</th><th>編集</th><th
-						>削除</th
-					></tr
-				></thead
-			>
-			<tbody>
-				{#each dataToDisplay as company, index}
-					<TableRow
-						{index}
-						customerNumber={company.customerNumber}
-						facilityName={company.facilityName}
-						status={company.status}
-						updateDate={company.updateDate}
-						address={company.address}
-					/>
-				{/each}
-			</tbody>
-		</table>
+		<Table {dataToDisplay} bind:data bind:newData />
 	</div>
 
 	<footer class="section__footer">
-		<div class="table-navigation">
-			<button class="btn btn--prev" on:click={handlePrevious}>
-				<Icon icon={{ path: 'chevron-right', color: '#595857' }} />
-			</button>
-
-			<ul class="page-list">
-				{#each pageArray as page}
-					<li class="page-list-item">
-						<button
-							class="btn btn--page {currentPage === parseInt(page) && 'current'}"
-							on:click={handlePageClick}
-							value={page}>{page}</button
-						>
-					</li>
-				{/each}
-			</ul>
-
-			<button class="btn btn--next" on:click={handleNext}
-				><Icon icon={{ path: 'chevron-right', color: '#595857' }} />
-			</button>
-		</div>
+		<TableNavigation bind:currentPage {pageArray} {numberOfPages} />
 	</footer>
 </section>
 
 <style lang="scss">
+	.section {
+		padding-bottom: 24px;
+	}
 	.section__header {
 		margin-bottom: 2rem;
 		.title {
@@ -232,116 +158,11 @@
 		}
 	}
 
-	.btn {
-		position: relative;
-		background-color: #2fa8e1;
-		color: #fff;
-		margin: 0;
-		height: 32px;
-		overflow: hidden;
-
-		&::after {
-			position: absolute;
-			content: ' ';
-			background-color: #fff;
-			width: 100%;
-			height: 100%;
-			top: 0;
-			left: 0;
-			opacity: 0;
-			transition: opacity 300ms;
-		}
-
-		&:hover {
-			cursor: pointer;
-			&::after {
-				opacity: 0.1;
-			}
-		}
-
-		&--search {
-			padding: 0 11px;
-			border-radius: 3px;
-		}
-
-		&--page {
-			background-color: transparent;
-			color: black;
-			height: 25px;
-			width: 25px;
-			border-radius: 100%;
-			transition: all 300ms;
-
-			&.current {
-				background-color: #2fa8e1;
-				color: #fff;
-			}
-
-			&:hover {
-				color: #fff;
-				background-color: #2fa8e1;
-			}
-		}
-	}
-
-	.search-menu {
-		display: flex;
-		justify-content: flex-start;
-		flex-wrap: wrap;
-		gap: 1vw;
-		margin-bottom: 1.5rem;
-	}
-
 	.checkbox {
 		margin-right: 11px;
 	}
 
-	.customer-list {
-		background-color: #fff;
-		padding: 0 calc((18 / 1366) * 100vw);
-		border-radius: 4px;
-		width: 100%;
-		border-spacing: 0;
-	}
-
-	th {
-		text-align: left;
-		padding: 18px calc((27 / 1366) * 100vw);
-		display: none;
-	}
-
-	.table-navigation {
-		display: flex;
-		justify-content: center;
-		gap: 18px;
-		margin: 24px 0;
-		align-items: center;
-	}
-
-	.page-list {
-		list-style-type: none;
-		display: flex;
-		justify-content: space-between;
-		gap: 18px;
-	}
-
-	.btn--next,
-	.btn--prev {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-		width: 1.5rem;
-		height: 1.5rem;
-		border: 1px solid #5b5a5a;
-		background-color: transparent;
-		transition: background-color 300ms;
-
-		&:hover {
-			background-color: #fff;
-		}
-	}
-
-	.btn--prev {
-		transform: rotate(180deg);
+	.no-data {
+		text-align: center;
 	}
 </style>

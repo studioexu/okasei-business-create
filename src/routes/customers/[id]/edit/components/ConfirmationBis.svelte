@@ -1,25 +1,54 @@
-<script lang="ts" context="module">
-</script>
-
 <script lang="ts">
-	import BedContainer from './components/BedContainer.svelte'
-	import BeddingWrapper from './components/BeddingWrapper.svelte'
-	import FoundationWrapper from './components/FoundationWrapper.svelte'
-	import Wrapper from './components/Wrapper.svelte'
-	export let data
+	import BedContainer from '../../components/BedContainer.svelte'
+	import BeddingWrapper from '../../components/BeddingWrapper.svelte'
+	import FoundationWrapper from '../../components/FoundationWrapper.svelte'
+	import Wrapper from '../../components/Wrapper.svelte'
 
-	let company = data.company
+	export let company: CompanyInfo
+	export let checkIsTrue: boolean
+
+	interface CompanyInfo {
+		id: string
+		customerNumber: string
+		branchNumber: string
+		facilityName: string
+		kana: string
+		facilityNumber: string
+		businessType: string
+		address: {
+			postalCode: string
+			prefecture: string
+			city: string
+			address1: string
+			address2: string
+			phoneNumber: string
+			fax: string
+		}
+		numberOfEmployees: string
+		homepage: string
+		numberOfFacilities: string
+		foundation: {
+			month: string
+			year: string
+			founder: string
+		}
+		bedding: [{ department: string; quantity: string }, { department: string; quantity: string }]
+		registration: {
+			status: string
+			registrationDate: string
+			lastUpdated: string
+		}
+		update: {
+			status: string
+			lastUpdated: string
+		}
+	}
 
 	let bedQuantity: number = 0
-
-	company.bedding.forEach(bed => (bedQuantity += parseInt(bed.quantity)))
-
-	console.log(company)
 </script>
 
-<div class="section--confirmation">
-	<!-- <header>hello</header> -->
-	<div class="container">
+<div class="confirmation">
+	<div class="container {checkIsTrue ? '' : 'hidden'}">
 		<Wrapper areaClass="customerNumber" content={company.customerNumber} title={'顧客番号'} />
 		<Wrapper areaClass="branchNumber" content={company.branchNumber} title={'枝番'} />
 		<Wrapper areaClass="facilityName" content={company.facilityName} title={'施設名'} />
@@ -57,7 +86,7 @@
 		/>
 	</div>
 
-	<footer class="section__footer">
+	<!-- <footer class="section__footer">
 		<div class="metadata">
 			<div class="registration">
 				<div class="registration__data">
@@ -92,7 +121,7 @@
 		<div class="button-container">
 			<button class="btn btn--edit">編集</button>
 		</div>
-	</footer>
+	</footer> -->
 </div>
 
 <style lang="scss">
@@ -115,26 +144,9 @@
 			'numberOfFacilities numberOfFacilities numberOfFacilities . . . . . . .';
 	}
 
-	.btn {
-		background-color: #2fa8e1;
-		color: #fff;
-		margin: 0;
-
-		&--edit {
-			width: 108px;
-			height: 45px;
-			background-color: transparent;
-			color: #2fa8e1;
-			border: #2fa8e1 1px solid;
-			transition: all 300ms;
-
-			&:hover {
-				background-color: #2fa8e1;
-				color: #fff;
-			}
-		}
+	.hidden {
+		display: none;
 	}
-
 	.container {
 		overflow: hidden;
 		padding: 0 37px;
@@ -149,9 +161,6 @@
 	}
 
 	.section__footer {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-end;
 		margin-top: 1rem;
 		padding-bottom: 1rem;
 		.registration {

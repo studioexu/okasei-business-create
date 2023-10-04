@@ -1,4 +1,13 @@
 <script lang="ts" context="module">
+	const resetMargin = (id: string) => {
+		const element = document.getElementById(id)
+
+		if (element) {
+			element.style.marginTop = '0px'
+			element.style.marginBottom = '16px'
+		}
+	}
+
 	const debounce = (func: () => void, time: number) => {
 		let timer: ReturnType<typeof setTimeout> | undefined
 
@@ -54,15 +63,6 @@
 		if ((<HTMLElement>event.target).getAttribute('id') && currentTask !== '') {
 			newBoard = index
 			hoveringBoard = index + 1
-		}
-	}
-
-	const resetMargin = (id: string) => {
-		const element = document.getElementById(id)
-
-		if (element) {
-			element.style.marginTop = '0px'
-			element.style.marginBottom = '16px'
 		}
 	}
 

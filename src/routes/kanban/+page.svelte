@@ -115,13 +115,9 @@
 
 					if (element) {
 						isUpper = clientY - rect.top < rect.height / 2
-						if (isUpper) {
-							element.style.marginTop = `${rect.height + 16 * 2}px`
-							element.style.marginBottom = '16px'
-						} else {
-							element.style.marginTop = '0px'
-							element.style.marginBottom = `${rect.height + 16 * 2}px`
-						}
+
+						element.style[isUpper ? 'marginTop' : 'marginBottom'] = `${rect.height + 16 * 2}px`
+						element.style[isUpper ? 'marginBottom' : 'marginTop'] = `${isUpper ? '16' : '0'}px`
 					}
 
 					currentClientY = clientY
@@ -132,7 +128,8 @@
 
 	const dragStart = (event: Event, index: number) => {
 		currentTask = (<HTMLElement>event.target).getAttribute('id') ?? ''
-		document.getElementById(currentTask)!.style.opacity = '0.2'
+
+		if (currentTask !== '') document.getElementById(currentTask)!.style.opacity = '0.2'
 		currentBoard = index
 	}
 

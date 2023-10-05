@@ -1,13 +1,9 @@
 <script lang="ts">
-	import Confirmation from './components/Confirmation.svelte'
 	import ConfirmationBis from './components/ConfirmationBis.svelte'
 	import Form from './components/Form.svelte'
-
 	export let data
 
 	let company = data.company
-	console.log(data)
-
 	let checkIsTrue = false
 
 	const handleEditClicked = () => {
@@ -23,11 +19,8 @@
 	</header>
 
 	<div class="section__main">
-		<!-- {#if checkIsTrue} -->
 		<ConfirmationBis bind:company bind:checkIsTrue />
-		<!-- {:else} -->
 		<Form bind:checkIsTrue bind:company />
-		<!-- {/if} -->
 	</div>
 
 	<footer class="section__footer">
@@ -42,22 +35,16 @@
 
 <style lang="scss">
 	.btn {
-		background-color: #2fa8e1;
-		color: #fff;
+		width: 108px;
+		height: 45px;
 		margin: 0;
 
-		&--add {
-			padding: 0 11px;
-			margin-top: 14px;
-			height: 32px;
-			border-radius: 3px;
-			margin-left: 140px;
-		}
+		background-color: #2fa8e1;
+		color: #fff;
 
 		&--submit {
 			position: relative;
-			width: 108px;
-			height: 45px;
+
 			&::after {
 				content: '';
 				position: absolute;
@@ -75,12 +62,9 @@
 					opacity: 0.3;
 				}
 			}
-			// margin-left: auto;
 		}
 
 		&--edit {
-			width: 108px;
-			height: 45px;
 			background-color: transparent;
 			color: #2fa8e1;
 			border: #2fa8e1 1px solid;

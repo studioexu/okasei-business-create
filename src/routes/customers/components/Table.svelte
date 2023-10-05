@@ -29,10 +29,9 @@
 				<TableRow
 					bind:data
 					bind:newData
-					customerNumber={company.customerNumber}
 					facilityName={company.facilityName}
 					status={company.registration.status}
-					updateDate={company.registration.lastUpdated}
+					updateDate={company.registration.registrationDate}
 					address={company.address}
 					id={company.id}
 				/>

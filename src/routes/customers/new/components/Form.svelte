@@ -1,177 +1,270 @@
 <script lang="ts">
+	import type { CompanyEntries, Error } from '../../utils/types'
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
 	import BedConfiguration from './BedConfiguration.svelte'
+	import { inputIsValid } from '../../utils/validations'
+	import { post } from '../../utils/actions'
 
-	const hojinKojin: string[] = ['', '個人', '法人']
-
-	interface Info {
-		title: string
-		class: string
-		data: string
-	}
-
+	export let initialState: CompanyEntries
 	export let checkIsTrue: boolean
-	export let info1: Info[]
-	export let info2: Info[]
-	export let foundation: Info[]
-	export let address: Info[]
 
-	let date = {
-		year: { title: '年', data: '', class: 'year' },
-		month: { title: '月', data: '', class: 'month' }
+	const hojinKojin = [' ', '法人', '個人']
+
+	let bedInputArray: number[] = [1]
+
+	let noErrors: Error = {
+		branchNumber: true,
+		facilityName: true,
+		kana: true,
+		facilityNumber: true,
+		businessType: true,
+		postalCode: true,
+		prefecture: true,
+		city: true,
+		address1: true,
+		address2: true,
+		phoneNumber: true,
+		fax: true,
+		year: true,
+		month: true,
+		founder: true,
+		bedding: true,
+		numberOfEmployees: true,
+		homepage: true,
+		numberOfFacilities: true
 	}
 
-	$: foundation[0].data = date.year.data
-	$: foundation[1].data = date.month.data
+	const handleAddBed = () => {
+		bedInputArray.push(bedInputArray.length + 1)
+		bedInputArray = bedInputArray
+	}
+
+	const checkIfFormIsValid = (formEntries: Object): boolean => {
+		let errorArray: boolean[] = []
+		let isValid = true
+		const companyKeys = Object.keys(formEntries)
+		const companyValues = Object.values(formEntries)
+
+		for (let i = 0; i < companyKeys.length; i++) {
+			const name: string = companyKeys[i]
+			const input: string = companyValues[i]
+
+			noErrors[name as keyof Error] = inputIsValid(name, input)
+			errorArray.push(!inputIsValid(name, input))
+		}
+
+		errorArray.forEach(error => {
+			if (error) {
+				isValid = false
+			}
+		})
+
+		return isValid
+	}
+
+	// $: console.log(numberOfBedInput)
 
 	const handleSubmit = (e: any) => {
-		e.preventDefault()
-		console.log(e.target)
-		console.log(info1)
+		if (checkIsTrue) {
+			post(initialState)
+		}
 
-		checkIsTrue = !checkIsTrue
+		if (!checkIsTrue) {
+			e.preventDefault()
 
-		// console.log(info1)
-		// console.log(address)
-		// console.log(foundation)
-		// console.log(info2)
+			let formIsValid = true
+			formIsValid = checkIfFormIsValid(initialState)
+
+			if (!formIsValid) {
+				return
+			}
+
+			checkIsTrue = true
+		}
+		// edit()
 	}
 </script>
 
-<form class="form" method="POST" id="registration-form" on:submit={handleSubmit}>
+<form
+	class="form {checkIsTrue ? 'hidden' : ''}"
+	method="PUT"
+	action="/customers/"
+	id="registration-form"
+	on:submit={handleSubmit}
+>
 	<div class="form__form">
 		<fieldset class="fieldset fieldset--info1">
-			<legend class="hidden">info1</legend>
+			<legend class="hidden">情報１</legend>
 			<div class="container">
-				<Input
+				<!-- <Input
 					additionalClass={'number--md'}
 					name={'customer-number'}
 					label={'顧客番号'}
 					labelClass={'label-width--md'}
-					bind:value={info1[0].data}
-				/>
+					bind:value={initialState.customerNumber}
+				/> -->
 				<Input
 					additionalClass={'number--sm'}
 					name={'branch-number'}
 					label={'枝番'}
-					bind:value={info1[1].data}
+					bind:value={initialState.branchNumber}
+					bind:isValid={noErrors.branchNumber}
 				/>
 			</div>
 
 			<Input
 				additionalClass={'txt--xl'}
-				name="facility-name"
+				name="facilityName"
 				label="施設名"
 				autoSearch={true}
 				labelClass={'label-width--md'}
-				bind:value={info1[2].data}
+				bind:value={initialState.facilityName}
+				bind:isValid={noErrors.facilityName}
 			/>
 			<Input
 				additionalClass={'txt--xl'}
 				name="kana"
 				label="カナ"
 				labelClass={'label-width--md'}
-				bind:value={info1[3].data}
+				bind:value={initialState.kana}
+				bind:isValid={noErrors.kana}
 			/>
 
 			<div class="container">
 				<Input
 					additionalClass="number--md"
-					name="instition-number"
+					name="facilityNumber"
 					label="医療機関番号"
 					labelClass={'label-width--lg'}
-					bind:value={info1[4].data}
+					bind:value={initialState.facilityNumber}
+					bind:isValid={noErrors.facilityNumber}
 				/>
 
-				<Select options={hojinKojin} label="個人／法人" bind:value={info1[5].data} />
+				<Select
+					options={hojinKojin}
+					label="個人／法人"
+					bind:value={initialState.businessType}
+					name={'businessType'}
+				/>
 			</div>
 		</fieldset>
 
 		<fieldset class="fieldset fieldset--address">
-			<legend class="hidden">Address</legend>
+			<legend class="hidden">住所</legend>
 
 			<div class="container">
 				<Input
 					additionalClass="txt--sm"
-					name="postal"
+					name="postalCode"
 					label="郵便番号"
 					autoSearch={true}
 					labelClass={'label-width--lg'}
-					bind:value={address[0].data}
+					bind:value={initialState.postalCode}
+					bind:isValid={noErrors.postalCode}
 				/>
 
 				<Input
 					additionalClass="txt--sm"
-					name="region"
+					name="prefecture"
 					label={'都道府県'}
-					bind:value={address[1].data}
+					bind:value={initialState.prefecture}
+					bind:isValid={noErrors.prefecture}
 				/>
 
 				<Input
 					additionalClass="txt--sm"
 					name="city"
 					label={'市区町村'}
-					bind:value={address[2].data}
+					bind:value={initialState.city}
+					bind:isValid={noErrors.city}
 				/>
 
-				<div class="address">
+				<!-- <div class="address">
 					<Input
 						additionalClass="txt--lg"
 						name="address1"
 						label={'住所１'}
 						placeholder="丁目・番地"
-						bind:value={address[3].data}
+						bind:value={initialState.address.address1}
 					/>
 					<Input
 						additionalClass="txt--lg"
 						name="address2"
 						label={'住所２'}
 						placeholder="建物名・部屋番号"
-						bind:value={address[4].data}
+						bind:value={initialState.address.address2}
 					/>
-				</div>
+				</div> -->
+
+				<!-- <div class="container" -->
+			</div>
+
+			<div class="address">
+				<Input
+					labelClass={'label-width--lg'}
+					additionalClass="txt--lg"
+					name="address1"
+					label={'住所１'}
+					placeholder="丁目・番地"
+					bind:value={initialState.address1}
+					bind:isValid={noErrors.address1}
+				/>
+				<Input
+					labelClass={'label-width--lg'}
+					additionalClass="txt--lg"
+					name="address2"
+					label={'住所２'}
+					placeholder="建物名・部屋番号"
+					bind:value={initialState.address2}
+					bind:isValid={noErrors.address2}
+				/>
 			</div>
 
 			<div class="container">
 				<Input
 					additionalClass="number--lg"
-					name="phone"
+					name="phoneNumber"
 					label="電話番号"
 					labelClass={'label-width--lg'}
-					bind:value={address[5].data}
+					bind:value={initialState.phoneNumber}
+					bind:isValid={noErrors.phoneNumber}
 				/>
 
 				<Input
 					additionalClass="number--lg"
 					name="fax"
 					label="FAX番号"
-					bind:value={address[6].data}
+					bind:value={initialState.fax}
+					bind:isValid={noErrors.fax}
 				/>
 			</div>
 		</fieldset>
 
 		<fieldset class="fieldset fieldset--foundation">
-			<legend class="hidden">foundation</legend>
+			<legend class="hidden">創立</legend>
 			<div class="container">
-				<DateSelector bind:value={date} />
+				<DateSelector bind:year={initialState.year} bind:month={initialState.month} />
 				<Input
 					additionalClass="txt--lg"
 					name="founder"
 					label="設立者"
-					bind:value={foundation[2].data}
+					bind:value={initialState.founder}
+					bind:isValid={noErrors.founder}
 				/>
 			</div>
 		</fieldset>
 
 		<fieldset class="fieldset fieldset--bed">
-			<legend class="hidden">bed setting</legend>
+			<legend class="hidden">病床設定</legend>
 			<div class="container">
 				<label class="label" for="">診療科目</label>
 
 				<div class="container container--vertical">
-					<BedConfiguration />
+					{#each bedInputArray as index}
+						<BedConfiguration />
+					{/each}
 				</div>
 
 				<div class="total">
@@ -179,17 +272,19 @@
 					<p class="total__dispay">0</p>
 				</div>
 			</div>
-			<button class="btn btn--add">＋ 新規追加</button>
+			<button type="button" class="btn btn--add" on:click={handleAddBed}>＋ 新規追加</button>
 		</fieldset>
 
 		<fieldset class="fieldset fieldset--info2">
+			<legend class="hidden">情報２</legend>
 			<Input
 				unit="名"
 				additionalClass="number--lg"
 				label="従業員数"
 				labelClass={'label-width--lg'}
 				name="employee-quantity"
-				bind:value={info2[0].data}
+				bind:value={initialState.numberOfEmployees}
+				bind:isValid={noErrors.numberOfEmployees}
 			/>
 
 			<Input
@@ -197,7 +292,8 @@
 				name="homepage"
 				additionalClass="txt--lg"
 				label="ホームページ"
-				bind:value={info2[1].data}
+				bind:value={initialState.homepage}
+				bind:isValid={noErrors.homepage}
 			/>
 
 			<Input
@@ -206,32 +302,29 @@
 				additionalClass="number--lg"
 				unit="店"
 				label="関連施設拠点数"
-				bind:value={info2[2].data}
+				bind:value={initialState.numberOfFacilities}
+				bind:isValid={noErrors.numberOfFacilities}
 			/>
 		</fieldset>
 	</div>
 </form>
 
 <style lang="scss">
+	.hidden {
+		display: none;
+	}
 	.form {
 		font-family: 'Noto Sans JP';
-	}
-	.form__form {
-		padding: 0 37px;
-		padding-top: 28px;
-		padding-bottom: 48px;
-		background-color: #fff;
-		width: calc(((1240 - 74) / 1366) * 100vw);
-		width: calc(((1240 - 74) / 1366) * 100vw);
-		width: auto;
-
-		box-shadow: 0px 8px 8px rgb(200, 200, 200);
-	}
-
-	.select {
-		padding-left: 10px;
-		height: 32px;
-		width: calc(106px - 10px);
+		&__form {
+			padding: 0 37px;
+			padding-top: 28px;
+			padding-bottom: 48px;
+			background-color: #fff;
+			width: calc(((1240 - 74) / 1366) * 100vw);
+			width: calc(((1240 - 74) / 1366) * 100vw);
+			width: auto;
+			box-shadow: 0px 8px 8px rgb(200, 200, 200);
+		}
 	}
 
 	.container {
@@ -247,8 +340,10 @@
 	}
 
 	.fieldset {
+		margin-bottom: 2rem;
+		// border-bottom: #2fa8e1 solid 1px;
 		&--bed {
-			margin-bottom: 20px;
+			// margin-bottom: 20px;
 			.container {
 				column-gap: 10px;
 				row-gap: 11px;
@@ -282,5 +377,19 @@
 
 	.hidden {
 		display: none;
+	}
+
+	.btn {
+		background-color: #2fa8e1;
+		color: #fff;
+		margin: 0;
+
+		&--add {
+			padding: 0 11px;
+			margin-top: 14px;
+			height: 32px;
+			border-radius: 3px;
+			margin-left: 140px;
+		}
 	}
 </style>

@@ -3,16 +3,12 @@ import { loadData } from './utils/actions.js'
 
 import type { CompanyInfo } from './+page.svelte'
 
-let data: CompanyInfo[] = await loadData('http://localhost:3000/customers')
+export const load = async () => {
+	const data: CompanyInfo[] = await loadData('http://localhost:3000/customers')
 
-export function load({ params }) {
-	const companies: CompanyInfo[] = data
-
-	console.log(companies)
-
-	if (!companies) throw error(404)
+	if (!data) throw error(404)
 
 	return {
-		companies
+		data
 	}
 }

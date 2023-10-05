@@ -1,57 +1,101 @@
 <script lang="ts">
-	import Confirmation from './components/Confirmation.svelte'
+	// import type { CompanyInfo } from '../+page.svelte'
+	import ConfirmationBis from './components/ConfirmationBis.svelte'
 	import Form from './components/Form.svelte'
+	import type { CompanyInfo, CompanyEntries } from '../utils/types'
 
-	let numberOfBedInput = 1
+	console.log('hello')
+
+	import { Company } from '../utils/classes'
+
+	// export let data
+
+	// let company = data.company
+	let company: CompanyInfo = {
+		id: '',
+		customerNumber: '',
+		branchNumber: '',
+		facilityName: '',
+		kana: '',
+		facilityNumber: '',
+		businessType: '',
+		address: {
+			postalCode: '',
+			prefecture: '',
+			city: '',
+			address1: '',
+			address2: '',
+			phoneNumber: '',
+			fax: ''
+		},
+		numberOfEmployees: '',
+		homepage: '',
+		numberOfFacilities: '',
+		foundation: {
+			month: '',
+			year: '',
+			founder: ''
+		},
+		bedding: [
+			{
+				department: '',
+				quantity: ''
+			},
+			{
+				department: '',
+				quantity: ''
+			}
+		],
+		registration: {
+			status: '',
+			registrationDate: '',
+			registrationTime: ''
+		},
+		update: {
+			status: '',
+			lastUpdatedDate: '',
+			lastUpdatedTime: ''
+		},
+		delete: {
+			status: ' ',
+			deletedDate: '',
+			deletedTime: ''
+		}
+	}
+
+	let initialState: CompanyEntries = {
+		branchNumber: '',
+		facilityName: '',
+		kana: '',
+		facilityNumber: '',
+		businessType: '',
+		postalCode: '',
+		prefecture: '',
+		city: '',
+		address1: '',
+		address2: '',
+		phoneNumber: '',
+		fax: '',
+		year: '',
+		month: '',
+		founder: '',
+		bedding: [],
+		numberOfEmployees: '',
+		homepage: '',
+		numberOfFacilities: ''
+	}
+
+	// console.log(initialState)
+
+	// const newCompany = new Company(initialState)
+
+	// console.log(newCompany)
+
+	// $: console.log(initialState)
 
 	let checkIsTrue = false
 
-	interface Info {
-		title: string
-		class: string
-		data: string
-	}
-
-	let info1: Info[] = [
-		{ title: '顧客番号', class: 'customer-number', data: '' },
-		{ title: '枝番', data: '', class: 'branch-number' },
-		{ title: '施設名', data: '', class: 'name' },
-		{ title: 'カナ', data: '', class: 'kana' },
-		{ title: '医療機関番号', data: '', class: 'institution-number' },
-		{ title: '区分', data: '', class: 'company-type' }
-	]
-
-	let address: Info[] = [
-		{ title: '郵便番号', data: '', class: 'postal' },
-		{ title: '都道府県', data: '', class: 'region' },
-		{ title: '市区町村', data: '', class: 'city' },
-		{ title: '住所１', data: '', class: 'address1' },
-		{ title: '住所2', data: '', class: 'address2' },
-		{ title: '電話番号', data: '', class: 'phone' },
-		{ title: 'FAX番号', data: '', class: 'fax' }
-	]
-
-	let foundation = [
-		{ title: '年', data: '', class: 'year' },
-		{ title: '月', data: '', class: 'month' },
-		{ title: '設立者', data: '', class: 'founder' }
-	]
-
-	let info2: Info[] = [
-		{ title: '従業員数', data: '', class: 'number-employee' },
-		{ title: 'ホームページ', data: '', class: 'homepage' },
-		{ title: '関連施設拠点数', data: '', class: 'facility-quantity' }
-	]
-
-	let date = {
-		year: { title: '年', data: '', class: 'year' },
-		month: { title: '月', data: '', class: 'month' }
-	}
-
-	$: foundation[0].data = date.year.data
-	$: foundation[1].data = date.month.data
-
-	const handleCorrectClicked = () => {
+	const handleEditClicked = () => {
 		checkIsTrue = false
 	}
 </script>
@@ -64,17 +108,14 @@
 	</header>
 
 	<div class="section__main">
-		{#if checkIsTrue}
-			<Confirmation {info1} {info2} {address} {foundation} />
-		{:else}
-			<Form bind:info1 bind:info2 bind:address bind:foundation bind:checkIsTrue />
-		{/if}
+		<ConfirmationBis bind:initialState bind:checkIsTrue />
+		<Form bind:checkIsTrue bind:initialState />
 	</div>
 
 	<footer class="section__footer">
 		<div class="form__footer">
 			{#if checkIsTrue}
-				<button class="btn btn--correct" on:click={handleCorrectClicked}>修正</button>
+				<button class="btn btn--edit" on:click={handleEditClicked}>修正</button>
 			{/if}
 			<button class="btn btn--submit" form="registration-form">登録</button>
 		</div>
@@ -83,22 +124,16 @@
 
 <style lang="scss">
 	.btn {
-		background-color: #2fa8e1;
-		color: #fff;
+		width: 108px;
+		height: 45px;
 		margin: 0;
 
-		&--add {
-			padding: 0 11px;
-			margin-top: 14px;
-			height: 32px;
-			border-radius: 3px;
-			margin-left: 140px;
-		}
+		background-color: #2fa8e1;
+		color: #fff;
 
 		&--submit {
 			position: relative;
-			width: 108px;
-			height: 45px;
+
 			&::after {
 				content: '';
 				position: absolute;
@@ -116,12 +151,9 @@
 					opacity: 0.3;
 				}
 			}
-			// margin-left: auto;
 		}
 
-		&--correct {
-			width: 108px;
-			height: 45px;
+		&--edit {
 			background-color: transparent;
 			color: #2fa8e1;
 			border: #2fa8e1 1px solid;

@@ -1,7 +1,6 @@
 <script lang="ts">
 	import Icon from '@/components/Icon.svelte'
 	import { loadData, deleteItem } from '../utils/actions'
-	export let customerNumber: string = ''
 	export let facilityName: string = ''
 	export let address = { prefecture: '', city: '' }
 	export let status: string = ''
@@ -21,11 +20,20 @@
 
 	//We update newData, so that it displays the right information
 	$: newData = data
+
+	const handleRowClick = (e: any) => {
+		console.log(e.target.closest('.data').classList.value)
+		const classList = e.target.closest('.data').classList.value
+
+		if (classList.includes('update') || classList.includes('erase')) {
+			return
+		}
+		window.location.href = '/customers/' + id
+	}
 </script>
 
-<!-- <a class="customer-link" href="/customers/{id}"> -->
-<tr class="row">
-	<td class="data customer-number">{customerNumber}</td>
+<tr class="row" on:click={handleRowClick}>
+	<td class="data customer-number">{id}</td>
 	<td class="data facility-name">{facilityName}</td>
 	<td class="data address">{address.prefecture}県{address.city}市</td>
 	<td class="data status">{status}</td>
@@ -36,18 +44,22 @@
 		</a>
 	</td>
 	<td class="data erase">
-		<button class="btn btn--erase" on:click={handleDeleteItem} {id}>
+		<button class="btn btn--erase" {id} on:click={handleDeleteItem}>
 			<Icon icon={{ path: 'trash-bin', color: '#2FA8E1' }} />
 		</button>
 	</td>
 </tr>
 
-<!-- </a> -->
-
 <style lang="scss">
-	.customer-link {
-		width: 100%;
+	.row {
+		position: relative;
+		cursor: pointer;
+
+		&:hover {
+			background-color: hsl(199, 75%, 53%, 0.1);
+		}
 	}
+
 	.data {
 		text-align: left;
 		padding: 18px calc((27 / 1366) * 100vw);
@@ -61,6 +73,7 @@
 	.btn {
 		background-color: transparent;
 		transition: transform 300ms;
+		z-index: 99;
 
 		&:hover {
 			cursor: pointer;

@@ -43,16 +43,19 @@
 	import SearchMenu from './components/SearchMenu.svelte'
 	import { onMount } from 'svelte'
 	import { loadData } from './utils/actions'
-	let data: CompanyInfo[] = []
-	let newData: CompanyInfo[] = data
+
+	export let data
+	let newData: CompanyInfo[] = data.data
 
 	console.log(data)
 
 	//Set the default data
-	onMount(async () => {
-		data = await loadData('http://localhost:3000/customers')
-		newData = await loadData('http://localhost:3000/customers')
-	})
+	// onMount(async () => {
+	// 	// data = await loadData('http://localhost:3000/customers')
+	// 	newData = await loadData('http://localhost:3000/customers')
+	// })
+
+	// $: newData = data.data
 
 	let dataToDisplay: CompanyInfo[] = []
 	let pageArray: string[] = []
@@ -125,7 +128,7 @@
 <section class="section section--customers-management" id="customers-management">
 	<header class="section__header">
 		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>
-		<SearchMenu {data} bind:newData />
+		<SearchMenu data={data.data} bind:newData />
 
 		<label for="checkbox"
 			><input
@@ -135,10 +138,12 @@
 				name="checkbox"
 			/>以前削除した施設も含む</label
 		>
+
+		<a class="btn btn--new" href="/customers/new">＋新規登録</a>
 	</header>
 
 	<div class="section__main">
-		<Table {dataToDisplay} bind:data bind:newData />
+		<Table {dataToDisplay} bind:data={data.data} bind:newData />
 	</div>
 
 	<footer class="section__footer">
@@ -164,5 +169,18 @@
 
 	.no-data {
 		text-align: center;
+	}
+
+	.btn {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 32px;
+		// width: 108px;
+		padding: 8px;
+		border-radius: 3px;
+		background-color: #2fa8e1;
+		color: #fff;
+		float: right;
 	}
 </style>

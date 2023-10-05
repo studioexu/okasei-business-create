@@ -1,68 +1,66 @@
-<script lang="ts" context="module">
-</script>
-
 <script lang="ts">
-	import BedContainer from './components/BedContainer.svelte'
-	import BeddingWrapper from './components/BeddingWrapper.svelte'
-	import FoundationWrapper from './components/FoundationWrapper.svelte'
-	import Wrapper from './components/Wrapper.svelte'
-	export let data
+	import BedContainer from './BedContainer.svelte'
+	import BeddingWrapper from './BeddingWrapper.svelte'
+	import FoundationWrapper from './FoundationWrapper.svelte'
+	import Wrapper from './Wrapper.svelte'
+	import type { CompanyInfo, CompanyEntries } from '../../utils/types'
 
-	// import { load } from '../+page.server'
+	export let initialState: CompanyEntries
 
-	console.log('myData')
-	console.log(data)
-
-	let company = data.company
+	// export let company: CompanyInfo
+	export let checkIsTrue: boolean
 
 	let bedQuantity: number = 0
-
-	company.bedding.forEach(bed => (bedQuantity += parseInt(bed.quantity)))
-
-	console.log(company)
 </script>
 
-<div class="section--confirmation">
-	<!-- <header>hello</header> -->
-	<div class="container">
-		<Wrapper areaClass="customerNumber" content={company.customerNumber} title={'顧客番号'} />
-		<Wrapper areaClass="branchNumber" content={company.branchNumber} title={'枝番'} />
-		<Wrapper areaClass="facilityName" content={company.facilityName} title={'施設名'} />
-		<Wrapper areaClass="kana" content={company.kana} title={'カナ'} />
+<div class="confirmation">
+	<div class="container {checkIsTrue ? '' : 'hidden'}">
+		<Wrapper areaClass="customerNumber" content={'????'} title={'顧客番号'} />
+		<Wrapper areaClass="branchNumber" content={initialState.branchNumber} title={'枝番'} />
+		<Wrapper areaClass="facilityName" content={initialState.facilityName} title={'施設名'} />
+		<Wrapper areaClass="kana" content={initialState.kana} title={'カナ'} />
 
-		<Wrapper areaClass="facilityNumber" content={company.facilityNumber} title={'医療機関番号'} />
-		<Wrapper areaClass="businessType" content={company.businessType} title={'区分'} />
+		<Wrapper
+			areaClass="facilityNumber"
+			content={initialState.facilityNumber}
+			title={'医療機関番号'}
+		/>
+		<Wrapper areaClass="businessType" content={initialState.businessType} title={'区分'} />
 
-		<Wrapper areaClass="postalCode" content={company.address.postalCode} title={'郵便番号'} />
-		<Wrapper areaClass="prefecture" content={company.address.prefecture} title={'都道府県'} />
-		<Wrapper areaClass="city" content={company.address.city} title={'市区町村'} />
-		<Wrapper areaClass="address1" content={company.address.address1} title={'住所１'} />
-		<Wrapper areaClass="address2" content={company.address.address2} title={'住所2'} />
-		<Wrapper areaClass="phoneNumber" content={company.address.phoneNumber} title={'電話番号'} />
-		<Wrapper areaClass="fax" content={company.address.fax} title={'FAX番号'} />
+		<Wrapper areaClass="postalCode" content={initialState.postalCode} title={'郵便番号'} />
+		<Wrapper areaClass="prefecture" content={initialState.prefecture} title={'都道府県'} />
+		<Wrapper areaClass="city" content={initialState.city} title={'市区町村'} />
+		<Wrapper areaClass="address1" content={initialState.address1} title={'住所１'} />
+		<Wrapper areaClass="address2" content={initialState.address2} title={'住所2'} />
+		<Wrapper areaClass="phoneNumber" content={initialState.phoneNumber} title={'電話番号'} />
+		<Wrapper areaClass="fax" content={initialState.fax} title={'FAX番号'} />
 
-		<Wrapper areaClass="homepage" content={company.homepage} title={'ホームページ'} />
-		<Wrapper areaClass="numberOfEmployees" content={company.numberOfEmployees} title={'従業員数'} />
+		<Wrapper areaClass="homepage" content={initialState.homepage} title={'ホームページ'} />
+		<Wrapper
+			areaClass="numberOfEmployees"
+			content={initialState.numberOfEmployees}
+			title={'従業員数'}
+		/>
 		<Wrapper
 			areaClass="numberOfFacilities"
-			content={company.numberOfFacilities}
+			content={initialState.numberOfFacilities}
 			title={'関連施設拠点数'}
 		/>
 
 		<BeddingWrapper total={bedQuantity}>
-			{#each company.bedding as bedding}
+			{#each initialState.bedding as bedding}
 				<BedContainer department={bedding.department} quantity={bedding.quantity} />
 			{/each}
 		</BeddingWrapper>
 
 		<FoundationWrapper
-			year={company.foundation.year}
-			month={company.foundation.month}
-			founder={company.foundation.founder}
+			year={initialState.year}
+			month={initialState.month}
+			founder={initialState.founder}
 		/>
 	</div>
 
-	<footer class="section__footer">
+	<!-- <footer class="section__footer">
 		<div class="metadata">
 			<div class="registration">
 				<div class="registration__data">
@@ -95,9 +93,9 @@
 		</div>
 
 		<div class="button-container">
-			<a class="btn btn--edit" href="/customers/{company.id}/edit">編集</a>
+			<button class="btn btn--edit">編集</button>
 		</div>
-	</footer>
+	</footer> -->
 </div>
 
 <style lang="scss">
@@ -120,26 +118,9 @@
 			'numberOfFacilities numberOfFacilities numberOfFacilities . . . . . . .';
 	}
 
-	.btn {
-		background-color: #2fa8e1;
-		color: #fff;
-		margin: 0;
-
-		&--edit {
-			width: 108px;
-			height: 45px;
-			background-color: transparent;
-			color: #2fa8e1;
-			border: #2fa8e1 1px solid;
-			transition: all 300ms;
-
-			&:hover {
-				background-color: #2fa8e1;
-				color: #fff;
-			}
-		}
+	.hidden {
+		display: none;
 	}
-
 	.container {
 		overflow: hidden;
 		padding: 0 37px;
@@ -154,9 +135,6 @@
 	}
 
 	.section__footer {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-end;
 		margin-top: 1rem;
 		padding-bottom: 1rem;
 		.registration {

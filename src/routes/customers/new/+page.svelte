@@ -1,67 +1,7 @@
 <script lang="ts">
-	// import type { CompanyInfo } from '../+page.svelte'
-	import ConfirmationBis from './components/ConfirmationBis.svelte'
-	import Form from './components/Form.svelte'
-	import type { CompanyInfo, CompanyEntries } from '../utils/types'
-
-	console.log('hello')
-
-	import { Company } from '../utils/classes'
-
-	// export let data
-
-	// let company = data.company
-	let company: CompanyInfo = {
-		id: '',
-		customerNumber: '',
-		branchNumber: '',
-		facilityName: '',
-		kana: '',
-		facilityNumber: '',
-		businessType: '',
-		address: {
-			postalCode: '',
-			prefecture: '',
-			city: '',
-			address1: '',
-			address2: '',
-			phoneNumber: '',
-			fax: ''
-		},
-		numberOfEmployees: '',
-		homepage: '',
-		numberOfFacilities: '',
-		foundation: {
-			month: '',
-			year: '',
-			founder: ''
-		},
-		bedding: [
-			{
-				department: '',
-				quantity: ''
-			},
-			{
-				department: '',
-				quantity: ''
-			}
-		],
-		registration: {
-			status: '',
-			registrationDate: '',
-			registrationTime: ''
-		},
-		update: {
-			status: '',
-			lastUpdatedDate: '',
-			lastUpdatedTime: ''
-		},
-		delete: {
-			status: ' ',
-			deletedDate: '',
-			deletedTime: ''
-		}
-	}
+	import Confirmation from './components/Confirmation/Confirmation.svelte'
+	import Form from './components/Form/Form.svelte'
+	import type { CompanyEntries } from '../utils/types'
 
 	let initialState: CompanyEntries = {
 		branchNumber: '',
@@ -85,36 +25,28 @@
 		numberOfFacilities: ''
 	}
 
-	// console.log(initialState)
-
-	// const newCompany = new Company(initialState)
-
-	// console.log(newCompany)
-
-	// $: console.log(initialState)
-
-	let checkIsTrue = false
+	let verificationPageDisplayed = false
 
 	const handleEditClicked = () => {
-		checkIsTrue = false
+		verificationPageDisplayed = false
 	}
 </script>
 
 <section class="section section--form">
 	<header class="section__header">
-		{#if checkIsTrue}
+		{#if verificationPageDisplayed}
 			<h2 class="section__header__title">下記の内容で登録しますか？</h2>
 		{/if}
 	</header>
 
 	<div class="section__main">
-		<ConfirmationBis bind:initialState bind:checkIsTrue />
-		<Form bind:checkIsTrue bind:initialState />
+		<Confirmation bind:initialState bind:verificationPageDisplayed />
+		<Form bind:verificationPageDisplayed bind:initialState />
 	</div>
 
 	<footer class="section__footer">
 		<div class="form__footer">
-			{#if checkIsTrue}
+			{#if verificationPageDisplayed}
 				<button class="btn btn--edit" on:click={handleEditClicked}>修正</button>
 			{/if}
 			<button class="btn btn--submit" form="registration-form">登録</button>

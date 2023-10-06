@@ -1,19 +1,71 @@
 <script lang="ts">
-	import type { CompanyEntries, Error } from '../../utils/types'
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
 	import BedConfiguration from './BedConfiguration.svelte'
-	import { inputIsValid } from '../../utils/validations'
-	import { post } from '../../utils/actions'
-	import { parseCompanyInfo } from '../../utils/parsers'
+	import { parseBeforeUpdate } from '@/routes/customers/utils/parsers'
+	import type { CompanyEntries, CompanyInfo, Error } from '../../../../utils/types'
+	import { inputIsValid } from '../../../../utils/validations'
+	export let company: CompanyInfo
+	import { update } from '../../../../utils/actions'
 
+	interface BedInput {
+		index: number
+		department: string
+		quantity: string
+	}
+
+	export let verificationPageDisplayed: boolean
 	export let initialState: CompanyEntries
-	export let checkIsTrue: boolean
+
+	let totalOfBed: number = 0
+
+	const caculateTotalOfBed = (beds: BedInput[]): number => {
+		let sum: number = 0
+		beds.map((bed: BedInput) => {
+			sum += parseInt(bed.quantity)
+		})
+
+		return sum
+	}
+
+	const handleSubmit = (e: any) => {
+		if (verificationPageDisplayed) {
+			const registration = {
+				status: company.registration.status,
+				date: company.registration.registrationDate,
+				time: company.registration.registrationTime
+			}
+			const updatedCompany = parseBeforeUpdate(initialState, registration)
+
+			if (typeof company.id === 'string') {
+				update(updatedCompany, 'http://localhost:3000/customers/', company.id)
+			}
+		}
+
+		if (!verificationPageDisplayed) {
+			e.preventDefault()
+
+			let formIsValid = true
+			formIsValid = checkIfFormIsValid(initialState)
+
+			if (!formIsValid) {
+				return
+			}
+
+			verificationPageDisplayed = true
+		}
+	}
 
 	const hojinKojin = [' ', '法人', '個人']
 
-	let bedInputArray: number[] = [1]
+	let bedInputArray: BedInput[] = []
+
+	initialState.bedding.map((bed, index) => {
+		bedInputArray.push({ index: index, department: bed.department, quantity: bed.quantity })
+	})
+
+	$: totalOfBed = caculateTotalOfBed(bedInputArray)
 
 	let noErrors: Error = {
 		branchNumber: true,
@@ -38,9 +90,12 @@
 	}
 
 	const handleAddBed = () => {
-		bedInputArray.push(bedInputArray.length + 1)
-		bedInputArray = bedInputArray
+		bedInputArray = [
+			...bedInputArray,
+			{ index: bedInputArray[bedInputArray.length - 1].index + 1, department: '', quantity: '' }
+		]
 	}
+	$: initialState.bedding = bedInputArray
 
 	const checkIfFormIsValid = (formEntries: Object): boolean => {
 		let errorArray: boolean[] = []
@@ -64,32 +119,10 @@
 
 		return isValid
 	}
-
-	// $: console.log(numberOfBedInput)
-
-	const handleSubmit = (e: any) => {
-		if (checkIsTrue) {
-			let newCompany = parseCompanyInfo(initialState)
-			post(newCompany, 'http://localhost:3000/customers/')
-		}
-
-		if (!checkIsTrue) {
-			e.preventDefault()
-
-			let formIsValid = true
-			formIsValid = checkIfFormIsValid(initialState)
-
-			if (!formIsValid) {
-				return
-			}
-
-			checkIsTrue = true
-		}
-	}
 </script>
 
 <form
-	class="form {checkIsTrue ? 'hidden' : ''}"
+	class="form {verificationPageDisplayed ? 'hidden' : ''}"
 	method="PUT"
 	action="/customers/"
 	id="registration-form"
@@ -99,13 +132,13 @@
 		<fieldset class="fieldset fieldset--info1">
 			<legend class="hidden">情報１</legend>
 			<div class="container">
-				<!-- <Input
+				<Input
 					additionalClass={'number--md'}
 					name={'customer-number'}
 					label={'顧客番号'}
 					labelClass={'label-width--md'}
-					bind:value={initialState.customerNumber}
-				/> -->
+					bind:value={company.id}
+				/>
 				<Input
 					additionalClass={'number--sm'}
 					name={'branch-number'}
@@ -151,6 +184,7 @@
 				/>
 			</div>
 		</fieldset>
+		<!-- .fieldset--info1 -->
 
 		<fieldset class="fieldset fieldset--address">
 			<legend class="hidden">住所</legend>
@@ -181,25 +215,6 @@
 					bind:value={initialState.city}
 					bind:isValid={noErrors.city}
 				/>
-
-				<!-- <div class="address">
-					<Input
-						additionalClass="txt--lg"
-						name="address1"
-						label={'住所１'}
-						placeholder="丁目・番地"
-						bind:value={initialState.address.address1}
-					/>
-					<Input
-						additionalClass="txt--lg"
-						name="address2"
-						label={'住所２'}
-						placeholder="建物名・部屋番号"
-						bind:value={initialState.address.address2}
-					/>
-				</div> -->
-
-				<!-- <div class="container" -->
 			</div>
 
 			<div class="address">
@@ -242,6 +257,7 @@
 				/>
 			</div>
 		</fieldset>
+		<!-- .fieldset--address -->
 
 		<fieldset class="fieldset fieldset--foundation">
 			<legend class="hidden">創立</legend>
@@ -256,6 +272,7 @@
 				/>
 			</div>
 		</fieldset>
+		<!-- .fieldset--foundation -->
 
 		<fieldset class="fieldset fieldset--bed">
 			<legend class="hidden">病床設定</legend>
@@ -263,18 +280,19 @@
 				<label class="label" for="">診療科目</label>
 
 				<div class="container container--vertical">
-					{#each bedInputArray as index}
-						<BedConfiguration />
+					{#each bedInputArray as bed}
+						<BedConfiguration bind:bed bind:bedInputArray />
 					{/each}
 				</div>
 
 				<div class="total">
 					<h3 class="label">病床数合計</h3>
-					<p class="total__dispay">0</p>
+					<p class="total__dispay">{totalOfBed}</p>
 				</div>
 			</div>
 			<button type="button" class="btn btn--add" on:click={handleAddBed}>＋ 新規追加</button>
 		</fieldset>
+		<!-- .fieldset--bed -->
 
 		<fieldset class="fieldset fieldset--info2">
 			<legend class="hidden">情報２</legend>
@@ -307,6 +325,7 @@
 				bind:isValid={noErrors.numberOfFacilities}
 			/>
 		</fieldset>
+		<!-- .fieldset--info2 -->
 	</div>
 </form>
 
@@ -330,7 +349,7 @@
 
 	.container {
 		display: flex;
-		gap: 2rem;
+		column-gap: 2rem;
 		align-items: flex-start;
 		justify-content: flex-start;
 		flex-wrap: wrap;
@@ -342,9 +361,7 @@
 
 	.fieldset {
 		margin-bottom: 2rem;
-		// border-bottom: #2fa8e1 solid 1px;
 		&--bed {
-			// margin-bottom: 20px;
 			.container {
 				column-gap: 10px;
 				row-gap: 11px;

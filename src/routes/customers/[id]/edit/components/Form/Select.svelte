@@ -58,7 +58,7 @@
 		display: flex;
 		gap: 10px;
 		align-items: center;
-		margin-bottom: 20px; // justify-content: space-between;
+		margin-bottom: 20px;
 		.label {
 			font-size: 18px;
 			font-weight: 500;

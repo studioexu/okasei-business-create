@@ -1,13 +1,5 @@
 <script lang="ts">
-	import {
-		phoneNumberValidation,
-		kanaValidation,
-		postalCodeValidation,
-		yearValidation,
-		numberOFCharacterValidation
-	} from '../../utils/validations'
-
-	import { inputIsValid } from '../../utils/validations'
+	import { inputIsValid } from '../../../utils/validations'
 
 	export let placeholder: string = ''
 	export let value: string = ''
@@ -22,7 +14,6 @@
 	export let isValid: boolean = true
 
 	const handleChange = (e: any) => {
-		// console.log(e.target.value)
 		const input = e.target.value
 		isValid = inputIsValid(name, input)
 	}
@@ -106,25 +97,15 @@
 	.txt {
 		&--sm {
 			width: calc(((137 - 10) / 1366)) * 100vw;
-			// @include responsiveInputWidth((137));
-			// width: 11%;
-			// width: 137px;
 			@include responsiveInputWidth((114));
 		}
 		&--md {
-			width: calc(421px - 10px);
-			@include responsiveInputWidth((421));
 			@include responsiveInputWidth((114));
 		}
 		&--lg {
-			width: calc(433px - 10px);
-			// @include responsiveInputWidth((433));
 			@include responsiveInputWidth((359));
-			// @include responsiveInputWidth((259));
 		}
 		&--xl {
-			width: calc(644px - 10px);
-			// @include responsiveInputWidth((644));
 			@include responsiveInputWidth((534));
 		}
 	}
@@ -144,7 +125,7 @@
 
 	.error {
 		.input {
-			border: 2px solid rgb(255, 102, 102);
+			border: 1.5px solid #f55d3e;
 		}
 	}
 </style>

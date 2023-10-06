@@ -1,4 +1,5 @@
 import { Company } from './classes'
+import type { CompanyInfo } from './types'
 
 /**
  * Load the data from the server.
@@ -78,5 +79,15 @@ export const post = (newCompany: Object, url: string) => {
 		body: JSON.stringify(newCompany)
 	})
 		.then(() => console.log('post succeeded'))
+		.catch(err => console.log(err))
+}
+
+export const update = (updatedCompany: CompanyInfo, url: string, companyId: string) => {
+	fetch(url + companyId, {
+		method: 'PUT',
+		headers: { 'Content-type': 'application/json;charset=UTF-8' },
+		body: JSON.stringify(updatedCompany)
+	})
+		.then(() => console.log('yeah'))
 		.catch(err => console.log(err))
 }

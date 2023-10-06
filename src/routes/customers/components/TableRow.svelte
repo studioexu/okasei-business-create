@@ -39,7 +39,7 @@
 	<td class="data status">{status}</td>
 	<td class="data update-date">{updateDate}</td>
 	<td class="data update">
-		<a class="btn btn--update" href="/customers/{id}">
+		<a class="btn btn--update" href="/customers/{id}/edit">
 			<Icon icon={{ path: 'notepad', color: '#2FA8E1' }} />
 		</a>
 	</td>

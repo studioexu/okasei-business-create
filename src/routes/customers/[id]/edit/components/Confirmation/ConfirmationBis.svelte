@@ -3,19 +3,18 @@
 	import BeddingWrapper from './BeddingWrapper.svelte'
 	import FoundationWrapper from './FoundationWrapper.svelte'
 	import Wrapper from './Wrapper.svelte'
-	import type { CompanyInfo, CompanyEntries } from '../../utils/types'
+	import type { CompanyEntries } from '../../../../utils/types'
+	import { Company } from '@/routes/customers/utils/classes'
 
 	export let initialState: CompanyEntries
-
-	// export let company: CompanyInfo
-	export let checkIsTrue: boolean
+	export let verificationPageDisplayed: boolean
 
 	let bedQuantity: number = 0
 </script>
 
 <div class="confirmation">
-	<div class="container {checkIsTrue ? '' : 'hidden'}">
-		<Wrapper areaClass="customerNumber" content={'????'} title={'顧客番号'} />
+	<div class="container {verificationPageDisplayed ? '' : 'hidden'}">
+		<Wrapper areaClass="customerNumber" content={initialState.id} title={'顧客番号'} />
 		<Wrapper areaClass="branchNumber" content={initialState.branchNumber} title={'枝番'} />
 		<Wrapper areaClass="facilityName" content={initialState.facilityName} title={'施設名'} />
 		<Wrapper areaClass="kana" content={initialState.kana} title={'カナ'} />

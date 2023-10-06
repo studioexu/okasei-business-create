@@ -4,7 +4,7 @@ interface bedding {
 }
 
 export class Company {
-	id?: string | undefined
+	id?: string
 	branchNumber: string
 	customerNumber?: string | undefined
 	facilityName: string
@@ -45,10 +45,10 @@ export class Company {
 		deletedTime: string
 	}
 
-	constructor(data: any, registration?: any, id?: string, update?: any) {
-		if (id) {
-			this.id = id
-			this.customerNumber = id
+	constructor(data: any, registration?: any, update?: any) {
+		if (data.id) {
+			this.id = data.id
+			this.customerNumber = data.id
 		}
 		this.branchNumber = data.branchNumber
 		this.facilityName = data.facilityName

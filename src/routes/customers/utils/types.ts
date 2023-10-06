@@ -1,10 +1,11 @@
-interface bedding {
+export interface bedding {
+	index?: string
 	department: string
 	quantity: string
 }
 
 export interface CompanyInfo {
-	id?: string | undefined
+	id?: string
 	customerNumber?: string | undefined
 	branchNumber: string
 	facilityName: string
@@ -47,6 +48,7 @@ export interface CompanyInfo {
 }
 
 export interface CompanyEntries {
+	id?: string
 	branchNumber: string
 	facilityName: string
 	kana: string

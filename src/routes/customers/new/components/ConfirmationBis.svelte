@@ -59,43 +59,6 @@
 			founder={initialState.founder}
 		/>
 	</div>
-
-	<!-- <footer class="section__footer">
-		<div class="metadata">
-			<div class="registration">
-				<div class="registration__data">
-					<h3 class="registration__data__title">登録者名</h3>
-					<p class="registration__data__content">山田太郎</p>
-				</div>
-				<div class="registration__data">
-					<h3 class="registration__data__title">登録日</h3>
-					<p class="registration__data__content">2023.00.00</p>
-				</div>
-				<div class="registration__data">
-					<h3 class="registration__data__title">登録時刻</h3>
-					<p class="registration__data__content">00:00:00</p>
-				</div>
-			</div>
-			<div class="registration">
-				<div class="registration__data">
-					<h3 class="registration__data__title">更新者名</h3>
-					<p class="registration__data__content">山田太郎</p>
-				</div>
-				<div class="registration__data">
-					<h3 class="registration__data__title">更新日</h3>
-					<p class="registration__data__content">2023.00.00</p>
-				</div>
-				<div class="registration__data">
-					<h3 class="registration__data__title">更新時刻</h3>
-					<p class="registration__data__content">00:00:00</p>
-				</div>
-			</div>
-		</div>
-
-		<div class="button-container">
-			<button class="btn btn--edit">編集</button>
-		</div>
-	</footer> -->
 </div>
 
 <style lang="scss">

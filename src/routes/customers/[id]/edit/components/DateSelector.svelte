@@ -9,9 +9,6 @@
 	export let year: string = ''
 	export let month: string = ''
 
-	// export let year = { title: '年', data: '', class: 'year' }
-	// export let month = { title: '月', data: '', class: 'month' }
-
 	const currentYear = new Date().getFullYear()
 	const years: string[] = ['']
 	const months: string[] = ['']

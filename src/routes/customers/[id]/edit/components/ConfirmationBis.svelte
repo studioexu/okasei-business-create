@@ -4,52 +4,17 @@
 	import FoundationWrapper from '../../components/FoundationWrapper.svelte'
 	import Wrapper from '../../components/Wrapper.svelte'
 
+	import type { CompanyInfo } from '../../../utils/types'
+
 	export let company: CompanyInfo
 	export let checkIsTrue: boolean
-
-	interface CompanyInfo {
-		id: string
-		customerNumber: string
-		branchNumber: string
-		facilityName: string
-		kana: string
-		facilityNumber: string
-		businessType: string
-		address: {
-			postalCode: string
-			prefecture: string
-			city: string
-			address1: string
-			address2: string
-			phoneNumber: string
-			fax: string
-		}
-		numberOfEmployees: string
-		homepage: string
-		numberOfFacilities: string
-		foundation: {
-			month: string
-			year: string
-			founder: string
-		}
-		bedding: [{ department: string; quantity: string }, { department: string; quantity: string }]
-		registration: {
-			status: string
-			registrationDate: string
-			lastUpdated: string
-		}
-		update: {
-			status: string
-			lastUpdated: string
-		}
-	}
 
 	let bedQuantity: number = 0
 </script>
 
 <div class="confirmation">
 	<div class="container {checkIsTrue ? '' : 'hidden'}">
-		<Wrapper areaClass="customerNumber" content={company.customerNumber} title={'顧客番号'} />
+		<Wrapper areaClass="customerNumber" content={company.id} title={'顧客番号'} />
 		<Wrapper areaClass="branchNumber" content={company.branchNumber} title={'枝番'} />
 		<Wrapper areaClass="facilityName" content={company.facilityName} title={'施設名'} />
 		<Wrapper areaClass="kana" content={company.kana} title={'カナ'} />

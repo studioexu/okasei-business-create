@@ -4,7 +4,9 @@ interface bedding {
 }
 
 export class Company {
-	customerNumber: string | undefined
+	id?: string | undefined
+	branchNumber: string
+	customerNumber?: string | undefined
 	facilityName: string
 	kana: string
 	facilityNumber: string
@@ -44,10 +46,11 @@ export class Company {
 	}
 
 	constructor(data: any, registration?: any, id?: string, update?: any) {
-		// if (id) {
-		// 	this.id = id
-		// 	this.customerNumber = id
-		// }
+		if (id) {
+			this.id = id
+			this.customerNumber = id
+		}
+		this.branchNumber = data.branchNumber
 		this.facilityName = data.facilityName
 		this.kana = data.kana
 		this.facilityNumber = data.facilityNumber

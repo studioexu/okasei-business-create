@@ -6,6 +6,7 @@
 	import BedConfiguration from './BedConfiguration.svelte'
 	import { inputIsValid } from '../../utils/validations'
 	import { post } from '../../utils/actions'
+	import { parseCompanyInfo } from '../../utils/parsers'
 
 	export let initialState: CompanyEntries
 	export let checkIsTrue: boolean
@@ -68,7 +69,8 @@
 
 	const handleSubmit = (e: any) => {
 		if (checkIsTrue) {
-			post(initialState)
+			let newCompany = parseCompanyInfo(initialState)
+			post(newCompany, 'http://localhost:3000/customers/')
 		}
 
 		if (!checkIsTrue) {
@@ -83,7 +85,6 @@
 
 			checkIsTrue = true
 		}
-		// edit()
 	}
 </script>
 

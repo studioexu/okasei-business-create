@@ -1,6 +1,11 @@
+interface bedding {
+	department: string
+	quantity: string
+}
+
 export interface CompanyInfo {
-	id: string
-	customerNumber: string
+	id?: string | undefined
+	customerNumber?: string | undefined
 	branchNumber: string
 	facilityName: string
 	kana: string
@@ -23,7 +28,7 @@ export interface CompanyInfo {
 		year: string
 		founder: string
 	}
-	bedding: [{ department: string; quantity: string }, { department: string; quantity: string }]
+	bedding: bedding[]
 	registration: {
 		status: string
 		registrationDate: string

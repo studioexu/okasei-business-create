@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit'
 import { loadData } from '../../utils/actions.js'
-import type { CompanyInfo } from '../../+page.svelte'
+import type { CompanyInfo } from '../../utils/types.ts'
 
 export const load = async ({ params }) => {
 	const data: CompanyInfo[] = await loadData('http://localhost:3000/customers')

@@ -59,6 +59,5 @@ export const inputIsValid = (name: string, input: string): boolean => {
 
 		default:
 			return true
-			break
 	}
 }

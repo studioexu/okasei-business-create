@@ -8,11 +8,6 @@
 	import Wrapper from './components/Wrapper.svelte'
 	export let data
 
-	// import { load } from '../+page.server'
-
-	console.log('myData')
-	console.log(data)
-
 	let company = data.company
 
 	let bedQuantity: number = 0
@@ -25,7 +20,7 @@
 <div class="section--confirmation">
 	<!-- <header>hello</header> -->
 	<div class="container">
-		<Wrapper areaClass="customerNumber" content={company.customerNumber} title={'顧客番号'} />
+		<Wrapper areaClass="customerNumber" content={company.id} title={'顧客番号'} />
 		<Wrapper areaClass="branchNumber" content={company.branchNumber} title={'枝番'} />
 		<Wrapper areaClass="facilityName" content={company.facilityName} title={'施設名'} />
 		<Wrapper areaClass="kana" content={company.kana} title={'カナ'} />
@@ -71,27 +66,30 @@
 				</div>
 				<div class="registration__data">
 					<h3 class="registration__data__title">登録日</h3>
-					<p class="registration__data__content">2023.00.00</p>
+					<p class="registration__data__content">{company.registration.registrationDate}</p>
 				</div>
 				<div class="registration__data">
 					<h3 class="registration__data__title">登録時刻</h3>
-					<p class="registration__data__content">00:00:00</p>
+					<p class="registration__data__content">{company.registration.registrationTime}</p>
 				</div>
 			</div>
-			<div class="registration">
-				<div class="registration__data">
-					<h3 class="registration__data__title">更新者名</h3>
-					<p class="registration__data__content">山田太郎</p>
+
+			{#if company.update.status !== ''}
+				<div class="registration">
+					<div class="registration__data">
+						<h3 class="registration__data__title">更新者名</h3>
+						<p class="registration__data__content">山田太郎</p>
+					</div>
+					<div class="registration__data">
+						<h3 class="registration__data__title">更新日</h3>
+						<p class="registration__data__content">{company.update.lastUpdatedDate}</p>
+					</div>
+					<div class="registration__data">
+						<h3 class="registration__data__title">更新時刻</h3>
+						<p class="registration__data__content">{company.update.lastUpdatedTime}</p>
+					</div>
 				</div>
-				<div class="registration__data">
-					<h3 class="registration__data__title">更新日</h3>
-					<p class="registration__data__content">2023.00.00</p>
-				</div>
-				<div class="registration__data">
-					<h3 class="registration__data__title">更新時刻</h3>
-					<p class="registration__data__content">00:00:00</p>
-				</div>
-			</div>
+			{/if}
 		</div>
 
 		<div class="button-container">
@@ -121,21 +119,40 @@
 	}
 
 	.btn {
+		display: flex;
+		position: relative;
+		align-items: center;
+		justify-content: center;
+
+		// background-color: #2fa8e1;
+		// color: #fff;
+		margin: 0;
+		width: 108px;
+		height: 45px;
 		background-color: #2fa8e1;
 		color: #fff;
-		margin: 0;
+
+		&::after {
+			content: ' ';
+			position: absolute;
+			height: 100%;
+			width: 100%;
+			left: 0;
+			top: 0;
+			background-color: #fff;
+			opacity: 0;
+			transition: opacity 300ms;
+		}
 
 		&--edit {
-			width: 108px;
-			height: 45px;
-			background-color: transparent;
-			color: #2fa8e1;
-			border: #2fa8e1 1px solid;
+			// color: #2fa8e1;
+			// border: #2fa8e1 1px solid;
 			transition: all 300ms;
 
 			&:hover {
-				background-color: #2fa8e1;
-				color: #fff;
+				&::after {
+					opacity: 0.2;
+				}
 			}
 		}
 	}
@@ -158,7 +175,7 @@
 		justify-content: space-between;
 		align-items: flex-end;
 		margin-top: 1rem;
-		padding-bottom: 1rem;
+		padding-bottom: 2rem;
 		.registration {
 			display: flex;
 			gap: 2rem;

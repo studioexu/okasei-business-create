@@ -3,48 +3,13 @@
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
 	import BedConfiguration from './BedConfiguration.svelte'
+	import { parseCompanyInfo } from '@/routes/customers/utils/parsers'
+	import type { CompanyInfo } from '../../../utils/types'
 	export let company: CompanyInfo
 
 	export let checkIsTrue: boolean
 
 	const hojinKojin = [' ', '法人', '個人']
-
-	interface CompanyInfo {
-		id: string
-		customerNumber: string
-		branchNumber: string
-		facilityName: string
-		kana: string
-		facilityNumber: string
-		businessType: string
-		address: {
-			postalCode: string
-			prefecture: string
-			city: string
-			address1: string
-			address2: string
-			phoneNumber: string
-			fax: string
-		}
-		numberOfEmployees: string
-		homepage: string
-		numberOfFacilities: string
-		foundation: {
-			month: string
-			year: string
-			founder: string
-		}
-		bedding: [{ department: string; quantity: string }, { department: string; quantity: string }]
-		registration: {
-			status: string
-			registrationDate: string
-			lastUpdated: string
-		}
-		update: {
-			status: string
-			lastUpdated: string
-		}
-	}
 
 	// let numberOfBedInput = 1
 	let bedInputArray: number[] = [1]
@@ -66,11 +31,11 @@
 
 	// $: console.log(numberOfBedInput)
 
-	const edit = () => {
+	const edit = (updatedCompany: CompanyInfo) => {
 		fetch('http://localhost:3000/customers/' + company.id, {
 			method: 'PUT',
 			headers: { 'Content-type': 'application/json;charset=UTF-8' },
-			body: JSON.stringify(company)
+			body: JSON.stringify(updatedCompany)
 		})
 			.then(() => console.log('yeah'))
 			.catch(err => console.log(err))
@@ -79,7 +44,8 @@
 	const handleSubmit = (e: any) => {
 		if (checkIsTrue) {
 			console.log(edit)
-			edit()
+			const updatedCompany = parseCompanyInfo(company, 'update')
+			edit(updatedCompany)
 		}
 
 		if (!checkIsTrue) {

@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { CompanyInfo } from '../../utils/types'
 	import ConfirmationBis from './components/ConfirmationBis.svelte'
 	import Form from './components/Form.svelte'
 	export let data

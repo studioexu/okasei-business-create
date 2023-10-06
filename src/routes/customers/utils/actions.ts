@@ -30,11 +30,28 @@ export const deleteItem = (customerId: string, url: string) => {
 	})
 		.then(res => res.json())
 		.then(newData => {
-			fetch('http://localhost:3000/deletedCustomers/', {
-				method: 'POST',
-				headers: { 'Content-type': 'application/json;charset=UTF-8' },
-				body: JSON.stringify(newData)
-			})
+			let options: Intl.DateTimeFormatOptions = {
+				timeZone: 'Asia/Tokyo',
+				year: 'numeric',
+				month: 'numeric',
+				day: 'numeric',
+				hour: 'numeric',
+				minute: 'numeric',
+				second: 'numeric'
+			}
+
+			const formatter = new Intl.DateTimeFormat([], options)
+			const timeArray = formatter.format(new Date()).split(', ')
+
+			const deleted = {
+				status: '削除',
+				date: timeArray[0],
+				time: timeArray[1]
+			}
+
+			newData.delete = deleted
+
+			post(newData, 'http://localhost:3000/deletedCustomers/')
 		})
 
 	//We DELETE the customer from the "Customers" database.
@@ -50,33 +67,16 @@ export const deleteItem = (customerId: string, url: string) => {
 	return loadData(url)
 }
 
-export const post = (companyEntry: Object) => {
-	let options: Intl.DateTimeFormatOptions = {
-		timeZone: 'Asia/Tokyo',
-		year: 'numeric',
-		month: 'numeric',
-		day: 'numeric',
-		hour: 'numeric',
-		minute: 'numeric',
-		second: 'numeric'
-	}
-
-	const formatter = new Intl.DateTimeFormat([], options)
-	const timeArray = formatter.format(new Date()).split(', ')
-
-	const registration = {
-		status: '登録',
-		date: timeArray[0],
-		time: timeArray[1]
-	}
-
-	let newCompany = new Company(companyEntry, registration)
-
-	fetch('http://localhost:3000/customers/', {
+/**
+ * POST the new company into the server.
+ * @param companyEntry : Object corresponding to the inputs entered by the user.
+ */
+export const post = (newCompany: Object, url: string) => {
+	fetch(url, {
 		method: 'POST',
 		headers: { 'Content-type': 'application/json;charset=UTF-8' },
 		body: JSON.stringify(newCompany)
 	})
-		.then(() => console.log('yeah'))
+		.then(() => console.log('post succeeded'))
 		.catch(err => console.log(err))
 }

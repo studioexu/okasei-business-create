@@ -1,10 +1,10 @@
-export interface bedding {
+export interface Bedding {
 	index?: string
 	department: string
 	quantity: string
 }
 
-export interface CompanyInfo {
+export interface CustomerInfo {
 	id?: string
 	customerNumber?: string | undefined
 	branchNumber: string
@@ -29,7 +29,7 @@ export interface CompanyInfo {
 		year: string
 		founder: string
 	}
-	bedding: bedding[]
+	bedding: Bedding[]
 	registration: {
 		status: string
 		registrationDate: string
@@ -47,7 +47,7 @@ export interface CompanyInfo {
 	}
 }
 
-export interface CompanyEntries {
+export interface CustomerEntries {
 	id?: string
 	branchNumber: string
 	facilityName: string
@@ -68,6 +68,8 @@ export interface CompanyEntries {
 	numberOfEmployees: string
 	homepage: string
 	numberOfFacilities: string
+	registrationDate?: string
+	registrationTime?: string
 }
 
 export interface Error {

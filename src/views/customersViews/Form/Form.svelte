@@ -1,25 +1,12 @@
 <script lang="ts">
-	import type { CompanyEntries, Error } from '../../../utils/types'
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
 	import BedConfiguration from './BedConfiguration.svelte'
-	import { inputIsValid } from '../../../utils/validations'
-	import { post } from '../../../utils/actions'
-	import { parseCompanyInfo } from '../../../utils/parsers'
-
-	export let initialState: CompanyEntries
-	export let verificationPageDisplayed: boolean
-
-	const hojinKojin = [' ', '法人', '個人']
-
-	let bedInputArray: BedInput[] = [
-		{
-			index: 1,
-			department: '',
-			quantity: ''
-		}
-	]
+	import { parseBeforeUpdate, parseBeforePost } from '@/routes/customers/utils/parsers'
+	import type { CustomerEntries, CustomerInfo, Error } from '@/routes/customers/utils/types'
+	import { inputIsValid } from '@/routes/customers/utils/validations'
+	import { update, create } from '@/routes/customers/utils/actions'
 
 	interface BedInput {
 		index: number
@@ -27,7 +14,73 @@
 		quantity: string
 	}
 
-	let bedTypeQuantity: number = 1
+	export let formType: string
+	export let verificationPageDisplayed: boolean
+	export let initialState: CustomerEntries
+
+	// if (typeOfForm === 'update') {
+	// 	export let customer: CustomerInfo
+	// }
+
+	let totalOfBed: number = 0
+
+	const caculateTotalOfBed = (beds: BedInput[]): number => {
+		let sum: number = 0
+		beds.map((bed: BedInput) => {
+			sum += parseInt(bed.quantity)
+		})
+
+		return sum
+	}
+
+	// if (formType === 'update') {
+	// export let customer: CustomerInfo
+
+	const handleSubmit = (e: any) => {
+		if (verificationPageDisplayed) {
+			if (formType === 'create') {
+				let newcustomer = parseBeforePost(initialState)
+				create(newcustomer, 'http://localhost:3000/customers/')
+			}
+
+			if (formType === 'update') {
+				const registration = {
+					status: '登録',
+					date: initialState.registrationDate,
+					time: initialState.registrationTime
+				}
+				const updatedcustomer = parseBeforeUpdate(initialState, registration)
+
+				if (typeof initialState.id === 'string') {
+					update(updatedcustomer, 'http://localhost:3000/customers/', initialState.id)
+				}
+			}
+		}
+
+		if (!verificationPageDisplayed) {
+			e.preventDefault()
+
+			let formIsValid = true
+			formIsValid = checkIfFormIsValid(initialState)
+
+			if (!formIsValid) {
+				return
+			}
+
+			verificationPageDisplayed = true
+		}
+	}
+	// }
+
+	const hojinKojin = [' ', '法人', '個人']
+
+	let bedInputArray: BedInput[] = []
+
+	initialState.bedding.map((bed, index) => {
+		bedInputArray.push({ index: index, department: bed.department, quantity: bed.quantity })
+	})
+
+	$: totalOfBed = caculateTotalOfBed(bedInputArray)
 
 	let noErrors: Error = {
 		branchNumber: true,
@@ -52,28 +105,22 @@
 	}
 
 	const handleAddBed = () => {
-		console.log('hello')
-
-		// bedInputArray.push(bedInputArray.length + 1)
 		bedInputArray = [
 			...bedInputArray,
 			{ index: bedInputArray[bedInputArray.length - 1].index + 1, department: '', quantity: '' }
 		]
 	}
-
-	$: console.log(bedInputArray)
-
 	$: initialState.bedding = bedInputArray
 
 	const checkIfFormIsValid = (formEntries: Object): boolean => {
 		let errorArray: boolean[] = []
 		let isValid = true
-		const companyKeys = Object.keys(formEntries)
-		const companyValues = Object.values(formEntries)
+		const customerKeys = Object.keys(formEntries)
+		const customerValues = Object.values(formEntries)
 
-		for (let i = 0; i < companyKeys.length; i++) {
-			const name: string = companyKeys[i]
-			const input: string = companyValues[i]
+		for (let i = 0; i < customerKeys.length; i++) {
+			const name: string = customerKeys[i]
+			const input: string = customerValues[i]
 
 			noErrors[name as keyof Error] = inputIsValid(name, input)
 			errorArray.push(!inputIsValid(name, input))
@@ -86,25 +133,6 @@
 		})
 
 		return isValid
-	}
-
-	const handleSubmit = (e: any) => {
-		if (verificationPageDisplayed) {
-			let newCompany = parseCompanyInfo(initialState)
-			post(newCompany, 'http://localhost:3000/customers/')
-		}
-		if (!verificationPageDisplayed) {
-			e.preventDefault()
-
-			let formIsValid = true
-			formIsValid = checkIfFormIsValid(initialState)
-
-			if (!formIsValid) {
-				return
-			}
-
-			verificationPageDisplayed = true
-		}
 	}
 </script>
 
@@ -274,7 +302,7 @@
 
 				<div class="total">
 					<h3 class="label">病床数合計</h3>
-					<p class="total__dispay">0</p>
+					<p class="total__dispay">{totalOfBed}</p>
 				</div>
 			</div>
 			<button type="button" class="btn btn--add" on:click={handleAddBed}>＋ 新規追加</button>

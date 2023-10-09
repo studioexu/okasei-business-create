@@ -3,10 +3,10 @@
 	import BeddingWrapper from './BeddingWrapper.svelte'
 	import FoundationWrapper from './FoundationWrapper.svelte'
 	import Wrapper from './Wrapper.svelte'
-	import type { CompanyEntries } from '../../../../utils/types'
-	import { Company } from '@/routes/customers/utils/classes'
+	import type { CustomerEntries } from '@/routes/customers/utils/types'
+	import { Customer } from '@/routes/customers/utils/classes'
 
-	export let initialState: CompanyEntries
+	export let initialState: CustomerEntries
 	export let verificationPageDisplayed: boolean
 
 	let bedQuantity: number = 0

@@ -1,8 +1,8 @@
-import { Company } from './classes'
-import type { CompanyInfo } from './types'
+import type { CustomerInfo } from './types'
 
 /**
  * Load the data from the server.
+ * サーバーからデータを読み込む。
  * @param url : string, corresponding to URL of the server
  * @returns the data from the server
  */
@@ -17,7 +17,7 @@ export const loadData = async (url: string) => {
 
 /**
  * delete the corresponding customer from the active customers, and put it in the deleted customers
- * Customersを削除して、Deleted Customersに追加する。
+ * Customersからカスタマーを削除して、Deleted Customersに追加する。
  * @param url : string, corresponding to URL of the server
  * @param customerId : string, corresponding to the customer's id we want to delete
  * @returns the new data
@@ -52,7 +52,7 @@ export const deleteItem = (customerId: string, url: string) => {
 
 			newData.delete = deleted
 
-			post(newData, 'http://localhost:3000/deletedCustomers/')
+			create(newData, 'http://localhost:3000/deletedCustomers/')
 		})
 
 	//We DELETE the customer from the "Customers" database.
@@ -69,24 +69,32 @@ export const deleteItem = (customerId: string, url: string) => {
 }
 
 /**
- * POST the new company into the server.
- * @param companyEntry : Object corresponding to the inputs entered by the user.
+ * POST the new customer into the server.
+ * 新しいカスタマーを登録する。
+ * @param customerEntry : Object corresponding to the inputs entered by the user.
  */
-export const post = (newCompany: Object, url: string) => {
+export const create = (newcustomer: Object, url: string) => {
 	fetch(url, {
 		method: 'POST',
 		headers: { 'Content-type': 'application/json;charset=UTF-8' },
-		body: JSON.stringify(newCompany)
+		body: JSON.stringify(newcustomer)
 	})
 		.then(() => console.log('post succeeded'))
 		.catch(err => console.log(err))
 }
 
-export const update = (updatedCompany: CompanyInfo, url: string, companyId: string) => {
-	fetch(url + companyId, {
+/**
+ * This function update the customer information in the database
+ * カスタマーの情報をアップデートするためのfunction.
+ * @param updatedcustomer : CustomerInfo is an object with the type CustomerInfo
+ * @param url : string, corresponding to url of the database
+ * @param customerId : string, corresponding to the id of the customer we want to update.
+ */
+export const update = (updatedcustomer: CustomerInfo, url: string, customerId: string) => {
+	fetch(url + customerId, {
 		method: 'PUT',
 		headers: { 'Content-type': 'application/json;charset=UTF-8' },
-		body: JSON.stringify(updatedCompany)
+		body: JSON.stringify(updatedcustomer)
 	})
 		.then(() => console.log('yeah'))
 		.catch(err => console.log(err))

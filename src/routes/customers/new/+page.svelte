@@ -1,9 +1,10 @@
 <script lang="ts">
-	import Confirmation from './components/Confirmation/Confirmation.svelte'
-	import Form from './components/Form/Form.svelte'
-	import type { CompanyEntries } from '../utils/types'
+	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
+	// import Form from './components/Form/Form.svelte'
+	import Form from '@/views/customersViews/Form/Form.svelte'
+	import type { CustomerEntries } from '../utils/types'
 
-	let initialState: CompanyEntries = {
+	let initialState: CustomerEntries = {
 		branchNumber: '',
 		facilityName: '',
 		kana: '',
@@ -41,7 +42,7 @@
 
 	<div class="section__main">
 		<Confirmation bind:initialState bind:verificationPageDisplayed />
-		<Form bind:verificationPageDisplayed bind:initialState />
+		<Form bind:verificationPageDisplayed bind:initialState formType={'create'} />
 	</div>
 
 	<footer class="section__footer">
@@ -71,9 +72,10 @@
 				position: absolute;
 				width: 100%;
 				height: 100%;
-				background-color: #fff;
 				left: 0;
 				top: 0;
+
+				background-color: #fff;
 				opacity: 0;
 				transition: opacity 300ms;
 			}

@@ -1,63 +1,15 @@
 <script lang="ts" context="module">
-	export interface CompanyInfo {
-		id: string
-		customerNumber: string
-		branchNumber: string
-		facilityName: string
-		kana: string
-		facilityNumber: string
-		businessType: string
-		address: {
-			postalCode: string
-			prefecture: string
-			city: string
-			address1: string
-			address2: string
-			phoneNumber: string
-			fax: string
-		}
-		numberOfEmployees: string
-		homepage: string
-		numberOfFacilities: string
-		foundation: {
-			month: string
-			year: string
-			founder: string
-		}
-		bedding: [{ department: string; quantity: string }, { department: string; quantity: string }]
-		registration: {
-			status: string
-			registrationDate: string
-			lastUpdated: string
-		}
-		update: {
-			status: string
-			lastUpdated: string
-		}
-	}
 </script>
 
 <script lang="ts">
+	import type { CustomerInfo } from './utils/types'
 	import Table from './components/Table.svelte'
 	import TableNavigation from './components/TableNavigation.svelte'
 	import SearchMenu from './components/SearchMenu.svelte'
-	import { onMount } from 'svelte'
-	import { loadData } from './utils/actions'
-
 	export let data
-	let newData: CompanyInfo[] = data.data
 
-	console.log(data)
-
-	//Set the default data
-	// onMount(async () => {
-	// 	// data = await loadData('http://localhost:3000/customers')
-	// 	newData = await loadData('http://localhost:3000/customers')
-	// })
-
-	// $: newData = data.data
-
-	let dataToDisplay: CompanyInfo[] = []
+	let newData: CustomerInfo[] = data.data
+	let dataToDisplay: CustomerInfo[] = []
 	let pageArray: string[] = []
 	let currentPage: number = 1
 
@@ -71,7 +23,9 @@
 
 	/**
 	 * Update the page navigation in the footer according to the current page.
-	 *  */
+	 * @param numberOfPages: number, corresponding also to the maximum of pages
+	 * @param currentPage: number, page where the user is.
+	 */
 	const updateNavPage = (numberOfPages: number, currentPage: number) => {
 		if (numberOfPages <= 5) {
 			pageArray = []
@@ -116,8 +70,15 @@
 
 	/**
 	 * Update the data display according the current page.
+	 * @param data: array of customer's information
+	 * @param firstDataIndex: number, is the first customer we want to display from the data array
+	 * @param lastDataIndex: number, is the last customer we want to display from the data array
 	 */
-	const updateDataToDisplay = (data: any[], firstDataIndex: number, lastDataIndex: number) => {
+	const updateDataToDisplay = (
+		data: CustomerInfo[],
+		firstDataIndex: number,
+		lastDataIndex: number
+	) => {
 		dataToDisplay = []
 		for (let i = firstDataIndex; i <= lastDataIndex; i++) {
 			dataToDisplay = [...dataToDisplay, data[i]]
@@ -157,9 +118,10 @@
 	}
 	.section__header {
 		margin-bottom: 2rem;
+
 		.title {
-			font-size: 16px;
 			margin-bottom: 1.5rem;
+			font-size: 16px;
 		}
 	}
 
@@ -176,11 +138,10 @@
 		align-items: center;
 		justify-content: center;
 		height: 32px;
-		// width: 108px;
 		padding: 8px;
-		border-radius: 3px;
 		background-color: #2fa8e1;
 		color: #fff;
+		border-radius: 3px;
 		float: right;
 	}
 </style>

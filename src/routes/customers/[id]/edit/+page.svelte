@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { CompanyEntries } from '../../utils/types'
-	import ConfirmationBis from './components/Confirmation/ConfirmationBis.svelte'
-	import Form from './components/Form/Form.svelte'
+	import type { CustomerEntries } from '../../utils/types'
+	import ConfirmationBis from '@/views/customersViews/Confirmation/Confirmation.svelte'
+	import Form from '@/views/customersViews/Form/Form.svelte'
 	export let data
 
 	let company = data.company
 	let verificationPageDisplayed = false
 
-	let initialState: CompanyEntries = {
+	let initialState: CustomerEntries = {
 		id: company.id,
 		branchNumber: company.branchNumber,
 		facilityName: company.facilityName,
@@ -27,7 +27,9 @@
 		bedding: company.bedding,
 		numberOfEmployees: company.numberOfEmployees,
 		homepage: company.homepage,
-		numberOfFacilities: company.numberOfFacilities
+		numberOfFacilities: company.numberOfFacilities,
+		registrationDate: company.registration.registrationDate,
+		registrationTime: company.registration.registrationTime
 	}
 
 	const handleEditClicked = () => {
@@ -44,7 +46,7 @@
 
 	<div class="section__main">
 		<ConfirmationBis bind:verificationPageDisplayed bind:initialState />
-		<Form bind:verificationPageDisplayed bind:company bind:initialState />
+		<Form bind:verificationPageDisplayed bind:initialState formType={'update'} />
 	</div>
 
 	<footer class="section__footer">

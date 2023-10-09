@@ -3,7 +3,7 @@ interface bedding {
 	quantity: string
 }
 
-export class Company {
+export class Customer {
 	id?: string
 	branchNumber: string
 	customerNumber?: string | undefined

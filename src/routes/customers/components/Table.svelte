@@ -1,18 +1,18 @@
 <script lang="ts">
 	import TableRow from './TableRow.svelte'
-	import type { CompanyInfo } from '../utils/types'
+	import type { CustomerInfo } from '../utils/types'
 	import { update } from '../utils/actions'
-	export let data: CompanyInfo[]
+	export let data: CustomerInfo[]
 	$: data
 
-	export let dataToDisplay: CompanyInfo[]
-	export let newData: CompanyInfo[]
+	export let dataToDisplay: CustomerInfo[]
+	export let newData: CustomerInfo[]
 	$: newData
 	$: dataToDisplay
 
 	console.log(data)
-	data.map((company: CompanyInfo) => {
-		console.log(company.update !== undefined && company.update.status !== '')
+	data.map((customer: CustomerInfo) => {
+		console.log(customer.update !== undefined && customer.update.status !== '')
 	})
 </script>
 
@@ -32,19 +32,23 @@
 			</tr>
 		</thead>
 		<tbody>
-			{#each dataToDisplay as company}
+			{#each dataToDisplay as customer}
 				<TableRow
 					bind:data
 					bind:newData
-					facilityName={company.facilityName}
-					status={company.update !== undefined && company.update.status !== ''
-						? company.update.status
-						: company.registration.status}
-					updateDate={company.update !== undefined && company.update.status !== ''
-						? company.update.lastUpdatedDate
-						: company.registration.registrationDate}
-					address={company.address}
-					id={company.id}
+					facilityName={customer.facilityName}
+					status={customer.update !== undefined &&
+					customer.update.status !== undefined &&
+					customer.update.status !== ''
+						? customer.update.status
+						: customer.registration.status}
+					updateDate={customer.update !== undefined &&
+					customer.update.status !== undefined &&
+					customer.update.status !== ''
+						? customer.update.lastUpdatedDate
+						: customer.registration.registrationDate}
+					address={customer.address}
+					id={customer.id}
 				/>
 			{/each}
 		</tbody>

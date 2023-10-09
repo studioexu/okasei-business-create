@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { inputIsValid } from '../../../utils/validations'
+	import { inputIsValid } from '@/routes/customers/utils/validations'
 
 	export let placeholder: string = ''
 	export let value: string = ''
@@ -19,6 +19,7 @@
 	}
 
 	let disabled: boolean
+
 	name === 'customer-number' ? (disabled = true) : (disabled = false)
 </script>
 

@@ -2,19 +2,18 @@
 </script>
 
 <script lang="ts">
+	import type { Bedding, CustomerInfo } from '../utils/types'
 	import BedContainer from './components/BedContainer.svelte'
 	import BeddingWrapper from './components/BeddingWrapper.svelte'
 	import FoundationWrapper from './components/FoundationWrapper.svelte'
 	import Wrapper from './components/Wrapper.svelte'
 	export let data
 
-	let company = data.company
+	let company: CustomerInfo = data.company
 
 	let bedQuantity: number = 0
 
-	company.bedding.forEach(bed => (bedQuantity += parseInt(bed.quantity)))
-
-	console.log(company)
+	company.bedding.forEach((bed: Bedding) => (bedQuantity += parseInt(bed.quantity)))
 </script>
 
 <div class="section--confirmation">

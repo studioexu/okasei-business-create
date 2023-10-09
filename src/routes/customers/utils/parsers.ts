@@ -1,11 +1,11 @@
-import type { CompanyInfo, CompanyEntries } from './types'
-import { Company } from './classes'
+import type { CustomerInfo, CustomerEntries } from './types'
+import { Customer } from './classes'
 
-export const parseCompanyInfo = (
-	companyEntry: CompanyInfo | CompanyEntries,
+export const parsecustomerInfo = (
+	customerEntry: CustomerInfo | CustomerEntries,
 	actionType?: string,
 	postDateArray?: any
-): CompanyInfo => {
+): CustomerInfo => {
 	let options: Intl.DateTimeFormatOptions = {
 		timeZone: 'Asia/Tokyo',
 		year: 'numeric',
@@ -19,30 +19,32 @@ export const parseCompanyInfo = (
 	const formatter = new Intl.DateTimeFormat([], options)
 	const timeArray = formatter.format(new Date()).split(', ')
 
-	let companyUpdateDelete = companyEntry as CompanyInfo
-	let newCompanyToParse = companyEntry as CompanyEntries
+	let customerUpdateDelete = customerEntry as CustomerInfo
+	let newCustomerToParse = customerEntry as CustomerEntries
 
-	function isCompanyInfo(companyEntry: CompanyInfo | CompanyEntries): companyEntry is CompanyInfo {
-		return (companyEntry as CompanyInfo).delete !== undefined
+	function iscustomerInfo(
+		customerEntry: CustomerInfo | CustomerEntries
+	): customerEntry is CustomerInfo {
+		return (customerEntry as CustomerInfo).delete !== undefined
 	}
 
-	let newCompany: CompanyInfo | any = {}
+	let newcustomer: CustomerInfo | any = {}
 
 	switch (actionType) {
 		case 'delete':
-			// let newCompany: CompanyInfo
+			// let newCustomer: customerInfo
 			const deleted = {
 				status: '削除',
 				deletedDate: timeArray[0],
 				deletedTime: timeArray[1]
 			}
 
-			if (isCompanyInfo(companyEntry)) {
-				companyEntry.delete.status = deleted.status
-				companyEntry.delete.deletedDate = deleted.deletedDate
-				companyEntry.delete.deletedTime = deleted.deletedTime
+			if (iscustomerInfo(customerEntry)) {
+				customerEntry.delete.status = deleted.status
+				customerEntry.delete.deletedDate = deleted.deletedDate
+				customerEntry.delete.deletedTime = deleted.deletedTime
 
-				newCompany = companyEntry
+				newcustomer = customerEntry
 			}
 		case 'update':
 			const updated = {
@@ -51,13 +53,13 @@ export const parseCompanyInfo = (
 				lastUpdatedTime: timeArray[1]
 			}
 
-			newCompany = new Company(companyEntry, postDateArray, updated)
+			newcustomer = new Customer(customerEntry, postDateArray, updated)
 
-			// if (isCompanyInfo(companyEntry)) {
-			// 	companyEntry.update.status = updated.status
-			// 	companyEntry.update.lastUpdatedDate = updated.lastUpdatedDate
-			// 	companyEntry.update.lastUpdatedTime = updated.lastUpdatedTime
-			// 	return (newCompany = companyEntry)
+			// if (iscustomerInfo(customerEntry)) {
+			// 	customerEntry.update.status = updated.status
+			// 	customerEntry.update.lastUpdatedDate = updated.lastUpdatedDate
+			// 	customerEntry.update.lastUpdatedTime = updated.lastUpdatedTime
+			// 	return (newcustomer = customerEntry)
 			// }
 			break
 		default:
@@ -67,15 +69,15 @@ export const parseCompanyInfo = (
 				time: timeArray[1]
 			}
 
-			if (!isCompanyInfo(companyEntry)) {
+			if (!iscustomerInfo(customerEntry)) {
 			}
 			break
 	}
 
-	return newCompany
+	return newcustomer
 }
 
-export const parseBeforePost = (entries: CompanyEntries): CompanyInfo => {
+export const parseBeforePost = (entries: CustomerEntries): CustomerInfo => {
 	let options: Intl.DateTimeFormatOptions = {
 		timeZone: 'Asia/Tokyo',
 		year: 'numeric',
@@ -95,10 +97,10 @@ export const parseBeforePost = (entries: CompanyEntries): CompanyInfo => {
 		time: timeArray[1]
 	}
 
-	return new Company(entries, registration)
+	return new Customer(entries, registration)
 }
 
-export const parseBeforeDelete = (company: CompanyInfo) => {
+export const parseBeforeDelete = (customer: CustomerInfo) => {
 	let options: Intl.DateTimeFormatOptions = {
 		timeZone: 'Asia/Tokyo',
 		year: 'numeric',
@@ -118,14 +120,14 @@ export const parseBeforeDelete = (company: CompanyInfo) => {
 		deletedTime: timeArray[1]
 	}
 
-	company.delete.status = deleted.status
-	company.delete.deletedDate = deleted.deletedDate
-	company.delete.deletedTime = deleted.deletedTime
+	customer.delete.status = deleted.status
+	customer.delete.deletedDate = deleted.deletedDate
+	customer.delete.deletedTime = deleted.deletedTime
 
-	return company
+	return customer
 }
 
-export const parseBeforeUpdate = (entries: CompanyEntries, registration: any): CompanyInfo => {
+export const parseBeforeUpdate = (entries: CustomerEntries, registration: any): CustomerInfo => {
 	let options: Intl.DateTimeFormatOptions = {
 		timeZone: 'Asia/Tokyo',
 		year: 'numeric',
@@ -145,5 +147,5 @@ export const parseBeforeUpdate = (entries: CompanyEntries, registration: any): C
 		time: timeArray[1]
 	}
 
-	return new Company(entries, registration, updated)
+	return new Customer(entries, registration, updated)
 }

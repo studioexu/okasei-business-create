@@ -36,7 +36,7 @@
 	<td class="data customer-number">{id}</td>
 	<td class="data facility-name">{facilityName}</td>
 	<td class="data address">{address.prefecture}県{address.city}市</td>
-	<td class="data status">{status}</td>
+	<td class="data status">{status}日</td>
 	<td class="data update-date">{updateDate}</td>
 	<td class="data update">
 		<a class="btn btn--update" href="/customers/{id}/edit">

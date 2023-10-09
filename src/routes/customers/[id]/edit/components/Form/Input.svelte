@@ -17,6 +17,10 @@
 		const input = e.target.value
 		isValid = inputIsValid(name, input)
 	}
+
+	let disabled: boolean
+
+	name === 'customer-number' ? (disabled = true) : (disabled = false)
 </script>
 
 <div class="input-wrapper {wrapperClass} {isValid ? '' : 'error'}">
@@ -31,6 +35,7 @@
 		{placeholder}
 		bind:value
 		on:blur={handleChange}
+		{disabled}
 	/>
 	{#if autoSearch}
 		<button class="btn btn--search">自動検索</button>

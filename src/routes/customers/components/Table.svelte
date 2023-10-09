@@ -1,12 +1,19 @@
 <script lang="ts">
 	import TableRow from './TableRow.svelte'
-	export let data: any[]
+	import type { CompanyInfo } from '../utils/types'
+	import { update } from '../utils/actions'
+	export let data: CompanyInfo[]
 	$: data
 
-	export let dataToDisplay: any[]
-	export let newData: any[]
+	export let dataToDisplay: CompanyInfo[]
+	export let newData: CompanyInfo[]
 	$: newData
 	$: dataToDisplay
+
+	console.log(data)
+	data.map((company: CompanyInfo) => {
+		console.log(company.update !== undefined && company.update.status !== '')
+	})
 </script>
 
 {#if dataToDisplay.length === 0}
@@ -30,8 +37,12 @@
 					bind:data
 					bind:newData
 					facilityName={company.facilityName}
-					status={company.registration.status}
-					updateDate={company.registration.registrationDate}
+					status={company.update !== undefined && company.update.status !== ''
+						? company.update.status
+						: company.registration.status}
+					updateDate={company.update !== undefined && company.update.status !== ''
+						? company.update.lastUpdatedDate
+						: company.registration.registrationDate}
 					address={company.address}
 					id={company.id}
 				/>

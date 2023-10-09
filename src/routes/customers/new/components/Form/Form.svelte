@@ -119,13 +119,13 @@
 		<fieldset class="fieldset fieldset--info1">
 			<legend class="hidden">情報１</legend>
 			<div class="container">
-				<!-- <Input
+				<Input
 					additionalClass={'number--md'}
 					name={'customer-number'}
 					label={'顧客番号'}
 					labelClass={'label-width--md'}
-					bind:value={initialState.customerNumber}
-				/> -->
+					bind:value={initialState.id}
+				/>
 				<Input
 					additionalClass={'number--sm'}
 					name={'branch-number'}

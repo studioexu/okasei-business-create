@@ -1,10 +1,10 @@
 import { error } from '@sveltejs/kit'
 import { loadData } from './utils/actions.js'
 
-import type { CompanyInfo } from './+page.svelte'
+import type { CustomerInfo } from './utils/types.js'
 
 export const load = async () => {
-	const data: CompanyInfo[] = await loadData('http://localhost:3000/customers')
+	const data: CustomerInfo[] = await loadData('http://localhost:3000/customers')
 
 	if (!data) throw error(404)
 

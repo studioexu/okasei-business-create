@@ -1,19 +1,11 @@
 <script lang="ts">
 	import TableRow from './TableRow.svelte'
 	import type { CustomerInfo } from '../utils/types'
-	import { update } from '../utils/actions'
-	export let data: CustomerInfo[]
-	$: data
-
+	export let itemId: string = ''
 	export let dataToDisplay: CustomerInfo[]
-	export let newData: CustomerInfo[]
-	$: newData
-	$: dataToDisplay
 
-	console.log(data)
-	data.map((customer: CustomerInfo) => {
-		console.log(customer.update !== undefined && customer.update.status !== '')
-	})
+	$: itemId
+	$: dataToDisplay
 </script>
 
 {#if dataToDisplay.length === 0}
@@ -34,8 +26,6 @@
 		<tbody>
 			{#each dataToDisplay as customer}
 				<TableRow
-					bind:data
-					bind:newData
 					facilityName={customer.facilityName}
 					status={customer.update !== undefined &&
 					customer.update.status !== undefined &&
@@ -49,6 +39,7 @@
 						: customer.registration.registrationDate}
 					address={customer.address}
 					id={customer.id}
+					bind:itemId
 				/>
 			{/each}
 		</tbody>

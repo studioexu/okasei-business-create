@@ -6,67 +6,23 @@
 	import Table from './components/Table.svelte'
 	import TableNavigation from './components/TableNavigation.svelte'
 	import SearchMenu from './components/SearchMenu.svelte'
+	import DeleteModal from './DeleteModal.svelte'
 	export let data
 
 	let newData: CustomerInfo[] = data.data
 	let dataToDisplay: CustomerInfo[] = []
-	let pageArray: string[] = []
 	let currentPage: number = 1
+	let itemId: string = ''
+
+	$: itemId
 
 	$: lastDataIndex =
 		currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1
 	$: firstDataIndex = currentPage === 1 ? 0 : (currentPage - 1) * 6
-	$: numberOfPages = Math.ceil(newData.length / 6)
+	// $: numberOfPages = Math.ceil(newData.length / 6)
 
 	$: updateDataToDisplay(newData, firstDataIndex, lastDataIndex)
-	$: updateNavPage(numberOfPages, currentPage)
-
-	/**
-	 * Update the page navigation in the footer according to the current page.
-	 * @param numberOfPages: number, corresponding also to the maximum of pages
-	 * @param currentPage: number, page where the user is.
-	 */
-	const updateNavPage = (numberOfPages: number, currentPage: number) => {
-		if (numberOfPages <= 5) {
-			pageArray = []
-			for (let i = 1; i <= numberOfPages; i++) {
-				pageArray.push(i.toString())
-			}
-			return
-		}
-
-		if (currentPage >= numberOfPages - 4 && currentPage <= numberOfPages) {
-			pageArray = []
-			for (let i = numberOfPages - 4; i <= numberOfPages; i++) {
-				pageArray.push(i.toString())
-			}
-			return
-		}
-
-		if (currentPage >= parseInt(pageArray[4])) {
-			pageArray = []
-			for (let i = currentPage; i <= currentPage + 4; i++) {
-				pageArray.push(i.toString())
-			}
-			return
-		}
-
-		if (currentPage <= 5) {
-			pageArray = []
-			for (let i = 1; i <= 5; i++) {
-				pageArray.push(i.toString())
-			}
-			return
-		}
-
-		if (currentPage < parseInt(pageArray[0])) {
-			pageArray = []
-			for (let i = currentPage - 4; i <= currentPage; i++) {
-				pageArray.push(i.toString())
-			}
-			return
-		}
-	}
+	// $: updateNavPage(numberOfPages, currentPage)
 
 	/**
 	 * Update the data display according the current page.
@@ -87,6 +43,8 @@
 </script>
 
 <section class="section section--customers-management" id="customers-management">
+	<DeleteModal bind:itemId data={data.data} bind:newData />
+
 	<header class="section__header">
 		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>
 		<SearchMenu data={data.data} bind:newData />
@@ -104,11 +62,11 @@
 	</header>
 
 	<div class="section__main">
-		<Table {dataToDisplay} bind:data={data.data} bind:newData />
+		<Table {dataToDisplay} bind:itemId />
 	</div>
 
 	<footer class="section__footer">
-		<TableNavigation bind:currentPage {pageArray} {numberOfPages} />
+		<TableNavigation bind:currentPage bind:newData />
 	</footer>
 </section>
 

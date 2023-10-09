@@ -5,22 +5,21 @@
 	import { deleteItem, loadData } from '@/routes/customers/utils/actions'
 
 	export let itemId: string = ''
-	export let data: CustomerInfo
-
-	$: itemId
-
-	$: console.log(itemId)
+	export let data: CustomerInfo[]
+	export let newData: CustomerInfo[]
 
 	const handleCancel = () => {
-		console.log('cancel')
+		itemId = ''
 	}
 
-	const handleDelete = async () => {
-		console.log('delete')
-		deleteItem(itemId, 'http://localhost:3000/customers/').then(
+	const handleDelete = async (id: string) => {
+		deleteItem(id, 'http://localhost:3000/customers/').then(
 			(data = await loadData('http://localhost:3000/customers/'))
 		)
+		itemId = ''
 	}
+
+	$: newData = data
 </script>
 
 <div class="modal-wrapper {itemId === '' ? 'hidden' : ''}">
@@ -31,7 +30,9 @@
 
 		<footer class="modal__footer">
 			<button class="btn" on:click={handleCancel}>キャンセル</button>
-			<button type="submit" class="btn btn--confirm" on:click={handleDelete}>削除</button>
+			<button type="submit" class="btn btn--confirm" on:click={() => handleDelete(itemId)}
+				>削除</button
+			>
 		</footer>
 	</div>
 </div>

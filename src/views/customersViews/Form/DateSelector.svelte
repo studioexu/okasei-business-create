@@ -1,6 +1,8 @@
 <script lang="ts">
-	import Input from '@/routes/customers/components/Input.svelte'
+	import Input from './Input.svelte'
 	import Select from './Select.svelte'
+
+	import ListOfYear from './ListOfYear.svelte'
 
 	export let year: string = ''
 	export let month: string = ''
@@ -22,10 +24,12 @@
 	<label class="label" for="foundation-date">設立年月日</label>
 
 	<!-- <Select options={years} unit="年" wrapperClass="mb-0" bind:value={value.year.data} /> -->
-	<Input unit="年" wrapperClass="mb-0" additionalClass="number--md" bind:value={year} />
-	<!-- <Input unit="年" wrapperClass="mb-0" additionalClass="number--sm" bind:value={value.year.data} /> -->
+	<Input unit="年" wrapperClass="mb-0" inputClass="number--md" bind:value={year} />
+	<!-- <Input unit="年" wrapperClass="mb-0" inputClass="number--sm" bind:value={value.year.data} /> -->
 
 	<Select options={months} unit="月" wrapperClass="mb-0" bind:value={month} />
+
+	<ListOfYear />
 </div>
 
 <style lang="scss">

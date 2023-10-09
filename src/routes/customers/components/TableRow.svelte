@@ -1,28 +1,19 @@
 <script lang="ts">
 	import Icon from '@/components/Icon.svelte'
-	import { loadData, deleteItem } from '../utils/actions'
 	export let facilityName: string = ''
 	export let address = { prefecture: '', city: '' }
 	export let status: string = ''
 	export let updateDate: string = ''
 	export let id: string = ''
 
-	export let data: any[] = []
-	export let newData: any[] = []
-	$: data
+	export let itemId: string = ''
+	$: itemId
 
 	const handleDeleteItem = async (e: any) => {
-		const customerId = e.target.closest('.btn').id
-		deleteItem(customerId, 'http://localhost:3000/customers/').then(
-			(data = await loadData('http://localhost:3000/customers/'))
-		)
+		itemId = e.target.closest('.btn').id
 	}
 
-	//We update newData, so that it displays the right information
-	$: newData = data
-
 	const handleRowClick = (e: any) => {
-		console.log(e.target.closest('.data').classList.value)
 		const classList = e.target.closest('.data').classList.value
 
 		if (classList.includes('update') || classList.includes('erase')) {

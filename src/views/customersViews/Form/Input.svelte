@@ -5,22 +5,21 @@
 	export let value: string = ''
 	export let name: string = ''
 	export let label: string = ''
-	export let additionalClass: string = ''
+	export let inputClass: string = ''
 	export let autoSearch = false
 	export let labelClass: string = ''
 	export let unit: string = ''
 	export let wrapperClass: string = ''
-
 	export let isValid: boolean = true
+
+	let disabled: boolean
+
+	name === 'customer-number' ? (disabled = true) : (disabled = false)
 
 	const handleChange = (e: any) => {
 		const input = e.target.value
 		isValid = inputIsValid(name, input)
 	}
-
-	let disabled: boolean
-
-	name === 'customer-number' ? (disabled = true) : (disabled = false)
 </script>
 
 <div class="input-wrapper {wrapperClass} {isValid ? '' : 'error'}">
@@ -29,7 +28,7 @@
 	{/if}
 	<input
 		type="text"
-		class="input {additionalClass}"
+		class="input {inputClass}"
 		id={name}
 		{name}
 		{placeholder}
@@ -58,9 +57,9 @@
 		margin-bottom: 20px;
 
 		.label {
+			width: max-content;
 			font-size: 18px;
 			font-weight: 500;
-			width: max-content;
 
 			&-width {
 				&--md {
@@ -101,7 +100,6 @@
 
 	.txt {
 		&--sm {
-			width: calc(((137 - 10) / 1366)) * 100vw;
 			@include responsiveInputWidth((114));
 		}
 		&--md {

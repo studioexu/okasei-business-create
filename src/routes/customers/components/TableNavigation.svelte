@@ -1,13 +1,65 @@
 <script lang="ts">
 	import Icon from '@/components/Icon.svelte'
+	import type { CustomerInfo } from '../utils/types'
 
 	export let currentPage: number
-	export let numberOfPages: number
-	export let pageArray: string[]
+	export let newData: CustomerInfo[]
+	let pageArray: string[]
+	let numberOfPages: number
 
 	$: currentPage
 	$: numberOfPages
-	$: pageArray
+	// $: pageArray
+
+	$: updateNavPage(numberOfPages, currentPage)
+	$: numberOfPages = Math.ceil(newData.length / 6)
+
+	/**
+	 * Update the page navigation in the footer according to the current page.
+	 * @param numberOfPages: number, corresponding also to the maximum of pages
+	 * @param currentPage: number, page where the user is.
+	 */
+	const updateNavPage = (numberOfPages: number, currentPage: number) => {
+		if (numberOfPages <= 5) {
+			pageArray = []
+			for (let i = 1; i <= numberOfPages; i++) {
+				pageArray.push(i.toString())
+			}
+			return
+		}
+
+		if (currentPage >= numberOfPages - 4 && currentPage <= numberOfPages) {
+			pageArray = []
+			for (let i = numberOfPages - 4; i <= numberOfPages; i++) {
+				pageArray.push(i.toString())
+			}
+			return
+		}
+
+		if (currentPage >= parseInt(pageArray[4])) {
+			pageArray = []
+			for (let i = currentPage; i <= currentPage + 4; i++) {
+				pageArray.push(i.toString())
+			}
+			return
+		}
+
+		if (currentPage <= 5) {
+			pageArray = []
+			for (let i = 1; i <= 5; i++) {
+				pageArray.push(i.toString())
+			}
+			return
+		}
+
+		if (currentPage < parseInt(pageArray[0])) {
+			pageArray = []
+			for (let i = currentPage - 4; i <= currentPage; i++) {
+				pageArray.push(i.toString())
+			}
+			return
+		}
+	}
 
 	/**
 	 * When user click on the next button, it updates the current page as well as the data to display and the page navigation if necessary.

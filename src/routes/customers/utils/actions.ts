@@ -73,8 +73,8 @@ export const deleteItem = (customerId: string, url: string) => {
  * 新しいカスタマーを登録する。
  * @param customerEntry : Object corresponding to the inputs entered by the user.
  */
-export const create = (newcustomer: Object, url: string) => {
-	fetch(url, {
+export const create = async (newcustomer: Object, url: string) => {
+	await fetch(url, {
 		method: 'POST',
 		headers: { 'Content-type': 'application/json;charset=UTF-8' },
 		body: JSON.stringify(newcustomer)

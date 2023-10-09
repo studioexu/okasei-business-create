@@ -1,9 +1,9 @@
 <script lang="ts">
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
-	// import Form from './components/Form/Form.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
 	import type { CustomerEntries } from '../utils/types'
 
+	let verificationPageDisplayed = false
 	let initialState: CustomerEntries = {
 		branchNumber: '',
 		facilityName: '',
@@ -25,8 +25,6 @@
 		homepage: '',
 		numberOfFacilities: ''
 	}
-
-	let verificationPageDisplayed = false
 
 	const handleEditClicked = () => {
 		verificationPageDisplayed = false

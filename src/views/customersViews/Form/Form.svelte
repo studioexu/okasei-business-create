@@ -138,7 +138,7 @@
 
 <form
 	class="form {verificationPageDisplayed ? 'hidden' : ''}"
-	method="PUT"
+	method={'PUT'}
 	action="/customers/"
 	id="registration-form"
 	on:submit={handleSubmit}
@@ -148,14 +148,14 @@
 			<legend class="hidden">情報１</legend>
 			<div class="container">
 				<Input
-					additionalClass={'number--md'}
+					inputClass={'number--md'}
 					name={'customer-number'}
 					label={'顧客番号'}
 					labelClass={'label-width--md'}
 					bind:value={initialState.id}
 				/>
 				<Input
-					additionalClass={'number--sm'}
+					inputClass={'number--sm'}
 					name={'branch-number'}
 					label={'枝番'}
 					bind:value={initialState.branchNumber}
@@ -164,7 +164,7 @@
 			</div>
 
 			<Input
-				additionalClass={'txt--xl'}
+				inputClass={'txt--xl'}
 				name="facilityName"
 				label="施設名"
 				autoSearch={true}
@@ -173,7 +173,7 @@
 				bind:isValid={noErrors.facilityName}
 			/>
 			<Input
-				additionalClass={'txt--xl'}
+				inputClass={'txt--xl'}
 				name="kana"
 				label="カナ"
 				labelClass={'label-width--md'}
@@ -183,7 +183,7 @@
 
 			<div class="container">
 				<Input
-					additionalClass="number--md"
+					inputClass="number--md"
 					name="facilityNumber"
 					label="医療機関番号"
 					labelClass={'label-width--lg'}
@@ -206,7 +206,7 @@
 
 			<div class="container">
 				<Input
-					additionalClass="txt--sm"
+					inputClass="txt--sm"
 					name="postalCode"
 					label="郵便番号"
 					autoSearch={true}
@@ -216,7 +216,7 @@
 				/>
 
 				<Input
-					additionalClass="txt--sm"
+					inputClass="txt--sm"
 					name="prefecture"
 					label={'都道府県'}
 					bind:value={initialState.prefecture}
@@ -224,7 +224,7 @@
 				/>
 
 				<Input
-					additionalClass="txt--sm"
+					inputClass="txt--sm"
 					name="city"
 					label={'市区町村'}
 					bind:value={initialState.city}
@@ -235,7 +235,7 @@
 			<div class="address">
 				<Input
 					labelClass={'label-width--lg'}
-					additionalClass="txt--lg"
+					inputClass="txt--lg"
 					name="address1"
 					label={'住所１'}
 					placeholder="丁目・番地"
@@ -244,7 +244,7 @@
 				/>
 				<Input
 					labelClass={'label-width--lg'}
-					additionalClass="txt--lg"
+					inputClass="txt--lg"
 					name="address2"
 					label={'住所２'}
 					placeholder="建物名・部屋番号"
@@ -255,7 +255,7 @@
 
 			<div class="container">
 				<Input
-					additionalClass="number--lg"
+					inputClass="number--lg"
 					name="phoneNumber"
 					label="電話番号"
 					labelClass={'label-width--lg'}
@@ -264,7 +264,7 @@
 				/>
 
 				<Input
-					additionalClass="number--lg"
+					inputClass="number--lg"
 					name="fax"
 					label="FAX番号"
 					bind:value={initialState.fax}
@@ -279,7 +279,7 @@
 			<div class="container">
 				<DateSelector bind:year={initialState.year} bind:month={initialState.month} />
 				<Input
-					additionalClass="txt--lg"
+					inputClass="txt--lg"
 					name="founder"
 					label="設立者"
 					bind:value={initialState.founder}
@@ -313,7 +313,7 @@
 			<legend class="hidden">情報２</legend>
 			<Input
 				unit="名"
-				additionalClass="number--lg"
+				inputClass="number--lg"
 				label="従業員数"
 				labelClass={'label-width--lg'}
 				name="employee-quantity"
@@ -324,7 +324,7 @@
 			<Input
 				labelClass={'label-width--lg'}
 				name="homepage"
-				additionalClass="txt--lg"
+				inputClass="txt--lg"
 				label="ホームページ"
 				bind:value={initialState.homepage}
 				bind:isValid={noErrors.homepage}
@@ -333,7 +333,7 @@
 			<Input
 				labelClass={'label-width--lg'}
 				name="facility-number"
-				additionalClass="number--lg"
+				inputClass="number--lg"
 				unit="店"
 				label="関連施設拠点数"
 				bind:value={initialState.numberOfFacilities}

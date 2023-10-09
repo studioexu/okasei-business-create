@@ -29,7 +29,7 @@
 		<option>4</option>
 	</datalist>
 	<Input
-		additionalClass="number--lg"
+		inputClass="number--lg"
 		name="quantity"
 		label="病床数"
 		wrapperClass="mb-0"

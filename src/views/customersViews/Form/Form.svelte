@@ -4,9 +4,10 @@
 	import DateSelector from './DateSelector.svelte'
 	import BedConfiguration from './BedConfiguration.svelte'
 	import { parseBeforeUpdate, parseBeforePost } from '@/routes/customers/utils/parsers'
-	import type { CustomerEntries, CustomerInfo, Error } from '@/routes/customers/utils/types'
+	import type { CustomerEntries, Error } from '@/routes/customers/utils/types'
 	import { inputIsValid } from '@/routes/customers/utils/validations'
 	import { update, create } from '@/routes/customers/utils/actions'
+	import BedSection from './BedSection.svelte'
 
 	interface BedInput {
 		index: number
@@ -18,25 +19,51 @@
 	export let verificationPageDisplayed: boolean
 	export let initialState: CustomerEntries
 
-	// if (typeOfForm === 'update') {
-	// 	export let customer: CustomerInfo
+	// let totalOfBed: number = 1
+	// let bedInputArray: BedInput[] = []
+
+	// initialState.bedding.map((bed, index) => {
+	// 	bedInputArray.push({ index: index, department: bed.department, quantity: bed.quantity })
+	// 	index++
+	// })
+
+	// /**
+	//  * We go through the array of bed input and calculate the number total of beds.
+	//  * @param beds: array of bedInput
+	//  */
+	// const caculateTotalOfBeds = (beds: BedInput[]): number => {
+	// 	let sum: number = 0
+	// 	beds.map((bed: BedInput) => {
+	// 		sum += parseInt(bed.quantity)
+	// 	})
+
+	// 	return sum
 	// }
 
-	let totalOfBed: number = 0
+	// $: totalOfBed = caculateTotalOfBeds(bedInputArray)
 
-	const caculateTotalOfBed = (beds: BedInput[]): number => {
-		let sum: number = 0
-		beds.map((bed: BedInput) => {
-			sum += parseInt(bed.quantity)
-		})
+	// /**
+	//  * It will add a new bed input in the form
+	//  */
+	// const handleAddBed = () => {
+	// 	bedInputArray = [
+	// 		...bedInputArray,
+	// 		{
+	// 			index: bedInputArray.length === 0 ? 0 : bedInputArray[bedInputArray.length - 1].index + 1,
+	// 			department: '',
+	// 			quantity: '0'
+	// 		}
+	// 	]
+	// }
 
-		return sum
-	}
+	// $: initialState.bedding = bedInputArray
 
-	// if (formType === 'update') {
-	// export let customer: CustomerInfo
-
-	const handleSubmit = (e: any) => {
+	/**
+	 * Triggered when the form is submit. If the form is used to create a new customer, then it will POST a new customer is the database.
+	 * If the form is used to update customer's information, then it will PUT the new data in the database.
+	 * @param e
+	 */
+	const handleSubmit = (e: any): void => {
 		if (verificationPageDisplayed) {
 			if (formType === 'create') {
 				let newcustomer = parseBeforePost(initialState)
@@ -70,17 +97,8 @@
 			verificationPageDisplayed = true
 		}
 	}
-	// }
 
 	const hojinKojin = [' ', '法人', '個人']
-
-	let bedInputArray: BedInput[] = []
-
-	initialState.bedding.map((bed, index) => {
-		bedInputArray.push({ index: index, department: bed.department, quantity: bed.quantity })
-	})
-
-	$: totalOfBed = caculateTotalOfBed(bedInputArray)
 
 	let noErrors: Error = {
 		branchNumber: true,
@@ -103,14 +121,6 @@
 		homepage: true,
 		numberOfFacilities: true
 	}
-
-	const handleAddBed = () => {
-		bedInputArray = [
-			...bedInputArray,
-			{ index: bedInputArray[bedInputArray.length - 1].index + 1, department: '', quantity: '' }
-		]
-	}
-	$: initialState.bedding = bedInputArray
 
 	const checkIfFormIsValid = (formEntries: Object): boolean => {
 		let errorArray: boolean[] = []
@@ -291,7 +301,7 @@
 
 		<fieldset class="fieldset fieldset--bed">
 			<legend class="hidden">病床設定</legend>
-			<div class="container">
+			<!-- <div class="container">
 				<label class="label" for="">診療科目</label>
 
 				<div class="container container--vertical">
@@ -305,7 +315,9 @@
 					<p class="total__dispay">{totalOfBed}</p>
 				</div>
 			</div>
-			<button type="button" class="btn btn--add" on:click={handleAddBed}>＋ 新規追加</button>
+			<button type="button" class="btn btn--add" on:click={handleAddBed}>＋ 新規追加</button> -->
+
+			<BedSection bind:bedding={initialState.bedding} />
 		</fieldset>
 		<!-- .fieldset--bed -->
 

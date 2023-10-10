@@ -1,0 +1,124 @@
+<script lang="ts">
+	import BedConfiguration from './BedConfiguration.svelte'
+
+	interface BedInput {
+		index: number
+		department: string
+		quantity: string
+	}
+
+	export let bedding: BedInput[]
+
+	let totalOfBed: number = 0
+	let bedInputArray: BedInput[] = []
+
+	if (bedding.length === 0) {
+		bedInputArray = [{ index: 0, department: '', quantity: '0' }]
+	} else {
+		bedding.map((bed, index) => {
+			bedInputArray.push({ index: index, department: bed.department, quantity: bed.quantity })
+			index++
+		})
+	}
+
+	/**
+	 * We go through the array of bed input and calculate the number total of beds.
+	 * @param beds: array of bedInput
+	 */
+	const caculateTotalOfBeds = (beds: BedInput[]): number => {
+		let sum: number = 0
+		beds.map((bed: BedInput) => {
+			sum += parseInt(bed.quantity)
+		})
+
+		return sum
+	}
+
+	$: totalOfBed = caculateTotalOfBeds(bedInputArray)
+
+	/**
+	 * It will add a new bed input in the form
+	 */
+	const handleAddBed = () => {
+		bedInputArray = [
+			...bedInputArray,
+			{
+				index: bedInputArray.length === 0 ? 0 : bedInputArray[bedInputArray.length - 1].index + 1,
+				department: '',
+				quantity: '0'
+			}
+		]
+	}
+
+	$: bedding = bedInputArray
+</script>
+
+<div class="container">
+	<label class="label" for="">診療科目</label>
+
+	<div class="container container--vertical">
+		{#each bedInputArray as bed}
+			<BedConfiguration bind:bed bind:bedInputArray />
+		{/each}
+	</div>
+
+	<div class="total">
+		<h3 class="label">病床数合計</h3>
+		<p class="total__dispay">{totalOfBed}</p>
+	</div>
+</div>
+<button type="button" class="btn btn--add" on:click={handleAddBed}>＋ 新規追加</button>
+
+<style lang="scss">
+	.container {
+		display: flex;
+		column-gap: 2rem;
+		align-items: flex-start;
+		justify-content: flex-start;
+		flex-wrap: wrap;
+
+		&--vertical {
+			flex-direction: column;
+		}
+	}
+	.container {
+		column-gap: 10px;
+		row-gap: 11px;
+		.label {
+			min-width: 130px;
+		}
+	}
+
+	.total {
+		position: relative;
+		display: flex;
+		gap: 2.25rem;
+		align-items: center;
+		align-self: flex-end;
+		.title {
+			margin: 0;
+		}
+
+		&__display {
+			margin: 0;
+		}
+	}
+
+	.hidden {
+		display: none;
+	}
+
+	.btn {
+		background-color: #2fa8e1;
+		color: #fff;
+		margin: 0;
+
+		&--add {
+			padding: 0 11px;
+			margin-top: 14px;
+			height: 32px;
+			border-radius: 3px;
+			margin-left: 140px;
+		}
+	}
+</style>

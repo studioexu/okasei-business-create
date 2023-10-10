@@ -1,6 +1,6 @@
 <script lang="ts">
 	import type { CustomerEntries } from '../../utils/types'
-	import ConfirmationBis from '@/views/customersViews/Confirmation/Confirmation.svelte'
+	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
 	export let data
 
@@ -45,7 +45,7 @@
 	</header>
 
 	<div class="section__main">
-		<ConfirmationBis bind:verificationPageDisplayed bind:initialState />
+		<Confirmation bind:verificationPageDisplayed bind:initialState />
 		<Form bind:verificationPageDisplayed bind:initialState formType={'update'} />
 	</div>
 
@@ -60,6 +60,15 @@
 </section>
 
 <style lang="scss">
+	.section {
+		&__header {
+			margin-bottom: 18px;
+			&__title {
+				font-size: 24px;
+			}
+		}
+	}
+
 	.btn {
 		width: 108px;
 		height: 45px;

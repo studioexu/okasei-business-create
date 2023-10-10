@@ -29,7 +29,7 @@
 
 	<Select options={months} unit="月" wrapperClass="mb-0" bind:value={month} />
 
-	<ListOfYear />
+	<!-- <ListOfYear /> -->
 </div>
 
 <style lang="scss">

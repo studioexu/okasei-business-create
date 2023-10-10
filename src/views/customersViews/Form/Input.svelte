@@ -73,9 +73,12 @@
 		.input {
 			height: 32px;
 			padding-left: 10px;
-			border: 1px solid #707070;
 			border: 1px solid rgb(206, 205, 205);
 			border-radius: 3px;
+
+			&:focus {
+				border-color: #2fa8e1;
+			}
 		}
 	}
 

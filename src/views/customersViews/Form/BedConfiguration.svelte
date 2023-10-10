@@ -1,6 +1,7 @@
 <script lang="ts">
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
+	import Icon from '@/components/Icon.svelte'
 
 	export const department: string[] = ['内科', '外科', '診療内科']
 	export let bed: BedInput
@@ -16,18 +17,20 @@
 		department: string
 		quantity: string
 	}
+
+	$: console.log(bedInputArray.length)
 </script>
 
 <div class="bed-configuration" id={bed.index.toString()} data-index={bed.index}>
 	<Select options={department} wrapperClass="mb-0" bind:value={bed.department} />
 
-	<input autocomplete="off" list="options" id="option" />
+	<!-- <input autocomplete="off" list="options" id="option" />
 	<datalist id="options">
 		<option>1</option>
 		<option>2</option>
 		<option>3</option>
 		<option>4</option>
-	</datalist>
+	</datalist> -->
 	<Input
 		inputClass="number--lg"
 		name="quantity"
@@ -35,17 +38,28 @@
 		wrapperClass="mb-0"
 		bind:value={bed.quantity}
 	/>
-	<button type="button" class="btn btn--delete" on:click={deleteItem}>Delete</button>
+
+	<button type="button" class="btn btn--delete" on:click={deleteItem}>
+		{#if bedInputArray.length > 1}
+			<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
+		{/if}
+	</button>
 </div>
 
 <style lang="scss">
 	.bed-configuration {
 		display: flex;
 		align-items: center;
-		gap: 62px;
+		gap: 18px;
 	}
 
-	input {
-		border: 1px solid red;
+	.btn {
+		content: ' ';
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		background-color: transparent;
+		widows: 32px;
+		height: 32px;
 	}
 </style>

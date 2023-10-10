@@ -52,6 +52,13 @@
 	.select {
 		height: 32px;
 		width: calc(((106 - 10 - 2) / 1366) * 100vw);
+		padding-left: 10px;
+		border: 1px solid rgb(206, 205, 205);
+		font-size: 16px;
+
+		&:focus {
+			border-color: #2fa8e1;
+		}
 	}
 
 	.input-wrapper {

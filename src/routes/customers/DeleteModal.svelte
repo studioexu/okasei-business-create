@@ -12,14 +12,17 @@
 		itemId = ''
 	}
 
-	const handleDelete = async (id: string) => {
-		deleteItem(id, 'http://localhost:3000/customers/').then(
-			(data = await loadData('http://localhost:3000/customers/'))
-		)
-		itemId = ''
-	}
+	// const handleDelete = async (e: any, id: string) => {
+	// 	// e.preventDefault()
+	// 	console.log(e)
 
-	$: newData = data
+	// 	// deleteItem(id, 'http://localhost:3000/customers/').then(
+	// 	// 	(data = await loadData('http://localhost:3000/customers/'))
+	// 	// )
+	// 	// itemId = ''
+	// }
+
+	// $: newItemId = itemId
 </script>
 
 <div class="modal-wrapper {itemId === '' ? 'hidden' : ''}">
@@ -30,9 +33,13 @@
 
 		<footer class="modal__footer">
 			<button class="btn" on:click={handleCancel}>キャンセル</button>
-			<button type="submit" class="btn btn--confirm" on:click={() => handleDelete(itemId)}
+			<form method="POST" action="customers/?/delete">
+				<input type="hidden" name="id" value={itemId} />
+				<button class="btn btn--confirm">削除</button>
+			</form>
+			<!-- <button type="submit" class="btn btn--confirm" on:click={() => handleDelete(itemId)}
 				>削除</button
-			>
+			> -->
 		</footer>
 	</div>
 </div>

@@ -16,8 +16,7 @@
 	company.bedding.forEach((bed: Bedding) => (bedQuantity += parseInt(bed.quantity)))
 </script>
 
-<div class="section--confirmation">
-	<!-- <header>hello</header> -->
+<section class="section section--confirmation">
 	<div class="container">
 		<Wrapper areaClass="customerNumber" content={company.id} title={'顧客番号'} />
 		<Wrapper areaClass="branchNumber" content={company.branchNumber} title={'枝番'} />
@@ -73,7 +72,7 @@
 				</div>
 			</div>
 
-			{#if company.update.status !== ''}
+			{#if company.update.status !== '' && company.update.status !== undefined}
 				<div class="registration">
 					<div class="registration__data">
 						<h3 class="registration__data__title">更新者名</h3>
@@ -95,20 +94,36 @@
 			<a class="btn btn--edit" href="/customers/{company.id}/edit">編集</a>
 		</div>
 	</footer>
-</div>
+</section>
 
 <style lang="scss">
 	.container {
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 		grid-template-rows: auto;
+		// grid-template-areas:
+		// 	'customerNumber customerNumber branchNumber branchNumber . . . . . .'
+		// 	'facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName'
+		// 	'kana kana kana kana kana kana kana kana kana kana'
+		// 	'facilityNumber facilityNumber businessType businessType . . . . . .'
+		// 	'postalCode postalCode postalCode . . . . . . . '
+		// 	'prefecture prefecture city city address1 address1 address1 address2 address2 address2'
+		// 	'phoneNumber phoneNumber phoneNumber fax fax fax . . . .'
+		// 	'foundation foundation foundation foundation foundation  foundation foundation foundation foundation foundation'
+		// 	'bedding bedding bedding bedding bedding bedding bedding . . .'
+		// 	'numberOfEmployees numberOfEmployees numberOfEmployees numberOfEmployees . . . . . .'
+		// 	'homepage homepage homepage homepage homepage homepage homepage homepage homepage homepage'
+		// 	'numberOfFacilities numberOfFacilities numberOfFacilities . . . . . . .';
+
 		grid-template-areas:
 			'customerNumber customerNumber branchNumber branchNumber . . . . . .'
 			'facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName'
 			'kana kana kana kana kana kana kana kana kana kana'
 			'facilityNumber facilityNumber businessType businessType . . . . . .'
 			'postalCode postalCode postalCode . . . . . . . '
-			'prefecture prefecture city city address1 address1 address1 address2 address2 address2'
+			'prefecture prefecture prefecture city city city . . . .'
+			'address1 address1 address1 address1 address1 address1 address1 address1 address1 address1'
+			'address2 address2 address2 address2 address2 address2 address2 address2 address2 address2'
 			'phoneNumber phoneNumber phoneNumber fax fax fax . . . .'
 			'foundation foundation foundation foundation foundation  foundation foundation foundation foundation foundation'
 			'bedding bedding bedding bedding bedding bedding bedding . . .'

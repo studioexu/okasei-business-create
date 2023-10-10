@@ -44,6 +44,8 @@
 		}
 	}
 
+	.address1,
+	.address2,
 	.customerNumber,
 	.kana,
 	.facilityName,

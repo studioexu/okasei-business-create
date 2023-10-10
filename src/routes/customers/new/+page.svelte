@@ -54,6 +54,14 @@
 </section>
 
 <style lang="scss">
+	.section {
+		&__header {
+			margin-bottom: 18px;
+			&__title {
+				font-size: 24px;
+			}
+		}
+	}
 	.btn {
 		width: 108px;
 		height: 45px;

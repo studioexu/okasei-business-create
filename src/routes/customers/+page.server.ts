@@ -23,17 +23,17 @@ export const actions = {
 		let id: any = data.get('id') === null ? undefined : data.get('id')
 
 		if (id) {
-			fetch('http://localhost:3000/customers/' + id, {
-				method: 'GET',
-				headers: { 'Content-type': 'application/json;charset=UTF-8' }
-			})
-				.then(res => {
-					return res.json()
-				})
-				.then(newData => {
-					const parsedCustomer = parseBeforeDelete(newData)
-					create(parsedCustomer, 'http://localhost:3000/deletedCustomers/')
-				})
+			// fetch('http://localhost:3000/customers/' + id, {
+			// 	method: 'GET',
+			// 	headers: { 'Content-type': 'application/json;charset=UTF-8' }
+			// })
+			// 	.then(res => {
+			// 		return res.json()
+			// 	})
+			// 	.then(newData => {
+			// 		const parsedCustomer = parseBeforeDelete(newData)
+			// 		create(parsedCustomer, 'http://localhost:3000/deletedCustomers/')
+			// 	})
 
 			deleteItem(id, 'http://localhost:3000/customers/')
 		}

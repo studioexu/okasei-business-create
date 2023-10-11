@@ -14,3 +14,5 @@ export const postalCodeFormatter = (postalCode: string) => {
 
 	return postalCodeArray.join('')
 }
+
+export const phoneNumberFormatter = (phoneNumber: string) => {}

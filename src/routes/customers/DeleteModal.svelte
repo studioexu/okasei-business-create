@@ -1,46 +1,45 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
-	import type { CustomerInfo } from '@/routes/customers/utils/types'
-	import { deleteItem, loadData } from '@/routes/customers/utils/actions'
+	import { create } from './utils/actions'
+	import { parseBeforeDelete } from './utils/parsers'
 
 	export let itemId: string = ''
-	export let data: CustomerInfo[]
-	export let newData: CustomerInfo[]
 
 	const handleCancel = () => {
 		itemId = ''
 	}
 
-	// const handleDelete = async (e: any, id: string) => {
-	// 	// e.preventDefault()
-	// 	console.log(e)
+	const handleSubmit = (e: any) => {
+		const id = e.target.closest('.delete-form').querySelector('.input').value
 
-	// 	// deleteItem(id, 'http://localhost:3000/customers/').then(
-	// 	// 	(data = await loadData('http://localhost:3000/customers/'))
-	// 	// )
-	// 	// itemId = ''
-	// }
-
-	// $: newItemId = itemId
+		fetch('http://localhost:3000/customers/' + id, {
+			method: 'GET',
+			headers: { 'Content-type': 'application/json;charset=UTF-8' }
+		})
+			.then(res => {
+				return res.json()
+			})
+			.then(newData => {
+				const parsedCustomer = parseBeforeDelete(newData)
+				create(parsedCustomer, 'http://localhost:3000/deletedCustomers/')
+			})
+	}
 </script>
 
 <div class="modal-wrapper {itemId === '' ? 'hidden' : ''}">
 	<div class="modal">
-		<header class="modal__header">
+		<div class="modal__header">
 			<h2 class="title">本当にこの情報を削除しますか？</h2>
-		</header>
+		</div>
 
-		<footer class="modal__footer">
+		<div class="modal__footer">
 			<button class="btn" on:click={handleCancel}>キャンセル</button>
-			<form method="POST" action="customers/?/delete">
-				<input type="hidden" name="id" value={itemId} />
-				<button class="btn btn--confirm">削除</button>
+			<form class="delete-form" method="POST" action="customers/?/delete">
+				<input class="input" type="hidden" name="id" value={itemId} />
+				<button class="btn btn--confirm" on:click={handleSubmit}>削除</button>
 			</form>
-			<!-- <button type="submit" class="btn btn--confirm" on:click={() => handleDelete(itemId)}
-				>削除</button
-			> -->
-		</footer>
+		</div>
 	</div>
 </div>
 

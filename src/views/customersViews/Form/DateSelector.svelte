@@ -32,13 +32,7 @@
 
 <div class="date-selector">
 	<label class="label" for="foundation-date">設立年月日</label>
-
-	<!-- <Select options={years} unit="年" wrapperClass="mb-0" bind:value={value.year.data} /> -->
-	<!-- <Input unit="年" wrapperClass="mb-0" inputClass="number--md" bind:value={year} /> -->
 	<Selector bind:value={year} dataType={'year'} datas={years} unit="年" classInput={'mb-0'} />
-
-	<!-- <Input unit="年" wrapperClass="mb-0" inputClass="number--sm" bind:value={value.year.data} /> -->
-
 	<Select options={months} unit="月" bind:value={month} wrapperClass={'mb-0'} />
 </div>
 

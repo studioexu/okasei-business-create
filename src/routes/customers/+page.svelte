@@ -59,7 +59,7 @@
 </script>
 
 <section class="section section--customers-management" id="customers-management">
-	<DeleteModal bind:itemId data={data.data} bind:newData />
+	<DeleteModal bind:itemId />
 
 	<header class="section__header">
 		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>

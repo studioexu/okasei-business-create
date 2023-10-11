@@ -45,7 +45,7 @@ export class Customer {
 		deletedTime: string
 	}
 
-	constructor(data: any, registration?: any, update?: any) {
+	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.id) {
 			this.id = data.id
 			this.customerNumber = data.id
@@ -84,9 +84,9 @@ export class Customer {
 			lastUpdatedTime: update?.time
 		}
 		this.delete = {
-			status: update?.status,
-			deletedDate: update?.date,
-			deletedTime: update?.time
+			status: deleted?.status,
+			deletedDate: deleted?.date,
+			deletedTime: deleted?.time
 		}
 	}
 }

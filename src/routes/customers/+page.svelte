@@ -8,6 +8,12 @@
 	import SearchMenu from './components/SearchMenu.svelte'
 	import DeleteModal from './DeleteModal.svelte'
 	export let data
+	import { postalCodeFormatter } from './utils/formatter'
+
+	// console.log(data.deletedData)
+
+	console.log(postalCodeFormatter('〒6000000'))
+	console.log(postalCodeFormatter('0123456'))
 
 	let newData: CustomerInfo[] = data.data
 	let dataToDisplay: CustomerInfo[] = []
@@ -40,6 +46,16 @@
 			dataToDisplay = [...dataToDisplay, data[i]]
 		}
 	}
+
+	const handleCheck = (e: any) => {
+		console.log(e.target.checked)
+		const isChecked = e.target.checked
+		if (isChecked) {
+			newData = [...data.data, ...data.deletedData]
+		} else {
+			newData = data.data
+		}
+	}
 </script>
 
 <section class="section section--customers-management" id="customers-management">
@@ -49,14 +65,16 @@
 		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>
 		<SearchMenu data={data.data} bind:newData />
 
-		<label for="checkbox"
-			><input
+		<label for="checkbox">
+			<input
 				class="checkbox"
 				type="checkbox"
 				id="checkbox"
 				name="checkbox"
-			/>以前削除した施設も含む</label
-		>
+				on:change={handleCheck}
+			/>
+			以前削除した施設も含む
+		</label>
 
 		<a class="btn btn--new" href="/customers/new">＋新規登録</a>
 	</header>

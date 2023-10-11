@@ -9,8 +9,6 @@ export const load = async ({ params }) => {
 		(company: CustomerInfo) => company.id === params.id
 	)
 
-	console.log(company)
-
 	if (!company) throw error(404)
 
 	return {

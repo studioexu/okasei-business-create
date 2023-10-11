@@ -1,62 +1,18 @@
 <script lang="ts">
+	import { prefectures } from '@/routes/customers/data/data.js'
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
-	import BedConfiguration from './BedConfiguration.svelte'
 	import { parseBeforeUpdate, parseBeforePost } from '@/routes/customers/utils/parsers'
 	import type { CustomerEntries, Error } from '@/routes/customers/utils/types'
 	import { inputIsValid } from '@/routes/customers/utils/validations'
 	import { update, create } from '@/routes/customers/utils/actions'
 	import BedSection from './BedSection.svelte'
-
-	interface BedInput {
-		index: number
-		department: string
-		quantity: string
-	}
+	import Seletector from './Selector.svelte'
 
 	export let formType: string
 	export let verificationPageDisplayed: boolean
 	export let initialState: CustomerEntries
-
-	// let totalOfBed: number = 1
-	// let bedInputArray: BedInput[] = []
-
-	// initialState.bedding.map((bed, index) => {
-	// 	bedInputArray.push({ index: index, department: bed.department, quantity: bed.quantity })
-	// 	index++
-	// })
-
-	// /**
-	//  * We go through the array of bed input and calculate the number total of beds.
-	//  * @param beds: array of bedInput
-	//  */
-	// const caculateTotalOfBeds = (beds: BedInput[]): number => {
-	// 	let sum: number = 0
-	// 	beds.map((bed: BedInput) => {
-	// 		sum += parseInt(bed.quantity)
-	// 	})
-
-	// 	return sum
-	// }
-
-	// $: totalOfBed = caculateTotalOfBeds(bedInputArray)
-
-	// /**
-	//  * It will add a new bed input in the form
-	//  */
-	// const handleAddBed = () => {
-	// 	bedInputArray = [
-	// 		...bedInputArray,
-	// 		{
-	// 			index: bedInputArray.length === 0 ? 0 : bedInputArray[bedInputArray.length - 1].index + 1,
-	// 			department: '',
-	// 			quantity: '0'
-	// 		}
-	// 	]
-	// }
-
-	// $: initialState.bedding = bedInputArray
 
 	/**
 	 * Triggered when the form is submit. If the form is used to create a new customer, then it will POST a new customer is the database.
@@ -181,6 +137,8 @@
 				labelClass={'label-width--md'}
 				bind:value={initialState.facilityName}
 				bind:isValid={noErrors.facilityName}
+				required={true}
+				placeholder={'株式会社○○'}
 			/>
 			<Input
 				inputClass={'txt--xl'}
@@ -189,6 +147,8 @@
 				labelClass={'label-width--md'}
 				bind:value={initialState.kana}
 				bind:isValid={noErrors.kana}
+				required={true}
+				placeholder={'カナ'}
 			/>
 
 			<div class="container">
@@ -214,23 +174,36 @@
 		<fieldset class="fieldset fieldset--address">
 			<legend class="hidden">住所</legend>
 
-			<div class="container">
-				<Input
-					inputClass="txt--sm"
-					name="postalCode"
-					label="郵便番号"
-					autoSearch={true}
-					labelClass={'label-width--lg'}
-					bind:value={initialState.postalCode}
-					bind:isValid={noErrors.postalCode}
-				/>
+			<Input
+				inputClass="txt--sm"
+				name="postalCode"
+				label="郵便番号"
+				autoSearch={true}
+				labelClass={'label-width--lg'}
+				bind:value={initialState.postalCode}
+				bind:isValid={noErrors.postalCode}
+				required={true}
+			/>
 
-				<Input
+			<div class="container">
+				<!-- <Input
 					inputClass="txt--sm"
 					name="prefecture"
 					label={'都道府県'}
 					bind:value={initialState.prefecture}
 					bind:isValid={noErrors.prefecture}
+					required={true}
+				/> -->
+
+				<Seletector
+					labelClass={'label-width--lg'}
+					dataType="prefecture"
+					datas={prefectures}
+					label={'都道府県'}
+					bind:value={initialState.prefecture}
+					bind:isValid={noErrors.prefecture}
+					required={true}
+					placeholder="○○県"
 				/>
 
 				<Input
@@ -239,6 +212,8 @@
 					label={'市区町村'}
 					bind:value={initialState.city}
 					bind:isValid={noErrors.city}
+					required={true}
+					placeholder="○○市"
 				/>
 			</div>
 
@@ -251,6 +226,7 @@
 					placeholder="丁目・番地"
 					bind:value={initialState.address1}
 					bind:isValid={noErrors.address1}
+					required={true}
 				/>
 				<Input
 					labelClass={'label-width--lg'}
@@ -260,6 +236,7 @@
 					placeholder="建物名・部屋番号"
 					bind:value={initialState.address2}
 					bind:isValid={noErrors.address2}
+					required={true}
 				/>
 			</div>
 
@@ -271,6 +248,8 @@
 					labelClass={'label-width--lg'}
 					bind:value={initialState.phoneNumber}
 					bind:isValid={noErrors.phoneNumber}
+					required={true}
+					placeholder={'0000000000'}
 				/>
 
 				<Input
@@ -301,22 +280,6 @@
 
 		<fieldset class="fieldset fieldset--bed">
 			<legend class="hidden">病床設定</legend>
-			<!-- <div class="container">
-				<label class="label" for="">診療科目</label>
-
-				<div class="container container--vertical">
-					{#each bedInputArray as bed}
-						<BedConfiguration bind:bed bind:bedInputArray />
-					{/each}
-				</div>
-
-				<div class="total">
-					<h3 class="label">病床数合計</h3>
-					<p class="total__dispay">{totalOfBed}</p>
-				</div>
-			</div>
-			<button type="button" class="btn btn--add" on:click={handleAddBed}>＋ 新規追加</button> -->
-
 			<BedSection bind:bedding={initialState.bedding} />
 		</fieldset>
 		<!-- .fieldset--bed -->
@@ -353,6 +316,8 @@
 			/>
 		</fieldset>
 		<!-- .fieldset--info2 -->
+
+		<span class="required-legend">* 必須</span>
 	</div>
 </form>
 
@@ -380,6 +345,7 @@
 		align-items: flex-start;
 		justify-content: flex-start;
 		flex-wrap: wrap;
+		row-gap: 1rem;
 
 		&--vertical {
 			flex-direction: column;
@@ -436,5 +402,9 @@
 			border-radius: 3px;
 			margin-left: 140px;
 		}
+	}
+
+	.required-legend {
+		float: right;
 	}
 </style>

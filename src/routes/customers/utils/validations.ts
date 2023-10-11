@@ -71,7 +71,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return phoneNumberValidation(input)
 
 		case 'fax':
-			return phoneNumberValidation(input)
+			return input === '' || phoneNumberValidation(input)
 
 		case 'postalCode':
 			return postalCodeValidation(input)
@@ -86,7 +86,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return numberOFCharacterValidation(input)
 
 		case 'founder':
-			return numberOFCharacterValidation(input)
+			return input === '' || numberOFCharacterValidation(input)
 
 		default:
 			return true

@@ -11,6 +11,7 @@
 	export let unit: string = ''
 	export let wrapperClass: string = ''
 	export let isValid: boolean = true
+	export let required: boolean = false
 
 	let disabled: boolean
 
@@ -24,7 +25,7 @@
 
 <div class="input-wrapper {wrapperClass} {isValid ? '' : 'error'}">
 	{#if label}
-		<label class="label {labelClass}" for={name}>{label}</label>
+		<label class="label {labelClass}" for={name}>{required ? label + '*' : label}</label>
 	{/if}
 	<input
 		type="text"

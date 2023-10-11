@@ -1,35 +1,45 @@
 <script lang="ts">
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
+	import Selector from './Selector.svelte'
 
-	import ListOfYear from './ListOfYear.svelte'
+	import ListOfYear from './Selector.svelte'
 
 	export let year: string = ''
 	export let month: string = ''
 
-	const currentYear = new Date().getFullYear()
-	const years: string[] = ['']
+	// const currentYear = new Date().getFullYear()
+	// const years: string[] = ['']
 	const months: string[] = ['']
 
-	for (let i = 1850; i < currentYear; i++) {
-		years.push(i.toString())
-	}
+	// for (let i = 1850; i < currentYear; i++) {
+	// 	years.push(i.toString())
+	// }
 
 	for (let i = 1; i <= 12; i++) {
 		months.push(i.toString())
 	}
+
+	let years: string[] = []
+	const minYear = 1800
+	const currentYear = new Date().getFullYear()
+	for (let i = minYear; i < currentYear; i++) {
+		years.push(i.toString())
+	}
+
+	$: console.log(year)
 </script>
 
 <div class="date-selector">
 	<label class="label" for="foundation-date">設立年月日</label>
 
 	<!-- <Select options={years} unit="年" wrapperClass="mb-0" bind:value={value.year.data} /> -->
-	<Input unit="年" wrapperClass="mb-0" inputClass="number--md" bind:value={year} />
+	<!-- <Input unit="年" wrapperClass="mb-0" inputClass="number--md" bind:value={year} /> -->
+	<Selector bind:value={year} dataType={'year'} datas={years} unit="年" classInput={'mb-0'} />
+
 	<!-- <Input unit="年" wrapperClass="mb-0" inputClass="number--sm" bind:value={value.year.data} /> -->
 
-	<Select options={months} unit="月" wrapperClass="mb-0" bind:value={month} />
-
-	<!-- <ListOfYear /> -->
+	<Select options={months} unit="月" bind:value={month} wrapperClass={'mb-0'} />
 </div>
 
 <style lang="scss">

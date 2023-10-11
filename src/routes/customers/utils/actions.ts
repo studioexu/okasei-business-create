@@ -23,44 +23,54 @@ export const loadData = async (url: string) => {
  * @returns the new data
  */
 export const deleteItem = (customerId: string, url: string) => {
-	//We get the customer information so we can POST the information in the deletedCustomers.
-	//顧客の情報をGETして、DeletedCustomersにPOSTする。
-	fetch(url + customerId, {
-		method: 'GET',
-		headers: { 'Content-type': 'application/json;charset=UTF-8' }
-	})
-		.then(res => res.json())
-		.then(newData => {
-			let options: Intl.DateTimeFormatOptions = {
-				timeZone: 'Asia/Tokyo',
-				year: 'numeric',
-				month: 'numeric',
-				day: 'numeric',
-				hour: 'numeric',
-				minute: 'numeric',
-				second: 'numeric'
-			}
+	console.log('nyako')
 
-			const formatter = new Intl.DateTimeFormat([], options)
-			const timeArray = formatter.format(new Date()).split(', ')
+	// //We get the customer information so we can POST the information in the deletedCustomers.
+	// //顧客の情報をGETして、DeletedCustomersにPOSTする。
+	// fetch(url + customerId, {
+	// 	method: 'GET',
+	// 	headers: { 'Content-type': 'application/json;charset=UTF-8' }
+	// })
+	// 	.then(res => res.json())
+	// 	.then(newData => {
+	// 		console.log('yeah')
 
-			const deleted = {
-				status: '削除',
-				date: timeArray[0],
-				time: timeArray[1]
-			}
+	// 		let options: Intl.DateTimeFormatOptions = {
+	// 			timeZone: 'Asia/Tokyo',
+	// 			year: 'numeric',
+	// 			month: 'numeric',
+	// 			day: 'numeric',
+	// 			hour: 'numeric',
+	// 			minute: 'numeric',
+	// 			second: 'numeric'
+	// 		}
 
-			newData.delete = deleted
+	// 		const formatter = new Intl.DateTimeFormat([], options)
+	// 		const timeArray = formatter.format(new Date()).split(', ')
 
-			create(newData, 'http://localhost:3000/deletedCustomers/')
-		})
+	// 		const deleted = {
+	// 			status: '削除',
+	// 			date: timeArray[0],
+	// 			time: timeArray[1]
+	// 		}
+
+	// 		newData.delete = deleted
+	// 		// fetch(url + customerId, {
+	// 		// 	method: 'DELETE',
+	// 		// 	headers: { 'Content-type': 'application/json;charset=UTF-8' }
+	// 		// }).then(res => res.json())
+
+	// 		create(newData, 'http://localhost:3000/deletedCustomers/')
+	// 	})
 
 	//We DELETE the customer from the "Customers" database.
 	//DBからCustomersを削除する
 	fetch(url + customerId, {
 		method: 'DELETE',
 		headers: { 'Content-type': 'application/json;charset=UTF-8' }
-	}).then(res => res.json())
+	})
+		.then(res => res.json())
+		.then(data => console.log(data))
 	// .then(newData => {
 	// 	return newData
 	// })

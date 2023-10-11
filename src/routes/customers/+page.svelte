@@ -8,12 +8,6 @@
 	import SearchMenu from './components/SearchMenu.svelte'
 	import DeleteModal from './DeleteModal.svelte'
 	export let data
-	import { postalCodeFormatter } from './utils/formatter'
-
-	// console.log(data.deletedData)
-
-	console.log(postalCodeFormatter('〒6000000'))
-	console.log(postalCodeFormatter('0123456'))
 
 	let newData: CustomerInfo[] = data.data
 	let dataToDisplay: CustomerInfo[] = []
@@ -25,10 +19,8 @@
 	$: lastDataIndex =
 		currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1
 	$: firstDataIndex = currentPage === 1 ? 0 : (currentPage - 1) * 6
-	// $: numberOfPages = Math.ceil(newData.length / 6)
 
 	$: updateDataToDisplay(newData, firstDataIndex, lastDataIndex)
-	// $: updateNavPage(numberOfPages, currentPage)
 
 	/**
 	 * Update the data display according the current page.
@@ -65,7 +57,7 @@
 		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>
 		<SearchMenu data={data.data} bind:newData />
 
-		<label for="checkbox">
+		<!-- <label class="switch" for="checkbox">
 			<input
 				class="checkbox"
 				type="checkbox"
@@ -73,6 +65,21 @@
 				name="checkbox"
 				on:change={handleCheck}
 			/>
+			<span class="slider" />
+			以前削除した施設も含む
+		</label> -->
+
+		<label class="switch-label" for="checkbox">
+			<div class="switch">
+				<input
+					class="checkbox"
+					type="checkbox"
+					id="checkbox"
+					name="checkbox"
+					on:change={handleCheck}
+				/>
+				<span class="slider" />
+			</div>
 			以前削除した施設も含む
 		</label>
 
@@ -119,5 +126,63 @@
 		color: #fff;
 		border-radius: 3px;
 		float: right;
+	}
+
+	.switch-label {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+	}
+
+	.switch {
+		position: relative;
+		height: 24px;
+		width: 40px;
+		cursor: pointer;
+
+		.checkbox {
+			opacity: 0;
+			width: 0;
+			height: 0;
+		}
+
+		.slider {
+			position: absolute;
+			width: 100%;
+			height: 100%;
+			left: 0;
+			top: 0;
+			// right: 0;
+			// bottom: 0;
+			background-color: #2fa8e1;
+			border-radius: 50px;
+			background-color: rgb(200, 200, 200);
+			transition: background-color 300ms ease-out;
+		}
+
+		.slider::before {
+			position: absolute;
+			content: ' ';
+			width: 16px;
+			height: 16px;
+			background-color: #fff;
+			left: 4px;
+			top: 4px;
+			border-radius: 100%;
+			transition: transform 300ms ease-out;
+		}
+
+		.checkbox:checked {
+			& + .slider {
+				background-color: #2fa8e1;
+				transition: background-color 300ms ease-out;
+				&::before {
+					// left: auto;
+					// right: 4px;
+					transform: translateX(16px);
+					transition: transform 300ms ease-out;
+				}
+			}
+		}
 	}
 </style>

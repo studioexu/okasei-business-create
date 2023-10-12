@@ -1,8 +1,9 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
-	import { create } from './utils/actions'
+	import { create, deleteItem } from './utils/actions'
 	import { parseBeforeDelete } from './utils/parsers'
+	import Button from '@/components/customers/Button.svelte'
 
 	export let itemId: string = ''
 
@@ -24,6 +25,8 @@
 				const parsedCustomer = parseBeforeDelete(newData)
 				create(parsedCustomer, 'http://localhost:3000/deletedCustomers/')
 			})
+
+		itemId = ''
 	}
 </script>
 
@@ -34,10 +37,16 @@
 		</div>
 
 		<div class="modal__footer">
-			<button class="btn" on:click={handleCancel}>キャンセル</button>
-			<form class="delete-form" method="POST" action="customers/?/delete">
+			<Button buttonClass={'btn--round'} handleClick={handleCancel}>キャンセル</Button>
+			<form id="delete-form" class="delete-form" method="POST" action="customers/?/delete">
 				<input class="input" type="hidden" name="id" value={itemId} />
-				<button class="btn btn--confirm" on:click={handleSubmit}>削除</button>
+				<Button
+					buttonClass={'btn--round btn--round--delete'}
+					handleClick={handleSubmit}
+					form={'delete-form'}
+				>
+					削除
+				</Button>
 			</form>
 		</div>
 	</div>
@@ -73,32 +82,6 @@
 			justify-content: center;
 			margin-top: 1.75rem;
 			gap: 1.5rem;
-		}
-	}
-
-	.btn {
-		width: 182px;
-		height: 43px;
-		border: 1px solid #707070;
-		color: #707070;
-		background-color: #fff;
-		border-radius: 24px;
-
-		&:hover {
-			background-color: #707070;
-			// border-color: rgb(47, 168, 225);
-			color: #fff;
-		}
-
-		&--confirm {
-			background-color: rgb(47, 168, 225);
-			border-color: rgb(47, 168, 225);
-			color: #fff;
-
-			&:hover {
-				background-color: red;
-				border-color: red;
-			}
 		}
 	}
 

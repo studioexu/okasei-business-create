@@ -1,10 +1,11 @@
 <script lang="ts">
+	import Button from '@/components/customers/Button.svelte'
 	import Input from './Input.svelte'
 
-	let customerNumber = ''
-	let facilityName = ''
-	let postalCode = ''
-	let phoneNumber = ''
+	let customerNumber: string = ''
+	let facilityName: string = ''
+	let postalCode: string = ''
+	let phoneNumber: string = ''
 	export let data: any[]
 	export let newData: any[]
 	/**
@@ -24,8 +25,10 @@
 					return customer.kana.includes(input)
 				})
 			case 'customer-number':
+				console.log(input)
+
 				return data.filter(customer => {
-					return customer.customerNumber.includes(input)
+					return customer.id.includes(input)
 				})
 			case 'postal-code':
 				return data.filter(customer => {
@@ -46,10 +49,9 @@
 	 * @param e
 	 */
 	const handleSearch = (e?: any) => {
-		console.log('search')
-		console.log(data)
-
 		let dataBis = data
+
+		console.log(customerNumber)
 
 		if (customerNumber !== '') {
 			dataBis = filterData(dataBis, 'customer-number', customerNumber)
@@ -69,7 +71,6 @@
 		}
 
 		newData = dataBis
-		console.log(dataBis)
 	}
 </script>
 
@@ -94,61 +95,62 @@
 	/>
 	<Input additionalClass={'txt--md'} name={'phone'} label={'電話番号'} bind:value={phoneNumber} />
 
-	<button class="btn btn--search" on:click={handleSearch}>検索</button>
+	<!-- <button class="btn btn--search" on:click={handleSearch}>検索</button> -->
+	<Button buttonClass={'btn--filled btn--sm'} handleClick={handleSearch}>検索</Button>
 </form>
 
 <style lang="scss">
-	.btn {
-		position: relative;
-		background-color: #2fa8e1;
-		color: #fff;
-		margin: 0;
-		height: 32px;
-		overflow: hidden;
+	// .btn {
+	// 	position: relative;
+	// 	background-color: #2fa8e1;
+	// 	color: #fff;
+	// 	margin: 0;
+	// 	height: 32px;
+	// 	overflow: hidden;
 
-		&::after {
-			position: absolute;
-			content: ' ';
-			background-color: #fff;
-			width: 100%;
-			height: 100%;
-			top: 0;
-			left: 0;
-			opacity: 0;
-			transition: opacity 300ms;
-		}
+	// 	&::after {
+	// 		position: absolute;
+	// 		content: ' ';
+	// 		background-color: #fff;
+	// 		width: 100%;
+	// 		height: 100%;
+	// 		top: 0;
+	// 		left: 0;
+	// 		opacity: 0;
+	// 		transition: opacity 300ms;
+	// 	}
 
-		&:hover {
-			cursor: pointer;
-			&::after {
-				opacity: 0.1;
-			}
-		}
+	// 	&:hover {
+	// 		cursor: pointer;
+	// 		&::after {
+	// 			opacity: 0.1;
+	// 		}
+	// 	}
 
-		&--search {
-			padding: 0 11px;
-			border-radius: 3px;
-		}
+	// 	&--search {
+	// 		padding: 0 11px;
+	// 		border-radius: 3px;
+	// 	}
 
-		&--page {
-			background-color: transparent;
-			color: black;
-			height: 25px;
-			width: 25px;
-			border-radius: 100%;
-			transition: all 300ms;
+	// 	&--page {
+	// 		background-color: transparent;
+	// 		color: black;
+	// 		height: 25px;
+	// 		width: 25px;
+	// 		border-radius: 100%;
+	// 		transition: all 300ms;
 
-			&.current {
-				background-color: #2fa8e1;
-				color: #fff;
-			}
+	// 		&.current {
+	// 			background-color: #2fa8e1;
+	// 			color: #fff;
+	// 		}
 
-			&:hover {
-				color: #fff;
-				background-color: #2fa8e1;
-			}
-		}
-	}
+	// 		&:hover {
+	// 			color: #fff;
+	// 			background-color: #2fa8e1;
+	// 		}
+	// 	}
+	// }
 
 	.search-menu {
 		display: flex;

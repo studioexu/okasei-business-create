@@ -17,7 +17,7 @@
 				<th>顧客番号</th>
 				<th>施設名</th>
 				<th>住所</th>
-				<th>状態</th>
+				<!-- <th>状態</th> -->
 				<th>登録日</th>
 				<th>編集</th>
 				<th>削除</th>
@@ -27,14 +27,22 @@
 			{#each dataToDisplay as customer}
 				<TableRow
 					facilityName={customer.facilityName}
-					status={customer.update !== undefined &&
-					customer.update.status !== undefined &&
-					customer.update.status !== ''
+					status={customer.delete !== undefined &&
+					customer.delete.status !== undefined &&
+					customer.delete.status !== ''
+						? customer.delete.status
+						: customer.update !== undefined &&
+						  customer.update.status !== undefined &&
+						  customer.update.status !== ''
 						? customer.update.status
 						: customer.registration.status}
-					updateDate={customer.update !== undefined &&
-					customer.update.status !== undefined &&
-					customer.update.status !== ''
+					updateDate={customer.delete !== undefined &&
+					customer.delete.status !== undefined &&
+					customer.delete.status !== ''
+						? customer.delete.deletedDate
+						: customer.update !== undefined &&
+						  customer.update.status !== undefined &&
+						  customer.update.status !== ''
 						? customer.update.lastUpdatedDate
 						: customer.registration.registrationDate}
 					address={customer.address}

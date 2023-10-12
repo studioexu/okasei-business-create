@@ -1,5 +1,6 @@
 <script lang="ts">
 	import BedConfiguration from './BedConfiguration.svelte'
+	import Button from '@/components/customers/Button.svelte'
 
 	interface BedInput {
 		index: number
@@ -67,7 +68,10 @@
 		<p class="total__dispay">{totalOfBed}</p>
 	</div>
 </div>
-<button type="button" class="btn btn--add" on:click={handleAddBed}>＋ 新規追加</button>
+
+<div class="button-wrapper">
+	<Button buttonClass={'btn--sm btn--filled'} handleClick={handleAddBed}>＋ 新規追加</Button>
+</div>
 
 <style lang="scss">
 	.container {
@@ -108,17 +112,8 @@
 		display: none;
 	}
 
-	.btn {
-		background-color: #2fa8e1;
-		color: #fff;
-		margin: 0;
-
-		&--add {
-			padding: 0 11px;
-			margin-top: 14px;
-			height: 32px;
-			border-radius: 3px;
-			margin-left: 140px;
-		}
+	.button-wrapper {
+		margin-left: 140px;
+		margin-top: 14px;
 	}
 </style>

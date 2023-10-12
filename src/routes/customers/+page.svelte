@@ -57,33 +57,23 @@
 		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>
 		<SearchMenu data={data.data} bind:newData />
 
-		<!-- <label class="switch" for="checkbox">
-			<input
-				class="checkbox"
-				type="checkbox"
-				id="checkbox"
-				name="checkbox"
-				on:change={handleCheck}
-			/>
-			<span class="slider" />
-			以前削除した施設も含む
-		</label> -->
+		<div class="container">
+			<label class="switch-label" for="checkbox">
+				<div class="switch">
+					<input
+						class="checkbox"
+						type="checkbox"
+						id="checkbox"
+						name="checkbox"
+						on:change={handleCheck}
+					/>
+					<span class="slider" />
+				</div>
+				以前削除した施設も含む
+			</label>
 
-		<label class="switch-label" for="checkbox">
-			<div class="switch">
-				<input
-					class="checkbox"
-					type="checkbox"
-					id="checkbox"
-					name="checkbox"
-					on:change={handleCheck}
-				/>
-				<span class="slider" />
-			</div>
-			以前削除した施設も含む
-		</label>
-
-		<a class="btn btn--new" href="/customers/new">＋新規登録</a>
+			<a class="btn btn--new" href="/customers/new">＋新規登録</a>
+		</div>
 	</header>
 
 	<div class="section__main">
@@ -152,9 +142,6 @@
 			height: 100%;
 			left: 0;
 			top: 0;
-			// right: 0;
-			// bottom: 0;
-			background-color: #2fa8e1;
 			border-radius: 50px;
 			background-color: rgb(200, 200, 200);
 			transition: background-color 300ms ease-out;
@@ -184,5 +171,11 @@
 				}
 			}
 		}
+	}
+
+	.container {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
 	}
 </style>

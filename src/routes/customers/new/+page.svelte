@@ -2,6 +2,7 @@
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
 	import type { CustomerEntries } from '../utils/types'
+	import Button from '@/components/customers/Button.svelte'
 
 	let verificationPageDisplayed = false
 	let initialState: CustomerEntries = {
@@ -46,9 +47,9 @@
 	<footer class="section__footer">
 		<div class="form__footer">
 			{#if verificationPageDisplayed}
-				<button class="btn btn--edit" on:click={handleEditClicked}>修正</button>
+				<Button buttonClass={'btn--transparent'} handleClick={handleEditClicked}>修正</Button>
 			{/if}
-			<button class="btn btn--submit" form="registration-form">登録</button>
+			<Button buttonClass={'btn--filled'} form="registration-form">登録</Button>
 		</div>
 	</footer>
 </section>
@@ -59,49 +60,6 @@
 			margin-bottom: 18px;
 			&__title {
 				font-size: 24px;
-			}
-		}
-	}
-	.btn {
-		width: 108px;
-		height: 45px;
-		margin: 0;
-
-		background-color: #2fa8e1;
-		color: #fff;
-
-		&--submit {
-			position: relative;
-
-			&::after {
-				content: '';
-				position: absolute;
-				width: 100%;
-				height: 100%;
-				left: 0;
-				top: 0;
-
-				background-color: #fff;
-				opacity: 0;
-				transition: opacity 300ms;
-			}
-
-			&:hover {
-				&::after {
-					opacity: 0.3;
-				}
-			}
-		}
-
-		&--edit {
-			background-color: transparent;
-			color: #2fa8e1;
-			border: #2fa8e1 1px solid;
-			transition: all 300ms;
-
-			&:hover {
-				background-color: #2fa8e1;
-				color: #fff;
 			}
 		}
 	}

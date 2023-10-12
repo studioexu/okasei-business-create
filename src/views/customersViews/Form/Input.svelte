@@ -1,4 +1,5 @@
 <script lang="ts">
+	import Button from '@/components/customers/Button.svelte'
 	import { inputIsValid } from '@/routes/customers/utils/validations'
 
 	export let placeholder: string = ''
@@ -38,7 +39,7 @@
 		{disabled}
 	/>
 	{#if autoSearch}
-		<button class="btn btn--search">自動検索</button>
+		<Button buttonClass={'btn--sm btn--filled'}>自動検索</Button>
 	{/if}
 
 	{#if unit !== ''}
@@ -114,19 +115,6 @@
 		}
 		&--xl {
 			@include responsiveInputWidth((534));
-		}
-	}
-
-	.btn {
-		background-color: #2fa8e1;
-		color: #fff;
-		margin: 0;
-		&--search {
-			padding: 6px;
-			font-size: 1rem;
-			border-radius: 3px;
-			font-weight: bold;
-			width: max-content;
 		}
 	}
 

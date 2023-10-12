@@ -2,6 +2,7 @@
 </script>
 
 <script lang="ts">
+	import Button from '@/components/customers/Button.svelte'
 	import type { Bedding, CustomerInfo } from '../utils/types'
 	import BedContainer from './components/BedContainer.svelte'
 	import BeddingWrapper from './components/BeddingWrapper.svelte'
@@ -14,6 +15,10 @@
 	let bedQuantity: number = 0
 
 	company.bedding.forEach((bed: Bedding) => (bedQuantity += parseInt(bed.quantity)))
+
+	const handleLinkClicked = () => {
+		window.location.href = '/customers/' + company.id + '/edit'
+	}
 </script>
 
 <section class="section section--confirmation">
@@ -91,7 +96,9 @@
 		</div>
 
 		<div class="button-container">
-			<a class="btn btn--edit" href="/customers/{company.id}/edit">編集</a>
+			<!-- <a class="btn btn--edit" href="/customers/{company.id}/edit">編集</a> -->
+
+			<Button buttonClass={'btn--filled'} handleClick={handleLinkClicked}>編集</Button>
 		</div>
 	</footer>
 </section>
@@ -130,45 +137,6 @@
 			'numberOfEmployees numberOfEmployees numberOfEmployees numberOfEmployees . . . . . .'
 			'homepage homepage homepage homepage homepage homepage homepage homepage homepage homepage'
 			'numberOfFacilities numberOfFacilities numberOfFacilities . . . . . . .';
-	}
-
-	.btn {
-		display: flex;
-		position: relative;
-		align-items: center;
-		justify-content: center;
-
-		// background-color: #2fa8e1;
-		// color: #fff;
-		margin: 0;
-		width: 108px;
-		height: 45px;
-		background-color: #2fa8e1;
-		color: #fff;
-
-		&::after {
-			content: ' ';
-			position: absolute;
-			height: 100%;
-			width: 100%;
-			left: 0;
-			top: 0;
-			background-color: #fff;
-			opacity: 0;
-			transition: opacity 300ms;
-		}
-
-		&--edit {
-			// color: #2fa8e1;
-			// border: #2fa8e1 1px solid;
-			transition: all 300ms;
-
-			&:hover {
-				&::after {
-					opacity: 0.2;
-				}
-			}
-		}
 	}
 
 	.container {

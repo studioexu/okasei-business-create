@@ -1,5 +1,8 @@
+import { prefectures } from '../data/data'
+
 /**
  * We want to check if the user only use katakana
+ * カナのところにカタカナで入力したかどうかと確認する。
  * @param kanaString : string, we want to check
  * @returns boolean
  */
@@ -10,6 +13,7 @@ export const kanaValidation = (kanaString: string) => {
 
 /**
  * We check if the phone number entered is valid.
+ * 日本の電話番号であるかどうかと確認する。
  * @param phoneNumber : string
  * @returns boolean
  */
@@ -22,6 +26,7 @@ export const phoneNumberValidation = (phoneNumber: string) => {
 
 /**
  * We check if the postal Code is valid.
+ * 郵便番号が正しいかどうか確認する。
  * @param postalCode : string, the user can entered any postal code (e.g.: 600-0000, 6000000, 〒600-0000 are all accepted)
  * @returns boolean
  */
@@ -32,6 +37,7 @@ export const postalCodeValidation = (postalCode: string) => {
 
 /**
  * check if the year input is correct
+ * 数字が入れたかどうか確認する。
  * @param year: string
  * @returns boolean
  */
@@ -44,6 +50,7 @@ export const yearValidation = (year: string) => {
 
 /**
  * We limit the number of characters to avoid any code injection
+ * 文字の数の制限を作る。
  * @param input : string
  * @returns boolean
  */
@@ -51,6 +58,16 @@ export const numberOFCharacterValidation = (input: string) => {
 	const lengthOfInput = input.length
 
 	return lengthOfInput <= 50 && lengthOfInput > 0
+}
+
+/**
+ * Just in case, we check the seletected prefecture.
+ * 万が一、選択された都道府県を確認する。Inputなので、違うインプットする可能性がある。
+ * @param input : string corresponding to the seletected prefecture
+ * @returns
+ */
+export const checkIfPrefectureIsValid = (input: string) => {
+	return prefectures.includes(input)
 }
 
 /**
@@ -77,7 +94,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return postalCodeValidation(input)
 
 		case 'year':
-			return yearValidation(input)
+			return input === '' || yearValidation(input)
 
 		case 'address1':
 			return numberOFCharacterValidation(input)
@@ -87,6 +104,9 @@ export const inputIsValid = (name: string, input: string): boolean => {
 
 		case 'founder':
 			return input === '' || numberOFCharacterValidation(input)
+
+		case 'prefecture':
+			return checkIfPrefectureIsValid(input)
 
 		default:
 			return true

@@ -19,7 +19,7 @@
 </script>
 
 <script lang="ts">
-	$: boards = [
+	let boards = [
 		{
 			id: 'todo',
 			tasks: [
@@ -50,19 +50,38 @@
 			text: 'Done'
 		}
 	]
+	let currentTask = { id: '' } as { id: string; index?: number }
+	let currentBoard = 0
+	let newBoard = 0
+	let hoveringBoard = 0
+	let hoveringTask = { id: '' } as { id: string; index?: number }
 
-	$: currentTask = ''
-	$: currentBoard = 0
-	$: newBoard = 0
-	$: hoveringBoard = 0
-	$: hoveringTask = { id: '', index: null } as { id: string; index: number | null }
+	$: isAdjacent =
+		currentBoard === newBoard &&
+		currentTask.index !== undefined &&
+		hoveringTask.index !== undefined &&
+		Math.abs(currentTask.index - hoveringTask.index) === 1
+
 	let currentClientY: number = 0
 	let isUpper: boolean = false
 
-	const dragEnterOnBoard = (event: Event, index: number) => {
-		if ((<HTMLElement>event.target).getAttribute('id') && currentTask !== '') {
-			newBoard = index
-			hoveringBoard = index + 1
+	const dragEnter = (event: Event, index: number, type: 'board' | 'task') => {
+		const target = <HTMLElement>event.target
+		const id = target.getAttribute('id')
+
+		if (id) {
+			if (type === 'board' && currentTask.id !== '') {
+				if (hoveringBoard === index) resetMargin(hoveringTask.id)
+
+				newBoard = index
+				hoveringBoard = index + 1
+			} else if (type === 'task' && id !== currentTask.id) {
+				if (hoveringTask.id === '' && !hoveringTask.index) hoveringTask = { id, index }
+				else if (id !== hoveringTask.id && hoveringTask.index) {
+					resetMargin(hoveringTask.id)
+					hoveringTask = { id, index }
+				}
+			}
 		}
 	}
 
@@ -71,7 +90,7 @@
 
 		boards[currentBoard].tasks = boards[currentBoard].tasks?.filter(
 			(localTask: { id: string; title: string; status: string }) => {
-				if (localTask.id !== currentTask) return localTask
+				if (localTask.id !== currentTask.id) return localTask
 
 				task = localTask
 			}
@@ -82,10 +101,14 @@
 			const tasks = boards[newBoard].tasks
 
 			if (tasks.length >= 0) {
-				if (hoveringTask.index) {
+				if (hoveringTask.index !== undefined) {
 					if (isUpper && hoveringTask.index === 0) boards[index].tasks = [task, ...tasks]
 					else {
-						tasks.splice(isUpper ? hoveringTask.index : hoveringTask.index + 1, 0, task)
+						tasks.splice(
+							isAdjacent || isUpper ? hoveringTask.index : hoveringTask.index + 1,
+							0,
+							task
+						)
 						boards[index].tasks = [...tasks]
 					}
 				} else boards[index].tasks.push(task)
@@ -93,13 +116,13 @@
 		}
 
 		task = undefined
-		document.getElementById(currentTask)?.removeAttribute('style')
-		currentTask = ''
+		document.getElementById(currentTask.id)?.removeAttribute('style')
+		currentTask = { id: '' }
 		currentBoard = 0
 		newBoard = 0
 		hoveringBoard = 0
 		resetMargin(hoveringTask.id)
-		hoveringTask = { id: '', index: null }
+		hoveringTask = { id: '' }
 	}
 
 	const dragOver = async (event: Event) => {
@@ -107,7 +130,7 @@
 
 		const id = (<HTMLElement>event.target).getAttribute('id')
 
-		if (id && id !== currentTask) {
+		if (id && id !== currentTask.id) {
 			const rect = (<HTMLElement>event.target).getBoundingClientRect()
 			const clientY = (<MouseEvent>event).clientY
 
@@ -116,7 +139,9 @@
 					const element = document.getElementById(hoveringTask.id)
 
 					if (element) {
-						isUpper = clientY - rect.top < rect.height / 2
+						isUpper = isAdjacent
+							? currentTask.index! - hoveringTask.index! === 1
+							: clientY - rect.top < rect.height / 2
 
 						element.style[isUpper ? 'marginTop' : 'marginBottom'] = `${rect.height + 16 * 2}px`
 						element.style[isUpper ? 'marginBottom' : 'marginTop'] = `${isUpper ? '16' : '0'}px`
@@ -128,23 +153,14 @@
 		}
 	}
 
-	const dragStart = (event: Event, index: number) => {
-		currentTask = (<HTMLElement>event.target).getAttribute('id') ?? ''
-
-		if (currentTask !== '') document.getElementById(currentTask)!.style.opacity = '0.2'
-		currentBoard = index
-	}
-
-	const dragEnterOnTask = (event: Event, index: number) => {
+	const dragStart = (event: Event, index: number, taskIndex: number) => {
 		const id = (<HTMLElement>event.target).getAttribute('id')
 
-		if (id && id !== currentTask) {
-			if (hoveringTask.id === '' && hoveringTask.index === null) hoveringTask = { id, index }
-			else if (id !== hoveringTask.id && hoveringTask.index) {
-				resetMargin(hoveringTask.id)
-				hoveringTask = { id, index }
-			}
-		}
+		if (id) currentTask = { id, index: taskIndex }
+
+		if (currentTask.id !== '') document.getElementById(currentTask.id)!.style.opacity = '0.2'
+
+		currentBoard = index
 	}
 </script>
 
@@ -155,7 +171,7 @@
 			class="board"
 			class:is-hovering={index + 1 === hoveringBoard && currentBoard + 1 !== hoveringBoard}
 			id={board.id}
-			on:dragenter={event => dragEnterOnBoard(event, index)}
+			on:dragenter={event => dragEnter(event, index, 'board')}
 			on:dragover={event => event.preventDefault()}
 			on:drop={() => drop(index)}
 		>
@@ -166,8 +182,8 @@
 					class="task"
 					id={task.id}
 					draggable={true}
-					on:dragstart={event => dragStart(event, index)}
-					on:dragenter={event => dragEnterOnTask(event, taskIndex)}
+					on:dragstart={event => dragStart(event, index, taskIndex)}
+					on:dragenter={event => dragEnter(event, taskIndex, 'task')}
 					on:dragover={dragOver}
 					on:click={() => click(task.id)}
 				>

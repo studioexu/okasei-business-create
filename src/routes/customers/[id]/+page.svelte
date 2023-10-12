@@ -10,53 +10,57 @@
 	import Wrapper from './components/Wrapper.svelte'
 	export let data
 
-	let company: CustomerInfo = data.company
+	let customer: CustomerInfo = data.customer
 
 	let bedQuantity: number = 0
 
-	company.bedding.forEach((bed: Bedding) => (bedQuantity += parseInt(bed.quantity)))
+	customer.bedding.forEach((bed: Bedding) => (bedQuantity += parseInt(bed.quantity)))
 
 	const handleLinkClicked = () => {
-		window.location.href = '/customers/' + company.id + '/edit'
+		window.location.href = '/customers/' + customer.id + '/edit'
 	}
 </script>
 
 <section class="section section--confirmation">
 	<div class="container">
-		<Wrapper areaClass="customerNumber" content={company.id} title={'顧客番号'} />
-		<Wrapper areaClass="branchNumber" content={company.branchNumber} title={'枝番'} />
-		<Wrapper areaClass="facilityName" content={company.facilityName} title={'施設名'} />
-		<Wrapper areaClass="kana" content={company.kana} title={'カナ'} />
+		<Wrapper areaClass="customerNumber" content={customer.id} title={'顧客番号'} />
+		<Wrapper areaClass="branchNumber" content={customer.branchNumber} title={'枝番'} />
+		<Wrapper areaClass="facilityName" content={customer.facilityName} title={'施設名'} />
+		<Wrapper areaClass="kana" content={customer.kana} title={'カナ'} />
 
-		<Wrapper areaClass="facilityNumber" content={company.facilityNumber} title={'医療機関番号'} />
-		<Wrapper areaClass="businessType" content={company.businessType} title={'区分'} />
+		<Wrapper areaClass="facilityNumber" content={customer.facilityNumber} title={'医療機関番号'} />
+		<Wrapper areaClass="businessType" content={customer.businessType} title={'区分'} />
 
-		<Wrapper areaClass="postalCode" content={company.address.postalCode} title={'郵便番号'} />
-		<Wrapper areaClass="prefecture" content={company.address.prefecture} title={'都道府県'} />
-		<Wrapper areaClass="city" content={company.address.city} title={'市区町村'} />
-		<Wrapper areaClass="address1" content={company.address.address1} title={'住所１'} />
-		<Wrapper areaClass="address2" content={company.address.address2} title={'住所2'} />
-		<Wrapper areaClass="phoneNumber" content={company.address.phoneNumber} title={'電話番号'} />
-		<Wrapper areaClass="fax" content={company.address.fax} title={'FAX番号'} />
+		<Wrapper areaClass="postalCode" content={customer.address.postalCode} title={'郵便番号'} />
+		<Wrapper areaClass="prefecture" content={customer.address.prefecture} title={'都道府県'} />
+		<Wrapper areaClass="city" content={customer.address.city} title={'市区町村'} />
+		<Wrapper areaClass="address1" content={customer.address.address1} title={'住所１'} />
+		<Wrapper areaClass="address2" content={customer.address.address2} title={'住所2'} />
+		<Wrapper areaClass="phoneNumber" content={customer.address.phoneNumber} title={'電話番号'} />
+		<Wrapper areaClass="fax" content={customer.address.fax} title={'FAX番号'} />
 
-		<Wrapper areaClass="homepage" content={company.homepage} title={'ホームページ'} />
-		<Wrapper areaClass="numberOfEmployees" content={company.numberOfEmployees} title={'従業員数'} />
+		<Wrapper areaClass="homepage" content={customer.homepage} title={'ホームページ'} />
+		<Wrapper
+			areaClass="numberOfEmployees"
+			content={customer.numberOfEmployees}
+			title={'従業員数'}
+		/>
 		<Wrapper
 			areaClass="numberOfFacilities"
-			content={company.numberOfFacilities}
+			content={customer.numberOfFacilities}
 			title={'関連施設拠点数'}
 		/>
 
 		<BeddingWrapper total={bedQuantity}>
-			{#each company.bedding as bedding}
+			{#each customer.bedding as bedding}
 				<BedContainer department={bedding.department} quantity={bedding.quantity} />
 			{/each}
 		</BeddingWrapper>
 
 		<FoundationWrapper
-			year={company.foundation.year}
-			month={company.foundation.month}
-			founder={company.foundation.founder}
+			year={customer.foundation.year}
+			month={customer.foundation.month}
+			founder={customer.foundation.founder}
 		/>
 	</div>
 
@@ -69,15 +73,15 @@
 				</div>
 				<div class="registration__data">
 					<h3 class="registration__data__title">登録日</h3>
-					<p class="registration__data__content">{company.registration.registrationDate}</p>
+					<p class="registration__data__content">{customer.registration.registrationDate}</p>
 				</div>
 				<div class="registration__data">
 					<h3 class="registration__data__title">登録時刻</h3>
-					<p class="registration__data__content">{company.registration.registrationTime}</p>
+					<p class="registration__data__content">{customer.registration.registrationTime}</p>
 				</div>
 			</div>
 
-			{#if company.update.status !== '' && company.update.status !== undefined}
+			{#if customer.update.status !== '' && customer.update.status !== undefined}
 				<div class="registration">
 					<div class="registration__data">
 						<h3 class="registration__data__title">更新者名</h3>
@@ -85,19 +89,17 @@
 					</div>
 					<div class="registration__data">
 						<h3 class="registration__data__title">更新日</h3>
-						<p class="registration__data__content">{company.update.lastUpdatedDate}</p>
+						<p class="registration__data__content">{customer.update.lastUpdatedDate}</p>
 					</div>
 					<div class="registration__data">
 						<h3 class="registration__data__title">更新時刻</h3>
-						<p class="registration__data__content">{company.update.lastUpdatedTime}</p>
+						<p class="registration__data__content">{customer.update.lastUpdatedTime}</p>
 					</div>
 				</div>
 			{/if}
 		</div>
 
 		<div class="button-container">
-			<!-- <a class="btn btn--edit" href="/customers/{company.id}/edit">編集</a> -->
-
 			<Button buttonClass={'btn--filled'} handleClick={handleLinkClicked}>編集</Button>
 		</div>
 	</footer>

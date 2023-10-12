@@ -6,6 +6,7 @@
 	export let labelClass: string = ''
 	export let wrapperClass: string = ''
 	export let name: string = ''
+	export let isValid: boolean = true
 
 	const monthValidation = (month: string) => {
 		const monthInt = parseInt(month)
@@ -34,7 +35,7 @@
 	}
 </script>
 
-<div class="input-wrapper {wrapperClass}">
+<div class="input-wrapper {wrapperClass} {isValid ? '' : 'error'}">
 	{#if label !== ''}
 		<label class="label {labelClass}" for="organization-type">{label}</label>
 	{/if}

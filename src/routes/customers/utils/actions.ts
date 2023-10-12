@@ -23,8 +23,6 @@ export const loadData = async (url: string) => {
  * @returns the new data
  */
 export const deleteItem = (customerId: string, url: string) => {
-	console.log('nyako')
-
 	// //We get the customer information so we can POST the information in the deletedCustomers.
 	// //顧客の情報をGETして、DeletedCustomersにPOSTする。
 	// fetch(url + customerId, {

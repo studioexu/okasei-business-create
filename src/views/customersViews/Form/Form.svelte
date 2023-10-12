@@ -105,10 +105,11 @@
 <form
 	class="form {verificationPageDisplayed ? 'hidden' : ''}"
 	method={'PUT'}
-	action="/customers/"
+	action="/customers"
 	id="registration-form"
 	on:submit={handleSubmit}
 >
+	<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
 	<div class="form__form">
 		<fieldset class="fieldset fieldset--info1">
 			<legend class="hidden">情報１</legend>
@@ -157,6 +158,7 @@
 					name="facilityNumber"
 					label="医療機関番号"
 					labelClass={'label-width--lg'}
+					required={true}
 					bind:value={initialState.facilityNumber}
 					bind:isValid={noErrors.facilityNumber}
 				/>
@@ -266,7 +268,12 @@
 		<fieldset class="fieldset fieldset--foundation">
 			<legend class="hidden">創立</legend>
 			<div class="container">
-				<DateSelector bind:year={initialState.year} bind:month={initialState.month} />
+				<DateSelector
+					bind:year={initialState.year}
+					bind:month={initialState.month}
+					bind:monthIsValid={noErrors.month}
+					bind:yearIsValid={noErrors.year}
+				/>
 				<Input
 					inputClass="txt--lg"
 					name="founder"

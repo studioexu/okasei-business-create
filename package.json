@@ -29,6 +29,8 @@
 	},
 	"type": "module",
 	"dependencies": {
+		"google-libphonenumber": "^3.2.33",
+		"libphonenumber-js": "^1.10.47",
 		"sass": "^1.68.0"
 	}
 }

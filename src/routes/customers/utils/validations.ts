@@ -1,4 +1,5 @@
 import { prefectures } from '../data/data'
+const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
 
 /**
  * We want to check if the user only use katakana
@@ -48,16 +49,20 @@ export const yearValidation = (year: string) => {
 	return yearInt !== 0 && yearInt <= currentYear
 }
 
+export const monthIsValid = (input: string) => {
+	return months.includes(input)
+}
+
 /**
  * We limit the number of characters to avoid any code injection
  * 文字の数の制限を作る。
  * @param input : string
  * @returns boolean
  */
-export const numberOFCharacterValidation = (input: string) => {
+export const numberOFCharacterValidation = (input: string, maxCharacter: number) => {
 	const lengthOfInput = input.length
 
-	return lengthOfInput <= 50 && lengthOfInput > 0
+	return lengthOfInput <= maxCharacter && lengthOfInput > 0
 }
 
 /**
@@ -68,6 +73,10 @@ export const numberOFCharacterValidation = (input: string) => {
  */
 export const checkIfPrefectureIsValid = (input: string) => {
 	return prefectures.includes(input)
+}
+
+export const checkIfInputIsNumber = (input: string) => {
+	return !isNaN(parseInt(input))
 }
 
 /**
@@ -82,7 +91,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return kanaValidation(input)
 
 		case 'facilityName':
-			return numberOFCharacterValidation(input)
+			return numberOFCharacterValidation(input, 50)
 
 		case 'phoneNumber':
 			return phoneNumberValidation(input)
@@ -96,17 +105,38 @@ export const inputIsValid = (name: string, input: string): boolean => {
 		case 'year':
 			return input === '' || yearValidation(input)
 
+		case 'month':
+			return input === '' || monthIsValid(input)
+
 		case 'address1':
-			return numberOFCharacterValidation(input)
+			return numberOFCharacterValidation(input, 50)
 
 		case 'address2':
-			return numberOFCharacterValidation(input)
+			return numberOFCharacterValidation(input, 50)
 
 		case 'founder':
-			return input === '' || numberOFCharacterValidation(input)
+			return input === '' || numberOFCharacterValidation(input, 50)
 
 		case 'prefecture':
 			return checkIfPrefectureIsValid(input)
+
+		case 'city':
+			return numberOFCharacterValidation(input, 10)
+
+		case 'facilityNumber':
+			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 10)
+
+		case 'quantity':
+			return checkIfInputIsNumber(input)
+
+		case 'numberOfEmployees':
+			return input === '' || checkIfInputIsNumber(input)
+
+		case 'homepage':
+			return input === '' || numberOFCharacterValidation(input, 50)
+
+		case 'branchNumber':
+			return input === '' || checkIfInputIsNumber(input)
 
 		default:
 			return true

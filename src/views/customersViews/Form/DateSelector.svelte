@@ -5,6 +5,9 @@
 
 	import ListOfYear from './Selector.svelte'
 
+	export let monthIsValid = true
+	export let yearIsValid = true
+
 	export let year: string = ''
 	export let month: string = ''
 
@@ -32,8 +35,21 @@
 
 <div class="date-selector">
 	<label class="label" for="foundation-date">設立年月日</label>
-	<Selector bind:value={year} dataType={'year'} datas={years} unit="年" classInput={'mb-0'} />
-	<Select options={months} unit="月" bind:value={month} wrapperClass={'mb-0'} />
+	<Selector
+		bind:value={year}
+		dataType={'year'}
+		datas={years}
+		unit="年"
+		classInput={'mb-0'}
+		bind:isValid={yearIsValid}
+	/>
+	<Select
+		options={months}
+		unit="月"
+		bind:value={month}
+		wrapperClass={'mb-0'}
+		bind:isValid={monthIsValid}
+	/>
 </div>
 
 <style lang="scss">

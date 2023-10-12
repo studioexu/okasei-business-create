@@ -8,6 +8,12 @@
 	import SearchMenu from './components/SearchMenu.svelte'
 	import DeleteModal from './DeleteModal.svelte'
 	export let data
+	import { phoneNumberFormatter } from './utils/formatter'
+	import { checkIfInputIsNumber } from './utils/validations'
+
+	$: console.log(checkIfInputIsNumber('123'))
+	$: console.log(checkIfInputIsNumber('hello'))
+	$: console.log(checkIfInputIsNumber('0'))
 
 	let newData: CustomerInfo[] = data.data
 	let dataToDisplay: CustomerInfo[] = []

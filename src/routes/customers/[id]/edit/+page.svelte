@@ -4,32 +4,32 @@
 	import Form from '@/views/customersViews/Form/Form.svelte'
 	export let data
 
-	let company = data.company
+	let customer = data.customer
 	let verificationPageDisplayed = false
 
 	let initialState: CustomerEntries = {
-		id: company.id,
-		branchNumber: company.branchNumber,
-		facilityName: company.facilityName,
-		kana: company.kana,
-		facilityNumber: company.facilityNumber,
-		businessType: company.businessType,
-		postalCode: company.address.postalCode,
-		prefecture: company.address.prefecture,
-		city: company.address.city,
-		address1: company.address.address1,
-		address2: company.address.address2,
-		phoneNumber: company.address.phoneNumber,
-		fax: company.address.fax,
-		year: company.foundation.year,
-		month: company.foundation.month,
-		founder: company.foundation.founder,
-		bedding: company.bedding,
-		numberOfEmployees: company.numberOfEmployees,
-		homepage: company.homepage,
-		numberOfFacilities: company.numberOfFacilities,
-		registrationDate: company.registration.registrationDate,
-		registrationTime: company.registration.registrationTime
+		id: customer.id,
+		branchNumber: customer.branchNumber,
+		facilityName: customer.facilityName,
+		kana: customer.kana,
+		facilityNumber: customer.facilityNumber,
+		businessType: customer.businessType,
+		postalCode: customer.address.postalCode,
+		prefecture: customer.address.prefecture,
+		city: customer.address.city,
+		address1: customer.address.address1,
+		address2: customer.address.address2,
+		phoneNumber: customer.address.phoneNumber,
+		fax: customer.address.fax,
+		year: customer.foundation.year,
+		month: customer.foundation.month,
+		founder: customer.foundation.founder,
+		bedding: customer.bedding,
+		numberOfEmployees: customer.numberOfEmployees,
+		homepage: customer.homepage,
+		numberOfFacilities: customer.numberOfFacilities,
+		registrationDate: customer.registration.registrationDate,
+		registrationTime: customer.registration.registrationTime
 	}
 
 	const handleEditClicked = () => {
@@ -54,7 +54,7 @@
 			{#if verificationPageDisplayed}
 				<button class="btn btn--edit" on:click={handleEditClicked}>修正</button>
 			{/if}
-			<button class="btn btn--submit" form="registration-form">登録</button>
+			<button type="submit" class="btn btn--submit" form="registration-form">登録</button>
 		</div>
 	</footer>
 </section>

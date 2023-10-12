@@ -1,8 +1,9 @@
 <script lang="ts">
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
-	import type { CustomerEntries } from '../utils/types'
 	import Button from '@/components/customers/Button.svelte'
+
+	import type { CustomerEntries } from '../utils/types'
 
 	let verificationPageDisplayed = false
 	let initialState: CustomerEntries = {

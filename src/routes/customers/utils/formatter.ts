@@ -1,3 +1,5 @@
+import { parsePhoneNumber } from 'libphonenumber-js'
+
 export const postalCodeFormatter = (postalCode: string) => {
 	let postalCodeArray = postalCode.split('')
 	let formattedPostalCode = postalCode
@@ -15,4 +17,6 @@ export const postalCodeFormatter = (postalCode: string) => {
 	return postalCodeArray.join('')
 }
 
-export const phoneNumberFormatter = (phoneNumber: string) => {}
+export const phoneNumberFormatter = (phoneNumber: string) => {
+	return parsePhoneNumber(phoneNumber, 'JP').formatNational()
+}

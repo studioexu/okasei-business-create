@@ -4,7 +4,6 @@
 	import FoundationWrapper from './FoundationWrapper.svelte'
 	import Wrapper from './Wrapper.svelte'
 	import type { CustomerEntries } from '@/routes/customers/utils/types'
-	import { Customer } from '@/routes/customers/utils/classes'
 
 	export let initialState: CustomerEntries
 	export let verificationPageDisplayed: boolean

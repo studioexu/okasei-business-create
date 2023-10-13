@@ -8,7 +8,7 @@ let customerData: CustomerInfo
 export const load = async ({ params }) => {
 	const data: CustomerInfo[] = await loadData('http://localhost:3000/customers')
 	const customer: CustomerInfo | undefined = data.find(
-		(customer: CustomerInfo) => customer.id === params.id
+		(customer: CustomerInfo) => customer.id?.toString() === params.id.toString()
 	)
 
 	if (!customer) throw error(404)
@@ -20,30 +20,30 @@ export const load = async ({ params }) => {
 	}
 }
 
-// export const actions = {
-// 	update: async ({ request }) => {
-// 		const data = await request.formData()
-// 		let initialState: CustomerEntries
+export const actions = {
+	update: async ({ request }) => {
+		const data = await request.formData()
+		let initialState: CustomerEntries
 
-// 		const initialStateString = data.get('initialState')
-// 		if (typeof initialStateString === 'string') {
-// 			initialState = JSON.parse(initialStateString)
-// 			console.log(initialState)
+		const initialStateString = data.get('initialState')
+		if (typeof initialStateString === 'string') {
+			initialState = JSON.parse(initialStateString)
+			console.log(initialState)
 
-// 			const registration = {
-// 				status: '登録',
-// 				date: initialState.registrationDate,
-// 				time: initialState.registrationTime
-// 			}
-// 			const updatedcustomer = parseBeforeUpdate(initialState, registration)
+			const registration = {
+				status: '登録',
+				date: initialState.registrationDate,
+				time: initialState.registrationTime
+			}
+			const updatedcustomer = parseBeforeUpdate(initialState, registration)
 
-// 			if (initialState.id) {
-// 				update(updatedcustomer, 'http://localhost:3000/customers/', initialState.id)
-// 			}
-// 		}
+			if (initialState.id) {
+				update(updatedcustomer, 'http://localhost:3000/customers/', initialState.id)
+			}
+		}
 
-// 		redirect(303, '/customers')
+		// redirect(303, '/customers')
 
-// 		// window.location.href = '/customers'
-// 	}
-// }
+		// window.location.href = '/customers'
+	}
+}

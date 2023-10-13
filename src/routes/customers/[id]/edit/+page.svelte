@@ -2,10 +2,12 @@
 	import type { CustomerEntries } from '../../utils/types'
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
+	import RegisteredModal from '../../RegisteredModal.svelte'
 	export let data
 
 	let customer = data.customer
 	let verificationPageDisplayed = false
+	let modalIsOpened: boolean = false
 
 	let initialState: CustomerEntries = {
 		id: customer.id,
@@ -38,25 +40,31 @@
 </script>
 
 <section class="section section--form">
+	<RegisteredModal bind:isOpened={modalIsOpened} />
+
 	<header class="section__header">
-		{#if verificationPageDisplayed}
+		{#if verificationPageDisplayed && !modalIsOpened}
 			<h2 class="section__header__title">下記の内容で登録しますか？</h2>
 		{/if}
 	</header>
 
 	<div class="section__main">
-		<Confirmation bind:verificationPageDisplayed bind:initialState />
-		<Form bind:verificationPageDisplayed bind:initialState formType={'update'} />
+		{#if !modalIsOpened}
+			<Confirmation bind:verificationPageDisplayed bind:initialState />
+		{/if}
+		<Form bind:verificationPageDisplayed bind:initialState formType={'update'} bind:modalIsOpened />
 	</div>
 
-	<footer class="section__footer">
-		<div class="form__footer">
-			{#if verificationPageDisplayed}
-				<button class="btn btn--edit" on:click={handleEditClicked}>修正</button>
-			{/if}
-			<button type="submit" class="btn btn--submit" form="registration-form">登録</button>
-		</div>
-	</footer>
+	{#if !modalIsOpened}
+		<footer class="section__footer">
+			<div class="form__footer">
+				{#if verificationPageDisplayed}
+					<button class="btn btn--edit" on:click={handleEditClicked}>修正</button>
+				{/if}
+				<button type="submit" class="btn btn--submit" form="registration-form">登録</button>
+			</div>
+		</footer>
+	{/if}
 </section>
 
 <style lang="scss">

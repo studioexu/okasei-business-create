@@ -4,6 +4,9 @@
 	import Button from '@/components/customers/Button.svelte'
 
 	import type { CustomerEntries } from '../utils/types'
+	import RegisteredModal from '../RegisteredModal.svelte'
+
+	let modalIsOpened: boolean = false
 
 	let verificationPageDisplayed = false
 	let initialState: CustomerEntries = {
@@ -28,31 +31,41 @@
 		numberOfFacilities: ''
 	}
 
+	$: console.log(initialState)
+
 	const handleEditClicked = () => {
 		verificationPageDisplayed = false
 	}
 </script>
 
 <section class="section section--form">
-	<header class="section__header">
-		{#if verificationPageDisplayed}
-			<h2 class="section__header__title">下記の内容で登録しますか？</h2>
-		{/if}
-	</header>
+	<RegisteredModal bind:isOpened={modalIsOpened} />
+
+	{#if !modalIsOpened}
+		<header class="section__header">
+			{#if verificationPageDisplayed}
+				<h2 class="section__header__title">下記の内容で登録しますか？</h2>
+			{/if}
+		</header>
+	{/if}
 
 	<div class="section__main">
-		<Confirmation bind:initialState bind:verificationPageDisplayed />
-		<Form bind:verificationPageDisplayed bind:initialState formType={'create'} />
+		{#if !modalIsOpened}
+			<Confirmation bind:initialState bind:verificationPageDisplayed />
+		{/if}
+		<Form bind:verificationPageDisplayed bind:initialState formType={'create'} bind:modalIsOpened />
 	</div>
 
-	<footer class="section__footer">
-		<div class="form__footer">
-			{#if verificationPageDisplayed}
-				<Button buttonClass={'btn--transparent'} handleClick={handleEditClicked}>修正</Button>
-			{/if}
-			<Button buttonClass={'btn--filled'} form="registration-form">登録</Button>
-		</div>
-	</footer>
+	{#if !modalIsOpened}
+		<footer class="section__footer">
+			<div class="form__footer">
+				{#if verificationPageDisplayed}
+					<Button buttonClass={'btn--transparent'} handleClick={handleEditClicked}>修正</Button>
+				{/if}
+				<Button buttonClass={'btn--filled'} form="registration-form">登録</Button>
+			</div>
+		</footer>
+	{/if}
 </section>
 
 <style lang="scss">

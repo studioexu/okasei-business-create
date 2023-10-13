@@ -9,10 +9,12 @@
 	import { update, create } from '@/routes/customers/utils/actions'
 	import BedSection from './BedSection.svelte'
 	import Seletector from './Selector.svelte'
+	import { enhance } from '$app/forms'
 
 	export let formType: string
 	export let verificationPageDisplayed: boolean
 	export let initialState: CustomerEntries
+	export let modalIsOpened: boolean
 
 	/**
 	 * Triggered when the form is submit. If the form is used to create a new customer, then it will POST a new customer is the database.
@@ -21,23 +23,7 @@
 	 */
 	const handleSubmit = (e: any): void => {
 		if (verificationPageDisplayed) {
-			if (formType === 'create') {
-				let newcustomer = parseBeforePost(initialState)
-				create(newcustomer, 'http://localhost:3000/customers/')
-			}
-
-			if (formType === 'update') {
-				const registration = {
-					status: '登録',
-					date: initialState.registrationDate,
-					time: initialState.registrationTime
-				}
-				const updatedcustomer = parseBeforeUpdate(initialState, registration)
-
-				if (typeof initialState.id === 'string') {
-					update(updatedcustomer, 'http://localhost:3000/customers/', initialState.id)
-				}
-			}
+			modalIsOpened = true
 		}
 
 		if (!verificationPageDisplayed) {
@@ -104,10 +90,10 @@
 
 <form
 	class="form {verificationPageDisplayed ? 'hidden' : ''}"
-	method={'PUT'}
-	action="/customers"
+	method={'POST'}
+	action={formType === 'create' ? '/customers/new/?/create' : '/customers/[id]/edit/?/update'}
 	id="registration-form"
-	on:submit={handleSubmit}
+	on:submit|preventDefault={handleSubmit}
 >
 	<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
 	<div class="form__form">

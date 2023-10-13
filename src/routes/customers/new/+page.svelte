@@ -2,9 +2,9 @@
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
 	import Button from '@/components/customers/Button.svelte'
+	import RegisteredModal from '@/views/customersViews/modals/RegisteredModal.svelte'
 
 	import type { CustomerEntries } from '../utils/types'
-	import RegisteredModal from '../RegisteredModal.svelte'
 
 	let modalIsOpened: boolean = false
 

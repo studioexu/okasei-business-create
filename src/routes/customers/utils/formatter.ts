@@ -2,7 +2,6 @@ import { parsePhoneNumber } from 'libphonenumber-js'
 
 export const postalCodeFormatter = (postalCode: string) => {
 	let postalCodeArray = postalCode.split('')
-	let formattedPostalCode = postalCode
 
 	if (postalCodeArray[0] === '〒') {
 		postalCodeArray.shift()

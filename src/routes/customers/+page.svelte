@@ -6,11 +6,8 @@
 	import Table from './components/Table.svelte'
 	import TableNavigation from './components/TableNavigation.svelte'
 	import SearchMenu from './components/SearchMenu.svelte'
-	import DeleteModal from './DeleteModal.svelte'
+	import DeleteModal from '@/views/customersViews/modals/DeleteModal.svelte'
 	export let data
-	import { phoneNumberFormatter } from './utils/formatter'
-	import { checkIfInputIsNumber } from './utils/validations'
-	import { fade, fly } from 'svelte/transition'
 
 	$: customers = data.data
 	let newData: CustomerInfo[] = customers
@@ -45,7 +42,6 @@
 	}
 
 	const handleCheck = (e: any) => {
-		console.log(e.target.checked)
 		const isChecked = e.target.checked
 		if (isChecked) {
 			newData = [...data.data, ...data.deletedData]

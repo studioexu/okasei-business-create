@@ -3,10 +3,8 @@
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
-	import { parseBeforeUpdate, parseBeforePost } from '@/routes/customers/utils/parsers'
 	import type { CustomerEntries, Error } from '@/routes/customers/utils/types'
 	import { inputIsValid } from '@/routes/customers/utils/validations'
-	import { update, create } from '@/routes/customers/utils/actions'
 	import BedSection from './BedSection.svelte'
 	import Seletector from './Selector.svelte'
 	import { enhance } from '$app/forms'
@@ -15,30 +13,6 @@
 	export let verificationPageDisplayed: boolean
 	export let initialState: CustomerEntries
 	export let modalIsOpened: boolean
-
-	/**
-	 * Triggered when the form is submit. If the form is used to create a new customer, then it will POST a new customer is the database.
-	 * If the form is used to update customer's information, then it will PUT the new data in the database.
-	 * @param e
-	 */
-	const handleSubmit = (e: any): void => {
-		if (verificationPageDisplayed) {
-			modalIsOpened = true
-		}
-
-		if (!verificationPageDisplayed) {
-			e.preventDefault()
-
-			let formIsValid = true
-			formIsValid = checkIfFormIsValid(initialState)
-
-			if (!formIsValid) {
-				return
-			}
-
-			verificationPageDisplayed = true
-		}
-	}
 
 	const hojinKojin = [' ', '法人', '個人']
 
@@ -64,6 +38,35 @@
 		numberOfFacilities: true
 	}
 
+	/**
+	 * Triggered when the form is submit.
+	 * If the form is still on the entry page, then, it will preventDefault, and displayed the entry verification page.
+	 * If the user is in the entry verification page, then, we submit the form.
+	 * @param e
+	 */
+	const handleSubmit = (e: any): void => {
+		if (verificationPageDisplayed) {
+			modalIsOpened = true
+			// e.target.submit()
+		}
+
+		if (!verificationPageDisplayed) {
+			e.preventDefault()
+
+			let formIsValid: boolean = checkIfFormIsValid(initialState)
+
+			if (formIsValid) {
+				verificationPageDisplayed = true
+			}
+		}
+	}
+
+	/**
+	 * Take the form and check if all the entries are valid.
+	 * If there is one error, the function will return false.
+	 * @param formEntries: Object of entries
+	 * @returns boolean
+	 */
 	const checkIfFormIsValid = (formEntries: Object): boolean => {
 		let errorArray: boolean[] = []
 		let isValid = true
@@ -91,9 +94,11 @@
 <form
 	class="form {verificationPageDisplayed ? 'hidden' : ''}"
 	method={'POST'}
-	action={formType === 'create' ? '/customers/new/?/create' : '/customers/[id]/edit/?/update'}
+	action={formType === 'create'
+		? '/customers/new?/create'
+		: '/customers/' + initialState.id + '/edit?/update'}
 	id="registration-form"
-	on:submit|preventDefault={handleSubmit}
+	on:submit={handleSubmit}
 >
 	<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
 	<div class="form__form">

@@ -1,10 +1,10 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
-	import { create, deleteItem } from './utils/actions'
-	import { parseBeforeDelete } from './utils/parsers'
+	import { create, deleteItem } from '../../../routes/customers/utils/actions'
+	import { parseBeforeDelete } from '../../../routes/customers/utils/parsers'
 	import Button from '@/components/customers/Button.svelte'
-	import type { CustomerInfo } from './utils/types'
+	import type { CustomerInfo } from '../../../routes/customers/utils/types'
 	import { enhance } from '$app/forms'
 
 	export let itemId: string = ''

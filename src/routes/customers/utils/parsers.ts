@@ -77,7 +77,7 @@ import { Customer } from './classes'
 // 	return newcustomer
 // }
 
-export const parseBeforePost = (entries: CustomerEntries): CustomerInfo => {
+const getTimeArray = () => {
 	let options: Intl.DateTimeFormatOptions = {
 		timeZone: 'Asia/Tokyo',
 		year: 'numeric',
@@ -89,7 +89,23 @@ export const parseBeforePost = (entries: CustomerEntries): CustomerInfo => {
 	}
 
 	const formatter = new Intl.DateTimeFormat([], options)
-	const timeArray = formatter.format(new Date()).split(', ')
+
+	return formatter.format(new Date()).split(' ')
+}
+
+export const parseBeforePost = (entries: CustomerEntries): CustomerInfo => {
+	// let options: Intl.DateTimeFormatOptions = {
+	// 	timeZone: 'Asia/Tokyo',
+	// 	year: 'numeric',
+	// 	month: 'numeric',
+	// 	day: 'numeric',
+	// 	hour: 'numeric',
+	// 	minute: 'numeric',
+	// 	second: 'numeric'
+	// }
+
+	// const formatter = new Intl.DateTimeFormat([], options)
+	const timeArray = getTimeArray()
 
 	const registration = {
 		status: '登録',
@@ -112,7 +128,7 @@ export const parseBeforeDelete = (customer: CustomerInfo): CustomerInfo => {
 	}
 
 	const formatter = new Intl.DateTimeFormat([], options)
-	const timeArray = formatter.format(new Date()).split(' ')
+	const timeArray = formatter.format(new Date()).split(', ')
 
 	const deleted = {
 		status: '削除',
@@ -137,7 +153,7 @@ export const parseBeforeUpdate = (entries: CustomerEntries, registration: any): 
 	}
 
 	const formatter = new Intl.DateTimeFormat([], options)
-	const timeArray = formatter.format(new Date()).split(' ')
+	const timeArray = formatter.format(new Date()).split(', ')
 
 	const updated = {
 		status: '更新',

@@ -3,8 +3,6 @@ import { loadData, update } from '../../utils/actions.js'
 import type { CustomerEntries, CustomerInfo } from '../../utils/types.ts'
 import { parseBeforeUpdate } from '../../utils/parsers.js'
 
-let customerData: CustomerInfo
-
 export const load = async ({ params }) => {
 	const data: CustomerInfo[] = await loadData('http://localhost:3000/customers')
 	const customer: CustomerInfo | undefined = data.find(
@@ -12,8 +10,6 @@ export const load = async ({ params }) => {
 	)
 
 	if (!customer) throw error(404)
-
-	customerData = customer
 
 	return {
 		customer
@@ -41,9 +37,5 @@ export const actions = {
 				update(updatedcustomer, 'http://localhost:3000/customers/', initialState.id)
 			}
 		}
-
-		// redirect(303, '/customers')
-
-		// window.location.href = '/customers'
 	}
 }

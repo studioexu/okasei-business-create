@@ -13,7 +13,7 @@
 </script>
 
 <div class="confirmation">
-	<div class="container {verificationPageDisplayed ? '' : 'hidden'}">
+	<div class="container {verificationPageDisplayed ? '' : 'hidden'} ">
 		<Wrapper areaClass="customerNumber" content={initialState.id} title={'顧客番号'} />
 		<Wrapper areaClass="branchNumber" content={initialState.branchNumber} title={'枝番'} />
 		<Wrapper areaClass="facilityName" content={initialState.facilityName} title={'施設名'} />
@@ -65,13 +65,30 @@
 		display: grid;
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 		grid-template-rows: auto;
+		// 	grid-template-areas:
+		// 		'customerNumber customerNumber branchNumber branchNumber . . . . . .'
+		// 		'facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName'
+		// 		'kana kana kana kana kana kana kana kana kana kana'
+		// 		'facilityNumber facilityNumber businessType businessType . . . . . .'
+		// 		'postalCode postalCode postalCode . . . . . . . '
+		// 		'prefecture prefecture city city address1 address1 address1 address2 address2 address2'
+		// 		'phoneNumber phoneNumber phoneNumber fax fax fax . . . .'
+		// 		'foundation foundation foundation foundation foundation  foundation foundation foundation foundation foundation'
+		// 		'bedding bedding bedding bedding bedding bedding bedding . . .'
+		// 		'numberOfEmployees numberOfEmployees numberOfEmployees numberOfEmployees . . . . . .'
+		// 		'homepage homepage homepage homepage homepage homepage homepage homepage homepage homepage'
+		// 		'numberOfFacilities numberOfFacilities numberOfFacilities . . . . . . .';
+		// }
+
 		grid-template-areas:
-			'customerNumber customerNumber branchNumber branchNumber . . . . . .'
+			'customerNumber customerNumber CustomerNumber branchNumber branchNumber branchNumber. . . .'
 			'facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName'
 			'kana kana kana kana kana kana kana kana kana kana'
-			'facilityNumber facilityNumber businessType businessType . . . . . .'
+			'facilityNumber facilityNumber facilityNumber businessType businessType businessType  . . . .'
 			'postalCode postalCode postalCode . . . . . . . '
-			'prefecture prefecture city city address1 address1 address1 address2 address2 address2'
+			'prefecture prefecture prefecture city city city . . . .'
+			'address1 address1 address1 address1 address1 address1 address1 address1 address1 address1'
+			'address2 address2 address2 address2 address2 address2 address2 address2 address2 address2'
 			'phoneNumber phoneNumber phoneNumber fax fax fax . . . .'
 			'foundation foundation foundation foundation foundation  foundation foundation foundation foundation foundation'
 			'bedding bedding bedding bedding bedding bedding bedding . . .'

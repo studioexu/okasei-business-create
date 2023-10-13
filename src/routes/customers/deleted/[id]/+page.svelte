@@ -3,11 +3,11 @@
 
 <script lang="ts">
 	import Button from '@/components/customers/Button.svelte'
-	import type { Bedding, CustomerInfo } from '../utils/types'
-	import BedContainer from './components/BedContainer.svelte'
-	import BeddingWrapper from './components/BeddingWrapper.svelte'
-	import FoundationWrapper from './components/FoundationWrapper.svelte'
-	import Wrapper from './components/Wrapper.svelte'
+	import type { Bedding, CustomerInfo } from '@/routes/customers/utils/types'
+	import BedContainer from '../../[id]/components/BedContainer.svelte'
+	import BeddingWrapper from '../../[id]/components/BeddingWrapper.svelte'
+	import FoundationWrapper from '../../[id]/components/FoundationWrapper.svelte'
+	import Wrapper from '../../[id]/components/Wrapper.svelte'
 	export let data
 
 	let customer: CustomerInfo = data.customer
@@ -81,27 +81,27 @@
 				</div>
 			</div>
 
-			{#if customer.update.status !== '' && customer.update.status !== undefined}
+			{#if customer.delete.status !== '' && customer.delete.status !== undefined}
 				<div class="registration">
 					<div class="registration__data">
-						<h3 class="registration__data__title">更新者名</h3>
+						<h3 class="registration__data__title">削除者名</h3>
 						<p class="registration__data__content">山田太郎</p>
 					</div>
 					<div class="registration__data">
-						<h3 class="registration__data__title">更新日</h3>
-						<p class="registration__data__content">{customer.update.lastUpdatedDate}</p>
+						<h3 class="registration__data__title">削除日</h3>
+						<p class="registration__data__content">{customer.delete.deletedDate}</p>
 					</div>
 					<div class="registration__data">
-						<h3 class="registration__data__title">更新時刻</h3>
-						<p class="registration__data__content">{customer.update.lastUpdatedTime}</p>
+						<h3 class="registration__data__title">削除時刻</h3>
+						<p class="registration__data__content">{customer.delete.deletedTime}</p>
 					</div>
 				</div>
 			{/if}
 		</div>
 
-		<div class="button-container">
+		<!-- <div class="button-container">
 			<Button buttonClass={'btn--filled'} handleClick={handleLinkClicked}>編集</Button>
-		</div>
+		</div> -->
 	</footer>
 </section>
 
@@ -125,10 +125,10 @@
 		// 	'numberOfFacilities numberOfFacilities numberOfFacilities . . . . . . .';
 
 		grid-template-areas:
-			'customerNumber customerNumber CustomerNumber branchNumber branchNumber branchNumber. . . .'
+			'customerNumber customerNumber branchNumber branchNumber . . . . . .'
 			'facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName'
 			'kana kana kana kana kana kana kana kana kana kana'
-			'facilityNumber facilityNumber facilityNumber businessType businessType businessType  . . . .'
+			'facilityNumber facilityNumber businessType businessType . . . . . .'
 			'postalCode postalCode postalCode . . . . . . . '
 			'prefecture prefecture prefecture city city city . . . .'
 			'address1 address1 address1 address1 address1 address1 address1 address1 address1 address1'

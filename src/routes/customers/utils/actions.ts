@@ -73,7 +73,7 @@ export const deleteItem = (customerId: string, url: string) => {
 	// 	return newData
 	// })
 
-	return loadData(url)
+	// return loadData(url)
 }
 
 /**

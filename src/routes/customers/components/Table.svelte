@@ -1,6 +1,7 @@
 <script lang="ts">
 	import TableRow from './TableRow.svelte'
 	import type { CustomerInfo } from '../utils/types'
+	import { slide } from 'svelte/transition'
 	export let itemId: string = ''
 	export let dataToDisplay: CustomerInfo[]
 

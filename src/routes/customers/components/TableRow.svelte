@@ -1,5 +1,7 @@
 <script lang="ts">
+	import { enhance } from '$app/forms'
 	import Icon from '@/components/Icon.svelte'
+	import { slide, fly } from 'svelte/transition'
 	export let facilityName: string = ''
 	export let address = { prefecture: '', city: '' }
 	export let status: string = ''
@@ -22,6 +24,11 @@
 	const handleRowClick = (e: any) => {
 		const classList = e.target.closest('.data').classList.value
 
+		if (status === '削除') {
+			window.location.href = '/customers/deleted/' + id
+			return
+		}
+
 		if (classList.includes('update') || classList.includes('erase')) {
 			return
 		}
@@ -31,7 +38,9 @@
 	const iconColor = status === '削除' ? 'rgb(200, 200, 200)' : '#2FA8E1'
 </script>
 
+<!-- <div> -->
 <tr class="row" on:click={handleRowClick}>
+	<!-- <div out:fly={{ x: 200 }}> -->
 	<td class="data customer-number">{id}</td>
 	<td class="data facility-name">{facilityName}</td>
 	<td class="data address">{address.prefecture}県{address.city}市</td>
@@ -51,11 +60,15 @@
 			<Icon icon={{ path: 'trash-bin', color: iconColor }} />
 		</button>
 	</td>
+	<!-- </div> -->
 </tr>
+
+<!-- </div> -->
 
 <style lang="scss">
 	.row {
 		position: relative;
+		// display: block;
 		cursor: pointer;
 
 		&:hover {
@@ -86,5 +99,21 @@
 
 	.disabled {
 		pointer-events: none;
+	}
+
+	.delete {
+		animation: deleted 1000ms forwards;
+	}
+
+	@keyframes deleted {
+		0% {
+			opacity: 1;
+			transform: scaleY(1);
+		}
+
+		100% {
+			opacity: 0;
+			transform: scaleY(0);
+		}
 	}
 </style>

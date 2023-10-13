@@ -4,17 +4,22 @@
 	import { create, deleteItem } from './utils/actions'
 	import { parseBeforeDelete } from './utils/parsers'
 	import Button from '@/components/customers/Button.svelte'
+	import type { CustomerInfo } from './utils/types'
+	import { enhance } from '$app/forms'
 
 	export let itemId: string = ''
 
+	console.log(itemId)
+
+	let isDeleted: boolean = false
+
 	const handleCancel = () => {
 		itemId = ''
+		isDeleted = false
 	}
 
 	const handleSubmit = (e: any) => {
-		const id = e.target.closest('.delete-form').querySelector('.input').value
-
-		fetch('http://localhost:3000/customers/' + id, {
+		fetch('http://localhost:3000/customers/' + itemId, {
 			method: 'GET',
 			headers: { 'Content-type': 'application/json;charset=UTF-8' }
 		})
@@ -25,29 +30,38 @@
 				const parsedCustomer = parseBeforeDelete(newData)
 				create(parsedCustomer, 'http://localhost:3000/deletedCustomers/')
 			})
-
-		itemId = ''
+			.then(() => {
+				isDeleted = true
+			})
 	}
 </script>
 
 <div class="modal-wrapper {itemId === '' ? 'hidden' : ''}">
 	<div class="modal">
 		<div class="modal__header">
-			<h2 class="title">本当にこの情報を削除しますか？</h2>
+			<h2 class="title">{isDeleted ? '削除しました' : '本当にこの情報を削除しますか？'}</h2>
 		</div>
 
 		<div class="modal__footer">
-			<Button buttonClass={'btn--round'} handleClick={handleCancel}>キャンセル</Button>
-			<form id="delete-form" class="delete-form" method="POST" action="customers/?/delete">
-				<input class="input" type="hidden" name="id" value={itemId} />
-				<Button
-					buttonClass={'btn--round btn--round--delete'}
-					handleClick={handleSubmit}
-					form={'delete-form'}
+			{#if isDeleted}
+				<Button buttonClass={'btn--round'} handleClick={handleCancel}>OK</Button>
+			{:else}
+				<Button buttonClass={'btn--round'} handleClick={handleCancel}>キャンセル</Button>
+				<form
+					id="delete-form"
+					class="delete-form"
+					method="POST"
+					action="customers?/delete"
+					use:enhance
 				>
-					削除
-				</Button>
-			</form>
+					<input class="input" type="hidden" name="id" value={itemId} />
+					<Button
+						buttonClass={'btn--round btn--round--delete'}
+						handleClick={handleSubmit}
+						form={'delete-form'}>削除</Button
+					>
+				</form>
+			{/if}
 		</div>
 	</div>
 </div>

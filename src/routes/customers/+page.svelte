@@ -10,17 +10,16 @@
 	export let data
 	import { phoneNumberFormatter } from './utils/formatter'
 	import { checkIfInputIsNumber } from './utils/validations'
+	import { fade, fly } from 'svelte/transition'
 
-	$: console.log(checkIfInputIsNumber('123'))
-	$: console.log(checkIfInputIsNumber('hello'))
-	$: console.log(checkIfInputIsNumber('0'))
-
-	let newData: CustomerInfo[] = data.data
+	$: customers = data.data
+	let newData: CustomerInfo[] = customers
 	let dataToDisplay: CustomerInfo[] = []
 	let currentPage: number = 1
 	let itemId: string = ''
 
 	$: itemId
+	$: newData = customers
 
 	$: lastDataIndex =
 		currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1

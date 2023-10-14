@@ -35,6 +35,7 @@ export const actions = {
 
 			if (initialState.id) {
 				update(updatedcustomer, 'http://localhost:3000/customers/', initialState.id)
+				redirect(302, '/customers')
 			}
 		}
 	}

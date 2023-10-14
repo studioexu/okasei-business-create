@@ -9,6 +9,9 @@
 	import Seletector from './Selector.svelte'
 	import { enhance } from '$app/forms'
 
+	import { parseBeforePost, parseBeforeUpdate } from '@/routes/customers/utils/parsers'
+	import { create, update } from '@/routes/customers/utils/actions'
+
 	export let formType: string
 	export let verificationPageDisplayed: boolean
 	export let initialState: CustomerEntries
@@ -47,7 +50,26 @@
 	const handleSubmit = (e: any): void => {
 		if (verificationPageDisplayed) {
 			modalIsOpened = true
+
+			if (formType === 'create') {
+				let newcustomer = parseBeforePost(initialState)
+				create(newcustomer, 'http://localhost:3000/customers/')
+			}
+
+			if (formType === 'update') {
+				const registration = {
+					status: '登録',
+					date: initialState.registrationDate,
+					time: initialState.registrationTime
+				}
+				const updatedcustomer = parseBeforeUpdate(initialState, registration)
+
+				if (initialState.id) {
+					update(updatedcustomer, 'http://localhost:3000/customers/', initialState.id)
+				}
+			}
 			// e.target.submit()
+			// window.location.href = '/customers'
 		}
 
 		if (!verificationPageDisplayed) {
@@ -98,8 +120,15 @@
 		? '/customers/new?/create'
 		: '/customers/' + initialState.id + '/edit?/update'}
 	id="registration-form"
-	on:submit={handleSubmit}
+	on:submit|preventDefault={handleSubmit}
 >
+	<!-- <form
+	class="form {verificationPageDisplayed ? 'hidden' : ''}"
+	method={'POST'}
+	action={'?/update'}
+	id="registration-form"
+	on:submit={handleSubmit}
+> -->
 	<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
 	<div class="form__form">
 		<fieldset class="fieldset fieldset--info1">

@@ -1,14 +1,14 @@
 <script lang="ts">
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
-	import Button from '@/components/customers/Button.svelte'
 	import RegisteredModal from '@/views/customersViews/modals/RegisteredModal.svelte'
 
-	import type { CustomerEntries } from '../utils/types'
+	import type { CustomerEntries, Error } from '../utils/types'
+	import RegistrationFooter from '@/views/customersViews/RegistrationFooter/RegistrationFooter.svelte'
 
 	let modalIsOpened: boolean = false
-
 	let verificationPageDisplayed = false
+
 	let initialState: CustomerEntries = {
 		branchNumber: '',
 		facilityName: '',
@@ -31,10 +31,26 @@
 		numberOfFacilities: ''
 	}
 
-	$: console.log(initialState)
-
-	const handleEditClicked = () => {
-		verificationPageDisplayed = false
+	let noErrors: Error = {
+		branchNumber: true,
+		facilityName: true,
+		kana: true,
+		facilityNumber: true,
+		businessType: true,
+		postalCode: true,
+		prefecture: true,
+		city: true,
+		address1: true,
+		address2: true,
+		phoneNumber: true,
+		fax: true,
+		year: true,
+		month: true,
+		founder: true,
+		bedding: true,
+		numberOfEmployees: true,
+		homepage: true,
+		numberOfFacilities: true
 	}
 </script>
 
@@ -53,18 +69,17 @@
 		{#if !modalIsOpened}
 			<Confirmation bind:initialState bind:verificationPageDisplayed />
 		{/if}
-		<Form bind:verificationPageDisplayed bind:initialState formType={'create'} bind:modalIsOpened />
+		<Form
+			bind:verificationPageDisplayed
+			bind:initialState
+			formType={'create'}
+			bind:modalIsOpened
+			bind:noErrors
+		/>
 	</div>
 
 	{#if !modalIsOpened}
-		<footer class="section__footer">
-			<div class="form__footer">
-				{#if verificationPageDisplayed}
-					<Button buttonClass={'btn--transparent'} handleClick={handleEditClicked}>修正</Button>
-				{/if}
-				<Button buttonClass={'btn--filled'} form="registration-form">登録</Button>
-			</div>
-		</footer>
+		<RegistrationFooter bind:initialState bind:noErrors bind:verificationPageDisplayed />
 	{/if}
 </section>
 
@@ -76,13 +91,5 @@
 				font-size: 24px;
 			}
 		}
-	}
-
-	.form__footer {
-		display: flex;
-		justify-content: flex-end;
-		gap: 1rem;
-		margin-top: 1.5rem;
-		padding-bottom: 24px;
 	}
 </style>

@@ -1,4 +1,7 @@
 <script lang="ts">
+	import type { AnimationConfig } from 'svelte/animate'
+	import { fade } from 'svelte/transition'
+
 	export let buttonClass: string = ''
 	// export let content: string = ''
 	export let form: string = ''

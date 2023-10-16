@@ -69,7 +69,7 @@ export interface CustomerEntries {
 	homepage: string
 	numberOfFacilities: string
 	registrationDate?: string
-	registrationTime?: string
+	registrationTime?: string　
 }
 
 export interface Error {

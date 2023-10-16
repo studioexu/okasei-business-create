@@ -4,42 +4,19 @@
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
 	import type { CustomerEntries, Error } from '@/routes/customers/utils/types'
-	import { inputIsValid } from '@/routes/customers/utils/validations'
 	import BedSection from './BedSection.svelte'
 	import Seletector from './Selector.svelte'
 	import { enhance } from '$app/forms'
-
-	import { parseBeforePost, parseBeforeUpdate } from '@/routes/customers/utils/parsers'
-	import { create, update } from '@/routes/customers/utils/actions'
+	import { fade, fly } from 'svelte/transition'
 
 	export let formType: string
 	export let verificationPageDisplayed: boolean
 	export let initialState: CustomerEntries
 	export let modalIsOpened: boolean
 
-	const hojinKojin = [' ', '法人', '個人']
+	export let noErrors: Error
 
-	let noErrors: Error = {
-		branchNumber: true,
-		facilityName: true,
-		kana: true,
-		facilityNumber: true,
-		businessType: true,
-		postalCode: true,
-		prefecture: true,
-		city: true,
-		address1: true,
-		address2: true,
-		phoneNumber: true,
-		fax: true,
-		year: true,
-		month: true,
-		founder: true,
-		bedding: true,
-		numberOfEmployees: true,
-		homepage: true,
-		numberOfFacilities: true
-	}
+	const hojinKojin = [' ', '法人', '個人']
 
 	/**
 	 * Triggered when the form is submit.
@@ -50,66 +27,7 @@
 	const handleSubmit = (e: any): void => {
 		if (verificationPageDisplayed) {
 			modalIsOpened = true
-
-			if (formType === 'create') {
-				let newcustomer = parseBeforePost(initialState)
-				create(newcustomer, 'http://localhost:3000/customers/')
-			}
-
-			if (formType === 'update') {
-				const registration = {
-					status: '登録',
-					date: initialState.registrationDate,
-					time: initialState.registrationTime
-				}
-				const updatedcustomer = parseBeforeUpdate(initialState, registration)
-
-				if (initialState.id) {
-					update(updatedcustomer, 'http://localhost:3000/customers/', initialState.id)
-				}
-			}
-			// e.target.submit()
-			// window.location.href = '/customers'
 		}
-
-		if (!verificationPageDisplayed) {
-			e.preventDefault()
-
-			let formIsValid: boolean = checkIfFormIsValid(initialState)
-
-			if (formIsValid) {
-				verificationPageDisplayed = true
-			}
-		}
-	}
-
-	/**
-	 * Take the form and check if all the entries are valid.
-	 * If there is one error, the function will return false.
-	 * @param formEntries: Object of entries
-	 * @returns boolean
-	 */
-	const checkIfFormIsValid = (formEntries: Object): boolean => {
-		let errorArray: boolean[] = []
-		let isValid = true
-		const customerKeys = Object.keys(formEntries)
-		const customerValues = Object.values(formEntries)
-
-		for (let i = 0; i < customerKeys.length; i++) {
-			const name: string = customerKeys[i]
-			const input: string = customerValues[i]
-
-			noErrors[name as keyof Error] = inputIsValid(name, input)
-			errorArray.push(!inputIsValid(name, input))
-		}
-
-		errorArray.forEach(error => {
-			if (error) {
-				isValid = false
-			}
-		})
-
-		return isValid
 	}
 </script>
 
@@ -120,15 +38,9 @@
 		? '/customers/new?/create'
 		: '/customers/' + initialState.id + '/edit?/update'}
 	id="registration-form"
-	on:submit|preventDefault={handleSubmit}
->
-	<!-- <form
-	class="form {verificationPageDisplayed ? 'hidden' : ''}"
-	method={'POST'}
-	action={'?/update'}
-	id="registration-form"
 	on:submit={handleSubmit}
-> -->
+	use:enhance
+>
 	<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
 	<div class="form__form">
 		<fieldset class="fieldset fieldset--info1">

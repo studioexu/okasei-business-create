@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { fly } from 'svelte/transition'
 	import BedContainer from './BedContainer.svelte'
 	import BeddingWrapper from './BeddingWrapper.svelte'
 	import FoundationWrapper from './FoundationWrapper.svelte'

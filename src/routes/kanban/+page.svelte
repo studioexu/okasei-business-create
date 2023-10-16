@@ -76,6 +76,8 @@
 				newBoard = index
 				hoveringBoard = index + 1
 			} else if (type === 'task' && id !== currentTask.id) {
+				console.log(hoveringTask)
+
 				if (hoveringTask.id === '' && !hoveringTask.index) hoveringTask = { id, index }
 				else if (id !== hoveringTask.id && hoveringTask.index) {
 					resetMargin(hoveringTask.id)

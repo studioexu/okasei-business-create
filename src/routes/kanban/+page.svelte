@@ -62,12 +62,12 @@
 		hoveringTask.index !== undefined &&
 		Math.abs(currentTask.index - hoveringTask.index) === 1
 
+	let isDropped: boolean = false
 	let currentClientY: number = 0
 	let isUpper: boolean = false
 
 	const dragEnter = (event: Event, index: number, type: 'board' | 'task') => {
-		const target = <HTMLElement>event.target
-		const id = target.getAttribute('id')
+		const id = (<HTMLElement>event.target).getAttribute('id')
 
 		if (id) {
 			if (type === 'board' && currentTask.id !== '') {
@@ -123,6 +123,7 @@
 		hoveringBoard = 0
 		resetMargin(hoveringTask.id)
 		hoveringTask = { id: '' }
+		isDropped = true
 	}
 
 	const dragOver = async (event: Event) => {
@@ -162,6 +163,20 @@
 
 		currentBoard = index
 	}
+
+	const dragEnd = () => {
+		if (isDropped) isDropped = false
+		else {
+			document.getElementById(currentTask.id)?.removeAttribute('style')
+			currentTask = { id: '' }
+			currentBoard = 0
+			newBoard = 0
+			hoveringBoard = 0
+			resetMargin(hoveringTask.id)
+			hoveringTask = { id: '' }
+			isDropped = false
+		}
+	}
 </script>
 
 <div class="kanban">
@@ -185,6 +200,7 @@
 					on:dragstart={event => dragStart(event, index, taskIndex)}
 					on:dragenter={event => dragEnter(event, taskIndex, 'task')}
 					on:dragover={dragOver}
+					on:dragend={dragEnd}
 					on:click={() => click(task.id)}
 				>
 					<p>{task.title}</p>

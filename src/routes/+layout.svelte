@@ -47,7 +47,9 @@
 	:global(span),
 	:global(li),
 	:global(fieldset),
-	:global(input) {
+	:global(input),
+	:global(th),
+	:global(td) {
 		font-size: 18px;
 		color: var(--black);
 	}
@@ -63,10 +65,18 @@
 		margin: 0 auto;
 		text-align: center;
 		cursor: pointer;
+
+		&:hover {
+			opacity: 0.5;
+		}
 	}
 
 	:global(input) {
 		outline: none;
+	}
+
+	:global(th) {
+		font-weight: normal;
 	}
 
 	:global(.font-large) {

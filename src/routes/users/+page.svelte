@@ -835,7 +835,7 @@
 	</fieldset>
 </div>
 <div class="users">
-	<button class="btn" on:click={() => onClick('new')}>新規登録</button>
+	<button class="btn primary-btn" on:click={() => onClick('new')}>新規登録</button>
 	<table class="users-table">
 		<thead>
 			<tr>
@@ -935,8 +935,6 @@
 
 		.btn {
 			display: inline-block;
-			background: var(--primary-color);
-			color: #fff;
 			border-radius: 8px;
 			padding: 8px 16px;
 			margin: 32px 0;

@@ -73,8 +73,6 @@
 
 				> input {
 					width: 100%;
-					border: 1px solid var(--gray);
-					border-radius: 0;
 					padding: 8px 16px;
 					margin-left: 16px;
 
@@ -99,8 +97,6 @@
 			}
 
 			.login-btn {
-				background: var(--primary-color);
-				color: #fff;
 				font-weight: bold;
 			}
 

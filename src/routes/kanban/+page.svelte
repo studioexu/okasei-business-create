@@ -1,4 +1,6 @@
 <script lang="ts" context="module">
+	import { debounce } from '@/libs/utils'
+
 	const resetMargin = (id: string) => {
 		const element = document.getElementById(id)
 
@@ -6,13 +8,6 @@
 			element.style.marginTop = '0px'
 			element.style.marginBottom = '16px'
 		}
-	}
-
-	const debounce = (func: () => void, time: number) => {
-		let timer: ReturnType<typeof setTimeout> | undefined
-
-		if (timer) clearTimeout(timer)
-		timer = setTimeout(func, time)
 	}
 
 	const click = (id: string) => alert(`Task ID: ${id} がクリックされました`)
@@ -137,7 +132,7 @@
 			const rect = (<HTMLElement>event.target).getBoundingClientRect()
 			const clientY = (<MouseEvent>event).clientY
 
-			debounce(() => {
+			const moveTask = debounce(() => {
 				if (currentClientY !== clientY) {
 					const element = document.getElementById(hoveringTask.id)
 
@@ -153,6 +148,8 @@
 					currentClientY = clientY
 				}
 			}, 100)
+
+			moveTask()
 		}
 	}
 

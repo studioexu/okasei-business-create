@@ -73,6 +73,8 @@
 
 	:global(input) {
 		outline: none;
+		border: 1px solid var(--gray);
+		border-radius: 0;
 	}
 
 	:global(th) {
@@ -82,6 +84,11 @@
 	:global(.font-large) {
 		font-size: 21px;
 		font-weight: bold;
+	}
+
+	:global(.primary-btn) {
+		background: var(--primary-color);
+		color: #fff;
 	}
 
 	.main {

@@ -6,25 +6,25 @@
 	$: isHidden = true
 </script>
 
-<main class="login">
+<div class="login">
 	<div class="left">
 		<img class="logo" src="./../../logo.svg" alt="logo" />
 	</div>
 	<div class="right">
 		<fieldset class="fieldset">
-			<Icon icon={{ path: 'icons/user', color: '#595857' }} />
+			<Icon icon={{ path: 'user', color: '#595857' }} />
 			<input type="text" placeholder="社員番号" />
 		</fieldset>
 		<fieldset class="fieldset">
-			<Icon icon={{ path: 'icons/password', color: '#595857' }} />
+			<Icon icon={{ path: 'password', color: '#595857' }} />
 			<input type={isHidden ? 'password' : 'text'} placeholder="パスワード" />
 			<!-- svelte-ignore a11y-click-events-have-key-events -->
 			<!-- svelte-ignore a11y-no-static-element-interactions -->
 			<span on:click={() => (isHidden = !isHidden)}>
 				{#if isHidden}
-					<Icon icon={{ path: 'icons/eye-slash', color: '#595857' }} />
+					<Icon icon={{ path: 'eye-slash', color: '#595857' }} />
 				{:else}
-					<Icon icon={{ path: 'icons/eye', color: '#595857' }} />
+					<Icon icon={{ path: 'eye', color: '#595857' }} />
 				{/if}
 			</span>
 		</fieldset>
@@ -32,7 +32,7 @@
 		<span class="horizontal-line" />
 		<button class="password-btn">パスワード変更</button>
 	</div>
-</main>
+</div>
 
 <style lang="scss">
 	.login {
@@ -60,7 +60,7 @@
 		}
 
 		> .right {
-			background-color: #fff;
+			background: #fff;
 			border-radius: 8px;
 			text-align: center;
 
@@ -73,13 +73,13 @@
 
 				> input {
 					width: 100%;
-					border: 1px solid #7b7c7d;
+					border: 1px solid var(--gray);
 					border-radius: 0;
 					padding: 8px 16px;
 					margin-left: 16px;
 
 					&::placeholder {
-						color: #7b7c7d;
+						color: var(--gray);
 					}
 				}
 
@@ -94,7 +94,7 @@
 			.login-btn,
 			.password-btn {
 				width: 320px;
-				border-radius: 100px;
+				border-radius: 16px;
 				padding: 16px 24px;
 			}
 

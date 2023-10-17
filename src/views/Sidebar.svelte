@@ -4,27 +4,42 @@
 
 <script lang="ts">
 	export let path: string
+	export let authority: string
 
-	const menus: { path: string; text: string }[] = [
-		{ path: 'users', text: '社員一覧' },
-		{ path: 'customers', text: '顧客管理' },
-		{ path: 'purchases', text: '買取一覧' },
-		{ path: 'negotiations', text: '商談一覧' },
-		{ path: 'history', text: '変更履歴' },
-		{ path: 'settings', text: '設定' }
+	const menus: { path: string; routes: string[]; text: string }[] = [
+		{ path: 'users', routes: ['/users', '/users/[id]', '/users/new'], text: '社員一覧' },
+		{
+			path: 'customers',
+			routes: ['/customers', '/customers/[id]', '/customers/new'],
+			text: '顧客一覧'
+		},
+		{
+			path: 'purchases',
+			routes: ['/purchases', '/purchases/[id]', '/purchases/new'],
+			text: '買取一覧'
+		},
+		{
+			path: 'negotiations',
+			routes: ['/negotiations', '/negotiations/[id]', '/negotiations/new'],
+			text: '商談一覧'
+		},
+		{ path: 'history', routes: ['/history'], text: '変更履歴' },
+		{ path: 'settings', routes: ['/settings'], text: '設定' }
 	]
+
+	if (authority !== 'admin') menus.shift()
 </script>
 
 <nav class="nav">
 	<ul class="nav-menu">
 		{#each menus as menu}
-			<li class:active={`/${menu.path}` === path}>
-				<a href={`/${menu.path}`}>
-					<span class:invisible={`/${menu.path}` !== path}>
-						<Icon icon={{ path: `icons/${menu.path}`, color: '#0093d0' }} />
+			<li class:active={menu.routes.includes(path)}>
+				<a href={menu.path}>
+					<span class:invisible={!menu.routes.includes(path)}>
+						<Icon icon={{ path: menu.path, color: '#0093d0' }} />
 					</span>
-					<span class:invisible={`/${menu.path}` === path}>
-						<Icon icon={{ path: `icons/${menu.path}` }} />
+					<span class:invisible={menu.routes.includes(path)}>
+						<Icon icon={{ path: menu.path }} />
 					</span>
 					{menu.text}
 				</a>
@@ -32,7 +47,7 @@
 		{/each}
 	</ul>
 	<span class="logout">
-		<a href="/"><Icon icon={{ path: `icons/logout` }} />ログアウト</a>
+		<a href="/"><Icon icon={{ path: 'logout' }} />ログアウト</a>
 	</span>
 </nav>
 
@@ -56,21 +71,23 @@
 				&:last-of-type {
 					margin-bottom: 0px;
 				}
+
+				&:hover {
+					opacity: 0.5;
+				}
 			}
 
 			.active {
 				background: #fff;
 				color: var(--primary-color);
+
+				&:hover {
+					opacity: 1;
+				}
 			}
 
 			.invisible {
 				display: none;
-
-				// > :global(.svg-icon) {
-				// 	width: 0;
-				// 	height: 0;
-				// 	visibility: hidden;
-				// }
 			}
 		}
 
@@ -79,6 +96,10 @@
 			bottom: 64px;
 			color: #fff;
 			padding: 0 24px;
+
+			&:hover {
+				opacity: 0.5;
+			}
 		}
 
 		a {

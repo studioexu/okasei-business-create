@@ -1,5 +1,4 @@
 <script lang="ts" context="module">
-	import { onMount } from 'svelte'
 	import { page } from '$app/stores'
 	import Header from '@/views/Header.svelte'
 	import Sidebar from '@/views/Sidebar.svelte'
@@ -7,31 +6,24 @@
 
 <script lang="ts">
 	$: path = $page.url.pathname
-	$: slicedPath = path ? path.slice(1) : path
-	$: title = slicedPath && titles.hasOwnProperty(slicedPath) ? titles[slicedPath] : ''
 
-	const titles: Record<string, string> = {
-		users: '社員一覧',
-		customers: '顧客管理',
-		purchases: '買取一覧',
-		negotiations: '商談一覧',
-		history: '変更履歴',
-		settings: '設定'
-	}
+	const authority = 'admin'
 </script>
 
-{#if path !== '/' && path !== null}
-	<Header {title} authority="admin" id="000000" name="山田太郎" />
-	<Sidebar {path} />
+{#if path !== '/'}
+	<Header {path} {authority} id="000000" name="山田太郎" />
+	<Sidebar {path} {authority} />
 {/if}
-<slot />
+<main class:main={path !== '/'}>
+	<slot />
+</main>
 
 <style>
 	:root {
 		--primary-color: #0093d0;
-		--background-color: #b7eaff;
+		--background-color: #d0f1ff;
 		--black: #595857;
-    --gray: #7b7c7d;
+		--gray: #7b7c7d;
 	}
 
 	:global(*) {
@@ -54,7 +46,10 @@
 	:global(p),
 	:global(span),
 	:global(li),
-	:global(input) {
+	:global(fieldset),
+	:global(input),
+	:global(th),
+	:global(td) {
 		font-size: 18px;
 		color: var(--black);
 	}
@@ -69,15 +64,32 @@
 		font-size: 18px;
 		margin: 0 auto;
 		text-align: center;
-    cursor: pointer;
+		cursor: pointer;
+
+		&:hover {
+			opacity: 0.5;
+		}
 	}
 
 	:global(input) {
 		outline: none;
 	}
 
+	:global(th) {
+		font-weight: normal;
+	}
+
 	:global(.font-large) {
 		font-size: 21px;
 		font-weight: bold;
+	}
+
+	.main {
+		position: absolute;
+		top: 64px;
+		left: 200px;
+		width: calc(100vw - 200px);
+		height: calc(100vh - 64px);
+		padding: 32px;
 	}
 </style>

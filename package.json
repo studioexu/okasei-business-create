@@ -28,5 +28,8 @@
 		"vite": "^4.4.2",
 		"vite-tsconfig-paths": "^4.2.1"
 	},
-	"type": "module"
+	"type": "module",
+	"dependencies": {
+		"@sveltejs/adapter-auto": "^2.1.0"
+	}
 }

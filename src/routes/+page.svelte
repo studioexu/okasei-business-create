@@ -60,7 +60,7 @@
 		}
 
 		> .right {
-			background-color: #fff;
+			background: #fff;
 			border-radius: 8px;
 			text-align: center;
 
@@ -73,13 +73,13 @@
 
 				> input {
 					width: 100%;
-					border: 1px solid #7b7c7d;
+					border: 1px solid var(--gray);
 					border-radius: 0;
 					padding: 8px 16px;
 					margin-left: 16px;
 
 					&::placeholder {
-						color: #7b7c7d;
+						color: var(--gray);
 					}
 				}
 
@@ -96,10 +96,6 @@
 				width: 320px;
 				border-radius: 16px;
 				padding: 16px 24px;
-
-				&:hover {
-					opacity: 0.5;
-				}
 			}
 
 			.login-btn {

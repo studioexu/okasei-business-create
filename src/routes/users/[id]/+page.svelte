@@ -14,15 +14,8 @@
 
 	const keys = <('user' | 'date' | 'time')[]>Object.keys(texts)
 
-	const generateEditedData = (data: {
-		user: string
-		datetime: Date
-	}): EditedData => {
-		const obj: EditedData = {
-			user: '',
-			date: '',
-			time: ''
-		}
+	const generateEditedData = (data: { user: string; datetime: Date }): EditedData => {
+		const obj: EditedData = { user: '', date: '', time: '' }
 
 		if (data.user !== '') {
 			obj.user = data.user
@@ -115,7 +108,7 @@
 
 			switch (id) {
 				case 'employeeNumber':
-					user[id] = Number(content.replace(/^0+(?=\d)/, ''))
+					user[id] = parseInt(content.replace(/^0+(?=\d)/, ''), 10)
 
 					if (fieldset) fieldset.isError = user[id] <= 0
 

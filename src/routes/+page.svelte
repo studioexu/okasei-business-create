@@ -34,7 +34,7 @@
 		const content: string = (<HTMLInputElement>event.target).value
 		loginData[key] = key === 'password' ? content : content.replace(/^0+(?=\d)/, '')
 
-		if (key === 'employeeNumber' && Number(loginData[key]) <= 0) error = key
+		if (key === 'employeeNumber' && parseInt(loginData[key], 10) <= 0) error = key
 	}, 500)
 
 	const onSubmit = debounce(async (event: Event) => {

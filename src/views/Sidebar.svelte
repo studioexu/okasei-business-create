@@ -6,8 +6,13 @@
 	export let path: string
 	export let authority: string
 
-	const menus: { path: string; routes: string[]; text: string }[] = [
-		{ path: 'users', routes: ['/users', '/users/[id]', '/users/new'], text: '社員一覧' },
+	const menus: { path: string; routes: string[]; regexp?: RegExp; text: string }[] = [
+		{
+			path: 'users',
+			routes: ['/users', '/users/[id]', '/users/new'],
+			regexp: /^\/users\/[1-9]\d?$/,
+			text: '社員一覧'
+		},
 		{
 			path: 'customers',
 			routes: ['/customers', '/customers/[id]', '/customers/new'],
@@ -33,12 +38,12 @@
 <nav class="nav">
 	<ul class="nav-menu">
 		{#each menus as menu}
-			<li class:active={menu.routes.includes(path)}>
+			<li class:active={menu.routes.includes(path) || menu.regexp?.test(path)}>
 				<a href={menu.path}>
-					<span class:invisible={!menu.routes.includes(path)}>
+					<span class:invisible={!menu.routes.includes(path) && !menu.regexp?.test(path)}>
 						<Icon icon={{ path: menu.path, color: '#0093d0' }} />
 					</span>
-					<span class:invisible={menu.routes.includes(path)}>
+					<span class:invisible={menu.routes.includes(path) || menu.regexp?.test(path)}>
 						<Icon icon={{ path: menu.path }} />
 					</span>
 					{menu.text}

@@ -108,19 +108,23 @@
 </script>
 
 <div class="search">
-	{#each fieldsets as fieldset}
-		<fieldset>
-			<label for={toKebab(fieldset.id)}>{fieldset.text}</label>
-			<input
-				type={fieldset.type}
-				id={toKebab(fieldset.id)}
-				on:input={event => onInput(event, fieldset.id)}
-			/>
-		</fieldset>
-	{/each}
+	<div class="search-container">
+		<div>
+			{#each fieldsets as fieldset}
+				<fieldset>
+					<label for={toKebab(fieldset.id)}>{fieldset.text}</label>
+					<input
+						type={fieldset.type}
+						id={toKebab(fieldset.id)}
+						on:input={event => onInput(event, fieldset.id)}
+					/>
+				</fieldset>
+			{/each}
+		</div>
+		<button class="primary" on:click={() => onClick('new')}>新規登録</button>
+	</div>
 </div>
 <div class="users">
-	<button class="btn primary" on:click={() => onClick('new')}>新規登録</button>
 	<table class="users-table">
 		<thead>
 			<tr>
@@ -195,19 +199,32 @@
 
 <style lang="scss">
 	.search {
-		display: flex;
-		justify-content: center;
+		text-align: center;
 
-		fieldset {
-			margin-right: 32px;
+		&-container {
+			display: inline-block;
 
-			&:last-child {
-				margin-right: 0;
+			div {
+				display: flex;
+				justify-content: center;
+
+				fieldset {
+					margin-right: 32px;
+
+					&:last-child {
+						margin-right: 0;
+					}
+
+					input {
+						padding: 4px 8px;
+						margin-left: 8px;
+					}
+				}
 			}
 
-			input {
-				padding: 4px 8px;
-				margin-left: 8px;
+			button {
+				float: right;
+				margin: 32px 0;
 			}
 		}
 	}
@@ -217,11 +234,6 @@
 		justify-content: end;
 		flex-wrap: wrap;
 		margin-bottom: 48px;
-
-		.btn {
-			display: inline-block;
-			margin: 32px 0;
-		}
 
 		&-table {
 			width: 100%;

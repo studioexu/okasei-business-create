@@ -7,8 +7,14 @@
 </script>
 
 <script lang="ts">
-	const user: User = {
-		employeeNumber: 0,
+	const user: {
+		employeeNumber: string
+		name: string
+		belongsTo: string
+		role: Role
+		email: string
+	} = {
+		employeeNumber: '',
 		name: '',
 		belongsTo: '',
 		role: <Role>'',
@@ -82,10 +88,9 @@
 
 			switch (id) {
 				case 'employeeNumber':
-					user[id] = Number(content.replace(/^0+(?=\d)/, ''))
+					user[id] = content.replace(/^0+(?=\d)/, '')
 
-					if (fieldset) fieldset.isError = user[id] <= 0
-
+					if (fieldset) fieldset.isError = parseInt(user[id], 10) <= 0
 					break
 
 				case 'name':
@@ -109,7 +114,7 @@
 		}
 	}, 500)
 
-  const goBack = () => goto('/users')
+	const goBack = () => goto('/users')
 
 	const onClick = () => {
 		if (confirm('ページを移動しますか？')) {
@@ -127,7 +132,37 @@
 
 				for (const key in user) formData.append(key, <string>user[<UserKey>key])
 
-				users.set([...$users, user])
+				const localUser: User = <User>{
+					employeeNumber: 0,
+					name: '',
+					belongsTo: '',
+					role: <Role>'',
+					email: ''
+				}
+
+				for (let key in localUser) {
+					key = <UserKey>key
+
+					if (localUser.hasOwnProperty(key)) {
+						switch (key) {
+							case 'employeeNumber':
+								localUser[key] = parseInt(user[key], 10)
+								break
+
+							case 'role':
+								localUser[key] = <Role>user[key]
+								break
+
+							case 'name':
+							case 'belongsTo':
+							case 'email':
+								localUser[key] = user[key]
+								break
+						}
+					}
+				}
+
+				users.set([...$users, localUser])
 				isShown = true
 				isSucceeded = true
 			} catch (error) {
@@ -175,7 +210,7 @@
 		</div>
 	</form>
 	{#if isShown}
-		<ResultModal {isSucceeded} on:click={() => isSucceeded ? goBack() : (isShown = false)} />
+		<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
 	{/if}
 </div>
 

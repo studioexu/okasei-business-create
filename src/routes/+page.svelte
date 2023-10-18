@@ -1,37 +1,93 @@
 <script lang="ts" context="module">
+	import { goto } from '$app/navigation'
 	import Icon from '@/components/Icon.svelte'
+	import type { Login } from '@/libs/types'
+	import { debounce } from '@/libs/utils'
+
+	const keys: Login[] = ['employeeNumber', 'password']
+
+	const errorTexts: {
+		employeeNumber: string
+		password: string
+	} = {
+		employeeNumber: '社員番号は0より大きい数を入力してください。',
+		password: '社員番号とパスワードが一致しません。'
+	}
 </script>
 
 <script lang="ts">
-	$: isHidden = true
+	let error: Login | undefined = undefined
+	let isHidden = true
+
+	const loginData: {
+		employeeNumber: string
+		password: string
+	} = {
+		employeeNumber: '',
+		password: ''
+	}
+
+	$: isDisabled = keys.some(key => loginData[key] === '' || error)
+
+	const onInput = debounce((event: Event, key: Login) => {
+		error = undefined
+		const content: string = (<HTMLInputElement>event.target).value
+		loginData[key] = key === 'password' ? content : content.replace(/^0+(?=\d)/, '')
+
+		if (key === 'employeeNumber' && Number(loginData[key]) <= 0) error = key
+	}, 500)
+
+	const onSubmit = debounce(async (event: Event) => {
+		event.preventDefault()
+
+		if (!isDisabled) {
+			try {
+				const formData = new FormData()
+
+				for (const key in loginData) formData.append(key, <string>loginData[<Login>key])
+
+				if (loginData.password !== 'password') error = 'password'
+				else goto('/users')
+			} catch (error) {}
+		}
+	}, 500)
 </script>
 
 <div class="login">
 	<div class="left">
 		<img class="logo" src="./../../logo.svg" alt="logo" />
 	</div>
-	<div class="right">
-		<fieldset class="fieldset">
-			<Icon icon={{ path: 'user', color: '#595857' }} />
-			<input type="text" placeholder="社員番号" />
-		</fieldset>
-		<fieldset class="fieldset">
-			<Icon icon={{ path: 'password', color: '#595857' }} />
-			<input type={isHidden ? 'password' : 'text'} placeholder="パスワード" />
-			<!-- svelte-ignore a11y-click-events-have-key-events -->
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			<span on:click={() => (isHidden = !isHidden)}>
-				{#if isHidden}
-					<Icon icon={{ path: 'eye-slash', color: '#595857' }} />
-				{:else}
-					<Icon icon={{ path: 'eye', color: '#595857' }} />
+	<form class="right" on:submit={onSubmit}>
+		{#if error}
+			<span class="font-error">{errorTexts[error]}</span>
+		{/if}
+		{#each keys as key}
+			<fieldset class="fieldset">
+				<Icon icon={{ path: key === 'password' ? 'password' : 'user', color: '#595857' }} />
+				<input
+					class:error={(error && key === 'employeeNumber') || error === 'password'}
+					type={key === 'employeeNumber' ? 'number' : isHidden ? 'password' : 'text'}
+					value={loginData[key]}
+					placeholder={key === 'password' ? 'パスワード' : '社員番号'}
+					on:input={event => onInput(event, key)}
+				/>
+				{#if key === 'password'}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<!-- svelte-ignore a11y-no-static-element-interactions -->
+					<span on:click={() => (isHidden = !isHidden)}>
+						{#if isHidden}
+							<Icon icon={{ path: 'eye-slash', color: '#595857' }} />
+						{:else}
+							<Icon icon={{ path: 'eye', color: '#595857' }} />
+						{/if}
+					</span>
 				{/if}
-			</span>
-		</fieldset>
-		<button class="primary login-btn">ログイン</button>
+			</fieldset>
+		{/each}
+		<button class="primary login-btn" class:disabled={isDisabled} type="submit">ログイン</button>
 		<span class="horizontal-line" />
-		<button class="password-btn">パスワード変更</button>
-	</div>
+		<button class="password-btn" type="button">パスワード変更</button>
+	</form>
 </div>
 
 <style lang="scss">
@@ -63,6 +119,11 @@
 			background: #fff;
 			border-radius: 8px;
 			text-align: center;
+
+			> span {
+				display: block;
+				margin-bottom: 8px;
+			}
 
 			> .fieldset {
 				position: relative;

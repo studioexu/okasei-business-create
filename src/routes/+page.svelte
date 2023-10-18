@@ -28,7 +28,7 @@
 				{/if}
 			</span>
 		</fieldset>
-		<button class="login-btn">ログイン</button>
+		<button class="primary login-btn">ログイン</button>
 		<span class="horizontal-line" />
 		<button class="password-btn">パスワード変更</button>
 	</div>

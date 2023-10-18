@@ -83,6 +83,12 @@
 		font-weight: normal;
 	}
 
+	:global(dt),
+	:global(dd) {
+		font-size: 14px;
+		color: var(--black);
+	}
+
 	:global(.font-large) {
 		font-size: 21px;
 		font-weight: bold;

@@ -1,10 +1,44 @@
 <script lang="ts" context="module">
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
-	import { roles, users } from '@/stores/users'
+	import { roles, users, created, updated } from '@/stores/users'
 	import { debounce, toKebab } from '@/libs/utils'
-	import type { Role, User, UserKey } from '@/libs/types'
+	import type { EditedData, Role, User, UserKey } from '@/libs/types'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
+
+	const texts: EditedData = {
+		user: '登録者',
+		date: '登録日',
+		time: '登録時刻'
+	}
+
+	const keys = <('user' | 'date' | 'time')[]>Object.keys(texts)
+
+	const generateEditedData = (data: {
+		user: string
+		datetime: Date
+	}): EditedData => {
+		const obj: EditedData = {
+			user: '',
+			date: '',
+			time: ''
+		}
+
+		if (data.user !== '') {
+			obj.user = data.user
+			const datetime: Date = data.datetime
+			const convert = (num: number) => `0${num}`.slice(-2)
+
+			obj.date = `${datetime.getFullYear()}/${convert(datetime.getMonth() + 1)}/${convert(
+				datetime.getDate()
+			)}`
+			obj.time = `${datetime.getHours()}:${convert(datetime.getMinutes())}:${convert(
+				datetime.getSeconds()
+			)}`
+		}
+
+		return obj
+	}
 </script>
 
 <script lang="ts">
@@ -70,6 +104,9 @@
 	let isNavigating: boolean = false
 	let isShown: boolean = false
 	let isSucceeded: boolean = false
+
+	const createdAt: EditedData = generateEditedData($created)
+	const updatedAt: EditedData = generateEditedData($updated)
 
 	const onInput = debounce((event: Event, id: string) => {
 		if (user.hasOwnProperty(id)) {
@@ -143,7 +180,7 @@
 </script>
 
 <div class="container">
-	<form class="form" id="new-user" on:submit={event => onSubmit(event)}>
+	<form class="form" on:submit={event => onSubmit(event)}>
 		{#each fieldsets as fieldset}
 			<fieldset>
 				<label for={toKebab(fieldset.id)}>{fieldset.text}</label>
@@ -191,6 +228,22 @@
 			{/if}
 		</div>
 	</form>
+	<dl class="history">
+		<div>
+			{#each keys as key}
+				<dt>{texts[key]}</dt>
+				<dd>{createdAt[key]}</dd>
+			{/each}
+		</div>
+		{#if updatedAt.user !== ''}
+			<div>
+				{#each keys as key}
+					<dt>{texts[key]}</dt>
+					<dd>{updatedAt[key]}</dd>
+				{/each}
+			</div>
+		{/if}
+	</dl>
 	{#if isConfirming && isShown}
 		<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
 	{/if}
@@ -238,6 +291,32 @@
 
 					&:first-child {
 						margin-right: 32px;
+					}
+				}
+			}
+		}
+
+		.history {
+			margin-top: 32px;
+
+			div {
+				display: flex;
+				align-items: center;
+
+				&:last-child {
+					margin-top: 8px;
+				}
+
+				dt {
+					width: 64px;
+				}
+
+				dd {
+					width: 102px;
+					margin-right: 16px;
+
+					&:last-child {
+						margin-right: 0;
 					}
 				}
 			}

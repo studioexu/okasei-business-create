@@ -50,8 +50,8 @@
 		const numbers: number[] = []
 
 		for (let i = 0; i < Math.min(users.length, max); i++) {
-			if (current < max || users.length <= max) numbers.push(i + 1)
-			else if (users.length - max - 1 < current && current < users.length)
+			if (current < max - 1 || users.length <= max) numbers.push(i + 1)
+			else if (users.length - max < current && current < users.length)
 				numbers.unshift(users.length - i)
 			else numbers.push(current + i)
 		}
@@ -62,11 +62,9 @@
 	$: pagination = generatePagination(dividedUsers)
 
 	const onInput = debounce((event: Event, key: SortedItemForUser) => {
-		const localKey = <SortedItemForUser>toKebab(key)
 		const content: string = (<HTMLInputElement>event.target).value
 
-		sortedValues[localKey] =
-			localKey === 'employeeNumber' ? content : content.replace(/^0+(?=\d)/, '')
+		sortedValues[key] = key === 'employeeNumber' ? content.replace(/^0+(?=\d)/, '') : content
 		current = 0
 	}, 500)
 
@@ -122,7 +120,7 @@
 	{/each}
 </div>
 <div class="users">
-	<button class="btn primary-btn" on:click={() => onClick('new')}>新規登録</button>
+	<button class="btn primary" on:click={() => onClick('new')}>新規登録</button>
 	<table class="users-table">
 		<thead>
 			<tr>
@@ -222,18 +220,14 @@
 
 		.btn {
 			display: inline-block;
-			border-radius: 8px;
-			padding: 8px 16px;
 			margin: 32px 0;
 		}
 
 		&-table {
-			display: block;
 			width: 100%;
 			background: #fff;
 			border-radius: 16px;
 			padding: 32px;
-			margin: 0 auto;
 
 			thead,
 			tbody {

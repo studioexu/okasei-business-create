@@ -4,6 +4,7 @@
 	import { debounce, toKebab } from '@/libs/utils'
 	import { users } from '@/stores/users'
 	import type { SortedItemForUser, User } from '@/libs/types'
+	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 </script>
 
 <script lang="ts">
@@ -61,6 +62,10 @@
 
 	$: pagination = generatePagination(dividedUsers)
 
+	let isShown: boolean = false
+	let currentUser: number | undefined = undefined
+	let phase: 'shown' | 'success' | 'error' = 'shown'
+
 	const onInput = debounce((event: Event, key: SortedItemForUser) => {
 		const content: string = (<HTMLInputElement>event.target).value
 
@@ -68,16 +73,9 @@
 		current = 0
 	}, 500)
 
-	const onClick = (type: string, index?: number) => {
-		switch (type) {
-			case 'new':
-				goto('/users/new')
-				break
-
-			case 'edit':
-				if (index) goto(`/users/${dividedUsers[current][index - 1].employeeNumber}`)
-				break
-		}
+	const openModal = (index: number) => {
+		isShown = true
+		currentUser = dividedUsers[current][<number>index].employeeNumber
 	}
 
 	const movePage = (
@@ -105,6 +103,40 @@
 				if (!isActive) current = page
 		}
 	}
+
+	const onClick = (event: { detail: { key: string } }) => {
+		switch (event.detail.key) {
+			case 'cancel':
+				isShown = false
+				break
+
+			case 'delete':
+				try {
+					users.set($users.filter(user => user.employeeNumber !== currentUser))
+					phase = 'success'
+				} catch (error) {
+					phase = 'error'
+				}
+				break
+
+			case 'success':
+				isShown = false
+				phase = 'shown'
+				break
+
+			case 'error':
+				phase = 'shown'
+				break
+		}
+	}
+
+	$: {
+		if (isShown && phase === 'success')
+			setTimeout(() => {
+				isShown = false
+				phase = 'shown'
+			}, 2000)
+	}
 </script>
 
 <div class="search">
@@ -121,7 +153,7 @@
 				</fieldset>
 			{/each}
 		</div>
-		<button class="primary" on:click={() => onClick('new')}>新規登録</button>
+		<button class="primary" on:click={() => goto('/users/new')}>新規登録</button>
 	</div>
 </div>
 <div class="users">
@@ -149,14 +181,14 @@
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
 						<td
-							><span on:click={() => onClick('edit', index + 1)}
+							><span on:click={() => goto(`/users/${dividedUsers[current][index].employeeNumber}`)}
 								><Icon icon={{ path: 'edit', color: '#0093d0' }} /></span
 							></td
 						>
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
 						<td>
-							<span on:click={() => onClick('delete', index)}
+							<span on:click={() => openModal(index)}
 								><Icon icon={{ path: 'delete', color: '#0093d0' }} /></span
 							>
 						</td>
@@ -196,6 +228,9 @@
 		{/if}
 	</div>
 </div>
+{#if isShown}
+	<DeleteModal {phase} on:click={onClick} />
+{/if}
 
 <style lang="scss">
 	.search {

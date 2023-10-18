@@ -56,7 +56,7 @@
 		position: relative;
 		display: inline-block;
 		height: calc(100vh - 64px);
-		width: 200px;
+		width: 192px;
 		background: var(--primary-color);
 		padding-top: 16px;
 

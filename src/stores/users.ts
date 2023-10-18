@@ -713,3 +713,13 @@ export const users: Writable<User[]> = writable([
 		email: 'oliver.turner@example.com'
 	}
 ])
+
+export const created: Readable<{ user: string; datetime: Date }> = readable({
+	user: 'Jane Smith',
+	datetime: new Date(2023, 9, 14, 16, 28, 5, 114)
+})
+
+export const updated: Readable<{ user: string; datetime: Date }> = readable({
+	user: 'Emily Davis',
+	datetime: new Date()
+})

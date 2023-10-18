@@ -9,3 +9,5 @@ export interface User {
 	role: Role
 	email: string
 }
+
+export type UserKey = SortedItemForUser | 'role' | 'email'

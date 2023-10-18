@@ -1,6 +1,5 @@
 <script lang="ts" context="module">
 	import { goto } from '$app/navigation'
-	import { page } from '$app/stores'
 	import { roles, users } from '@/stores/users'
 	import { debounce, toKebab } from '@/libs/utils'
 	import type { Role, User, UserKey } from '@/libs/types'
@@ -8,7 +7,14 @@
 </script>
 
 <script lang="ts">
-	const user: User = <User>$users.find(user => `${user.employeeNumber}` === $page.params.id)
+	const user: User = {
+		employeeNumber: 0,
+		name: '',
+		belongsTo: '',
+		role: <Role>'',
+		email: ''
+	}
+
 	$: fieldsets = [
 		{
 			id: 'employeeNumber',
@@ -52,8 +58,6 @@
 		isError?: boolean
 		errorText?: string
 	}[]
-
-	let isConfirming: boolean = false
 
 	$: isDisabled = !Object.keys(user).every(key => {
 		const localKey = <UserKey>key
@@ -105,7 +109,7 @@
 		}
 	}, 500)
 
-	const goBack = () => goto('/users')
+  const goBack = () => goto('/users')
 
 	const onClick = () => {
 		if (confirm('ページを移動しますか？')) {
@@ -123,11 +127,7 @@
 
 				for (const key in user) formData.append(key, <string>user[<UserKey>key])
 
-				users.set(
-					$users.map(localUser =>
-						localUser.employeeNumber === user.employeeNumber ? user : localUser
-					)
-				)
+				users.set([...$users, user])
 				isShown = true
 				isSucceeded = true
 			} catch (error) {
@@ -138,7 +138,7 @@
 	}, 500)
 
 	$: {
-		if (isConfirming && isShown && isSucceeded) setTimeout(() => goBack(), 2000)
+		if (isShown && isSucceeded) setTimeout(() => goBack(), 2000)
 	}
 </script>
 
@@ -153,12 +153,10 @@
 					{/if}
 					<input
 						class:error={fieldset.isError}
-						class:readonly={isConfirming || fieldset.id === 'employeeNumber'}
 						type={fieldset.type}
 						id={toKebab(fieldset.id)}
 						value={user[fieldset.id]}
 						list={fieldset.list ?? ''}
-						readonly={isConfirming}
 						on:input={event => onInput(event, fieldset.id)}
 					/>
 				</div>
@@ -172,27 +170,12 @@
 			</fieldset>
 		{/each}
 		<div class="btns">
-			<button
-				class="secondary"
-				type="button"
-				on:click={() => (isConfirming ? (isConfirming = false) : onClick())}
-			>
-				{isConfirming ? '修正' : '戻る'}
-			</button>
-			{#if isConfirming}
-				<button class="primary" type="submit">登録</button>
-			{:else}
-				<button
-					class="primary"
-					class:disabled={isDisabled}
-					type="button"
-					on:click={() => (isConfirming = true)}>確認</button
-				>
-			{/if}
+			<button class="secondary" type="button" on:click={onClick}>戻る</button>
+			<button class="primary" class:disabled={isDisabled} type="submit">登録</button>
 		</div>
 	</form>
-	{#if isConfirming && isShown}
-		<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
+	{#if isShown}
+		<ResultModal {isSucceeded} on:click={() => isSucceeded ? goBack() : (isShown = false)} />
 	{/if}
 </div>
 

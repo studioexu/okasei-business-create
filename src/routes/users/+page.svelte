@@ -1,728 +1,40 @@
 <script lang="ts" context="module">
+	import { goto } from '$app/navigation'
 	import Icon from '@/components/Icon.svelte'
-	import type { Role } from '@/libs/types'
-	import { debounce } from '@/libs/utils'
+	import { debounce, toKebab } from '@/libs/utils'
+	import { users } from '@/stores/users'
+	import type { SortedItemForUser, User } from '@/libs/types'
 </script>
 
 <script lang="ts">
-	const users: {
-		employeeNumber: number
-		name: string
-		belongsTo: string
-		role: Role
-		email: string
-	}[] = [
+	const fieldsets: { id: SortedItemForUser; type: string; list?: string; text: string }[] = [
 		{
-			employeeNumber: 1,
-			name: 'John Doe',
-			belongsTo: '営業部',
-			role: 'システム管理者',
-			email: 'john.doe@example.com'
+			id: 'employeeNumber',
+			type: 'number',
+			text: '社員番号'
 		},
 		{
-			employeeNumber: 2,
-			name: 'Jane Smith',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'jane.smith@example.com'
+			id: 'name',
+			type: 'text',
+			text: '氏名'
 		},
 		{
-			employeeNumber: 3,
-			name: 'Bob Johnson',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'bob.johnson@example.com'
-		},
-		{
-			employeeNumber: 4,
-			name: 'Emily Davis',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'emily.davis@example.com'
-		},
-		{
-			employeeNumber: 5,
-			name: 'Michael Wilson',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'michael.wilson@example.com'
-		},
-		{
-			employeeNumber: 6,
-			name: 'Olivia Brown',
-			belongsTo: '営業部',
-			role: 'システム運用者',
-			email: 'olivia.brown@example.com'
-		},
-		{
-			employeeNumber: 7,
-			name: 'James Lee',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'james.lee@example.com'
-		},
-		{
-			employeeNumber: 8,
-			name: 'Sophia Moore',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'sophia.moore@example.com'
-		},
-		{
-			employeeNumber: 9,
-			name: 'Benjamin Hall',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'benjamin.hall@example.com'
-		},
-		{
-			employeeNumber: 10,
-			name: 'Emma Harris',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'emma.harris@example.com'
-		},
-		{
-			employeeNumber: 11,
-			name: 'Liam Clark',
-			belongsTo: '営業部',
-			role: 'システム管理者',
-			email: 'liam.clark@example.com'
-		},
-		{
-			employeeNumber: 12,
-			name: 'Ava Rodriguez',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'ava.rodriguez@example.com'
-		},
-		{
-			employeeNumber: 13,
-			name: 'Lucas Walker',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'lucas.walker@example.com'
-		},
-		{
-			employeeNumber: 14,
-			name: 'Mia Perez',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'mia.perez@example.com'
-		},
-		{
-			employeeNumber: 15,
-			name: 'Mason Lewis',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'mason.lewis@example.com'
-		},
-		{
-			employeeNumber: 16,
-			name: 'Harper Hill',
-			belongsTo: '営業部',
-			role: 'システム運用者',
-			email: 'harper.hill@example.com'
-		},
-		{
-			employeeNumber: 17,
-			name: 'Ethan Scott',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'ethan.scott@example.com'
-		},
-		{
-			employeeNumber: 18,
-			name: 'Liam Carter',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'liam.carter@example.com'
-		},
-		{
-			employeeNumber: 19,
-			name: 'Emma Hall',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'emma.hall@example.com'
-		},
-		{
-			employeeNumber: 20,
-			name: 'Oliver Turner',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'oliver.turner@example.com'
-		},
-		{
-			employeeNumber: 21,
-			name: 'Ava Bennett',
-			belongsTo: '営業部',
-			role: 'システム管理者',
-			email: 'ava.bennett@example.com'
-		},
-		{
-			employeeNumber: 22,
-			name: 'Sophia Perez',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'sophia.perez@example.com'
-		},
-		{
-			employeeNumber: 23,
-			name: 'Lucas White',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'lucas.white@example.com'
-		},
-		{
-			employeeNumber: 24,
-			name: 'Aiden Lewis',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'aiden.lewis@example.com'
-		},
-		{
-			employeeNumber: 25,
-			name: 'Ella Anderson',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'ella.anderson@example.com'
-		},
-		{
-			employeeNumber: 26,
-			name: 'Ethan Martin',
-			belongsTo: '営業部',
-			role: 'システム運用者',
-			email: 'ethan.martin@example.com'
-		},
-		{
-			employeeNumber: 27,
-			name: 'Mia Thompson',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'mia.thompson@example.com'
-		},
-		{
-			employeeNumber: 28,
-			name: 'Lucas Lee',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'lucas.lee@example.com'
-		},
-		{
-			employeeNumber: 29,
-			name: 'Aiden Harris',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'aiden.harris@example.com'
-		},
-		{
-			employeeNumber: 30,
-			name: 'Liam Thomas',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'liam.thomas@example.com'
-		},
-		{
-			employeeNumber: 31,
-			name: 'Ava Scott',
-			belongsTo: '営業部',
-			role: 'システム管理者',
-			email: 'ava.scott@example.com'
-		},
-		{
-			employeeNumber: 32,
-			name: 'Oliver Brown',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'oliver.brown@example.com'
-		},
-		{
-			employeeNumber: 33,
-			name: 'Sophia Davis',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'sophia.davis@example.com'
-		},
-		{
-			employeeNumber: 34,
-			name: 'Lucas Turner',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'lucas.turner@example.com'
-		},
-		{
-			employeeNumber: 35,
-			name: 'Emma Turner',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'emma.turner@example.com'
-		},
-		{
-			employeeNumber: 36,
-			name: 'Mia White',
-			belongsTo: '営業部',
-			role: 'システム運用者',
-			email: 'mia.white@example.com'
-		},
-		{
-			employeeNumber: 37,
-			name: 'James White',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'james.white@example.com'
-		},
-		{
-			employeeNumber: 38,
-			name: 'Sophia Clark',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'sophia.clark@example.com'
-		},
-		{
-			employeeNumber: 39,
-			name: 'Ava Davis',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'ava.davis@example.com'
-		},
-		{
-			employeeNumber: 40,
-			name: 'Liam Smith',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'liam.smith@example.com'
-		},
-		{
-			employeeNumber: 41,
-			name: 'Harper Martin',
-			belongsTo: '営業部',
-			role: 'システム管理者',
-			email: 'harper.martin@example.com'
-		},
-		{
-			employeeNumber: 42,
-			name: 'Sophia White',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'sophia.white@example.com'
-		},
-		{
-			employeeNumber: 43,
-			name: 'Liam Johnson',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'liam.johnson@example.com'
-		},
-		{
-			employeeNumber: 44,
-			name: 'Lucas Anderson',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'lucas.anderson@example.com'
-		},
-		{
-			employeeNumber: 45,
-			name: 'Sophia Smith',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'sophia.smith@example.com'
-		},
-		{
-			employeeNumber: 46,
-			name: 'Mia Jones',
-			belongsTo: '営業部',
-			role: 'システム運用者',
-			email: 'mia.jones@example.com'
-		},
-		{
-			employeeNumber: 47,
-			name: 'Benjamin Turner',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'benjamin.turner@example.com'
-		},
-		{
-			employeeNumber: 48,
-			name: 'Ella Smith',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'ella.smith@example.com'
-		},
-		{
-			employeeNumber: 49,
-			name: 'Oliver Thomas',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'oliver.thomas@example.com'
-		},
-		{
-			employeeNumber: 50,
-			name: 'Aiden Martin',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'aiden.martin@example.com'
-		},
-		{
-			employeeNumber: 51,
-			name: 'Olivia Walker',
-			belongsTo: '営業部',
-			role: 'システム管理者',
-			email: 'olivia.walker@example.com'
-		},
-		{
-			employeeNumber: 52,
-			name: 'James Allen',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'james.allen@example.com'
-		},
-		{
-			employeeNumber: 53,
-			name: 'Benjamin Lewis',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'benjamin.lewis@example.com'
-		},
-		{
-			employeeNumber: 54,
-			name: 'Aiden Perez',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'aiden.perez@example.com'
-		},
-		{
-			employeeNumber: 55,
-			name: 'Lucas Walker',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'lucas.walker@example.com'
-		},
-		{
-			employeeNumber: 56,
-			name: 'Harper Rodriguez',
-			belongsTo: '営業部',
-			role: 'システム運用者',
-			email: 'harper.rodriguez@example.com'
-		},
-		{
-			employeeNumber: 57,
-			name: 'Mia Hill',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'mia.hill@example.com'
-		},
-		{
-			employeeNumber: 58,
-			name: 'Ella Smith',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'ella.smith@example.com'
-		},
-		{
-			employeeNumber: 59,
-			name: 'Ethan Turner',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'ethan.turner@example.com'
-		},
-		{
-			employeeNumber: 60,
-			name: 'Oliver Lee',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'oliver.lee@example.com'
-		},
-		{
-			employeeNumber: 61,
-			name: 'Sophia Harris',
-			belongsTo: '営業部',
-			role: 'システム管理者',
-			email: 'sophia.harris@example.com'
-		},
-		{
-			employeeNumber: 62,
-			name: 'James Walker',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'james.walker@example.com'
-		},
-		{
-			employeeNumber: 63,
-			name: 'Olivia Harris',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'olivia.harris@example.com'
-		},
-		{
-			employeeNumber: 64,
-			name: 'Lucas Lewis',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'lucas.lewis@example.com'
-		},
-		{
-			employeeNumber: 65,
-			name: 'Benjamin Turner',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'benjamin.turner@example.com'
-		},
-		{
-			employeeNumber: 66,
-			name: 'Sophia Anderson',
-			belongsTo: '営業部',
-			role: 'システム運用者',
-			email: 'sophia.anderson@example.com'
-		},
-		{
-			employeeNumber: 67,
-			name: 'Oliver Walker',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'oliver.walker@example.com'
-		},
-		{
-			employeeNumber: 68,
-			name: 'Mia Turner',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'mia.turner@example.com'
-		},
-		{
-			employeeNumber: 69,
-			name: 'Ella Clark',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'ella.clark@example.com'
-		},
-		{
-			employeeNumber: 70,
-			name: 'James Perez',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'james.perez@example.com'
-		},
-		{
-			employeeNumber: 71,
-			name: 'Ethan Brown',
-			belongsTo: '営業部',
-			role: 'システム管理者',
-			email: 'ethan.brown@example.com'
-		},
-		{
-			employeeNumber: 72,
-			name: 'Liam Smith',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'liam.smith@example.com'
-		},
-		{
-			employeeNumber: 73,
-			name: 'Olivia Walker',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'olivia.walker@example.com'
-		},
-		{
-			employeeNumber: 74,
-			name: 'Sophia Turner',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'sophia.turner@example.com'
-		},
-		{
-			employeeNumber: 75,
-			name: 'Ava Lewis',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'ava.lewis@example.com'
-		},
-		{
-			employeeNumber: 76,
-			name: 'Lucas Anderson',
-			belongsTo: '営業部',
-			role: 'システム運用者',
-			email: 'lucas.anderson@example.com'
-		},
-		{
-			employeeNumber: 77,
-			name: 'Mia Davis',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'mia.davis@example.com'
-		},
-		{
-			employeeNumber: 78,
-			name: 'Ella Thomas',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'ella.thomas@example.com'
-		},
-		{
-			employeeNumber: 79,
-			name: 'James Lee',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'james.lee@example.com'
-		},
-		{
-			employeeNumber: 80,
-			name: 'Benjamin White',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'benjamin.white@example.com'
-		},
-		{
-			employeeNumber: 81,
-			name: 'Sophia Clark',
-			belongsTo: '営業部',
-			role: 'システム管理者',
-			email: 'sophia.clark@example.com'
-		},
-		{
-			employeeNumber: 82,
-			name: 'Aiden Turner',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'aiden.turner@example.com'
-		},
-		{
-			employeeNumber: 83,
-			name: 'Oliver Turner',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'oliver.turner@example.com'
-		},
-		{
-			employeeNumber: 84,
-			name: 'Emma Perez',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'emma.perez@example.com'
-		},
-		{
-			employeeNumber: 85,
-			name: 'Liam Johnson',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'liam.johnson@example.com'
-		},
-		{
-			employeeNumber: 86,
-			name: 'Ella Thompson',
-			belongsTo: '営業部',
-			role: 'システム運用者',
-			email: 'ella.thompson@example.com'
-		},
-		{
-			employeeNumber: 87,
-			name: 'Ava Turner',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'ava.turner@example.com'
-		},
-		{
-			employeeNumber: 88,
-			name: 'Sophia Davis',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'sophia.davis@example.com'
-		},
-		{
-			employeeNumber: 89,
-			name: 'Ethan Walker',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'ethan.walker@example.com'
-		},
-		{
-			employeeNumber: 90,
-			name: 'Oliver Lewis',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'oliver.lewis@example.com'
-		},
-		{
-			employeeNumber: 91,
-			name: 'Ava Scott',
-			belongsTo: '営業部',
-			role: 'システム管理者',
-			email: 'ava.scott@example.com'
-		},
-		{
-			employeeNumber: 92,
-			name: 'James Brown',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'james.brown@example.com'
-		},
-		{
-			employeeNumber: 93,
-			name: 'Sophia White',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'sophia.white@example.com'
-		},
-		{
-			employeeNumber: 94,
-			name: 'Aiden Johnson',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'aiden.johnson@example.com'
-		},
-		{
-			employeeNumber: 95,
-			name: 'Ella Harris',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'ella.harris@example.com'
-		},
-		{
-			employeeNumber: 96,
-			name: 'Liam Turner',
-			belongsTo: '営業部',
-			role: 'システム運用者',
-			email: 'liam.turner@example.com'
-		},
-		{
-			employeeNumber: 97,
-			name: 'Lucas Martin',
-			belongsTo: '人事部',
-			role: '外回り担当',
-			email: 'lucas.martin@example.com'
-		},
-		{
-			employeeNumber: 98,
-			name: 'Emma Harris',
-			belongsTo: '開発部',
-			role: '清掃担当',
-			email: 'emma.harris@example.com'
-		},
-		{
-			employeeNumber: 99,
-			name: 'Benjamin Walker',
-			belongsTo: '総務部',
-			role: '倉庫担当',
-			email: 'benjamin.walker@example.com'
-		},
-		{
-			employeeNumber: 100,
-			name: 'Oliver Turner',
-			belongsTo: '開発部',
-			role: '電話担当',
-			email: 'oliver.turner@example.com'
+			id: 'belongsTo',
+			type: 'text',
+			text: '所属'
 		}
 	]
-	const searchedValues: { employeeNumber: string; name: string; belongsTo: string } = {
+
+	const sortedValues: { employeeNumber: string; name: string; belongsTo: string } = {
 		employeeNumber: '',
 		name: '',
 		belongsTo: ''
 	}
 
-	$: sortedUsers = users.filter(user =>
-		Object.keys(searchedValues).every(key => {
-			const localKey = <'employeeNumber' | 'name' | 'belongsTo'>key
-			return `${user[localKey]}`.includes(searchedValues[localKey])
+	$: sortedUsers = $users.filter(user =>
+		Object.keys(sortedValues).every(key => {
+			const localKey = <SortedItemForUser>key
+			return `${user[localKey]}`.includes(sortedValues[localKey])
 		})
 	)
 
@@ -734,20 +46,12 @@
 	const max: number = 3
 	let current: number = 0
 
-	$: generatePagination = (
-		users: {
-			employeeNumber: number
-			name: string
-			belongsTo: string
-			role: Role
-			email: string
-		}[][]
-	): number[] => {
+	$: generatePagination = (users: User[][]): number[] => {
 		const numbers: number[] = []
 
 		for (let i = 0; i < Math.min(users.length, max); i++) {
-			if (current < max || users.length <= max) numbers.push(i + 1)
-			else if (users.length - max - 1 < current && current < users.length)
+			if (current < max - 1 || users.length <= max) numbers.push(i + 1)
+			else if (users.length - max < current && current < users.length)
 				numbers.unshift(users.length - i)
 			else numbers.push(current + i)
 		}
@@ -757,29 +61,21 @@
 
 	$: pagination = generatePagination(dividedUsers)
 
-	const onInput = debounce((event: Event, key: 'employeeNumber' | 'name' | 'belongsTo') => {
-		let content: string = (<HTMLInputElement>event.target).value
+	const onInput = debounce((event: Event, key: SortedItemForUser) => {
+		const content: string = (<HTMLInputElement>event.target).value
 
-		searchedValues[key] = key === 'employeeNumber' ? content : content.replace(/^0+(?=\d)/, '')
+		sortedValues[key] = key === 'employeeNumber' ? content.replace(/^0+(?=\d)/, '') : content
 		current = 0
 	}, 500)
 
 	const onClick = (type: string, index?: number) => {
 		switch (type) {
-			case 'to-first':
-				current = 0
+			case 'new':
+				goto('/users/new')
 				break
 
-			case 'prev':
-				current--
-				break
-
-			case 'pagination':
-				if (index) current = index
-				break
-
-			case 'next':
-				current++
+			case 'edit':
+				if (index) goto(`/users/${dividedUsers[current][index - 1].employeeNumber}`)
 				break
 		}
 	}
@@ -812,30 +108,19 @@
 </script>
 
 <div class="search">
-	<fieldset>
-		<label for="employee-number">社員番号</label><input
-			type="number"
-			id="employee-number"
-			on:input={event => onInput(event, 'employeeNumber')}
-		/>
-	</fieldset>
-	<fieldset>
-		<label for="name">氏名</label><input
-			type="text"
-			id="name"
-			on:input={event => onInput(event, 'name')}
-		/>
-	</fieldset>
-	<fieldset>
-		<label for="belong-to">所属</label><input
-			type="text"
-			id="belong-to"
-			on:input={event => onInput(event, 'belongsTo')}
-		/>
-	</fieldset>
+	{#each fieldsets as fieldset}
+		<fieldset>
+			<label for={toKebab(fieldset.id)}>{fieldset.text}</label>
+			<input
+				type={fieldset.type}
+				id={toKebab(fieldset.id)}
+				on:input={event => onInput(event, fieldset.id)}
+			/>
+		</fieldset>
+	{/each}
 </div>
 <div class="users">
-	<button class="btn" on:click={() => onClick('new')}>新規登録</button>
+	<button class="btn primary" on:click={() => onClick('new')}>新規登録</button>
 	<table class="users-table">
 		<thead>
 			<tr>
@@ -860,7 +145,7 @@
 						<!-- svelte-ignore a11y-click-events-have-key-events -->
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
 						<td
-							><span on:click={() => onClick('edit', index)}
+							><span on:click={() => onClick('edit', index + 1)}
 								><Icon icon={{ path: 'edit', color: '#0093d0' }} /></span
 							></td
 						>
@@ -935,20 +220,14 @@
 
 		.btn {
 			display: inline-block;
-			background: var(--primary-color);
-			color: #fff;
-			border-radius: 8px;
-			padding: 8px 16px;
 			margin: 32px 0;
 		}
 
 		&-table {
-			display: block;
 			width: 100%;
 			background: #fff;
 			border-radius: 16px;
 			padding: 32px;
-			margin: 0 auto;
 
 			thead,
 			tbody {

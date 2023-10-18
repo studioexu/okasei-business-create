@@ -9,3 +9,5 @@ export const debounce = <F extends (...args: any[]) => void>(func: F, time: numb
 		}, time)
 	}
 }
+
+export const toKebab = (str: string) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()

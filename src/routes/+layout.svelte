@@ -23,7 +23,9 @@
 		--primary-color: #0093d0;
 		--background-color: #d0f1ff;
 		--black: #595857;
+		--modal-back: rgba(89, 88, 87, 0.8);
 		--gray: #7b7c7d;
+		--error: #eb3c3c;
 	}
 
 	:global(*) {
@@ -73,6 +75,8 @@
 
 	:global(input) {
 		outline: none;
+		border: 1px solid var(--gray);
+		border-radius: 8px;
 	}
 
 	:global(th) {
@@ -84,11 +88,50 @@
 		font-weight: bold;
 	}
 
+	:global(.font-error) {
+		font-size: 14px;
+		color: var(--error);
+	}
+
+	:global(button.primary) {
+		min-width: 112px;
+		background: var(--primary-color);
+		color: #fff;
+		border-radius: 8px;
+		padding: 8px 16px;
+	}
+
+	:global(button.secondary) {
+		min-width: 112px;
+		background: none;
+		color: var(--primary-color);
+		border-radius: 8px;
+		border: 1px solid var(--primary-color);
+		padding: 8px 16px;
+	}
+
+	:global(button.disabled) {
+		background: var(--gray);
+		cursor: not-allowed;
+
+		&:hover {
+			opacity: 1;
+		}
+	}
+
+	:global(input.error) {
+		border-color: var(--error);
+	}
+
+	:global(input.readonly) {
+		border-color: #fff;
+	}
+
 	.main {
 		position: absolute;
 		top: 64px;
-		left: 200px;
-		width: calc(100vw - 200px);
+		left: 192px;
+		width: calc(100vw - 192px);
 		height: calc(100vh - 64px);
 		padding: 32px;
 	}

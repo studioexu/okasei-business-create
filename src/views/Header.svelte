@@ -15,7 +15,7 @@
 	const titles: { path: string | RegExp; title: string }[] = [
 		{ path: '/users', title: '社員一覧' },
 		{ path: '/users/new', title: '新規社員登録' },
-		{ path: /\/users\/+/, title: '社員情報編集' },
+		{ path: /^\/users\/[1-9]\d?$/, title: '社員情報編集' },
 		{ path: '/customers', title: '顧客一覧' },
 		{ path: '/customers/new', title: '新規顧客登録' },
 		{ path: /\/customers\/+/, title: '顧客情報編集' },

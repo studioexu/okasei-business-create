@@ -71,9 +71,9 @@
 		)
 	})
 
-	let isNavigating = false
-	let isShown = false
-	let isSucceeded = false
+	let isNavigating: boolean = false
+	let isShown: boolean = false
+	let isSucceeded: boolean = false
 
 	const onInput = debounce((event: Event, id: string) => {
 		if (user.hasOwnProperty(id)) {

@@ -143,7 +143,7 @@
 </script>
 
 <div class="container">
-	<form class="form" id="new-user" on:submit={event => onSubmit(event)}>
+	<form class="form" on:submit={event => onSubmit(event)}>
 		{#each fieldsets as fieldset}
 			<fieldset>
 				<label for={toKebab(fieldset.id)}>{fieldset.text}</label>

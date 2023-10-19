@@ -1,6 +1,5 @@
 <script lang="ts">
 	import Icon from '@/components/Icon.svelte'
-	import type { CustomerInfo } from '../utils/types'
 	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
 
 	export let currentPage: number
@@ -10,7 +9,6 @@
 
 	$: currentPage
 	$: numberOfPages
-	// $: pageArray
 
 	$: updateNavPage(numberOfPages, currentPage)
 	$: numberOfPages = Math.ceil(newData.length / 6)

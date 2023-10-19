@@ -10,30 +10,18 @@
 	import { CustomerFactory } from './utils/Factories/CustomerFactory'
 	export let data
 
-	// $: console.log(data)
-
 	let allCustomers: CustomerFactory[] = data.data.map(
 		(customer: CustomerInfo) => new CustomerFactory(customer, 'customer')
 	)
-
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
-
-	// $: customersToDisplay = allCustomers.filter(customer => customer.isActive)
-
-	// $: console.log(customers)
-
 	let newData: CustomerFactory[] = customersToDisplay
-
 	let dataToDisplay: CustomerFactory[] = []
 	let currentPage: number = 1
 	let itemId: string = ''
-
 	let displayDeleteCustomersIsChecked = false
 
 	$: itemId
 	$: newData
-	// $: customersToDisplay
-	// $: newData = customersToDisplay
 
 	$: lastDataIndex =
 		currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1
@@ -58,6 +46,12 @@
 		}
 	}
 
+	/**
+	 * The toggle is ON, we display all the customers (deleted and active).
+	 * The toggle is OFF, We only display the active customers.
+	 * We change the state of displayDeleteCusomtersIsChecked.
+	 * @param e
+	 */
 	const handleCheck = (e: any) => {
 		displayDeleteCustomersIsChecked = e.target.checked
 		if (displayDeleteCustomersIsChecked) {
@@ -68,8 +62,6 @@
 			newData = customersToDisplay
 		}
 	}
-
-	$: console.log(customersToDisplay)
 </script>
 
 <section class="section section--customers-management" id="customers-management">

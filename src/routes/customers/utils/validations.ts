@@ -31,8 +31,12 @@ export const phoneNumberValidation = (phoneNumber: string) => {
  * @param postalCode : string, the user can entered any postal code (e.g.: 600-0000, 6000000, 〒600-0000 are all accepted)
  * @returns boolean
  */
+// export const postalCodeValidation = (postalCode: string) => {
+// 	const regex = /〒?[0-9]{3}-?[0-9]{4}/g
+// 	return regex.test(postalCode)
+// }
 export const postalCodeValidation = (postalCode: string) => {
-	const regex = /〒?[0-9]{3}-?[0-9]{4}/g
+	const regex = /[0-9]{7}/g
 	return regex.test(postalCode)
 }
 
@@ -87,10 +91,31 @@ export const checkIfInputIsNumber = (input: string) => {
  */
 export const inputIsValid = (name: string, input: string): boolean => {
 	switch (name) {
+		case 'branchNumber':
+			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 4)
+
+		case 'facilityName':
+			return numberOFCharacterValidation(input, 128)
+
 		case 'kana':
 			return kanaValidation(input)
 
-		case 'facilityName':
+		case 'facilityNumber':
+			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 10)
+
+		case 'postalCode':
+			return postalCodeValidation(input)
+
+		case 'prefecture':
+			return checkIfPrefectureIsValid(input)
+
+		case 'city':
+			return numberOFCharacterValidation(input, 10)
+
+		case 'address1':
+			return numberOFCharacterValidation(input, 50)
+
+		case 'address2':
 			return numberOFCharacterValidation(input, 50)
 
 		case 'phoneNumber':
@@ -99,32 +124,14 @@ export const inputIsValid = (name: string, input: string): boolean => {
 		case 'fax':
 			return input === '' || phoneNumberValidation(input)
 
-		case 'postalCode':
-			return postalCodeValidation(input)
-
 		case 'year':
 			return input === '' || yearValidation(input)
 
 		case 'month':
 			return input === '' || monthIsValid(input)
 
-		case 'address1':
-			return numberOFCharacterValidation(input, 50)
-
-		case 'address2':
-			return numberOFCharacterValidation(input, 50)
-
 		case 'founder':
-			return input === '' || numberOFCharacterValidation(input, 50)
-
-		case 'prefecture':
-			return checkIfPrefectureIsValid(input)
-
-		case 'city':
-			return numberOFCharacterValidation(input, 10)
-
-		case 'facilityNumber':
-			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 10)
+			return input === '' || numberOFCharacterValidation(input, 128)
 
 		case 'quantity':
 			return checkIfInputIsNumber(input)
@@ -133,10 +140,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return input === '' || checkIfInputIsNumber(input)
 
 		case 'homepage':
-			return input === '' || numberOFCharacterValidation(input, 50)
-
-		case 'branchNumber':
-			return input === '' || checkIfInputIsNumber(input)
+			return input === '' || numberOFCharacterValidation(input, 128)
 
 		default:
 			return true

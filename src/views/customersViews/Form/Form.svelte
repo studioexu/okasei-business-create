@@ -3,7 +3,7 @@
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
-	import type { CustomerEntries, Error } from '@/routes/customers/utils/types'
+	import type { CustomerEntries, CustomerEntriesErrors } from '@/routes/customers/utils/types'
 	import BedSection from './DepartmentSection.svelte'
 	import Seletector from './Selector.svelte'
 	import { enhance } from '$app/forms'
@@ -15,7 +15,7 @@
 	export let initialState: CustomerEntries
 	export let modalIsOpened: boolean
 
-	export let noErrors: Error
+	export let noErrors: CustomerEntriesErrors
 
 	const hojinKojin = [' ', '法人', '個人']
 
@@ -264,6 +264,14 @@
 <style lang="scss">
 	.hidden {
 		display: none;
+		// animation: out 2000ms forwards;
+		// position: absolute;
+		// top: 0;
+		// left: 0;
+		// width: 100%;
+		// height: 100%;
+		// opacity: 0;
+		// // transform: translateX(-1000px);
 		// animation: out 2000ms forwards;
 	}
 	.form {

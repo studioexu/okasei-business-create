@@ -1,7 +1,5 @@
 <script lang="ts">
 	import TableRow from './TableRow.svelte'
-	import type { CustomerInfo } from '../utils/types'
-	import { slide } from 'svelte/transition'
 	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
 
 	export let itemId: string = ''
@@ -27,6 +25,7 @@
 			</tr>
 		</thead>
 		<tbody>
+			<!-- <slot /> -->
 			{#each dataToDisplay as customer}
 				<TableRow
 					facilityName={customer.custName}

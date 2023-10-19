@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CustomerEntries, Error } from '../../utils/types'
+	import type { CustomerEntries, CustomerEntriesErrors } from '../../utils/types'
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
 	import RegisteredModal from '@/views/customersViews/modals/RegisteredModal.svelte'
@@ -7,37 +7,14 @@
 	import { CustomerFactory } from '../../utils/Factories/CustomerFactory'
 	export let data
 
-	// let customer = data.customer
-
 	let customer = new CustomerFactory(data.customer, 'customer')
+	// let customer = data.customer
+	// console.log('ANYAAAA')
+
+	// console.log(data.customer)
 
 	let verificationPageDisplayed = false
 	let modalIsOpened: boolean = false
-
-	// let initialState: CustomerEntries = {
-	// 	id: customer.id,
-	// 	branchNumber: customer.branchNumber,
-	// 	facilityName: customer.facilityName,
-	// 	kana: customer.kana,
-	// 	facilityNumber: customer.facilityNumber,
-	// 	businessType: customer.businessType,
-	// 	postalCode: customer.address.postalCode,
-	// 	prefecture: customer.address.prefecture,
-	// 	city: customer.address.city,
-	// 	address1: customer.address.address1,
-	// 	address2: customer.address.address2,
-	// 	phoneNumber: customer.address.phoneNumber,
-	// 	fax: customer.address.fax,
-	// 	year: customer.foundation.year,
-	// 	month: customer.foundation.month,
-	// 	founder: customer.foundation.founder,
-	// 	bedding: customer.bedding,
-	// 	numberOfEmployees: customer.numberOfEmployees,
-	// 	homepage: customer.homepage,
-	// 	numberOfFacilities: customer.numberOfFacilities,
-	// 	registrationDate: customer.registration.registrationDate,
-	// 	registrationTime: customer.registration.registrationTime
-	// }
 
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
@@ -65,10 +42,7 @@
 		isActive: customer.isActive
 	}
 
-	console.log(data.customer)
-	console.log(customer)
-
-	let noErrors: Error = {
+	let noErrors: CustomerEntriesErrors = {
 		branchNumber: true,
 		facilityName: true,
 		kana: true,
@@ -89,8 +63,6 @@
 		homepage: true,
 		numberOfFacilities: true
 	}
-
-	$: console.log(noErrors)
 </script>
 
 <section class="section section--form">
@@ -106,6 +78,7 @@
 		{#if !modalIsOpened}
 			<Confirmation bind:verificationPageDisplayed bind:initialState />
 		{/if}
+		<!-- <div out:flip> -->
 		<Form
 			bind:verificationPageDisplayed
 			bind:initialState
@@ -113,6 +86,7 @@
 			bind:modalIsOpened
 			bind:noErrors
 		/>
+		<!-- </div> -->
 	</div>
 
 	{#if !modalIsOpened}

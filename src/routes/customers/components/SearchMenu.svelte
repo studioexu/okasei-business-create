@@ -9,9 +9,7 @@
 	let phoneNumber: string = ''
 	export let data: CustomerFactory[]
 	export let newData: CustomerFactory[]
-	// let dataBis: CustomerFactory[] = data
 
-	// $: newData = dataBis
 	/**
 	 * FilterData will filter data according the keywords entered by the user and the type of the input.
 	 * @param data: Array, it will be the array that it will be filtered
@@ -58,10 +56,7 @@
 	 * @param e
 	 */
 	function handleSearch(e?: any) {
-		// let dataBis = data
 		let dataBis: CustomerFactory[] = data
-
-		console.log(instId)
 
 		if (instId !== '') {
 			dataBis = filterData(dataBis, 'customer-number', instId)
@@ -79,11 +74,6 @@
 			dataBis = filterData(dataBis, 'facility-name', custName)
 			// dataBis = filterData(dataBis, 'kana', facilityName)
 		}
-
-		console.log('dataBis')
-
-		console.log(dataBis)
-		console.log(newData)
 
 		newData = dataBis
 	}

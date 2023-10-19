@@ -1,6 +1,4 @@
-import { CustomerFactory } from './Factories/CustomerFactory'
 import { parseBeforeDelete } from './parsers'
-import type { CustomerInfo } from './types'
 
 /**
  * Load the data from the server.
@@ -25,44 +23,6 @@ export const loadData = async (url: string) => {
  * @returns the new data
  */
 export const deleteItem = (customerId: string, url: string) => {
-	// //We get the customer information so we can POST the information in the deletedCustomers.
-	// //顧客の情報をGETして、DeletedCustomersにPOSTする。
-	// fetch(url + customerId, {
-	// 	method: 'GET',
-	// 	headers: { 'Content-type': 'application/json;charset=UTF-8' }
-	// })
-	// 	.then(res => res.json())
-	// 	.then(newData => {
-	// 		console.log('yeah')
-
-	// 		let options: Intl.DateTimeFormatOptions = {
-	// 			timeZone: 'Asia/Tokyo',
-	// 			year: 'numeric',
-	// 			month: 'numeric',
-	// 			day: 'numeric',
-	// 			hour: 'numeric',
-	// 			minute: 'numeric',
-	// 			second: 'numeric'
-	// 		}
-
-	// 		const formatter = new Intl.DateTimeFormat([], options)
-	// 		const timeArray = formatter.format(new Date()).split(', ')
-
-	// 		const deleted = {
-	// 			status: '削除',
-	// 			date: timeArray[0],
-	// 			time: timeArray[1]
-	// 		}
-
-	// 		newData.delete = deleted
-	// 		// fetch(url + customerId, {
-	// 		// 	method: 'DELETE',
-	// 		// 	headers: { 'Content-type': 'application/json;charset=UTF-8' }
-	// 		// }).then(res => res.json())
-
-	// 		create(newData, 'http://localhost:3000/deletedCustomers/')
-	// 	})
-
 	//We DELETE the customer from the "Customers" database.
 	//DBからCustomersを削除する
 	fetch(url + customerId, {
@@ -71,11 +31,6 @@ export const deleteItem = (customerId: string, url: string) => {
 	})
 		.then(res => res.json())
 		.then(data => console.log(data))
-	// .then(newData => {
-	// 	return newData
-	// })
-
-	// return loadData(url)
 }
 
 /**
@@ -132,8 +87,6 @@ export const deleteCustomer = (customerId: string, url: string) => {
 			})
 				.then(res => res.json())
 				.then(data => {
-					console.log(data)
-
 					console.log('Customer successfully deleted')
 				})
 				.catch(err => console.log(err))

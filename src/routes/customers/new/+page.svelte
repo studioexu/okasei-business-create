@@ -1,9 +1,9 @@
 <script lang="ts">
+	import type { CustomerEntries, CustomerEntriesErrors } from '../utils/types'
+
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
 	import RegisteredModal from '@/views/customersViews/modals/RegisteredModal.svelte'
-
-	import type { CustomerEntries, Error } from '../utils/types'
 	import RegistrationFooter from '@/views/customersViews/RegistrationFooter/RegistrationFooter.svelte'
 
 	let modalIsOpened: boolean = false
@@ -32,7 +32,7 @@
 		isActive: true
 	}
 
-	let noErrors: Error = {
+	let noErrors: CustomerEntriesErrors = {
 		branchNumber: true,
 		facilityName: true,
 		kana: true,
@@ -91,6 +91,10 @@
 			&__title {
 				font-size: 24px;
 			}
+		}
+
+		&__main {
+			position: relative;
 		}
 	}
 </style>

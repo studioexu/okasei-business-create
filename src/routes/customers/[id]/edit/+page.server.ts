@@ -1,9 +1,14 @@
-import { error, redirect } from '@sveltejs/kit'
+import { error } from '@sveltejs/kit'
 import { loadData, update } from '../../utils/actions.js'
-import type { CustomerEntries, CustomerInfo } from '../../utils/types.ts'
+import type { CustomerEntries } from '../../utils/types.ts'
 import { parseBeforeUpdate } from '../../utils/parsers.js'
 import type { CustomerBackend } from '../../utils/classes.js'
 
+/**
+ * We load the necessary data.
+ * @param param0 corresponds to the parameters of the page
+ * @returns
+ */
 export const load = async ({ params }) => {
 	const data: CustomerBackend[] = await loadData('http://localhost:3000/customers/')
 	const customer: CustomerBackend | undefined = data.find(
@@ -17,6 +22,10 @@ export const load = async ({ params }) => {
 	}
 }
 
+/**
+ * We declare the different actions will use on the page.
+ * Here, we will only update the customer information. So, we just have only one action.
+ */
 export const actions = {
 	update: async ({ request }) => {
 		const data = await request.formData()

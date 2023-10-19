@@ -1,5 +1,4 @@
 import { Customer } from '../models/Customer'
-// import type {custo}
 
 export class CustomerFactory {
 	[x: string]: any

@@ -1,10 +1,7 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
-	import { create, deleteItem } from '../../../routes/customers/utils/actions'
-	import { parseBeforeDelete } from '../../../routes/customers/utils/parsers'
 	import Button from '@/components/customers/Button.svelte'
-	import type { CustomerInfo } from '../../../routes/customers/utils/types'
 	import { enhance } from '$app/forms'
 	import type { CustomerFactory } from '@/routes/customers/utils/Factories/CustomerFactory'
 
@@ -12,11 +9,9 @@
 	export let displayDeleteCustomersIsChecked: boolean
 	export let newData
 	export let allCustomers: CustomerFactory[]
-	$: customersToDisplay
-
 	export let itemId: string = ''
 
-	console.log(itemId)
+	$: customersToDisplay
 
 	let isDeleted: boolean = false
 
@@ -25,20 +20,25 @@
 		isDeleted = false
 	}
 
-	const handleSubmit = async (e: any) => {
+	/**
+	 * After the customer is put not active(i.e. deleted), we displayed the modal with isDeleted=true.
+	 * Then, we update the displayed information.
+	 * @param e
+	 */
+	const handleDelete = async (e: any) => {
+		//display the modal
 		isDeleted = true
 
+		//update the data in allCustomers
 		allCustomers = allCustomers.filter(customer => {
 			if (customer.custCD === itemId) {
 				customer.isActive = false
-				console.log(customer)
 			}
 
 			return customer
 		})
 
-		// newData = customersToDisplay
-
+		//update the displayed data depending if we want to display the deleted customers or not.
 		if (displayDeleteCustomersIsChecked) {
 			customersToDisplay = allCustomers
 			newData = customersToDisplay
@@ -66,7 +66,7 @@
 					method="POST"
 					action="customers?/delete"
 					use:enhance
-					on:submit={handleSubmit}
+					on:submit={handleDelete}
 				>
 					<input class="input" type="hidden" name="id" value={itemId} />
 					<Button buttonClass={'btn--round btn--round--delete'} form="delete-form">削除</Button>

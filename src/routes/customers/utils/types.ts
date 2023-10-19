@@ -3,93 +3,6 @@ export interface Detail {
 	numBed: string
 }
 
-// export interface CustomerInfo {
-// 	id?: string
-// 	customerNumber?: string | undefined
-// 	branchNumber: string
-// 	facilityName: string
-// 	kana: string
-// 	facilityNumber: string
-// 	businessType: string
-// 	address: {
-// 		postalCode: string
-// 		prefecture: string
-// 		city: string
-// 		address1: string
-// 		address2: string
-// 		phoneNumber: string
-// 		fax: string
-// 	}
-// 	numberOfEmployees: string
-// 	homepage: string
-// 	numberOfFacilities: string
-// 	foundation: {
-// 		month: string
-// 		year: string
-// 		founder: string
-// 	}
-// 	bedding: Bedding[]
-// 	registration: {
-// 		status: string
-// 		registrationDate: string
-// 		registrationTime: string
-// 	}
-// 	update: {
-// 		status: string
-// 		lastUpdatedDate: string
-// 		lastUpdatedTime: string
-// 	}
-// 	delete: {
-// 		status: string
-// 		deletedDate: string
-// 		deletedTime: string
-// 	}
-// }
-
-// export interface CustomerInfo {
-// 	_id?: string
-// 	_custCD?: string | undefined
-// 	_custBranchCD: string
-// 	_custName: string
-// 	_custKana: string
-// 	_instId: string
-// 	_custType: string
-// 	_address: {
-// 		postalCode: string
-// 		prefecture: string
-// 		city: string
-// 		address1: string
-// 		address2: string
-// 		phoneNumber: string
-// 		fax: string
-// 	}
-// 	_numEmployees: string
-// 	_url: string
-// 	_numBranch: string
-// 	_foundation: {
-// 		establishDate: string
-// 		establishedBy: string
-// 	}
-// 	_isActive: number
-
-// 	_departments: {
-// 		detail: Detail[]
-// 		bedTotal: number
-// 	}
-// 	_registration: {
-// 		registDate: string
-// 		registBy: string
-// 	}
-// 	_update: {
-// 		updateDate: string
-// 		updateBy: string
-// 	}
-// 	_delete: {
-// 		deleteDate: string
-// 		deleteBy: string
-// 	}
-// }
-
 export interface CustomerInfo {
 	id?: string
 	custCD?: string | undefined
@@ -159,7 +72,7 @@ export interface CustomerEntries {
 	isActive: boolean
 }
 
-export interface Error {
+export interface CustomerEntriesErrors {
 	branchNumber: boolean
 	facilityName: boolean
 	kana: boolean

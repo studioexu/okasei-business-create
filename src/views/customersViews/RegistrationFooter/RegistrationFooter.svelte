@@ -1,11 +1,10 @@
 <script lang="ts">
-	import type { CustomerEntries, Error } from '@/routes/customers/utils/types'
+	import type { CustomerEntries, CustomerEntriesErrors } from '@/routes/customers/utils/types'
 	import { inputIsValid } from '@/routes/customers/utils/validations'
 	import Button from '@/components/customers/Button.svelte'
-	import { fade } from 'svelte/transition'
 
 	export let initialState: CustomerEntries
-	export let noErrors: Error
+	export let noErrors: CustomerEntriesErrors
 	export let verificationPageDisplayed: boolean = false
 
 	const handleEditClicked = () => {
@@ -28,9 +27,7 @@
 			const name: string = customerKeys[i]
 			const input: string = customerValues[i]
 
-			console.log(noErrors)
-
-			noErrors[name as keyof Error] = inputIsValid(name, input)
+			noErrors[name as keyof CustomerEntriesErrors] = inputIsValid(name, input)
 			errorArray.push(!inputIsValid(name, input))
 		}
 

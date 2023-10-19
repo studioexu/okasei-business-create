@@ -1,8 +1,5 @@
 <script lang="ts">
-	import { enhance } from '$app/forms'
 	import Icon from '@/components/Icon.svelte'
-	import { slide, fly } from 'svelte/transition'
-	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
 	export let facilityName: string = ''
 	export let address = { prefecture: '', city: '' }
 	export let isActive: boolean
@@ -68,9 +65,12 @@
 		// display: block;
 		cursor: pointer;
 		// background-color: pink;
+		// transform-origin: 0 0;
 
 		&.deleted {
 			background-color: rgb(229, 229, 229);
+
+			// animation: deleted 2000ms forwards;
 
 			.data {
 				.btn {
@@ -116,12 +116,22 @@
 	@keyframes deleted {
 		0% {
 			opacity: 1;
+			// transform: translateX(0);
 			transform: scaleY(1);
+			// height: auto;
+		}
+
+		90% {
+			opacity: 0;
+			// transform: translateX(200);
+			transform: scaleY(0);
+			// height: 0;
 		}
 
 		100% {
 			opacity: 0;
 			transform: scaleY(0);
+			display: none;
 		}
 	}
 </style>

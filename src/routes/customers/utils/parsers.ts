@@ -1,6 +1,5 @@
-import type { CustomerInfo, CustomerEntries } from './types'
-import { Customer, CustomerBackend } from './classes'
-import { CustomerFactory } from './Factories/CustomerFactory'
+import type { CustomerEntries } from './types'
+import { CustomerBackend } from './classes'
 
 const getTimeArray = (): string => {
 	let options: Intl.DateTimeFormatOptions = {

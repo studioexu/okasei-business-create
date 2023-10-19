@@ -99,6 +99,15 @@
 
 	.hidden {
 		display: none;
+		// position: absolute;
+		// top: 0;
+		// left: 0;
+		// width: 100%;
+		// height: 100%;
+		// opacity: 0;
+		// transform: translateX(-1000px);
+		// animation: in 2000ms forwards;
+		// animation: in 2000ms 2000ms;
 	}
 	.container {
 		overflow: hidden;
@@ -133,5 +142,50 @@
 				}
 			}
 		}
+	}
+
+	@keyframes out {
+		0% {
+			opacity: 1;
+			transform: translateX(0);
+		}
+
+		80% {
+			opacity: 0;
+			transform: translateX(1000px);
+		}
+
+		100% {
+			transform: translateX(1000px);
+			display: none;
+		}
+	}
+
+	@keyframes in {
+		0% {
+			opacity: 0;
+			transform: translateX(-1000px);
+			display: none;
+		}
+
+		20% {
+			opacity: 0;
+			transform: translateX(-1000px);
+			display: block;
+		}
+
+		// 20%{
+
+		// }
+
+		100% {
+			opacity: 0;
+			transform: translateX(0);
+		}
+
+		// 100% {
+		// 	transform: translateX(1000px);
+		// 	display: none;
+		// }
 	}
 </style>

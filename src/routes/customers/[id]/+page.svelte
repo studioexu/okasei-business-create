@@ -11,20 +11,14 @@
 	import { CustomerFactory } from '../utils/Factories/CustomerFactory'
 	export let data
 
-	console.log(data)
-
-	// let customer: CustomerInfo = data.customer
-
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'customer')
-
-	console.log(customer)
-
 	let bedQuantity: number = 0
-
-	// customer.bedding.forEach((bed: Bedding) => (bedQuantity += parseInt(bed.quantity)))
 
 	customer.departments.detail.forEach((bed: any) => (bedQuantity += parseInt(bed.quantity)))
 
+	/**
+	 * On click, we redirect the user to the edit page
+	 */
 	const handleLinkClicked = () => {
 		window.location.href = '/customers/' + customer.custCD + '/edit'
 	}

@@ -2,6 +2,10 @@
 	import Button from '@/components/customers/Button.svelte'
 	export let isOpened: boolean = false
 
+	/**
+	 * Once we click OK button, the modal is closed.
+	 * Then we are redirected to the main page of customers
+	 */
 	const handleConfirm = () => {
 		isOpened = false
 		window.location.href = '/customers/'

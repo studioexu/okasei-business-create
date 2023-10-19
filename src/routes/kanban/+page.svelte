@@ -14,7 +14,15 @@
 </script>
 
 <script lang="ts">
-	let boards = [
+	let boards: {
+		id: string
+		tasks: {
+			id: string
+			title: string
+			status: string
+		}[]
+		text: string
+	}[] = [
 		{
 			id: 'todo',
 			tasks: [
@@ -45,11 +53,11 @@
 			text: 'Done'
 		}
 	]
-	let currentTask = { id: '' } as { id: string; index?: number }
+	let currentTask:{ id: string; index?: number } = { id: '' }
 	let currentBoard = 0
 	let newBoard = 0
 	let hoveringBoard = 0
-	let hoveringTask = { id: '' } as { id: string; index?: number }
+	let hoveringTask: { id: string; index?: number } = { id: '' }
 
 	$: isAdjacent =
 		currentBoard === newBoard &&
@@ -71,7 +79,7 @@
 				newBoard = index
 				hoveringBoard = index + 1
 			} else if (type === 'task' && id !== currentTask.id) {
-				console.log(hoveringTask)
+				// console.log(hoveringTask)
 
 				if (hoveringTask.id === '' && !hoveringTask.index) hoveringTask = { id, index }
 				else if (id !== hoveringTask.id && hoveringTask.index) {
@@ -112,6 +120,8 @@
 			}
 		}
 
+		console.log(hoveringBoard, hoveringTask)
+
 		task = undefined
 		document.getElementById(currentTask.id)?.removeAttribute('style')
 		currentTask = { id: '' }
@@ -132,7 +142,7 @@
 			const rect = (<HTMLElement>event.target).getBoundingClientRect()
 			const clientY = (<MouseEvent>event).clientY
 
-			const moveTask = debounce(() => {
+			debounce(() => {
 				if (currentClientY !== clientY) {
 					const element = document.getElementById(hoveringTask.id)
 
@@ -147,9 +157,7 @@
 
 					currentClientY = clientY
 				}
-			}, 100)
-
-			moveTask()
+			}, 200)()
 		}
 	}
 

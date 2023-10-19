@@ -1,13 +1,17 @@
 <script lang="ts">
 	import Button from '@/components/customers/Button.svelte'
 	import Input from './Input.svelte'
+	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
 
-	let customerNumber: string = ''
-	let facilityName: string = ''
+	let instId: string = ''
+	let custName: string = ''
 	let postalCode: string = ''
 	let phoneNumber: string = ''
-	export let data: any[]
-	export let newData: any[]
+	export let data: CustomerFactory[]
+	export let newData: CustomerFactory[]
+	// let dataBis: CustomerFactory[] = data
+
+	// $: newData = dataBis
 	/**
 	 * FilterData will filter data according the keywords entered by the user and the type of the input.
 	 * @param data: Array, it will be the array that it will be filtered
@@ -15,10 +19,15 @@
 	 * @param input: string, the keywords entered by the user
 	 */
 	const filterData = (data: any[], filterType: string, input: string) => {
+		console.log(data)
+		console.log(input)
+
 		switch (filterType) {
 			case 'facility-name':
 				return data.filter(customer => {
-					return customer.facilityName.includes(input)
+					console.log(customer.custName.includes(input))
+
+					return customer.custName.includes(input)
 				})
 			case 'kana':
 				return data.filter(customer => {
@@ -28,7 +37,7 @@
 				console.log(input)
 
 				return data.filter(customer => {
-					return customer.id.includes(input)
+					return customer.instId.includes(input)
 				})
 			case 'postal-code':
 				return data.filter(customer => {
@@ -48,13 +57,14 @@
 	 * it will lauch a research according to the input entered by the user, when the user clicks on 検索 button.
 	 * @param e
 	 */
-	const handleSearch = (e?: any) => {
-		let dataBis = data
+	function handleSearch(e?: any) {
+		// let dataBis = data
+		let dataBis: CustomerFactory[] = data
 
-		console.log(customerNumber)
+		console.log(instId)
 
-		if (customerNumber !== '') {
-			dataBis = filterData(dataBis, 'customer-number', customerNumber)
+		if (instId !== '') {
+			dataBis = filterData(dataBis, 'customer-number', instId)
 		}
 
 		if (phoneNumber !== '') {
@@ -65,13 +75,21 @@
 			dataBis = filterData(dataBis, 'postal-code', postalCode)
 		}
 
-		if (facilityName !== '') {
-			dataBis = filterData(dataBis, 'facility-name', facilityName)
+		if (custName !== '') {
+			dataBis = filterData(dataBis, 'facility-name', custName)
 			// dataBis = filterData(dataBis, 'kana', facilityName)
 		}
 
+		console.log('dataBis')
+
+		console.log(dataBis)
+		console.log(newData)
+
 		newData = dataBis
 	}
+
+	$: console.log('newData')
+	$: console.log(newData)
 </script>
 
 <form class="search-menu">
@@ -79,13 +97,13 @@
 		additionalClass={'txt--lg'}
 		name={'facility-name'}
 		label={'施設名'}
-		bind:value={facilityName}
+		bind:value={custName}
 	/>
 	<Input
 		additionalClass={'txt--sm'}
 		name={'customer-number'}
 		label={'医療機関番号'}
-		bind:value={customerNumber}
+		bind:value={instId}
 	/>
 	<Input
 		additionalClass={'txt--sm'}

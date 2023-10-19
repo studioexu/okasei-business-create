@@ -7,16 +7,33 @@
 	import TableNavigation from './components/TableNavigation.svelte'
 	import SearchMenu from './components/SearchMenu.svelte'
 	import DeleteModal from '@/views/customersViews/modals/DeleteModal.svelte'
+	import { CustomerFactory } from './utils/Factories/CustomerFactory'
 	export let data
 
-	$: customers = data.data
-	let newData: CustomerInfo[] = customers
-	let dataToDisplay: CustomerInfo[] = []
+	// $: console.log(data)
+
+	let allCustomers: CustomerFactory[] = data.data.map(
+		(customer: CustomerInfo) => new CustomerFactory(customer, 'customer')
+	)
+
+	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
+
+	// $: customersToDisplay = allCustomers.filter(customer => customer.isActive)
+
+	// $: console.log(customers)
+
+	let newData: CustomerFactory[] = customersToDisplay
+
+	let dataToDisplay: CustomerFactory[] = []
 	let currentPage: number = 1
 	let itemId: string = ''
 
+	let displayDeleteCustomersIsChecked = false
+
 	$: itemId
-	$: newData = customers
+	$: newData
+	// $: customersToDisplay
+	// $: newData = customersToDisplay
 
 	$: lastDataIndex =
 		currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1
@@ -31,7 +48,7 @@
 	 * @param lastDataIndex: number, is the last customer we want to display from the data array
 	 */
 	const updateDataToDisplay = (
-		data: CustomerInfo[],
+		data: CustomerFactory[],
 		firstDataIndex: number,
 		lastDataIndex: number
 	) => {
@@ -42,21 +59,31 @@
 	}
 
 	const handleCheck = (e: any) => {
-		const isChecked = e.target.checked
-		if (isChecked) {
-			newData = [...data.data, ...data.deletedData]
+		displayDeleteCustomersIsChecked = e.target.checked
+		if (displayDeleteCustomersIsChecked) {
+			customersToDisplay = allCustomers
+			newData = customersToDisplay
 		} else {
-			newData = data.data
+			customersToDisplay = allCustomers.filter(customer => customer.isActive)
+			newData = customersToDisplay
 		}
 	}
+
+	$: console.log(customersToDisplay)
 </script>
 
 <section class="section section--customers-management" id="customers-management">
-	<DeleteModal bind:itemId />
+	<DeleteModal
+		bind:itemId
+		bind:customersToDisplay
+		{displayDeleteCustomersIsChecked}
+		bind:newData
+		bind:allCustomers
+	/>
 
 	<header class="section__header">
 		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>
-		<SearchMenu data={data.data} bind:newData />
+		<SearchMenu bind:data={customersToDisplay} bind:newData />
 
 		<div class="container">
 			<label class="switch-label" for="checkbox">
@@ -66,7 +93,7 @@
 						type="checkbox"
 						id="checkbox"
 						name="checkbox"
-						on:change={handleCheck}
+						on:click={handleCheck}
 					/>
 					<span class="slider" />
 				</div>

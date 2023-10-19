@@ -2,18 +2,18 @@
 	import { enhance } from '$app/forms'
 	import Icon from '@/components/Icon.svelte'
 	import { slide, fly } from 'svelte/transition'
+	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
 	export let facilityName: string = ''
 	export let address = { prefecture: '', city: '' }
-	export let status: string = ''
+	export let isActive: boolean
 	export let updateDate: string = ''
 	export let id: string = ''
+	export let status: string
 
 	export let itemId: string = ''
 	$: itemId
 
 	const handleDeleteItem = async (e: any) => {
-		// itemId = e.target.closest('.btn').id
-
 		itemId = id
 	}
 
@@ -24,40 +24,37 @@
 	const handleRowClick = (e: any) => {
 		const classList = e.target.closest('.data').classList.value
 
-		if (status === '削除') {
-			window.location.href = '/customers/deleted/' + id
-			return
-		}
-
 		if (classList.includes('update') || classList.includes('erase')) {
 			return
 		}
 		window.location.href = '/customers/' + id
 	}
-
-	const iconColor = status === '削除' ? 'rgb(200, 200, 200)' : '#2FA8E1'
 </script>
 
 <!-- <div> -->
-<tr class="row" on:click={handleRowClick}>
+<tr class="row {isActive ? '' : 'deleted'}" on:click={handleRowClick}>
 	<!-- <div out:fly={{ x: 200 }}> -->
 	<td class="data customer-number">{id}</td>
 	<td class="data facility-name">{facilityName}</td>
-	<td class="data address">{address.prefecture}県{address.city}市</td>
+	<td class="data address">{address.prefecture}{address.city}</td>
 	<!-- <td class="data status">{status}日</td> -->
 	<td class="data update-date">{status}日 {updateDate}</td>
 	<td class="data update">
-		<a class="btn btn--update {status === '削除' ? 'disabled' : ''}" href="/customers/{id}/edit">
-			<Icon icon={{ path: 'notepad', color: iconColor }} />
+		<a class="btn btn--update" href="/customers/{id}/edit">
+			{#if isActive}
+				<Icon icon={{ path: 'notepad', color: '#2FA8E1' }} />
+			{:else}
+				<Icon icon={{ path: 'notepad', color: 'rgb(200, 200, 200)' }} />
+			{/if}
 		</a>
 	</td>
 	<td class="data erase">
-		<button
-			class="btn btn--erase {status === '削除' ? 'disabled' : ''}"
-			{id}
-			on:click={handleDeleteItem}
-		>
-			<Icon icon={{ path: 'trash-bin', color: iconColor }} />
+		<button class="btn btn--erase" {id} on:click={handleDeleteItem}>
+			{#if isActive}
+				<Icon icon={{ path: 'trash-bin', color: '#2FA8E1' }} />
+			{:else}
+				<Icon icon={{ path: 'trash-bin', color: 'rgb(200, 200, 200)' }} />
+			{/if}
 		</button>
 	</td>
 	<!-- </div> -->
@@ -70,6 +67,17 @@
 		position: relative;
 		// display: block;
 		cursor: pointer;
+		// background-color: pink;
+
+		&.deleted {
+			background-color: rgb(229, 229, 229);
+
+			.data {
+				.btn {
+					pointer-events: none;
+				}
+			}
+		}
 
 		&:hover {
 			background-color: hsl(199, 75%, 53%, 0.1);

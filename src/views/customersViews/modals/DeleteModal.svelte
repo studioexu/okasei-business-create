@@ -6,6 +6,13 @@
 	import Button from '@/components/customers/Button.svelte'
 	import type { CustomerInfo } from '../../../routes/customers/utils/types'
 	import { enhance } from '$app/forms'
+	import type { CustomerFactory } from '@/routes/customers/utils/Factories/CustomerFactory'
+
+	export let customersToDisplay: CustomerFactory[]
+	export let displayDeleteCustomersIsChecked: boolean
+	export let newData
+	export let allCustomers: CustomerFactory[]
+	$: customersToDisplay
 
 	export let itemId: string = ''
 
@@ -18,21 +25,27 @@
 		isDeleted = false
 	}
 
-	const handleSubmit = (e: any) => {
-		fetch('http://localhost:3000/customers/' + itemId, {
-			method: 'GET',
-			headers: { 'Content-type': 'application/json;charset=UTF-8' }
+	const handleSubmit = async (e: any) => {
+		isDeleted = true
+
+		allCustomers = allCustomers.filter(customer => {
+			if (customer.custCD === itemId) {
+				customer.isActive = false
+				console.log(customer)
+			}
+
+			return customer
 		})
-			.then(res => {
-				return res.json()
-			})
-			.then(newData => {
-				const parsedCustomer = parseBeforeDelete(newData)
-				create(parsedCustomer, 'http://localhost:3000/deletedCustomers/')
-			})
-			.then(() => {
-				isDeleted = true
-			})
+
+		// newData = customersToDisplay
+
+		if (displayDeleteCustomersIsChecked) {
+			customersToDisplay = allCustomers
+			newData = customersToDisplay
+		} else {
+			customersToDisplay = allCustomers.filter(customer => customer.isActive)
+			newData = customersToDisplay
+		}
 	}
 </script>
 
@@ -53,13 +66,10 @@
 					method="POST"
 					action="customers?/delete"
 					use:enhance
+					on:submit={handleSubmit}
 				>
 					<input class="input" type="hidden" name="id" value={itemId} />
-					<Button
-						buttonClass={'btn--round btn--round--delete'}
-						handleClick={handleSubmit}
-						form={'delete-form'}>削除</Button
-					>
+					<Button buttonClass={'btn--round btn--round--delete'} form="delete-form">削除</Button>
 				</form>
 			{/if}
 		</div>

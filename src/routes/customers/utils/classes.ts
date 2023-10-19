@@ -3,6 +3,11 @@ interface bedding {
 	quantity: string
 }
 
+interface Detail {
+	dept_ID: number
+	num_beds: number
+}
+
 export class Customer {
 	id?: string
 	branchNumber: string
@@ -87,6 +92,95 @@ export class Customer {
 			status: deleted?.status,
 			deletedDate: deleted?.date,
 			deletedTime: deleted?.time
+		}
+	}
+}
+
+export class CustomerBackend {
+	id?: string
+	Cust_CD?: string | undefined
+	Cust_Branch_CD: string
+	Cust_Name: string
+	Cust_Kana: string
+	Inst_ID: string
+	Cust_Type: string
+	Address: {
+		Cust_Postal: string
+		Cust_Ken: string
+		Cust_City: string
+		Cust_Addr1: string
+		Cust_Addr2: string
+		Cust_Phone: string
+		Cust_Fax: string
+	}
+	Num_Employees: string
+	URL: string
+	Num_Branch: string
+	foundation: {
+		Establish_Date: string
+		Established_By: string
+	}
+	is_active: boolean
+
+	departments: {
+		detail: Detail[]
+		bed_total: number
+	}
+	registration: {
+		Regist_Date: string
+		Regist_By: number
+	}
+	update: {
+		Update_Date: string
+		Update_By: number
+	}
+	delete: {
+		Delete_Date: string
+		Delete_By: number
+	}
+
+	constructor(data: any, registration?: any, update?: any, deleted?: any) {
+		if (data.id) {
+			this.id = data.id
+			this.Cust_CD = data.id
+		}
+		this.Cust_Branch_CD = data.branchNumber
+		this.Cust_Name = data.facilityName
+		this.Cust_Kana = data.kana
+		this.Inst_ID = data.facilityNumber
+		this.Cust_Type = data.businessType
+		this.Address = {
+			Cust_Postal: data.postalCode,
+			Cust_Ken: data.prefecture,
+			Cust_City: data.city,
+			Cust_Addr1: data.address1,
+			Cust_Addr2: data.address2,
+			Cust_Phone: data.phoneNumber,
+			Cust_Fax: data.fax
+		}
+		this.Num_Employees = data.numberOfEmployees
+		this.URL = data.homepage
+		this.Num_Branch = data.numberOfFacilities
+		this.foundation = {
+			Establish_Date: data.year,
+			Established_By: data.founder
+		}
+		this.is_active = data.isActive
+		this.departments = {
+			detail: data.bedding,
+			bed_total: data.bed_total
+		}
+		this.registration = {
+			Regist_Date: registration?.registDate || data.registration?.Regist_Date,
+			Regist_By: registration?.registBy || data.registration?.Regist_By
+		}
+		this.update = {
+			Update_Date: update?.updateDate || data.update?.Update_Date,
+			Update_By: update?.updateBy || data.update?.Update_By
+		}
+		this.delete = {
+			Delete_Date: deleted?.deleteDate || data.delete?.Delete_Date,
+			Delete_By: deleted?.deleteBy || data.delete?.Delete_By
 		}
 	}
 }

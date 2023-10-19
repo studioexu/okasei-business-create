@@ -13,6 +13,8 @@
 	let totalOfBed: number = 0
 	let bedInputArray: BedInput[] = []
 
+	$: console.log(bedding)
+
 	if (bedding.length === 0) {
 		bedInputArray = [{ index: 0, department: '', quantity: '0' }]
 	} else {

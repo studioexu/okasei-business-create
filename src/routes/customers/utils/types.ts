@@ -1,17 +1,103 @@
-export interface Bedding {
-	index?: string
+export interface Detail {
 	department: string
-	quantity: string
+	numBed: string
 }
+
+// export interface CustomerInfo {
+// 	id?: string
+// 	customerNumber?: string | undefined
+// 	branchNumber: string
+// 	facilityName: string
+// 	kana: string
+// 	facilityNumber: string
+// 	businessType: string
+// 	address: {
+// 		postalCode: string
+// 		prefecture: string
+// 		city: string
+// 		address1: string
+// 		address2: string
+// 		phoneNumber: string
+// 		fax: string
+// 	}
+// 	numberOfEmployees: string
+// 	homepage: string
+// 	numberOfFacilities: string
+// 	foundation: {
+// 		month: string
+// 		year: string
+// 		founder: string
+// 	}
+// 	bedding: Bedding[]
+// 	registration: {
+// 		status: string
+// 		registrationDate: string
+// 		registrationTime: string
+// 	}
+// 	update: {
+// 		status: string
+// 		lastUpdatedDate: string
+// 		lastUpdatedTime: string
+// 	}
+// 	delete: {
+// 		status: string
+// 		deletedDate: string
+// 		deletedTime: string
+// 	}
+// }
+
+// export interface CustomerInfo {
+// 	_id?: string
+// 	_custCD?: string | undefined
+// 	_custBranchCD: string
+// 	_custName: string
+// 	_custKana: string
+// 	_instId: string
+// 	_custType: string
+// 	_address: {
+// 		postalCode: string
+// 		prefecture: string
+// 		city: string
+// 		address1: string
+// 		address2: string
+// 		phoneNumber: string
+// 		fax: string
+// 	}
+// 	_numEmployees: string
+// 	_url: string
+// 	_numBranch: string
+// 	_foundation: {
+// 		establishDate: string
+// 		establishedBy: string
+// 	}
+// 	_isActive: number
+
+// 	_departments: {
+// 		detail: Detail[]
+// 		bedTotal: number
+// 	}
+// 	_registration: {
+// 		registDate: string
+// 		registBy: string
+// 	}
+// 	_update: {
+// 		updateDate: string
+// 		updateBy: string
+// 	}
+// 	_delete: {
+// 		deleteDate: string
+// 		deleteBy: string
+// 	}
+// }
 
 export interface CustomerInfo {
 	id?: string
-	customerNumber?: string | undefined
-	branchNumber: string
-	facilityName: string
-	kana: string
-	facilityNumber: string
-	businessType: string
+	custCD?: string | undefined
+	custBranchCD: string
+	custName: string
+	custKana: string
+	instId: string
+	custType: string
 	address: {
 		postalCode: string
 		prefecture: string
@@ -21,29 +107,29 @@ export interface CustomerInfo {
 		phoneNumber: string
 		fax: string
 	}
-	numberOfEmployees: string
-	homepage: string
-	numberOfFacilities: string
+	numEmployees: string
+	url: string
+	numBranch: string
 	foundation: {
-		month: string
-		year: string
-		founder: string
+		establishDate: string
+		establishedBy: string
 	}
-	bedding: Bedding[]
+	isActive: boolean
+	departments: {
+		detail: Detail[]
+		bedTotal: number
+	}
 	registration: {
-		status: string
-		registrationDate: string
-		registrationTime: string
+		registDate: string
+		registBy: string
 	}
 	update: {
-		status: string
-		lastUpdatedDate: string
-		lastUpdatedTime: string
+		updateDate: string
+		updateBy: string
 	}
 	delete: {
-		status: string
-		deletedDate: string
-		deletedTime: string
+		deleteDate: string
+		deleteBy: string
 	}
 }
 
@@ -69,7 +155,8 @@ export interface CustomerEntries {
 	homepage: string
 	numberOfFacilities: string
 	registrationDate?: string
-	registrationTime?: string　
+	registrationTime?: string
+	isActive: boolean
 }
 
 export interface Error {

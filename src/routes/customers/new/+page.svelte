@@ -28,7 +28,8 @@
 		bedding: [],
 		numberOfEmployees: '',
 		homepage: '',
-		numberOfFacilities: ''
+		numberOfFacilities: '',
+		isActive: true
 	}
 
 	let noErrors: Error = {

@@ -11,8 +11,13 @@ export const actions = {
 		if (typeof initialStateString === 'string') {
 			initialState = JSON.parse(initialStateString)
 
-			let newcustomer = parseBeforePost(initialState)
-			create(newcustomer, 'http://localhost:3000/customers/')
+			let newCustomer = parseBeforePost(initialState)
+			console.log('new customer')
+
+			console.log(newCustomer)
+
+			create(newCustomer, 'http://localhost:3000/customers/')
+			console.log('yatta')
 		}
 	}
 }

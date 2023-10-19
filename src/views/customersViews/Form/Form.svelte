@@ -4,10 +4,11 @@
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
 	import type { CustomerEntries, Error } from '@/routes/customers/utils/types'
-	import BedSection from './BedSection.svelte'
+	import BedSection from './DepartmentSection.svelte'
 	import Seletector from './Selector.svelte'
 	import { enhance } from '$app/forms'
 	import { fade, fly } from 'svelte/transition'
+	import DepartmentSection from './DepartmentSection.svelte'
 
 	export let formType: string
 	export let verificationPageDisplayed: boolean
@@ -219,7 +220,7 @@
 
 		<fieldset class="fieldset fieldset--bed">
 			<legend class="hidden">病床設定</legend>
-			<BedSection bind:bedding={initialState.bedding} />
+			<DepartmentSection bind:bedding={initialState.bedding} />
 		</fieldset>
 		<!-- .fieldset--bed -->
 
@@ -263,6 +264,7 @@
 <style lang="scss">
 	.hidden {
 		display: none;
+		// animation: out 2000ms forwards;
 	}
 	.form {
 		font-family: 'Noto Sans JP';
@@ -325,9 +327,9 @@
 		}
 	}
 
-	.hidden {
-		display: none;
-	}
+	// .hidden {
+	// 	display: none;
+	// }
 
 	.btn {
 		background-color: #2fa8e1;
@@ -345,5 +347,22 @@
 
 	.required-legend {
 		float: right;
+	}
+
+	@keyframes out {
+		0% {
+			opacity: 1;
+			transform: translateX(0);
+		}
+
+		80% {
+			opacity: 0;
+			transform: translateX(1000px);
+		}
+
+		100% {
+			transform: translateX(1000px);
+			display: none;
+		}
 	}
 </style>

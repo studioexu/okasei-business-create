@@ -1,9 +1,10 @@
 <script lang="ts">
 	import Icon from '@/components/Icon.svelte'
 	import type { CustomerInfo } from '../utils/types'
+	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
 
 	export let currentPage: number
-	export let newData: CustomerInfo[]
+	export let newData: CustomerFactory[]
 	let pageArray: string[]
 	let numberOfPages: number
 
@@ -13,6 +14,9 @@
 
 	$: updateNavPage(numberOfPages, currentPage)
 	$: numberOfPages = Math.ceil(newData.length / 6)
+
+	$: currentPage =
+		currentPage > numberOfPages && numberOfPages !== 0 ? currentPage - 1 : currentPage
 
 	/**
 	 * Update the page navigation in the footer according to the current page.

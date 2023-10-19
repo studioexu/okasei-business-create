@@ -2,8 +2,10 @@
 	import TableRow from './TableRow.svelte'
 	import type { CustomerInfo } from '../utils/types'
 	import { slide } from 'svelte/transition'
+	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
+
 	export let itemId: string = ''
-	export let dataToDisplay: CustomerInfo[]
+	export let dataToDisplay: CustomerFactory[]
 
 	$: itemId
 	$: dataToDisplay
@@ -27,28 +29,21 @@
 		<tbody>
 			{#each dataToDisplay as customer}
 				<TableRow
-					facilityName={customer.facilityName}
-					status={customer.delete !== undefined &&
-					customer.delete.status !== undefined &&
-					customer.delete.status !== ''
-						? customer.delete.status
-						: customer.update !== undefined &&
-						  customer.update.status !== undefined &&
-						  customer.update.status !== ''
-						? customer.update.status
-						: customer.registration.status}
-					updateDate={customer.delete !== undefined &&
-					customer.delete.status !== undefined &&
-					customer.delete.status !== ''
-						? customer.delete.deletedDate
-						: customer.update !== undefined &&
-						  customer.update.status !== undefined &&
-						  customer.update.status !== ''
-						? customer.update.lastUpdatedDate
-						: customer.registration.registrationDate}
+					facilityName={customer.custName}
 					address={customer.address}
-					id={customer.id}
+					bind:isActive={customer.isActive}
+					id={customer.custCD}
 					bind:itemId
+					status={!customer.isActive
+						? '削除'
+						: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
+						? '更新'
+						: '登録'}
+					updateDate={customer.delete.deleteDate !== '' && customer.delete.deleteDate !== undefined
+						? customer.deleteDateTime.date
+						: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
+						? customer.updateDateTime.date
+						: customer.registDateTime.date}
 				/>
 			{/each}
 		</tbody>

@@ -4,19 +4,48 @@
 	import Form from '@/views/customersViews/Form/Form.svelte'
 	import RegisteredModal from '@/views/customersViews/modals/RegisteredModal.svelte'
 	import RegistrationFooter from '@/views/customersViews/RegistrationFooter/RegistrationFooter.svelte'
+	import { CustomerFactory } from '../../utils/Factories/CustomerFactory'
 	export let data
 
-	let customer = data.customer
+	// let customer = data.customer
+
+	let customer = new CustomerFactory(data.customer, 'customer')
+
 	let verificationPageDisplayed = false
 	let modalIsOpened: boolean = false
 
+	// let initialState: CustomerEntries = {
+	// 	id: customer.id,
+	// 	branchNumber: customer.branchNumber,
+	// 	facilityName: customer.facilityName,
+	// 	kana: customer.kana,
+	// 	facilityNumber: customer.facilityNumber,
+	// 	businessType: customer.businessType,
+	// 	postalCode: customer.address.postalCode,
+	// 	prefecture: customer.address.prefecture,
+	// 	city: customer.address.city,
+	// 	address1: customer.address.address1,
+	// 	address2: customer.address.address2,
+	// 	phoneNumber: customer.address.phoneNumber,
+	// 	fax: customer.address.fax,
+	// 	year: customer.foundation.year,
+	// 	month: customer.foundation.month,
+	// 	founder: customer.foundation.founder,
+	// 	bedding: customer.bedding,
+	// 	numberOfEmployees: customer.numberOfEmployees,
+	// 	homepage: customer.homepage,
+	// 	numberOfFacilities: customer.numberOfFacilities,
+	// 	registrationDate: customer.registration.registrationDate,
+	// 	registrationTime: customer.registration.registrationTime
+	// }
+
 	let initialState: CustomerEntries = {
-		id: customer.id,
-		branchNumber: customer.branchNumber,
-		facilityName: customer.facilityName,
-		kana: customer.kana,
-		facilityNumber: customer.facilityNumber,
-		businessType: customer.businessType,
+		id: customer.custCD,
+		branchNumber: customer.numBranch,
+		facilityName: customer.custName,
+		kana: customer.custKana,
+		facilityNumber: customer.instId,
+		businessType: customer.custType,
 		postalCode: customer.address.postalCode,
 		prefecture: customer.address.prefecture,
 		city: customer.address.city,
@@ -24,16 +53,20 @@
 		address2: customer.address.address2,
 		phoneNumber: customer.address.phoneNumber,
 		fax: customer.address.fax,
-		year: customer.foundation.year,
-		month: customer.foundation.month,
-		founder: customer.foundation.founder,
-		bedding: customer.bedding,
-		numberOfEmployees: customer.numberOfEmployees,
-		homepage: customer.homepage,
-		numberOfFacilities: customer.numberOfFacilities,
-		registrationDate: customer.registration.registrationDate,
-		registrationTime: customer.registration.registrationTime
+		year: customer.foundation.establishDate,
+		month: customer.foundation.establishDate,
+		founder: customer.foundation.establishedBy,
+		bedding: customer.departmentDetail,
+		numberOfEmployees: customer.numEmployees,
+		homepage: customer.url,
+		numberOfFacilities: customer.numBranch,
+		registrationDate: customer.registration.registDate,
+		registrationTime: customer.registration.registBy,
+		isActive: customer.isActive
 	}
+
+	console.log(data.customer)
+	console.log(customer)
 
 	let noErrors: Error = {
 		branchNumber: true,
@@ -56,6 +89,8 @@
 		homepage: true,
 		numberOfFacilities: true
 	}
+
+	$: console.log(noErrors)
 </script>
 
 <section class="section section--form">

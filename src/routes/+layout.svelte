@@ -140,5 +140,6 @@
 		width: calc(100vw - 192px);
 		height: calc(100vh - 64px);
 		padding: 32px;
+		overflow-y: overlay;
 	}
 </style>

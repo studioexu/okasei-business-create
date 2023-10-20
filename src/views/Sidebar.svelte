@@ -1,10 +1,10 @@
 <script lang="ts" context="module">
+	import { createEventDispatcher } from 'svelte'
 	import Icon from '@/components/Icon.svelte'
 </script>
 
 <script lang="ts">
 	export let path: string
-	export let authority: string
 
 	const menus: { path: string; routes: string[]; regexp?: RegExp; text: string }[] = [
 		{
@@ -31,19 +31,20 @@
 		{ path: 'history', routes: ['/history'], text: '変更履歴' },
 		{ path: 'settings', routes: ['/settings'], text: '設定' }
 	]
-
-	if (authority !== 'admin') menus.shift()
+	const checkIsActive = (routes: string[], regexp?: RegExp, path: string = '') =>
+		routes.includes(path) || regexp?.test(path)
+	const dispatch = createEventDispatcher()
 </script>
 
 <nav class="nav">
 	<ul class="nav-menu">
 		{#each menus as menu}
-			<li class:active={menu.routes.includes(path) || menu.regexp?.test(path)}>
+			<li class:active={checkIsActive(menu.routes, menu.regexp, path)}>
 				<a href={menu.path}>
-					<span class:invisible={!menu.routes.includes(path) && !menu.regexp?.test(path)}>
+					<span class:invisible={!checkIsActive(menu.routes, menu.regexp, path)}>
 						<Icon icon={{ path: menu.path, color: '#0093d0' }} />
 					</span>
-					<span class:invisible={menu.routes.includes(path) || menu.regexp?.test(path)}>
+					<span class:invisible={checkIsActive(menu.routes, menu.regexp, path)}>
 						<Icon icon={{ path: menu.path }} />
 					</span>
 					{menu.text}
@@ -51,8 +52,10 @@
 			</li>
 		{/each}
 	</ul>
-	<span class="logout">
-		<a href="/"><Icon icon={{ path: 'logout' }} />ログアウト</a>
+	<!-- svelte-ignore a11y-click-events-have-key-events -->
+	<!-- svelte-ignore a11y-no-static-element-interactions -->
+	<span class="logout" on:click={() => dispatch('click')}>
+		<Icon icon={{ path: 'logout' }} />ログアウト
 	</span>
 </nav>
 
@@ -111,13 +114,19 @@
 			display: flex;
 			align-items: center;
 
-			> span {
+			span {
 				display: flex;
 				align-items: center;
+				margin-right: 8px;
 			}
+		}
 
-			> span,
-			> :global(.svg-icon) {
+		span {
+			display: flex;
+			align-items: center;
+			cursor: pointer;
+
+			:global(.svg-icon) {
 				margin-right: 8px;
 			}
 		}

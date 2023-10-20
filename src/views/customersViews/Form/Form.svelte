@@ -7,6 +7,7 @@
 	import Seletector from './Selector.svelte'
 	import { enhance } from '$app/forms'
 	import DepartmentSection from './DepartmentSection.svelte'
+	import { fly } from 'svelte/transition'
 
 	export let formType: string
 	export let verificationPageDisplayed: boolean
@@ -29,8 +30,9 @@
 	}
 </script>
 
+<!-- {#if !verificationPageDisplayed} -->
 <form
-	class="form"
+	class="form {verificationPageDisplayed ? 'disappear' : ''}"
 	method={'POST'}
 	action={formType === 'create'
 		? '/customers/new?/create'
@@ -258,6 +260,8 @@
 	</div>
 </form>
 
+<!-- {/if} -->
+
 <style lang="scss">
 	.hidden {
 		display: none;
@@ -270,6 +274,16 @@
 		// opacity: 0;
 		// // transform: translateX(-1000px);
 		// animation: out 2000ms forwards;
+	}
+
+	.disappear {
+		display: none;
+		animation: out 2000ms forwards;
+	}
+
+	.appear {
+		display: block;
+		animation: in 2000ms forwards;
 	}
 	.form {
 		font-family: 'Noto Sans JP';
@@ -368,6 +382,18 @@
 		100% {
 			transform: translateX(1000px);
 			display: none;
+		}
+	}
+
+	@keyframes in {
+		0% {
+			opacity: 0;
+			transform: translateX(400px);
+		}
+
+		100% {
+			opacity: 1;
+			transform: translateX(0);
 		}
 	}
 </style>

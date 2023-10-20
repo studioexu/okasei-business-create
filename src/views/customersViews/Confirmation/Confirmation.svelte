@@ -12,53 +12,55 @@
 	let bedQuantity: number = 0
 </script>
 
-<div class="confirmation">
-	<div class="container {verificationPageDisplayed ? '' : 'hidden'} ">
-		<Wrapper areaClass="customerNumber" content={initialState.id} title={'顧客番号'} />
-		<Wrapper areaClass="branchNumber" content={initialState.branchNumber} title={'枝番'} />
-		<Wrapper areaClass="facilityName" content={initialState.facilityName} title={'施設名'} />
-		<Wrapper areaClass="kana" content={initialState.kana} title={'カナ'} />
+{#if verificationPageDisplayed}
+	<div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
+		<div class="container">
+			<Wrapper areaClass="customerNumber" content={initialState.id} title={'顧客番号'} />
+			<Wrapper areaClass="branchNumber" content={initialState.branchNumber} title={'枝番'} />
+			<Wrapper areaClass="facilityName" content={initialState.facilityName} title={'施設名'} />
+			<Wrapper areaClass="kana" content={initialState.kana} title={'カナ'} />
 
-		<Wrapper
-			areaClass="facilityNumber"
-			content={initialState.facilityNumber}
-			title={'医療機関番号'}
-		/>
-		<Wrapper areaClass="businessType" content={initialState.businessType} title={'区分'} />
+			<Wrapper
+				areaClass="facilityNumber"
+				content={initialState.facilityNumber}
+				title={'医療機関番号'}
+			/>
+			<Wrapper areaClass="businessType" content={initialState.businessType} title={'区分'} />
 
-		<Wrapper areaClass="postalCode" content={initialState.postalCode} title={'郵便番号'} />
-		<Wrapper areaClass="prefecture" content={initialState.prefecture} title={'都道府県'} />
-		<Wrapper areaClass="city" content={initialState.city} title={'市区町村'} />
-		<Wrapper areaClass="address1" content={initialState.address1} title={'住所１'} />
-		<Wrapper areaClass="address2" content={initialState.address2} title={'住所2'} />
-		<Wrapper areaClass="phoneNumber" content={initialState.phoneNumber} title={'電話番号'} />
-		<Wrapper areaClass="fax" content={initialState.fax} title={'FAX番号'} />
+			<Wrapper areaClass="postalCode" content={initialState.postalCode} title={'郵便番号'} />
+			<Wrapper areaClass="prefecture" content={initialState.prefecture} title={'都道府県'} />
+			<Wrapper areaClass="city" content={initialState.city} title={'市区町村'} />
+			<Wrapper areaClass="address1" content={initialState.address1} title={'住所１'} />
+			<Wrapper areaClass="address2" content={initialState.address2} title={'住所2'} />
+			<Wrapper areaClass="phoneNumber" content={initialState.phoneNumber} title={'電話番号'} />
+			<Wrapper areaClass="fax" content={initialState.fax} title={'FAX番号'} />
 
-		<Wrapper areaClass="homepage" content={initialState.homepage} title={'ホームページ'} />
-		<Wrapper
-			areaClass="numberOfEmployees"
-			content={initialState.numberOfEmployees}
-			title={'従業員数'}
-		/>
-		<Wrapper
-			areaClass="numberOfFacilities"
-			content={initialState.numberOfFacilities}
-			title={'関連施設拠点数'}
-		/>
+			<Wrapper areaClass="homepage" content={initialState.homepage} title={'ホームページ'} />
+			<Wrapper
+				areaClass="numberOfEmployees"
+				content={initialState.numberOfEmployees}
+				title={'従業員数'}
+			/>
+			<Wrapper
+				areaClass="numberOfFacilities"
+				content={initialState.numberOfFacilities}
+				title={'関連施設拠点数'}
+			/>
 
-		<BeddingWrapper total={bedQuantity}>
-			{#each initialState.bedding as bedding}
-				<BedContainer department={bedding.department} quantity={bedding.quantity} />
-			{/each}
-		</BeddingWrapper>
+			<BeddingWrapper total={bedQuantity}>
+				{#each initialState.bedding as bedding}
+					<BedContainer department={bedding.department} quantity={bedding.quantity} />
+				{/each}
+			</BeddingWrapper>
 
-		<FoundationWrapper
-			year={initialState.year}
-			month={initialState.month}
-			founder={initialState.founder}
-		/>
+			<FoundationWrapper
+				year={initialState.year}
+				month={initialState.month}
+				founder={initialState.founder}
+			/>
+		</div>
 	</div>
-</div>
+{/if}
 
 <style lang="scss">
 	.container {

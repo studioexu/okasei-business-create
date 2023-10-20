@@ -47,7 +47,7 @@
 <!-- <td class="data status">{status}日</td> -->
 <td class="data update-date">{status}日 {updateDate}</td>
 <td class="data update">
-	<a class="btn btn--update" href="/customers/{id}/edit">
+	<a class="btn btn--update {isActive ? '' : 'disabled'}" href="/customers/{id}/edit">
 		{#if isActive}
 			<Icon icon={{ path: 'notepad', color: '#2FA8E1' }} />
 		{:else}
@@ -56,7 +56,7 @@
 	</a>
 </td>
 <td class="data erase">
-	<button class="btn btn--erase" {id} on:click={handleDeleteItem}>
+	<button class="btn btn--erase {isActive ? '' : 'disabled'}" {id} on:click={handleDeleteItem}>
 		{#if isActive}
 			<Icon icon={{ path: 'trash-bin', color: '#2FA8E1' }} />
 		{:else}
@@ -113,6 +113,10 @@
 		&:hover {
 			cursor: pointer;
 			transform: scale(1.2);
+		}
+
+		&.disabled {
+			pointer-events: none;
 		}
 	}
 

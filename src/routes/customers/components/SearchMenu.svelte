@@ -9,6 +9,11 @@
 	let phoneNumber: string = ''
 	export let data: CustomerFactory[]
 	export let newData: CustomerFactory[]
+	export let displayDeleteCusomtersIsChecked: boolean
+	export let filteredCustomers: CustomerFactory[]
+
+	$: filteredCustomers
+	$: console.log(filteredCustomers)
 
 	/**
 	 * FilterData will filter data according the keywords entered by the user and the type of the input.
@@ -16,24 +21,19 @@
 	 * @param filterType: string, the filter that we want to apply
 	 * @param input: string, the keywords entered by the user
 	 */
-	const filterData = (data: any[], filterType: string, input: string) => {
+	const filterData = (data: CustomerFactory[], filterType: string, input: string) => {
 		console.log(data)
 		console.log(input)
 
 		switch (filterType) {
 			case 'facility-name':
 				return data.filter(customer => {
-					console.log(customer.custName.includes(input))
-
-					return customer.custName.includes(input)
-				})
-			case 'kana':
-				return data.filter(customer => {
-					return customer.kana.includes(input)
+					return (
+						customer.custName.toLowerCase().includes(input.toLowerCase()) ||
+						customer.custKana.includes(input)
+					)
 				})
 			case 'customer-number':
-				console.log(input)
-
 				return data.filter(customer => {
 					return customer.instId.includes(input)
 				})
@@ -72,10 +72,16 @@
 
 		if (custName !== '') {
 			dataBis = filterData(dataBis, 'facility-name', custName)
-			// dataBis = filterData(dataBis, 'kana', facilityName)
 		}
 
-		newData = dataBis
+		// newData = dataBis
+		filteredCustomers = dataBis
+		newData = displayDeleteCusomtersIsChecked
+			? filteredCustomers
+			: filteredCustomers.filter(customer => customer.isActive)
+
+		console.log(filteredCustomers)
+		console.log(dataBis)
 	}
 
 	$: console.log('newData')

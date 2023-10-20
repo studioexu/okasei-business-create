@@ -18,7 +18,7 @@
 
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
-		branchNumber: customer.numBranch,
+		branchNumber: customer.custBranchCD,
 		facilityName: customer.custName,
 		kana: customer.custKana,
 		facilityNumber: customer.instId,

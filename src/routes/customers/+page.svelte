@@ -13,6 +13,14 @@
 	let allCustomers: CustomerFactory[] = data.data.map(
 		(customer: CustomerInfo) => new CustomerFactory(customer, 'customer')
 	)
+
+	let filteredCustomers: CustomerFactory[]
+
+	$: filteredCustomers
+
+	$: console.log('binder')
+
+	$: console.log(filteredCustomers)
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let newData: CustomerFactory[] = customersToDisplay
 	let dataToDisplay: CustomerFactory[] = []
@@ -55,10 +63,13 @@
 	const handleCheck = (e: any) => {
 		displayDeleteCustomersIsChecked = e.target.checked
 		if (displayDeleteCustomersIsChecked) {
-			customersToDisplay = allCustomers
+			customersToDisplay = filteredCustomers === undefined ? allCustomers : filteredCustomers
 			newData = customersToDisplay
 		} else {
-			customersToDisplay = allCustomers.filter(customer => customer.isActive)
+			customersToDisplay =
+				filteredCustomers === undefined
+					? allCustomers.filter(customer => customer.isActive)
+					: filteredCustomers.filter(customer => customer.isActive)
 			newData = customersToDisplay
 		}
 	}
@@ -75,7 +86,12 @@
 
 	<header class="section__header">
 		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>
-		<SearchMenu bind:data={customersToDisplay} bind:newData />
+		<SearchMenu
+			bind:data={allCustomers}
+			bind:newData
+			bind:filteredCustomers
+			displayDeleteCusomtersIsChecked={displayDeleteCustomersIsChecked}
+		/>
 
 		<div class="container">
 			<label class="switch-label" for="checkbox">

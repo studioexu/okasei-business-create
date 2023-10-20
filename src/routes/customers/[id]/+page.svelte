@@ -29,7 +29,7 @@
 	<!-- ************************************************* -->
 	<div class="container">
 		<Wrapper areaClass="customerNumber" content={customer.custCD} title={'顧客番号'} />
-		<Wrapper areaClass="branchNumber" content={customer.numBranch} title={'枝番'} />
+		<Wrapper areaClass="branchNumber" content={customer.custBranchCD} title={'枝番'} />
 		<Wrapper areaClass="facilityName" content={customer.custName} title={'施設名'} />
 		<Wrapper areaClass="kana" content={customer.custKana} title={'カナ'} />
 

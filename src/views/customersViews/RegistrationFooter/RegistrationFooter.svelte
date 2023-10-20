@@ -2,6 +2,7 @@
 	import type { CustomerEntries, CustomerEntriesErrors } from '@/routes/customers/utils/types'
 	import { inputIsValid } from '@/routes/customers/utils/validations'
 	import Button from '@/components/customers/Button.svelte'
+	import { fade } from 'svelte/transition'
 
 	export let initialState: CustomerEntries
 	export let noErrors: CustomerEntriesErrors
@@ -48,7 +49,9 @@
 <footer class="section__footer">
 	<div class="form__footer">
 		{#if verificationPageDisplayed}
-			<Button buttonClass={'btn--transparent'} handleClick={handleEditClicked}>修正</Button>
+			<div in:fade>
+				<Button buttonClass={'btn--transparent'} handleClick={handleEditClicked}>修正</Button>
+			</div>
 			<Button buttonClass={'btn--filled'} form="registration-form">登録</Button>
 		{:else}
 			<Button buttonClass={'btn--filled'} handleClick={handleCheckForm}>登録</Button>

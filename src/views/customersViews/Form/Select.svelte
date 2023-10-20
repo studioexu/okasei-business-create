@@ -82,6 +82,10 @@
 		}
 	}
 
+	.unit {
+		height: 32px;
+	}
+
 	.mb-0 {
 		margin-bottom: 0;
 	}

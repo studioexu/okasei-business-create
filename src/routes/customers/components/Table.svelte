@@ -87,18 +87,18 @@
 
 <style lang="scss">
 	.table-wrapper {
-		border-radius: 5px;
+		border-radius: 3px;
 		overflow: hidden;
-		// padding: 0 18px;
-		// background-color: #fff;
+		padding: 0 18px;
+		background-color: #fff;
 	}
 	.customer-list {
-		// background-color: #fff;
 		padding: 0 calc((18 / 1366) * 100vw);
 		border-radius: 4px;
 		width: 100%;
 		border-spacing: 0;
 		border-collapse: collapse;
+		background-color: transparent;
 	}
 
 	.table-header {
@@ -115,9 +115,20 @@
 		// transform-origin: 0 0;
 		border-bottom: #2fa8e1 1px solid;
 		background-color: #fff;
+		// padding: 0 50px;
 
 		&.deleted {
 			background-color: rgb(229, 229, 229);
+			// &::before {
+			// 	content: ' ';
+			// 	position: absolute;
+			// 	top: 0;
+			// 	left: -18px;
+			// 	background-color: red;
+			// 	width: 120%;
+			// 	height: 100%;
+			// 	z-index: -1;
+			// }
 
 			// animation: deleted 2000ms forwards;
 

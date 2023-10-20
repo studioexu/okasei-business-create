@@ -215,14 +215,10 @@
 <div class="pagination">
 	<div class="pagination-container">
 		{#if current > 1 && dividedUsers.length > max}
-			<button on:click={() => movePage(0)}
-				><Icon icon={{ path: 'to-first', color: '#595857' }} /></button
-			>
+			<button on:click={() => movePage(0)}><Icon icon={{ path: 'to-first' }} /></button>
 		{/if}
 		{#if current > 0}
-			<button on:click={() => movePage('prev')}
-				><Icon icon={{ path: 'to-prev', color: '#595857' }} /></button
-			>
+			<button on:click={() => movePage('prev')}><Icon icon={{ path: 'to-prev' }} /></button>
 		{/if}
 		{#each pagination as num}
 			<button
@@ -231,14 +227,10 @@
 			>
 		{/each}
 		{#if current < dividedUsers.length - 1}
-			<button on:click={() => movePage('next')}
-				><Icon icon={{ path: 'to-next', color: '#595857' }} /></button
-			>
+			<button on:click={() => movePage('next')}><Icon icon={{ path: 'to-next' }} /></button>
 		{/if}
 		{#if current < dividedUsers.length - 2 && dividedUsers.length > max}
-			<button on:click={() => movePage('to-last')}
-				><Icon icon={{ path: 'to-last', color: '#595857' }} /></button
-			>
+			<button on:click={() => movePage('to-last')}><Icon icon={{ path: 'to-last' }} /></button>
 		{/if}
 	</div>
 </div>

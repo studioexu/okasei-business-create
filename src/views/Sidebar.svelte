@@ -45,7 +45,7 @@
 						<Icon icon={{ path: menu.path, color: '#0093d0' }} />
 					</span>
 					<span class:invisible={checkIsActive(menu.routes, menu.regexp, path)}>
-						<Icon icon={{ path: menu.path }} />
+						<Icon icon={{ path: menu.path, color: '#fff' }} />
 					</span>
 					{menu.text}
 				</a>
@@ -55,7 +55,7 @@
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<span class="logout" on:click={() => dispatch('click')}>
-		<Icon icon={{ path: 'logout' }} />ログアウト
+		<Icon icon={{ path: 'logout', color: '#fff' }} />ログアウト
 	</span>
 </nav>
 

@@ -74,7 +74,7 @@
 		{/if}
 		{#each keys as key}
 			<fieldset class="fieldset">
-				<Icon icon={{ path: key === 'password' ? 'password' : 'user', color: '#595857' }} />
+				<Icon icon={{ path: key === 'password' ? 'password' : 'user' }} />
 				<input
 					class:error={(error && key === 'employeeNumber') || error === 'password'}
 					type={key === 'employeeNumber' ? 'number' : isHidden ? 'password' : 'text'}
@@ -87,9 +87,9 @@
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<span on:click={() => (isHidden = !isHidden)}>
 						{#if isHidden}
-							<Icon icon={{ path: 'eye-slash', color: '#595857' }} />
+							<Icon icon={{ path: 'eye-slash' }} />
 						{:else}
-							<Icon icon={{ path: 'eye', color: '#595857' }} />
+							<Icon icon={{ path: 'eye' }} />
 						{/if}
 					</span>
 				{/if}

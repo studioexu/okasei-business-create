@@ -1,5 +1,8 @@
 <script lang="ts" context="module">
+	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
+	import { user } from '@/stores/users'
+	import type { User } from '@/libs/types'
 	import Header from '@/views/Header.svelte'
 	import Sidebar from '@/views/Sidebar.svelte'
 </script>
@@ -7,12 +10,17 @@
 <script lang="ts">
 	$: path = $page.url.pathname
 
-	const authority = 'admin'
+	const isAdmin = $user.role === 'システム管理者'
+
+	const onClick = () => {
+		user.set(<User>{})
+		goto('/')
+	}
 </script>
 
 {#if path !== '/'}
-	<Header {path} {authority} id="000000" name="山田太郎" />
-	<Sidebar {path} {authority} />
+	<Header {path} {isAdmin} id={`${$user.employeeNumber}`} name={$user.name} />
+	<Sidebar {path} on:click={onClick} />
 {/if}
 <main class:main={path !== '/'}>
 	<slot />

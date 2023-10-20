@@ -1,7 +1,8 @@
 <script lang="ts" context="module">
+	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
-	import { roles, users, created, updated } from '@/stores/users'
+	import { user, roles, users, created, updated } from '@/stores/users'
 	import { debounce, toKebab } from '@/libs/utils'
 	import type { EditedData, Role, User, UserKey } from '@/libs/types'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
@@ -35,7 +36,7 @@
 </script>
 
 <script lang="ts">
-	const user: User = <User>$users.find(user => `${user.employeeNumber}` === $page.params.id)
+	const currentUser: User = <User>$users.find(user => `${user.employeeNumber}` === $page.params.id)
 	$: fieldsets = [
 		{
 			id: 'employeeNumber',
@@ -84,7 +85,7 @@
 
 	$: isDisabled = !Object.keys(user).every(key => {
 		const localKey = <UserKey>key
-		const localUser = user[localKey]
+		const localUser = currentUser[localKey]
 		const fieldset = fieldsets.find(fieldset => fieldset.id === localKey)
 
 		return (
@@ -108,32 +109,34 @@
 
 			switch (id) {
 				case 'employeeNumber':
-					user[id] = parseInt(content.replace(/^0+(?=\d)/, ''), 10)
+					currentUser[id] = parseInt(content.replace(/^0+(?=\d)/, ''), 10)
 
-					if (fieldset) fieldset.isError = user[id] <= 0
+					if (fieldset) fieldset.isError = currentUser[id] <= 0
 
 					break
 
 				case 'name':
 				case 'belongsTo':
-					user[id] = content
+					currentUser[id] = content
 					break
 
 				case 'role':
-					user[id] = <Role>content
+					currentUser[id] = <Role>content
 
 					if (fieldset) fieldset.isError = !$roles.includes(<Role>content)
 
 					break
 
 				case 'email':
-					user[id] = content
+					currentUser[id] = content
 					if (fieldset)
-						fieldset.isError = !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(user[id])
+						fieldset.isError = !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(
+							currentUser[id]
+						)
 					break
 			}
 		}
-	}, 500)
+	}, 200)
 
 	const goBack = () => goto('/users')
 
@@ -151,11 +154,11 @@
 			try {
 				const formData = new FormData()
 
-				for (const key in user) formData.append(key, <string>user[<UserKey>key])
+				for (const key in user) formData.append(key, <string>currentUser[<UserKey>key])
 
 				users.set(
 					$users.map(localUser =>
-						localUser.employeeNumber === user.employeeNumber ? user : localUser
+						localUser.employeeNumber === currentUser.employeeNumber ? currentUser : localUser
 					)
 				)
 				isShown = true
@@ -165,11 +168,15 @@
 				isSucceeded = false
 			}
 		}
-	}, 500)
+	}, 200)
 
 	$: {
 		if (isConfirming && isShown && isSucceeded) setTimeout(() => goBack(), 2000)
 	}
+
+	onMount(() => {
+		if ($user.role !== 'システム管理者') goto('/users')
+	})
 </script>
 
 <div class="container">
@@ -186,7 +193,7 @@
 						class:readonly={isConfirming || fieldset.id === 'employeeNumber'}
 						type={fieldset.type}
 						id={toKebab(fieldset.id)}
-						value={user[fieldset.id]}
+						value={currentUser[fieldset.id]}
 						list={fieldset.list ?? ''}
 						readonly={isConfirming}
 						on:input={event => onInput(event, fieldset.id)}

@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let path: string
-	export let authority: string
+	export let isAdmin: boolean
 	export let id: string
 	export let name: string
 
@@ -38,7 +38,7 @@
 		<h1 class="font-large">{title}</h1>
 	</div>
 	<div class="right">
-		{#if authority === 'admin'}
+		{#if isAdmin}
 			<span class="authority">管理者</span>
 		{/if}
 		<span>社員番号: {id}</span>

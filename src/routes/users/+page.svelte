@@ -242,7 +242,7 @@
 		{/if}
 	</div>
 </div>
-{#if isShown}
+{#if isAdmin && isShown}
 	<DeleteModal {phase} on:click={onClick} />
 {/if}
 

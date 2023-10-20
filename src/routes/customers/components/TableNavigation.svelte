@@ -14,7 +14,7 @@
 	$: numberOfPages = Math.ceil(newData.length / 6)
 
 	$: currentPage =
-		currentPage > numberOfPages && numberOfPages !== 0 ? currentPage - 1 : currentPage
+		currentPage > numberOfPages && numberOfPages !== 0 ? (currentPage = numberOfPages) : currentPage
 
 	/**
 	 * Update the page navigation in the footer according to the current page.

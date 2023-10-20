@@ -13,8 +13,6 @@
 	let totalOfBed: number = 0
 	let bedInputArray: BedInput[] = []
 
-	$: console.log(bedding)
-
 	if (bedding.length === 0) {
 		bedInputArray = [{ index: 0, department: '', quantity: '0' }]
 	} else {
@@ -31,7 +29,8 @@
 	const caculateTotalOfBeds = (beds: BedInput[]): number => {
 		let sum: number = 0
 		beds.map((bed: BedInput) => {
-			sum += parseInt(bed.quantity)
+			const numberOfBed = isNaN(parseInt(bed.quantity)) ? 0 : parseInt(bed.quantity)
+			sum += numberOfBed
 		})
 
 		return sum

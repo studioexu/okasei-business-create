@@ -4,17 +4,14 @@
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
 	import type { CustomerEntries, CustomerEntriesErrors } from '@/routes/customers/utils/types'
-	import BedSection from './DepartmentSection.svelte'
 	import Seletector from './Selector.svelte'
 	import { enhance } from '$app/forms'
-	import { fade, fly } from 'svelte/transition'
 	import DepartmentSection from './DepartmentSection.svelte'
 
 	export let formType: string
 	export let verificationPageDisplayed: boolean
 	export let initialState: CustomerEntries
 	export let modalIsOpened: boolean
-
 	export let noErrors: CustomerEntriesErrors
 
 	const hojinKojin = [' ', '法人', '個人']
@@ -33,7 +30,7 @@
 </script>
 
 <form
-	class="form {verificationPageDisplayed ? 'hidden' : ''}"
+	class="form"
 	method={'POST'}
 	action={formType === 'create'
 		? '/customers/new?/create'

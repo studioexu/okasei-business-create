@@ -64,7 +64,6 @@
 
 	const handleChange = (e: any) => {
 		const input = e.target.value
-		console.log('hello')
 
 		isValid = inputIsValid(dataType, input)
 	}
@@ -83,6 +82,7 @@
 		{placeholder}
 		class="input"
 		bind:value
+		on:click={() => (value = '')}
 	/>
 
 	{#if unit !== ''}

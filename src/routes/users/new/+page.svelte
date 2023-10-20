@@ -1,24 +1,25 @@
 <script lang="ts" context="module">
+	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
-	import { roles, users } from '@/stores/users'
+	import { user, roles, users } from '@/stores/users'
 	import { debounce, toKebab } from '@/libs/utils'
 	import type { Role, User, UserKey } from '@/libs/types'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 </script>
 
 <script lang="ts">
-	const user: {
+	const currentUser: {
 		employeeNumber: string
 		name: string
 		belongsTo: string
 		role: Role
 		email: string
-	} = {
-		employeeNumber: '',
-		name: '',
-		belongsTo: '',
-		role: <Role>'',
-		email: ''
+	} = {} as {
+		employeeNumber: string
+		name: string
+		belongsTo: string
+		role: Role
+		email: string
 	}
 
 	$: fieldsets = [
@@ -65,9 +66,9 @@
 		errorText?: string
 	}[]
 
-	$: isDisabled = !Object.keys(user).every(key => {
+	$: isDisabled = !Object.keys(currentUser).every(key => {
 		const localKey = <UserKey>key
-		const localUser = user[localKey]
+		const localUser = currentUser[localKey]
 		const fieldset = fieldsets.find(fieldset => fieldset.id === localKey)
 
 		return (
@@ -82,37 +83,39 @@
 	let isSucceeded: boolean = false
 
 	const onInput = debounce((event: Event, id: string) => {
-		if (user.hasOwnProperty(id)) {
+		if (currentUser.hasOwnProperty(id)) {
 			const content: string = (<HTMLInputElement>event.target).value
 			const fieldset = fieldsets.find(fieldset => fieldset.id === id)
 
 			switch (id) {
 				case 'employeeNumber':
-					user[id] = content.replace(/^0+(?=\d)/, '')
+					currentUser[id] = content.replace(/^0+(?=\d)/, '')
 
-					if (fieldset) fieldset.isError = parseInt(user[id], 10) <= 0
+					if (fieldset) fieldset.isError = parseInt(currentUser[id], 10) <= 0
 					break
 
 				case 'name':
 				case 'belongsTo':
-					user[id] = content
+					currentUser[id] = content
 					break
 
 				case 'role':
-					user[id] = <Role>content
+					currentUser[id] = <Role>content
 
 					if (fieldset) fieldset.isError = !$roles.includes(<Role>content)
 
 					break
 
 				case 'email':
-					user[id] = content
+					currentUser[id] = content
 					if (fieldset)
-						fieldset.isError = !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(user[id])
+						fieldset.isError = !/^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Za-z]{2,}$/.test(
+							currentUser[id]
+						)
 					break
 			}
 		}
-	}, 500)
+	}, 200)
 
 	const goBack = () => goto('/users')
 
@@ -130,15 +133,9 @@
 			try {
 				const formData = new FormData()
 
-				for (const key in user) formData.append(key, <string>user[<UserKey>key])
+				for (const key in currentUser) formData.append(key, <string>currentUser[<UserKey>key])
 
-				const localUser: User = <User>{
-					employeeNumber: 0,
-					name: '',
-					belongsTo: '',
-					role: <Role>'',
-					email: ''
-				}
+				const localUser = <User>{}
 
 				for (let key in localUser) {
 					key = <UserKey>key
@@ -146,17 +143,17 @@
 					if (localUser.hasOwnProperty(key)) {
 						switch (key) {
 							case 'employeeNumber':
-								localUser[key] = parseInt(user[key], 10)
+								localUser[key] = parseInt(currentUser[key], 10)
 								break
 
 							case 'role':
-								localUser[key] = <Role>user[key]
+								localUser[key] = <Role>currentUser[key]
 								break
 
 							case 'name':
 							case 'belongsTo':
 							case 'email':
-								localUser[key] = user[key]
+								localUser[key] = currentUser[key]
 								break
 						}
 					}
@@ -170,11 +167,15 @@
 				isSucceeded = false
 			}
 		}
-	}, 500)
+	}, 200)
 
 	$: {
 		if (isShown && isSucceeded) setTimeout(() => goBack(), 2000)
 	}
+
+	onMount(() => {
+		if ($user.role !== 'システム管理者') goto('/users')
+	})
 </script>
 
 <div class="container">
@@ -190,7 +191,7 @@
 						class:error={fieldset.isError}
 						type={fieldset.type}
 						id={toKebab(fieldset.id)}
-						value={user[fieldset.id]}
+						value={currentUser[fieldset.id]}
 						list={fieldset.list ?? ''}
 						on:input={event => onInput(event, fieldset.id)}
 					/>

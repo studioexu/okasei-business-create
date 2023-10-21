@@ -4,7 +4,7 @@
 	import Icon from '@/components/Icon.svelte'
 	import { debounce, toKebab } from '@/libs/utils'
 	import { user, users } from '@/stores/users'
-	import type { SortedItemForUser, User } from '@/libs/types'
+	import type { Role, SortedItemForUser, User } from '@/libs/types'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 </script>
 
@@ -115,8 +115,20 @@
 
 			case 'delete':
 				try {
-					users.set($users.filter(user => user.employeeNumber !== currentUser))
-					phase = 'success'
+					users.set($users.filter(localUser => localUser.employeeNumber !== currentUser))
+
+					if ($user.employeeNumber === currentUser) {
+						user.set({
+							employeeNumber: 0,
+							name: '',
+							belongsTo: '',
+							role: <Role>'',
+							email: ''
+						})
+
+						goto('/')
+						phase = 'shown'
+					} else phase = 'success'
 				} catch (error) {
 					phase = 'error'
 				}

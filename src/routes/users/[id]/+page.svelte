@@ -88,16 +88,12 @@
 
 	let isConfirming: boolean = false
 
-	$: isDisabled = !Object.keys(user).every(key => {
+	$: isDisabled = !Object.keys($user).every(key => {
 		const localKey = <UserKey>key
-		const localUser = currentUser[localKey]
+		const value = currentUser[localKey]
 		const fieldset = fieldsets.find(fieldset => fieldset.id === localKey)
 
-		return (
-			(typeof localUser === 'number' ? localUser > 0 : localUser !== '') &&
-			fieldset &&
-			!fieldset.isError
-		)
+		return (typeof value === 'number' ? value > 0 : value !== '') && fieldset && !fieldset.isError
 	})
 
 	let isNavigating: boolean = false
@@ -108,7 +104,7 @@
 	const updatedAt: EditedData = generateEditedData($updated)
 
 	const onInput = debounce((event: Event, id: string) => {
-		if (user.hasOwnProperty(id)) {
+		if ($user.hasOwnProperty(id)) {
 			const content: string = (<HTMLInputElement>event.target).value
 			const fieldset = fieldsets.find(fieldset => fieldset.id === id)
 
@@ -159,7 +155,7 @@
 			try {
 				const formData = new FormData()
 
-				for (const key in user) formData.append(key, <string>currentUser[<UserKey>key])
+				for (const key in $user) formData.append(key, <string>currentUser[<UserKey>key])
 
 				users.set(
 					$users.map(localUser =>

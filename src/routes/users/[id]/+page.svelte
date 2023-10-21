@@ -1,5 +1,4 @@
 <script lang="ts" context="module">
-	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { user, roles, users, created, updated } from '@/stores/users'
@@ -7,13 +6,19 @@
 	import type { EditedData, Role, User, UserKey } from '@/libs/types'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
-	const texts: EditedData = {
+	const createdTexts: EditedData = {
 		user: '登録者',
 		date: '登録日',
 		time: '登録時刻'
 	}
 
-	const keys = <('user' | 'date' | 'time')[]>Object.keys(texts)
+	const updatedTexts: EditedData = {
+		user: '更新者',
+		date: '更新日',
+		time: '更新時刻'
+	}
+
+	const keys: ('user' | 'date' | 'time')[] = ['user', 'date', 'time']
 
 	const generateEditedData = (data: { user: string; datetime: Date }): EditedData => {
 		const obj: EditedData = { user: '', date: '', time: '' }
@@ -173,79 +178,80 @@
 	$: {
 		if (isConfirming && isShown && isSucceeded) setTimeout(() => goBack(), 2000)
 	}
-
-	onMount(() => {
-		if ($user.role !== 'システム管理者') goto('/users')
-	})
 </script>
 
 <div class="container">
-	<form class="form" on:submit={event => onSubmit(event)}>
-		{#each fieldsets as fieldset}
-			<fieldset>
-				<label for={toKebab(fieldset.id)}>{fieldset.text}</label>
-				<div class="input-container">
-					{#if fieldset.isError && fieldset.errorText}
-						<span class="font-error">{fieldset.errorText}</span>
+	{#if $user.role === 'システム管理者'}
+		<form class="form" on:submit={event => onSubmit(event)}>
+			{#each fieldsets as fieldset}
+				<fieldset>
+					<label for={toKebab(fieldset.id)}>{fieldset.text}</label>
+					<div class="input-container">
+						{#if fieldset.isError && fieldset.errorText}
+							<span class="font-error">{fieldset.errorText}</span>
+						{/if}
+						<input
+							class:error={fieldset.isError}
+							class:readonly={isConfirming || fieldset.id === 'employeeNumber'}
+							type={fieldset.type}
+							id={toKebab(fieldset.id)}
+							value={currentUser[fieldset.id]}
+							list={fieldset.list ?? ''}
+							readonly={isConfirming}
+							on:input={event => onInput(event, fieldset.id)}
+						/>
+					</div>
+					{#if fieldset.list && fieldset.options}
+						<datalist id={fieldset.list}>
+							{#each fieldset.options as _, index}
+								<option value={fieldset.options[index]} />
+							{/each}
+						</datalist>
 					{/if}
-					<input
-						class:error={fieldset.isError}
-						class:readonly={isConfirming || fieldset.id === 'employeeNumber'}
-						type={fieldset.type}
-						id={toKebab(fieldset.id)}
-						value={currentUser[fieldset.id]}
-						list={fieldset.list ?? ''}
-						readonly={isConfirming}
-						on:input={event => onInput(event, fieldset.id)}
-					/>
-				</div>
-				{#if fieldset.list && fieldset.options}
-					<datalist id={fieldset.list}>
-						{#each fieldset.options as _, index}
-							<option value={fieldset.options[index]} />
-						{/each}
-					</datalist>
-				{/if}
-			</fieldset>
-		{/each}
-		<div class="btns">
-			<button
-				class="secondary"
-				type="button"
-				on:click={() => (isConfirming ? (isConfirming = false) : onClick())}
-			>
-				{isConfirming ? '修正' : '戻る'}
-			</button>
-			{#if isConfirming}
-				<button class="primary" type="submit">登録</button>
-			{:else}
-				<button
-					class="primary"
-					class:disabled={isDisabled}
-					type="button"
-					on:click={() => (isConfirming = true)}>確認</button
-				>
-			{/if}
-		</div>
-	</form>
-	<dl class="history">
-		<div>
-			{#each keys as key}
-				<dt>{texts[key]}</dt>
-				<dd>{createdAt[key]}</dd>
+				</fieldset>
 			{/each}
-		</div>
-		{#if updatedAt.user !== ''}
+			<div class="btns">
+				<button
+					class="secondary"
+					type="button"
+					on:click={() => (isConfirming ? (isConfirming = false) : onClick())}
+				>
+					{isConfirming ? '修正' : '戻る'}
+				</button>
+				{#if isConfirming}
+					<button class="primary" type="submit">登録</button>
+				{:else}
+					<button
+						class="primary"
+						class:disabled={isDisabled}
+						type="button"
+						on:click={() => (isConfirming = true)}>確認</button
+					>
+				{/if}
+			</div>
+		</form>
+		<dl class="history">
 			<div>
 				{#each keys as key}
-					<dt>{texts[key]}</dt>
-					<dd>{updatedAt[key]}</dd>
+					<dt>{createdTexts[key]}</dt>
+					<dd>{createdAt[key]}</dd>
 				{/each}
 			</div>
+			{#if updatedAt.user !== ''}
+				<div>
+					{#each keys as key}
+						<dt>{updatedTexts[key]}</dt>
+						<dd>{updatedAt[key]}</dd>
+					{/each}
+				</div>
+			{/if}
+		</dl>
+		{#if isConfirming && isShown}
+			<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
 		{/if}
-	</dl>
-	{#if isConfirming && isShown}
-		<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
+	{:else}
+		<p>アクセス権限がありません。</p>
+		<button class="primary" on:click={() => goto('/users')}>戻る</button>
 	{/if}
 </div>
 
@@ -320,6 +326,11 @@
 					}
 				}
 			}
+		}
+
+		> p {
+			text-align: center;
+			margin-bottom: 16px;
 		}
 	}
 </style>

@@ -1,5 +1,4 @@
 <script lang="ts" context="module">
-	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { user, roles, users } from '@/stores/users'
 	import { debounce, toKebab } from '@/libs/utils'
@@ -14,12 +13,12 @@
 		belongsTo: string
 		role: Role
 		email: string
-	} = {} as {
-		employeeNumber: string
-		name: string
-		belongsTo: string
-		role: Role
-		email: string
+	} = {
+		employeeNumber: '',
+		name: '',
+		belongsTo: '',
+		role: <Role>'',
+		email: ''
 	}
 
 	$: fieldsets = [
@@ -135,7 +134,13 @@
 
 				for (const key in currentUser) formData.append(key, <string>currentUser[<UserKey>key])
 
-				const localUser = <User>{}
+				const localUser: User = {
+					employeeNumber: 0,
+					name: '',
+					belongsTo: '',
+					role: <Role>'',
+					email: ''
+				}
 
 				for (let key in localUser) {
 					key = <UserKey>key
@@ -172,46 +177,47 @@
 	$: {
 		if (isShown && isSucceeded) setTimeout(() => goBack(), 2000)
 	}
-
-	onMount(() => {
-		if ($user.role !== 'システム管理者') goto('/users')
-	})
 </script>
 
 <div class="container">
-	<form class="form" on:submit={event => onSubmit(event)}>
-		{#each fieldsets as fieldset}
-			<fieldset>
-				<label for={toKebab(fieldset.id)}>{fieldset.text}</label>
-				<div class="input-container">
-					{#if fieldset.isError && fieldset.errorText}
-						<span class="font-error">{fieldset.errorText}</span>
+	{#if $user.role === 'システム管理者'}
+		<form class="form" on:submit={event => onSubmit(event)}>
+			{#each fieldsets as fieldset}
+				<fieldset>
+					<label for={toKebab(fieldset.id)}>{fieldset.text}</label>
+					<div class="input-container">
+						{#if fieldset.isError && fieldset.errorText}
+							<span class="font-error">{fieldset.errorText}</span>
+						{/if}
+						<input
+							class:error={fieldset.isError}
+							type={fieldset.type}
+							id={toKebab(fieldset.id)}
+							value={currentUser[fieldset.id]}
+							list={fieldset.list ?? ''}
+							on:input={event => onInput(event, fieldset.id)}
+						/>
+					</div>
+					{#if fieldset.list && fieldset.options}
+						<datalist id={fieldset.list}>
+							{#each fieldset.options as _, index}
+								<option value={fieldset.options[index]} />
+							{/each}
+						</datalist>
 					{/if}
-					<input
-						class:error={fieldset.isError}
-						type={fieldset.type}
-						id={toKebab(fieldset.id)}
-						value={currentUser[fieldset.id]}
-						list={fieldset.list ?? ''}
-						on:input={event => onInput(event, fieldset.id)}
-					/>
-				</div>
-				{#if fieldset.list && fieldset.options}
-					<datalist id={fieldset.list}>
-						{#each fieldset.options as _, index}
-							<option value={fieldset.options[index]} />
-						{/each}
-					</datalist>
-				{/if}
-			</fieldset>
-		{/each}
-		<div class="btns">
-			<button class="secondary" type="button" on:click={onClick}>戻る</button>
-			<button class="primary" class:disabled={isDisabled} type="submit">登録</button>
-		</div>
-	</form>
-	{#if isShown}
-		<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
+				</fieldset>
+			{/each}
+			<div class="btns">
+				<button class="secondary" type="button" on:click={onClick}>戻る</button>
+				<button class="primary" class:disabled={isDisabled} type="submit">登録</button>
+			</div>
+		</form>
+		{#if isShown}
+			<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
+		{/if}
+	{:else}
+		<p>アクセス権限がありません。</p>
+		<button class="primary" on:click={() => goto('/users')}>戻る</button>
 	{/if}
 </div>
 
@@ -260,6 +266,11 @@
 					}
 				}
 			}
+		}
+
+		> p {
+			text-align: center;
+			margin-bottom: 16px;
 		}
 	}
 </style>

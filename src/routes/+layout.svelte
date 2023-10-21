@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { user } from '@/stores/users'
-	import type { User } from '@/libs/types'
+	import type { Role } from '@/libs/types'
 	import Header from '@/views/Header.svelte'
 	import Sidebar from '@/views/Sidebar.svelte'
 </script>
@@ -13,13 +13,24 @@
 	const isAdmin = $user.role === 'システム管理者'
 
 	const onClick = () => {
-		user.set(<User>{})
+		user.set({
+			employeeNumber: 0,
+			name: '',
+			belongsTo: '',
+			role: <Role>'',
+			email: ''
+		})
 		goto('/')
 	}
 </script>
 
 {#if path !== '/'}
-	<Header {path} {isAdmin} id={`${$user.employeeNumber}`} name={$user.name} />
+	<Header
+		{path}
+		{isAdmin}
+		id={`${$user.employeeNumber === 0 ? '' : $user.employeeNumber}`}
+		name={$user.name}
+	/>
 	<Sidebar {path} on:click={onClick} />
 {/if}
 <main class:main={path !== '/'}>

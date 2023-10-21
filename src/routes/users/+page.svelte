@@ -38,6 +38,9 @@
 	$: sortedUsers = $users.filter(user =>
 		Object.keys(sortedValues).every(key => {
 			const localKey = <SortedItemForUser>key
+			if (localKey === 'name')
+				return `${user[localKey].toLowerCase()}`.includes(sortedValues[localKey].toLowerCase())
+
 			return `${user[localKey]}`.includes(sortedValues[localKey])
 		})
 	)

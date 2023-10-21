@@ -2,7 +2,13 @@ import { readable, writable, type Writable } from 'svelte/store'
 import type { Readable } from 'svelte/motion'
 import type { Role, User } from '@/libs/types'
 
-export const user: Writable<User> = writable(<User>{})
+export const user: Writable<User> = writable({
+	employeeNumber: 0,
+	name: '',
+	belongsTo: '',
+	role: <Role>'',
+	email: ''
+})
 
 export const roles: Readable<Role[]> = readable([
 	'システム管理者',

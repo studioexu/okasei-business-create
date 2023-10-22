@@ -185,9 +185,9 @@
 		<thead>
 			<tr>
 				<th class="employee-number">社員番号</th>
-				<th class="name">氏名</th>
-				<th class="belongs-to">所属</th>
-				<th class="role">ロール</th>
+				<th>氏名</th>
+				<th>所属</th>
+				<th>ロール</th>
 				<th class="email">メールアドレス</th>
 				{#if isAdmin}
 					<th class="icon" />
@@ -200,7 +200,7 @@
 				{#each dividedUsers[current] as user, index}
 					<tr>
 						<td class="employee-number">{user.employeeNumber}</td>
-						<td class="name">{user.name}</td>
+						<td>{user.name}</td>
 						<td>{user.belongsTo}</td>
 						<td>{user.role}</td>
 						<td class="email">{user.email}</td>
@@ -287,10 +287,12 @@
 	}
 
 	.users {
-		display: flex;
-		justify-content: end;
-		flex-wrap: wrap;
+		overflow-x: overlay;
 		margin-bottom: 48px;
+
+		&::-webkit-scrollbar {
+			height: 0;
+		}
 
 		&-table {
 			width: 100%;
@@ -300,9 +302,11 @@
 
 			thead,
 			tbody {
-				display: flex;
-				justify-content: center;
-				flex-wrap: wrap;
+				display: block;
+
+				tr {
+					display: flex;
+				}
 			}
 
 			thead tr {
@@ -321,11 +325,7 @@
 			}
 
 			.employee-number {
-				width: 160px;
-			}
-
-			.name {
-				width: 240px;
+				width: 144px;
 			}
 
 			.email {

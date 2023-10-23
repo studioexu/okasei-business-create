@@ -65,7 +65,7 @@
 		display: inline-block;
 		height: calc(100vh - 64px);
 		width: 192px;
-		background: var(--primary-color);
+		background: var(--primary);
 		padding-top: 16px;
 
 		> .nav-menu {
@@ -87,7 +87,7 @@
 
 			.active {
 				background: #fff;
-				color: var(--primary-color);
+				color: var(--primary);
 
 				&:hover {
 					opacity: 1;

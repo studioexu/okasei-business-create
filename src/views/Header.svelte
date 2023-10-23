@@ -72,7 +72,7 @@
 			}
 
 			> .font-large {
-				color: var(--primary-color);
+				color: var(--primary);
 			}
 		}
 
@@ -85,7 +85,7 @@
 			}
 
 			.authority {
-				background: var(--primary-color);
+				background: var(--primary);
 				color: #fff;
 				padding: 4px 8px;
 				border-radius: 100px;

@@ -13,7 +13,6 @@
 	export let filteredCustomers: CustomerFactory[]
 
 	$: filteredCustomers
-	$: console.log(filteredCustomers)
 
 	/**
 	 * FilterData will filter data according the keywords entered by the user and the type of the input.
@@ -74,18 +73,11 @@
 			dataBis = filterData(dataBis, 'facility-name', custName)
 		}
 
-		// newData = dataBis
 		filteredCustomers = dataBis
 		newData = displayDeleteCusomtersIsChecked
 			? filteredCustomers
 			: filteredCustomers.filter(customer => customer.isActive)
-
-		console.log(filteredCustomers)
-		console.log(dataBis)
 	}
-
-	$: console.log('newData')
-	$: console.log(newData)
 </script>
 
 <form class="search-menu">

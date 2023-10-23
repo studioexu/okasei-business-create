@@ -7,6 +7,7 @@
 	export let wrapperClass: string = ''
 	export let name: string = ''
 	export let isValid: boolean = true
+	export let errorMsg: string = ''
 
 	const monthValidation = (month: string) => {
 		const monthInt = parseInt(month)
@@ -39,14 +40,19 @@
 	{#if label !== ''}
 		<label class="label {labelClass}" for="organization-type">{label}</label>
 	{/if}
-	<select class="select" bind:value on:change={handleSelect}>
-		{#each options as option}
-			<option value={option}>{option}</option>
-		{/each}
-	</select>
-	{#if unit !== ''}
-		<span class="unit">{unit}</span>
-	{/if}
+
+	<div class="input-w">
+		<select class="select" bind:value on:change={handleSelect}>
+			{#each options as option}
+				<option value={option}>{option}</option>
+			{/each}
+		</select>
+		{#if unit !== ''}
+			<span class="unit">{unit}</span>
+		{/if}
+
+		<span class="error-msg">{errorMsg}</span>
+	</div>
 </div>
 
 <style lang="scss">
@@ -88,5 +94,35 @@
 
 	.mb-0 {
 		margin-bottom: 0;
+	}
+
+	.error-msg {
+		position: absolute;
+		right: 0;
+		bottom: -14px;
+		color: #f55d3e;
+		font-size: 10px;
+		font-weight: 600;
+		min-width: 250px;
+		text-align: right;
+		opacity: 0;
+	}
+
+	.error {
+		.input {
+			transition: border 300ms;
+			border: 1.5px solid #f55d3e;
+			animation: buzz 100ms;
+			animation-iteration-count: 3;
+		}
+
+		.error-msg {
+			opacity: 1;
+			transition: all 300ms;
+		}
+	}
+
+	.input-w {
+		position: relative;
 	}
 </style>

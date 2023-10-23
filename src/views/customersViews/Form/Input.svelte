@@ -1,6 +1,15 @@
+<script context="module">
+</script>
+
 <script lang="ts">
 	import Button from '@/components/customers/Button.svelte'
 	import { inputIsValid } from '@/routes/customers/utils/validations'
+
+	interface AddressInfo {
+		prefecture: string
+		city: string
+		address1: string
+	}
 
 	export let placeholder: string = ''
 	export let value: string = ''
@@ -13,6 +22,13 @@
 	export let wrapperClass: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
+	export let errorMsg: string = ''
+
+	export let address: AddressInfo = {
+		prefecture: '',
+		city: '',
+		address1: ''
+	}
 
 	let disabled: boolean
 
@@ -22,24 +38,58 @@
 		const input = e.target.value
 		isValid = inputIsValid(name, input)
 	}
+
+	const handleSubmit = async (e: any) => {
+		e.preventDefault()
+		// console.log(document.getElementById(name)?.value)
+		if (isValid) {
+			const api = 'https://zipcloud.ibsnet.co.jp/api/search?zipcode='
+			const postalCode = (<HTMLInputElement>document.getElementById(name))?.value
+			const url = api + postalCode
+
+			await fetch(url)
+				.then(res => res.json())
+				.then(data => {
+					console.log(data.results[0])
+					const results = data.results[0]
+
+					;(address.prefecture = results.address1),
+						(address.city = results.address2.slice(0, results.address2.indexOf('市') + 1)),
+						(address.address1 = results.address2.split('市')[1] + results.address3)
+				})
+				.catch(err => console.log(err))
+
+			// if (response) {
+			// 	address = response
+			// }
+		}
+	}
+
+	$: console.log(address)
 </script>
 
 <div class="input-wrapper {wrapperClass} {isValid ? '' : 'error'}">
 	{#if label}
 		<label class="label {labelClass}" for={name}>{required ? label + '*' : label}</label>
 	{/if}
-	<input
-		type="text"
-		class="input {inputClass}"
-		id={name}
-		{name}
-		{placeholder}
-		bind:value
-		on:blur={handleChange}
-		{disabled}
-	/>
-	{#if autoSearch}
-		<Button buttonClass={'btn--sm btn--filled'}>自動検索</Button>
+	<div class="input-w">
+		<input
+			type="text"
+			class="input {inputClass}"
+			id={name}
+			{name}
+			{placeholder}
+			bind:value
+			on:blur={handleChange}
+			{disabled}
+		/>
+		<span class="error-msg">{errorMsg}</span>
+	</div>
+	{#if autoSearch && name === 'postalCode'}
+		<form id="search-form" action="" method="GET" on:submit={handleSubmit}>
+			<input type="hidden" bind:value />
+			<Button form="search-form" buttonClass={'btn--sm btn--filled'}>自動検索</Button>
+		</form>
 	{/if}
 
 	{#if unit !== ''}
@@ -53,6 +103,7 @@
 	}
 
 	.input-wrapper {
+		position: relative;
 		display: flex;
 		gap: 10px;
 		align-items: center;
@@ -118,9 +169,47 @@
 		}
 	}
 
+	.error-msg {
+		position: absolute;
+		right: 0;
+		bottom: -14px;
+		color: #f55d3e;
+		font-size: 10px;
+		font-weight: 600;
+		min-width: 250px;
+		text-align: right;
+		opacity: 0;
+	}
+
 	.error {
 		.input {
+			transition: border 300ms;
 			border: 1.5px solid #f55d3e;
+			animation: buzz 100ms;
+			animation-iteration-count: 3;
+		}
+
+		.error-msg {
+			opacity: 1;
+			transition: all 300ms;
+		}
+	}
+
+	.input-w {
+		position: relative;
+	}
+
+	@keyframes buzz {
+		0% {
+			transform: translateX(0px);
+		}
+
+		50% {
+			transform: translateX(-10px);
+		}
+
+		100% {
+			transform: translateX(10px);
 		}
 	}
 </style>

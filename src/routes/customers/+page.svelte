@@ -17,10 +17,6 @@
 	let filteredCustomers: CustomerFactory[]
 
 	$: filteredCustomers
-
-	$: console.log('binder')
-
-	$: console.log(filteredCustomers)
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let newData: CustomerFactory[] = customersToDisplay
 	let dataToDisplay: CustomerFactory[] = []

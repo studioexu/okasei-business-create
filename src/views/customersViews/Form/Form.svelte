@@ -7,13 +7,44 @@
 	import Seletector from './Selector.svelte'
 	import { enhance } from '$app/forms'
 	import DepartmentSection from './DepartmentSection.svelte'
-	import { fly } from 'svelte/transition'
 
 	export let formType: string
 	export let verificationPageDisplayed: boolean
 	export let initialState: CustomerEntries
 	export let modalIsOpened: boolean
 	export let noErrors: CustomerEntriesErrors
+
+	interface AddressInfo {
+		prefecture: string
+		city: string
+		address1: string
+	}
+
+	let address: AddressInfo = {
+		prefecture: '',
+		city: '',
+		address1: ''
+	}
+
+	// $: if (address.prefecture !== '') {
+	// 	console.log(address.prefecture)
+	// $: initialState.prefecture = address.prefecture
+
+	const assignAddressInfo = (address: AddressInfo) => {
+		if (address.prefecture.length !== 0) {
+			initialState.prefecture = address.prefecture
+		}
+		if (address.city.length !== 0) {
+			initialState.city = address.city
+		}
+		if (address.address1.length !== 0) {
+			initialState.address1 = address.address1
+		}
+	}
+
+	$: assignAddressInfo(address)
+
+	// }
 
 	const hojinKojin = [' ', '法人', '個人']
 
@@ -32,7 +63,7 @@
 
 <!-- {#if !verificationPageDisplayed} -->
 <form
-	class="form {verificationPageDisplayed ? 'disappear' : ''}"
+	class="form {verificationPageDisplayed ? 'hidden' : ''}"
 	method={'POST'}
 	action={formType === 'create'
 		? '/customers/new?/create'
@@ -59,6 +90,8 @@
 					label={'枝番'}
 					bind:value={initialState.branchNumber}
 					bind:isValid={noErrors.branchNumber}
+					required={true}
+					errorMsg={'４桁で入力して下さい。'}
 				/>
 			</div>
 
@@ -72,6 +105,7 @@
 				bind:isValid={noErrors.facilityName}
 				required={true}
 				placeholder={'株式会社○○'}
+				errorMsg={'施設名を入力して下さい。'}
 			/>
 			<Input
 				inputClass={'txt--xl'}
@@ -82,6 +116,7 @@
 				bind:isValid={noErrors.kana}
 				required={true}
 				placeholder={'カナ'}
+				errorMsg={'カタカナで入力してください。'}
 			/>
 
 			<div class="container">
@@ -93,6 +128,7 @@
 					required={true}
 					bind:value={initialState.facilityNumber}
 					bind:isValid={noErrors.facilityNumber}
+					errorMsg={'医療機関番号を入力して下さい。'}
 				/>
 
 				<Select
@@ -100,6 +136,7 @@
 					label="個人／法人"
 					bind:value={initialState.businessType}
 					name={'businessType'}
+					errorMsg={'一つを選んで下さい。'}
 				/>
 			</div>
 		</fieldset>
@@ -117,6 +154,8 @@
 				bind:value={initialState.postalCode}
 				bind:isValid={noErrors.postalCode}
 				required={true}
+				errorMsg={"正しい郵便番号を入力して下さい（'〒'や'ー'なし）。"}
+				bind:address
 			/>
 
 			<div class="container">
@@ -138,6 +177,7 @@
 					bind:isValid={noErrors.prefecture}
 					required={true}
 					placeholder="○○県"
+					errorMsg={'都道府県を一つ選んでください。'}
 				/>
 
 				<Input
@@ -148,6 +188,7 @@
 					bind:isValid={noErrors.city}
 					required={true}
 					placeholder="○○市"
+					errorMsg={'正しい街をご入力ください'}
 				/>
 			</div>
 
@@ -184,6 +225,7 @@
 					bind:isValid={noErrors.phoneNumber}
 					required={true}
 					placeholder={'0000000000'}
+					errorMsg={"正しい電話番号を入力して下さい（'ー'なし）。"}
 				/>
 
 				<Input
@@ -192,6 +234,7 @@
 					label="FAX番号"
 					bind:value={initialState.fax}
 					bind:isValid={noErrors.fax}
+					errorMsg={"正しいFAX番号を入力して下さい（'ー'なし）。"}
 				/>
 			</div>
 		</fieldset>
@@ -212,6 +255,7 @@
 					label="設立者"
 					bind:value={initialState.founder}
 					bind:isValid={noErrors.founder}
+					errorMsg={'正しい名前を入力して下さい。'}
 				/>
 			</div>
 		</fieldset>
@@ -233,6 +277,7 @@
 				name="employee-quantity"
 				bind:value={initialState.numberOfEmployees}
 				bind:isValid={noErrors.numberOfEmployees}
+				errorMsg={'数字を入力して下さい。'}
 			/>
 
 			<Input
@@ -252,6 +297,7 @@
 				label="関連施設拠点数"
 				bind:value={initialState.numberOfFacilities}
 				bind:isValid={noErrors.numberOfFacilities}
+				errorMsg={'数字を入力して下さい。'}
 			/>
 		</fieldset>
 		<!-- .fieldset--info2 -->
@@ -265,21 +311,12 @@
 <style lang="scss">
 	.hidden {
 		display: none;
-		// animation: out 2000ms forwards;
-		// position: absolute;
-		// top: 0;
-		// left: 0;
-		// width: 100%;
-		// height: 100%;
-		// opacity: 0;
-		// // transform: translateX(-1000px);
-		// animation: out 2000ms forwards;
 	}
 
-	.disappear {
-		display: none;
-		animation: out 2000ms forwards;
-	}
+	// .disappear {
+	// 	display: none;
+	// 	animation: out 2000ms forwards;
+	// }
 
 	.appear {
 		display: block;

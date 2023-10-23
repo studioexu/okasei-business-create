@@ -9,6 +9,7 @@
 	export let labelClass: string = ''
 	export let placeholder: string = ''
 	export let classInput: string = ''
+	export let errorMsg: string = ''
 
 	import { inputIsValid } from '@/routes/customers/utils/validations'
 
@@ -73,27 +74,32 @@
 	{#if label !== ''}
 		<label for={dataType} class="label {labelClass}">{label}{required ? '*' : ''}</label>
 	{/if}
-	<input
-		autocomplete="off"
-		list="{dataType}s"
-		id={dataType}
-		name={dataType}
-		on:blur={handleChange}
-		{placeholder}
-		class="input"
-		bind:value
-		on:click={() => (value = '')}
-	/>
 
-	{#if unit !== ''}
-		<span class="unit">{unit}</span>
-	{/if}
+	<div class="input-w">
+		<input
+			autocomplete="off"
+			list="{dataType}s"
+			id={dataType}
+			name={dataType}
+			on:blur={handleChange}
+			{placeholder}
+			class="input"
+			bind:value
+			on:click={() => (value = '')}
+		/>
 
-	<datalist id="{dataType}s" class="datalist">
-		{#each datas as data}
-			<option class="option" value={data}>{data}</option>
-		{/each}
-	</datalist>
+		{#if unit !== ''}
+			<span class="unit">{unit}</span>
+		{/if}
+
+		<datalist id="{dataType}s" class="datalist">
+			{#each datas as data}
+				<option class="option" value={data}>{data}</option>
+			{/each}
+		</datalist>
+
+		<span class="error-msg">{errorMsg}</span>
+	</div>
 </div>
 
 <style lang="scss">
@@ -164,6 +170,36 @@
 				min-width: 130px;
 			}
 		}
+	}
+
+	.error-msg {
+		position: absolute;
+		right: 0;
+		bottom: -14px;
+		color: #f55d3e;
+		font-size: 10px;
+		font-weight: 600;
+		min-width: 250px;
+		text-align: right;
+		opacity: 0;
+	}
+
+	.error {
+		.input {
+			transition: border 300ms;
+			border: 1.5px solid #f55d3e;
+			animation: buzz 100ms;
+			animation-iteration-count: 3;
+		}
+
+		.error-msg {
+			opacity: 1;
+			transition: all 300ms;
+		}
+	}
+
+	.input-w {
+		position: relative;
 	}
 
 	// .label {

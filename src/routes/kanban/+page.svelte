@@ -1,6 +1,8 @@
 <script lang="ts" context="module">
 	import { debounce } from '@/libs/utils'
 
+	const getId = (event: Event) => (<HTMLElement>event.target).getAttribute('id')
+
 	const resetMargin = (id: string) => {
 		const element = document.getElementById(id)
 
@@ -53,11 +55,13 @@
 			text: 'Done'
 		}
 	]
-	let currentTask:{ id: string; index?: number } = { id: '' }
+	let currentTask: { id: string; index?: number } = { id: '' }
 	let currentBoard = 0
 	let newBoard = 0
 	let hoveringBoard = 0
 	let hoveringTask: { id: string; index?: number } = { id: '' }
+
+	$: taskElement = document.getElementById(currentTask.id)
 
 	$: isAdjacent =
 		currentBoard === newBoard &&
@@ -70,7 +74,7 @@
 	let isUpper: boolean = false
 
 	const dragEnter = (event: Event, index: number, type: 'board' | 'task') => {
-		const id = (<HTMLElement>event.target).getAttribute('id')
+		const id = getId(event)
 
 		if (id) {
 			if (type === 'board' && currentTask.id !== '') {
@@ -123,7 +127,7 @@
 		console.log(hoveringBoard, hoveringTask)
 
 		task = undefined
-		document.getElementById(currentTask.id)?.removeAttribute('style')
+		taskElement?.removeAttribute('style')
 		currentTask = { id: '' }
 		currentBoard = 0
 		newBoard = 0
@@ -136,7 +140,7 @@
 	const dragOver = async (event: Event) => {
 		event.preventDefault()
 
-		const id = (<HTMLElement>event.target).getAttribute('id')
+		const id = getId(event)
 
 		if (id && id !== currentTask.id) {
 			const rect = (<HTMLElement>event.target).getBoundingClientRect()
@@ -162,11 +166,11 @@
 	}
 
 	const dragStart = (event: Event, index: number, taskIndex: number) => {
-		const id = (<HTMLElement>event.target).getAttribute('id')
+		const id = getId(event)
 
 		if (id) currentTask = { id, index: taskIndex }
 
-		if (currentTask.id !== '') document.getElementById(currentTask.id)!.style.opacity = '0.2'
+		if (taskElement) taskElement.style.opacity = '0.2'
 
 		currentBoard = index
 	}
@@ -174,7 +178,7 @@
 	const dragEnd = () => {
 		if (isDropped) isDropped = false
 		else {
-			document.getElementById(currentTask.id)?.removeAttribute('style')
+			taskElement?.removeAttribute('style')
 			currentTask = { id: '' }
 			currentBoard = 0
 			newBoard = 0

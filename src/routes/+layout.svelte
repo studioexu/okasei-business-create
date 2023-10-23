@@ -31,8 +31,8 @@
 
 <style>
 	:root {
-		--primary-color: #0093d0;
-		--background-color: #d0f1ff;
+		--primary: #0093d0;
+		--back: #d0f1ff;
 		--black: #595857;
 		--modal-back: rgba(89, 88, 87, 0.8);
 		--gray: #7b7c7d;
@@ -52,7 +52,7 @@
 	}
 
 	:global(body) {
-		background: var(--background-color);
+		background: var(--back);
 		overscroll-behavior-x: none;
 	}
 
@@ -112,7 +112,7 @@
 
 	:global(button.primary) {
 		min-width: 112px;
-		background: var(--primary-color);
+		background: var(--primary);
 		color: #fff;
 		border-radius: 8px;
 		padding: 8px 16px;
@@ -121,9 +121,9 @@
 	:global(button.secondary) {
 		min-width: 112px;
 		background: none;
-		color: var(--primary-color);
+		color: var(--primary);
 		border-radius: 8px;
-		border: 1px solid var(--primary-color);
+		border: 1px solid var(--primary);
 		padding: 8px 16px;
 	}
 

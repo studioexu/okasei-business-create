@@ -73,24 +73,12 @@
 	let currentClientY: number = 0
 	let isUpper: boolean = false
 
-	const dragEnter = (event: Event, index: number, type: 'board' | 'task') => {
-		const id = getId(event)
+	const dragEnterOnBoard = (event: Event, index: number) => {
+		if (getId(event) && currentTask.id !== '') {
+			if (hoveringBoard === index) resetMargin(hoveringTask.id)
 
-		if (id) {
-			if (type === 'board' && currentTask.id !== '') {
-				if (hoveringBoard === index) resetMargin(hoveringTask.id)
-
-				newBoard = index
-				hoveringBoard = index + 1
-			} else if (type === 'task' && id !== currentTask.id) {
-				// console.log(hoveringTask)
-
-				if (hoveringTask.id === '' && !hoveringTask.index) hoveringTask = { id, index }
-				else if (id !== hoveringTask.id && hoveringTask.index) {
-					resetMargin(hoveringTask.id)
-					hoveringTask = { id, index }
-				}
-			}
+			newBoard = index
+			hoveringBoard = index + 1
 		}
 	}
 
@@ -109,18 +97,11 @@
 			if (currentBoard !== newBoard) task.status = boards[newBoard].id
 			const tasks = boards[newBoard].tasks
 
-			if (tasks.length >= 0) {
-				if (hoveringTask.index !== undefined) {
-					if (isUpper && hoveringTask.index === 0) boards[index].tasks = [task, ...tasks]
-					else {
-						tasks.splice(
-							isAdjacent || isUpper ? hoveringTask.index : hoveringTask.index + 1,
-							0,
-							task
-						)
-						boards[index].tasks = [...tasks]
-					}
-				} else boards[index].tasks.push(task)
+			if (hoveringTask.index === undefined) boards[index].tasks.push(task)
+			else if (isUpper && hoveringTask.index === 0) boards[index].tasks.unshift(task)
+			else {
+				tasks.splice(isAdjacent || isUpper ? hoveringTask.index : hoveringTask.index + 1, 0, task)
+				boards[index].tasks = [...tasks]
 			}
 		}
 
@@ -137,16 +118,34 @@
 		isDropped = true
 	}
 
-	const dragOver = async (event: Event) => {
-		event.preventDefault()
+	const dragStart = (event: Event, index: number, taskIndex: number) => {
+		const id = getId(event)
 
+		if (id) currentTask = { id, index: taskIndex }
+
+		if (taskElement) taskElement.style.opacity = '0.2'
+
+		currentBoard = index
+	}
+
+	const dragEnterOnTask = (event: Event, index: number) => {
 		const id = getId(event)
 
 		if (id && id !== currentTask.id) {
-			const rect = (<HTMLElement>event.target).getBoundingClientRect()
-			const clientY = (<MouseEvent>event).clientY
+			if (hoveringTask.id === '' && !hoveringTask.index) hoveringTask = { id, index }
+			else if (id !== hoveringTask.id && hoveringTask.index) {
+				resetMargin(hoveringTask.id)
+				hoveringTask = { id, index }
+			}
+		}
+	}
 
-			debounce(() => {
+
+	const dragOver = async (event: Event) => {
+		event.preventDefault()
+
+		if (getId(event) && getId(event) !== currentTask.id)
+			debounce((rect: DOMRect, clientY: number) => {
 				if (currentClientY !== clientY) {
 					const element = document.getElementById(hoveringTask.id)
 
@@ -161,18 +160,7 @@
 
 					currentClientY = clientY
 				}
-			}, 200)()
-		}
-	}
-
-	const dragStart = (event: Event, index: number, taskIndex: number) => {
-		const id = getId(event)
-
-		if (id) currentTask = { id, index: taskIndex }
-
-		if (taskElement) taskElement.style.opacity = '0.2'
-
-		currentBoard = index
+			}, 200)((<HTMLElement>event.target).getBoundingClientRect(), (<MouseEvent>event).clientY)
 	}
 
 	const dragEnd = () => {
@@ -197,7 +185,7 @@
 			class="board"
 			class:is-hovering={index + 1 === hoveringBoard && currentBoard + 1 !== hoveringBoard}
 			id={board.id}
-			on:dragenter={event => dragEnter(event, index, 'board')}
+			on:dragenter={event => dragEnterOnBoard(event, index)}
 			on:dragover={event => event.preventDefault()}
 			on:drop={() => drop(index)}
 		>
@@ -209,7 +197,7 @@
 					id={task.id}
 					draggable={true}
 					on:dragstart={event => dragStart(event, index, taskIndex)}
-					on:dragenter={event => dragEnter(event, taskIndex, 'task')}
+					on:dragenter={event => dragEnterOnTask(event, taskIndex)}
 					on:dragover={dragOver}
 					on:dragend={dragEnd}
 					on:click={() => click(task.id)}

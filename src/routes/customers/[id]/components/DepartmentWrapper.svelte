@@ -38,18 +38,6 @@
 			gap: 1rem;
 		}
 
-		.bed-container {
-			display: flex;
-			flex-direction: row;
-			align-items: center;
-			gap: calc((35 / 1366) * 100vw);
-			.quantity {
-				display: flex;
-				align-items: center;
-				gap: calc((20 / 1366) * 100vw);
-			}
-		}
-
 		.title {
 			width: 130px;
 		}
@@ -62,7 +50,6 @@
 	}
 
 	.title {
-		// color: #707070;
 		color: rgb(206, 205, 205);
 		font-size: 18px;
 		font-weight: 500;

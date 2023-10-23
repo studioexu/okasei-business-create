@@ -10,6 +10,10 @@
 	export let verificationPageDisplayed: boolean
 
 	let bedQuantity: number = 0
+
+	$: initialState.bedding.map(
+		bed => (bedQuantity += bed.quantity === '' ? 0 : parseInt(bed.quantity))
+	)
 </script>
 
 {#if verificationPageDisplayed}
@@ -17,7 +21,7 @@
 		<div class="container">
 			<Wrapper areaClass="customerNumber" content={initialState.id} title={'顧客番号'} />
 			<Wrapper areaClass="branchNumber" content={initialState.branchNumber} title={'枝番'} />
-			<Wrapper areaClass="facilityName" content={initialState.facilityName} title={'施設名'} />
+			<Wrapper areaClass="customerName" content={initialState.customerName} title={'施設名'} />
 			<Wrapper areaClass="kana" content={initialState.kana} title={'カナ'} />
 
 			<Wrapper
@@ -65,26 +69,18 @@
 <style lang="scss">
 	.container {
 		display: grid;
+		overflow: hidden;
+		padding: 0 37px;
+		padding-top: 28px;
+		padding-bottom: 48px;
+		width: auto;
+		background-color: #fff;
+		box-shadow: 0px 8px 8px rgb(200, 200, 200);
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 		grid-template-rows: auto;
-		// 	grid-template-areas:
-		// 		'customerNumber customerNumber branchNumber branchNumber . . . . . .'
-		// 		'facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName'
-		// 		'kana kana kana kana kana kana kana kana kana kana'
-		// 		'facilityNumber facilityNumber businessType businessType . . . . . .'
-		// 		'postalCode postalCode postalCode . . . . . . . '
-		// 		'prefecture prefecture city city address1 address1 address1 address2 address2 address2'
-		// 		'phoneNumber phoneNumber phoneNumber fax fax fax . . . .'
-		// 		'foundation foundation foundation foundation foundation  foundation foundation foundation foundation foundation'
-		// 		'bedding bedding bedding bedding bedding bedding bedding . . .'
-		// 		'numberOfEmployees numberOfEmployees numberOfEmployees numberOfEmployees . . . . . .'
-		// 		'homepage homepage homepage homepage homepage homepage homepage homepage homepage homepage'
-		// 		'numberOfFacilities numberOfFacilities numberOfFacilities . . . . . . .';
-		// }
-
 		grid-template-areas:
 			'customerNumber customerNumber CustomerNumber branchNumber branchNumber branchNumber. . . .'
-			'facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName facilityName'
+			'customerName customerName customerName customerName customerName customerName customerName customerName customerName customerName'
 			'kana kana kana kana kana kana kana kana kana kana'
 			'facilityNumber facilityNumber facilityNumber businessType businessType businessType  . . . .'
 			'postalCode postalCode postalCode . . . . . . . '
@@ -97,97 +93,5 @@
 			'numberOfEmployees numberOfEmployees numberOfEmployees numberOfEmployees . . . . . .'
 			'homepage homepage homepage homepage homepage homepage homepage homepage homepage homepage'
 			'numberOfFacilities numberOfFacilities numberOfFacilities . . . . . . .';
-	}
-
-	.hidden {
-		display: none;
-		// position: absolute;
-		// top: 0;
-		// left: 0;
-		// width: 100%;
-		// height: 100%;
-		// opacity: 0;
-		// transform: translateX(-1000px);
-		// animation: in 2000ms forwards;
-		// animation: in 2000ms 2000ms;
-	}
-	.container {
-		overflow: hidden;
-		padding: 0 37px;
-		padding-top: 28px;
-		padding-bottom: 48px;
-		background-color: #fff;
-		width: calc(((1240 - 74) / 1366) * 100vw);
-		width: calc(((1240 - 74) / 1366) * 100vw);
-		width: auto;
-
-		box-shadow: 0px 8px 8px rgb(200, 200, 200);
-	}
-
-	.section__footer {
-		margin-top: 1rem;
-		padding-bottom: 1rem;
-		.registration {
-			display: flex;
-			gap: 2rem;
-			align-items: center;
-			&__data {
-				display: flex;
-				align-items: center;
-				gap: 1rem;
-
-				&__title {
-					font-size: 14px;
-				}
-				&__content {
-					font-size: 14px;
-				}
-			}
-		}
-	}
-
-	@keyframes out {
-		0% {
-			opacity: 1;
-			transform: translateX(0);
-		}
-
-		80% {
-			opacity: 0;
-			transform: translateX(1000px);
-		}
-
-		100% {
-			transform: translateX(1000px);
-			display: none;
-		}
-	}
-
-	@keyframes in {
-		0% {
-			opacity: 0;
-			transform: translateX(-1000px);
-			display: none;
-		}
-
-		20% {
-			opacity: 0;
-			transform: translateX(-1000px);
-			display: block;
-		}
-
-		// 20%{
-
-		// }
-
-		100% {
-			opacity: 0;
-			transform: translateX(0);
-		}
-
-		// 100% {
-		// 	transform: translateX(1000px);
-		// 	display: none;
-		// }
 	}
 </style>

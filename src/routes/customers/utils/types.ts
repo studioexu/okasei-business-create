@@ -49,7 +49,7 @@ export interface CustomerInfo {
 export interface CustomerEntries {
 	id?: string
 	branchNumber: string
-	facilityName: string
+	customerName: string
 	kana: string
 	facilityNumber: string
 	businessType: string
@@ -74,7 +74,7 @@ export interface CustomerEntries {
 
 export interface CustomerEntriesErrors {
 	branchNumber: boolean
-	facilityName: boolean
+	customerName: boolean
 	kana: boolean
 	facilityNumber: boolean
 	businessType: boolean

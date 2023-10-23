@@ -3,11 +3,13 @@
 
 <script lang="ts">
 	import type { CustomerInfo } from './utils/types'
+
 	import Table from './components/Table.svelte'
 	import TableNavigation from './components/TableNavigation.svelte'
 	import SearchMenu from './components/SearchMenu.svelte'
 	import DeleteModal from '@/views/customersViews/modals/DeleteModal.svelte'
 	import { CustomerFactory } from './utils/Factories/CustomerFactory'
+
 	export let data
 
 	let allCustomers: CustomerFactory[] = data.data.map(
@@ -15,8 +17,6 @@
 	)
 
 	let filteredCustomers: CustomerFactory[]
-
-	$: filteredCustomers
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let newData: CustomerFactory[] = customersToDisplay
 	let dataToDisplay: CustomerFactory[] = []
@@ -24,9 +24,9 @@
 	let itemId: string = ''
 	let displayDeleteCustomersIsChecked = false
 
+	$: filteredCustomers
 	$: itemId
 	$: newData
-
 	$: lastDataIndex =
 		currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1
 	$: firstDataIndex = currentPage === 1 ? 0 : (currentPage - 1) * 6
@@ -132,10 +132,6 @@
 
 	.checkbox {
 		margin-right: 11px;
-	}
-
-	.no-data {
-		text-align: center;
 	}
 
 	.btn {

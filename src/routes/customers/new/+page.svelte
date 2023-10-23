@@ -5,14 +5,13 @@
 	import Form from '@/views/customersViews/Form/Form.svelte'
 	import RegisteredModal from '@/views/customersViews/modals/RegisteredModal.svelte'
 	import RegistrationFooter from '@/views/customersViews/RegistrationFooter/RegistrationFooter.svelte'
-	import { fade, fly } from 'svelte/transition'
 
 	let modalIsOpened: boolean = false
 	let verificationPageDisplayed = false
 
 	let initialState: CustomerEntries = {
 		branchNumber: '',
-		facilityName: '',
+		customerName: '',
 		kana: '',
 		facilityNumber: '',
 		businessType: '',
@@ -35,7 +34,7 @@
 
 	let noErrors: CustomerEntriesErrors = {
 		branchNumber: true,
-		facilityName: true,
+		customerName: true,
 		kana: true,
 		facilityNumber: true,
 		businessType: true,
@@ -68,14 +67,9 @@
 	{/if}
 
 	<div class="section__main">
-		<!-- {#if verificationPageDisplayed} -->
 		{#if !modalIsOpened}
-			<!-- <div in:fly={{ x: 200, duration: 2000 }} style="position: absolute; top:0; left: 0;"> -->
 			<Confirmation bind:initialState bind:verificationPageDisplayed />
-			<!-- </div> -->
 		{/if}
-		<!-- {:else}
-			<div out:fade style="position: absolute; top:0; left: 0;"> -->
 		<Form
 			bind:verificationPageDisplayed
 			bind:initialState
@@ -83,8 +77,6 @@
 			bind:modalIsOpened
 			bind:noErrors
 		/>
-		<!-- </div> -->
-		<!-- {/if} -->
 	</div>
 
 	{#if !modalIsOpened}

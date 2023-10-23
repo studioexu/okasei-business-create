@@ -1,18 +1,18 @@
 <script lang="ts">
-	import Icon from '@/components/Icon.svelte'
 	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
+
+	import Icon from '@/components/Icon.svelte'
 
 	export let currentPage: number
 	export let newData: CustomerFactory[]
+
 	let pageArray: string[]
 	let numberOfPages: number
 
 	$: currentPage
 	$: numberOfPages
-
 	$: updateNavPage(numberOfPages, currentPage)
 	$: numberOfPages = Math.ceil(newData.length / 6)
-
 	$: currentPage =
 		currentPage > numberOfPages && numberOfPages !== 0 ? (currentPage = numberOfPages) : currentPage
 
@@ -120,34 +120,34 @@
 	.table-navigation {
 		display: flex;
 		justify-content: center;
-		gap: 18px;
-		margin: 24px 0;
 		align-items: center;
+		margin: 24px 0;
+		gap: 18px;
 	}
 
 	.page-list {
-		list-style-type: none;
 		display: flex;
 		justify-content: space-between;
+		list-style-type: none;
 		gap: 18px;
 	}
 
 	.btn {
 		position: relative;
+		height: 32px;
+		margin: 0;
 		background-color: #2fa8e1;
 		color: #fff;
-		margin: 0;
-		height: 32px;
 		overflow: hidden;
 
 		&::after {
-			position: absolute;
 			content: ' ';
-			background-color: #fff;
+			position: absolute;
 			width: 100%;
 			height: 100%;
 			top: 0;
 			left: 0;
+			background-color: #fff;
 			opacity: 0;
 			transition: opacity 300ms;
 		}
@@ -165,10 +165,10 @@
 		}
 
 		&--page {
+			width: 25px;
+			height: 25px;
 			background-color: transparent;
 			color: black;
-			height: 25px;
-			width: 25px;
 			border-radius: 100%;
 			transition: all 300ms;
 
@@ -191,8 +191,9 @@
 		align-items: center;
 		width: 1.5rem;
 		height: 1.5rem;
-		border: 1px solid #5b5a5a;
 		background-color: transparent;
+		border: 1px solid #5b5a5a;
+
 		transition: background-color 300ms;
 
 		&:hover {

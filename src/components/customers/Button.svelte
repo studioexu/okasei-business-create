@@ -1,13 +1,7 @@
 <script lang="ts">
-	import type { AnimationConfig } from 'svelte/animate'
-	import { fade } from 'svelte/transition'
-
 	export let buttonClass: string = ''
-	// export let content: string = ''
 	export let form: string = ''
 	export let handleClick: Function | null = null
-
-	export let buttonType: string = 'button'
 
 	const iclick = (e?: any) => {
 		if (handleClick) {
@@ -20,18 +14,9 @@
 	<slot />
 </button>
 
-<!-- {#if buttonType === 'linkButton'}{/if} -->
-
 <style lang="scss">
 	$primary-color: #2fa8e1;
 	$white: #fff;
-
-	// :root {
-	// 	--primary-color: #0093d0;
-	// 	--background-color: #d0f1ff;
-	// 	--black: #595857;
-	// 	--gray: #7b7c7d;
-	// }
 
 	.btn {
 		width: 108px;
@@ -106,6 +91,10 @@
 					border-color: red;
 				}
 			}
+		}
+
+		&--right {
+			margin-left: auto;
 		}
 	}
 </style>

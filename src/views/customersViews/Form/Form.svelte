@@ -26,10 +26,6 @@
 		address1: ''
 	}
 
-	// $: if (address.prefecture !== '') {
-	// 	console.log(address.prefecture)
-	// $: initialState.prefecture = address.prefecture
-
 	const assignAddressInfo = (address: AddressInfo) => {
 		if (address.prefecture.length !== 0) {
 			initialState.prefecture = address.prefecture
@@ -43,8 +39,6 @@
 	}
 
 	$: assignAddressInfo(address)
-
-	// }
 
 	const hojinKojin = [' ', '法人', '個人']
 
@@ -61,7 +55,6 @@
 	}
 </script>
 
-<!-- {#if !verificationPageDisplayed} -->
 <form
 	class="form {verificationPageDisplayed ? 'hidden' : ''}"
 	method={'POST'}
@@ -91,21 +84,21 @@
 					bind:value={initialState.branchNumber}
 					bind:isValid={noErrors.branchNumber}
 					required={true}
-					errorMsg={'４桁で入力して下さい。'}
+					errorMsg={'数字４桁で入力して下さい'}
 				/>
 			</div>
 
 			<Input
 				inputClass={'txt--xl'}
-				name="facilityName"
+				name="customerName"
 				label="施設名"
 				autoSearch={true}
 				labelClass={'label-width--md'}
-				bind:value={initialState.facilityName}
-				bind:isValid={noErrors.facilityName}
+				bind:value={initialState.customerName}
+				bind:isValid={noErrors.customerName}
 				required={true}
 				placeholder={'株式会社○○'}
-				errorMsg={'施設名を入力して下さい。'}
+				errorMsg={'施設名を入力して下さい'}
 			/>
 			<Input
 				inputClass={'txt--xl'}
@@ -116,7 +109,7 @@
 				bind:isValid={noErrors.kana}
 				required={true}
 				placeholder={'カナ'}
-				errorMsg={'カタカナで入力してください。'}
+				errorMsg={'カタカナで入力してください'}
 			/>
 
 			<div class="container">
@@ -128,7 +121,7 @@
 					required={true}
 					bind:value={initialState.facilityNumber}
 					bind:isValid={noErrors.facilityNumber}
-					errorMsg={'医療機関番号を入力して下さい。'}
+					errorMsg={'正しい医療機関番号を入力して下さい'}
 				/>
 
 				<Select
@@ -136,7 +129,8 @@
 					label="個人／法人"
 					bind:value={initialState.businessType}
 					name={'businessType'}
-					errorMsg={'一つを選んで下さい。'}
+					errorMsg={'一つを選んで下さい'}
+					required={true}
 				/>
 			</div>
 		</fieldset>
@@ -151,34 +145,27 @@
 				label="郵便番号"
 				autoSearch={true}
 				labelClass={'label-width--lg'}
+				placeholder={'0000000'}
 				bind:value={initialState.postalCode}
 				bind:isValid={noErrors.postalCode}
-				required={true}
-				errorMsg={"正しい郵便番号を入力して下さい（'〒'や'ー'なし）。"}
 				bind:address
+				required={true}
+				errorMsg={"正しい郵便番号を入力して下さい（'〒'や'ー'なし）"}
 			/>
 
 			<div class="container">
-				<!-- <Input
-					inputClass="txt--sm"
-					name="prefecture"
-					label={'都道府県'}
-					bind:value={initialState.prefecture}
-					bind:isValid={noErrors.prefecture}
-					required={true}
-				/> -->
-
 				<Seletector
 					labelClass={'label-width--lg'}
 					dataType="prefecture"
 					datas={prefectures}
 					label={'都道府県'}
+					placeholder="○○県"
 					bind:value={initialState.prefecture}
 					bind:isValid={noErrors.prefecture}
 					required={true}
-					placeholder="○○県"
-					errorMsg={'都道府県を一つ選んでください。'}
+					errorMsg={'都道府県を一つ選んでください'}
 				/>
+				<!-- Input -->
 
 				<Input
 					inputClass="txt--sm"
@@ -186,11 +173,12 @@
 					label={'市区町村'}
 					bind:value={initialState.city}
 					bind:isValid={noErrors.city}
-					required={true}
 					placeholder="○○市"
 					errorMsg={'正しい街をご入力ください'}
 				/>
+				<!-- Input -->
 			</div>
+			<!-- .container -->
 
 			<div class="address">
 				<Input
@@ -201,8 +189,9 @@
 					placeholder="丁目・番地"
 					bind:value={initialState.address1}
 					bind:isValid={noErrors.address1}
-					required={true}
 				/>
+				<!-- Input -->
+
 				<Input
 					labelClass={'label-width--lg'}
 					inputClass="txt--lg"
@@ -211,9 +200,10 @@
 					placeholder="建物名・部屋番号"
 					bind:value={initialState.address2}
 					bind:isValid={noErrors.address2}
-					required={true}
 				/>
+				<!-- Input -->
 			</div>
+			<!-- .address -->
 
 			<div class="container">
 				<Input
@@ -221,22 +211,26 @@
 					name="phoneNumber"
 					label="電話番号"
 					labelClass={'label-width--lg'}
+					placeholder={'0000000000'}
 					bind:value={initialState.phoneNumber}
 					bind:isValid={noErrors.phoneNumber}
 					required={true}
-					placeholder={'0000000000'}
-					errorMsg={"正しい電話番号を入力して下さい（'ー'なし）。"}
+					errorMsg={'正しい電話番号を入力して下さい（「ー」なし）'}
 				/>
+				<!-- Input -->
 
 				<Input
 					inputClass="number--lg"
 					name="fax"
 					label="FAX番号"
+					placeholder={'0000000000'}
 					bind:value={initialState.fax}
 					bind:isValid={noErrors.fax}
-					errorMsg={"正しいFAX番号を入力して下さい（'ー'なし）。"}
+					errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
 				/>
+				<!-- Input -->
 			</div>
+			<!-- .containter -->
 		</fieldset>
 		<!-- .fieldset--address -->
 
@@ -249,15 +243,19 @@
 					bind:monthIsValid={noErrors.month}
 					bind:yearIsValid={noErrors.year}
 				/>
+				<!-- DateSelector -->
 				<Input
 					inputClass="txt--lg"
 					name="founder"
 					label="設立者"
+					placeholder={'山田　太郎'}
 					bind:value={initialState.founder}
 					bind:isValid={noErrors.founder}
-					errorMsg={'正しい名前を入力して下さい。'}
+					errorMsg={'正しい名前を入力して下さい'}
 				/>
+				<!-- Input -->
 			</div>
+			<!-- .container -->
 		</fieldset>
 		<!-- .fieldset--foundation -->
 
@@ -277,17 +275,20 @@
 				name="employee-quantity"
 				bind:value={initialState.numberOfEmployees}
 				bind:isValid={noErrors.numberOfEmployees}
-				errorMsg={'数字を入力して下さい。'}
+				errorMsg={'数字で入力して下さい'}
 			/>
+			<!-- Input -->
 
 			<Input
 				labelClass={'label-width--lg'}
 				name="homepage"
 				inputClass="txt--lg"
 				label="ホームページ"
+				placeholder={'www.homepage.com'}
 				bind:value={initialState.homepage}
 				bind:isValid={noErrors.homepage}
 			/>
+			<!-- Input -->
 
 			<Input
 				labelClass={'label-width--lg'}
@@ -297,8 +298,9 @@
 				label="関連施設拠点数"
 				bind:value={initialState.numberOfFacilities}
 				bind:isValid={noErrors.numberOfFacilities}
-				errorMsg={'数字を入力して下さい。'}
+				errorMsg={'数字で入力して下さい'}
 			/>
+			<!-- Input -->
 		</fieldset>
 		<!-- .fieldset--info2 -->
 
@@ -306,22 +308,11 @@
 	</div>
 </form>
 
-<!-- {/if} -->
-
 <style lang="scss">
 	.hidden {
 		display: none;
 	}
 
-	// .disappear {
-	// 	display: none;
-	// 	animation: out 2000ms forwards;
-	// }
-
-	.appear {
-		display: block;
-		animation: in 2000ms forwards;
-	}
 	.form {
 		font-family: 'Noto Sans JP';
 		&__form {
@@ -343,23 +334,10 @@
 		justify-content: flex-start;
 		flex-wrap: wrap;
 		row-gap: 1rem;
-
-		&--vertical {
-			flex-direction: column;
-		}
 	}
 
 	.fieldset {
 		margin-bottom: 2rem;
-		&--bed {
-			.container {
-				column-gap: 10px;
-				row-gap: 11px;
-				.label {
-					min-width: 130px;
-				}
-			}
-		}
 
 		&--foundation {
 			.container:last-child {
@@ -368,69 +346,7 @@
 		}
 	}
 
-	.total {
-		position: relative;
-		display: flex;
-		gap: 2.25rem;
-		align-items: center;
-		align-self: flex-end;
-		.title {
-			margin: 0;
-		}
-
-		&__display {
-			margin: 0;
-		}
-	}
-
-	// .hidden {
-	// 	display: none;
-	// }
-
-	.btn {
-		background-color: #2fa8e1;
-		color: #fff;
-		margin: 0;
-
-		&--add {
-			padding: 0 11px;
-			margin-top: 14px;
-			height: 32px;
-			border-radius: 3px;
-			margin-left: 140px;
-		}
-	}
-
 	.required-legend {
 		float: right;
-	}
-
-	@keyframes out {
-		0% {
-			opacity: 1;
-			transform: translateX(0);
-		}
-
-		80% {
-			opacity: 0;
-			transform: translateX(1000px);
-		}
-
-		100% {
-			transform: translateX(1000px);
-			display: none;
-		}
-	}
-
-	@keyframes in {
-		0% {
-			opacity: 0;
-			transform: translateX(400px);
-		}
-
-		100% {
-			opacity: 1;
-			transform: translateX(0);
-		}
 	}
 </style>

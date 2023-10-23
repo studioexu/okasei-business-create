@@ -54,7 +54,9 @@ export const yearValidation = (year: string) => {
 }
 
 export const monthIsValid = (input: string) => {
-	return months.includes(input)
+	const monthInt = parseInt(input)
+
+	return monthInt > 0 && monthInt <= 12
 }
 
 /**
@@ -79,6 +81,11 @@ export const checkIfPrefectureIsValid = (input: string) => {
 	return prefectures.includes(input)
 }
 
+/**
+ * We check in the input is a number once it is converted into an int.
+ * @param input : string input from the user
+ * @returns
+ */
 export const checkIfInputIsNumber = (input: string) => {
 	return !isNaN(parseInt(input))
 }
@@ -94,7 +101,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 		case 'branchNumber':
 			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 4)
 
-		case 'facilityName':
+		case 'customerName':
 			return numberOFCharacterValidation(input, 128)
 
 		case 'kana':
@@ -110,13 +117,13 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return checkIfPrefectureIsValid(input)
 
 		case 'city':
-			return numberOFCharacterValidation(input, 10)
+			return numberOFCharacterValidation(input, 10) || input === ''
 
 		case 'address1':
-			return numberOFCharacterValidation(input, 50)
+			return numberOFCharacterValidation(input, 50) || input === ''
 
 		case 'address2':
-			return numberOFCharacterValidation(input, 50)
+			return numberOFCharacterValidation(input, 50) || input === ''
 
 		case 'phoneNumber':
 			return phoneNumberValidation(input)

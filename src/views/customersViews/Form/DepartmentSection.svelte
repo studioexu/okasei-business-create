@@ -2,13 +2,13 @@
 	import BedConfiguration from './BedConfiguration.svelte'
 	import Button from '@/components/customers/Button.svelte'
 
+	export let bedding: BedInput[]
+
 	interface BedInput {
 		index: number
 		department: string
 		quantity: string
 	}
-
-	export let bedding: BedInput[]
 
 	let totalOfBed: number = 0
 	let bedInputArray: BedInput[] = []
@@ -36,8 +36,6 @@
 		return sum
 	}
 
-	$: totalOfBed = caculateTotalOfBeds(bedInputArray)
-
 	/**
 	 * It will add a new bed input in the form
 	 */
@@ -52,6 +50,7 @@
 		]
 	}
 
+	$: totalOfBed = caculateTotalOfBeds(bedInputArray)
 	$: bedding = bedInputArray
 </script>
 
@@ -66,7 +65,7 @@
 
 	<div class="total">
 		<h3 class="label">病床数合計</h3>
-		<p class="total__dispay">{totalOfBed}</p>
+		<p class="total__display">{totalOfBed}</p>
 	</div>
 </div>
 
@@ -100,17 +99,13 @@
 		gap: 2.25rem;
 		align-items: center;
 		align-self: flex-end;
-		.title {
+		.label {
 			margin: 0;
 		}
 
 		&__display {
 			margin: 0;
 		}
-	}
-
-	.hidden {
-		display: none;
 	}
 
 	.button-wrapper {

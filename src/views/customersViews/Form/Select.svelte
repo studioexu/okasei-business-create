@@ -8,41 +8,20 @@
 	export let name: string = ''
 	export let isValid: boolean = true
 	export let errorMsg: string = ''
-
-	const monthValidation = (month: string) => {
-		const monthInt = parseInt(month)
-
-		return monthInt > 0 && monthInt <= 12
-	}
+	export let required: boolean = false
 
 	const businessTypeValidation = (businessType: string) => {
 		return businessType === '個人' || businessType === '法人'
 	}
-
-	const handleSelect = (e: any) => {
-		const input = e.target.value
-
-		switch (name) {
-			case 'month':
-				console.log(monthValidation(input))
-				break
-			case 'businessType':
-				console.log(businessTypeValidation(input))
-				break
-
-			default:
-				break
-		}
-	}
 </script>
 
-<div class="input-wrapper {wrapperClass} {isValid ? '' : 'error'}">
+<div class="input-wrapper {name} {wrapperClass} {isValid ? '' : 'error'}">
 	{#if label !== ''}
-		<label class="label {labelClass}" for="organization-type">{label}</label>
+		<label class="label {labelClass}" for="organization-type">{label}{required ? '*' : ''}</label>
 	{/if}
 
 	<div class="input-w">
-		<select class="select" bind:value on:change={handleSelect}>
+		<select class="select" bind:value>
 			{#each options as option}
 				<option value={option}>{option}</option>
 			{/each}

@@ -12,7 +12,7 @@ export class Customer {
 	id?: string
 	branchNumber: string
 	customerNumber?: string | undefined
-	facilityName: string
+	customerName: string
 	kana: string
 	facilityNumber: string
 	businessType: string
@@ -56,7 +56,7 @@ export class Customer {
 			this.customerNumber = data.id
 		}
 		this.branchNumber = data.branchNumber
-		this.facilityName = data.facilityName
+		this.customerName = data.customerName
 		this.kana = data.kana
 		this.facilityNumber = data.facilityNumber
 		this.businessType = data.businessType
@@ -145,7 +145,7 @@ export class CustomerBackend {
 			this.Cust_CD = data.id
 		}
 		this.Cust_Branch_CD = data.branchNumber
-		this.Cust_Name = data.facilityName
+		this.Cust_Name = data.customerName
 		this.Cust_Kana = data.kana
 		this.Inst_ID = data.facilityNumber
 		this.Cust_Type = data.businessType

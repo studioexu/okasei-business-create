@@ -1,9 +1,10 @@
 <script lang="ts">
-	import TableRow from './TableRow.svelte'
 	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
+
+	import TableRow from './TableRow.svelte'
 	import { crossfade, fade, fly } from 'svelte/transition'
 	import { flip } from 'svelte/animate'
-	import { backIn, bounceIn, bounceOut, quintIn, quintOut } from 'svelte/easing'
+	import { quintOut } from 'svelte/easing'
 
 	export let itemId: string = ''
 	export let dataToDisplay: CustomerFactory[]
@@ -40,26 +41,23 @@
 					<th>顧客番号</th>
 					<th>施設名</th>
 					<th>住所</th>
-					<!-- <th>状態</th> -->
 					<th>登録日</th>
 					<th>編集</th>
 					<th>削除</th>
 				</tr>
 			</thead>
 			<tbody>
-				<!-- <slot /> -->
 				{#each dataToDisplay as customer (customer.custCD)}
-					<!-- <div in:receive={{ key: customer.custCD }} out:send={{ key: customer.custCD }} animate:flip> -->
 					<tr
 						class="row {customer.isActive ? '' : 'deleted'}"
+						data-id={customer.custCD}
 						in:receive={{ key: customer.custCD }}
 						out:send={{ key: customer.custCD }}
 						animate:flip={{ duration: 1000, easing: quintOut }}
-						data-id={customer.custCD}
 						on:click={handleRowClick}
 					>
 						<TableRow
-							facilityName={customer.custName}
+							customerName={customer.custName}
 							address={customer.address}
 							bind:isActive={customer.isActive}
 							id={customer.custCD}
@@ -76,8 +74,6 @@
 								? customer.updateDateTime.date
 								: customer.registDateTime.date}
 						/>
-
-						<!-- </div> -->
 					</tr>
 				{/each}
 			</tbody>
@@ -87,18 +83,18 @@
 
 <style lang="scss">
 	.table-wrapper {
-		border-radius: 3px;
-		overflow: hidden;
 		padding: 0 18px;
 		background-color: #fff;
+		border-radius: 3px;
+		overflow: hidden;
 	}
 	.customer-list {
-		padding: 0 calc((18 / 1366) * 100vw);
-		border-radius: 4px;
 		width: 100%;
+		padding: 0 calc((18 / 1366) * 100vw);
+		background-color: transparent;
+		border-radius: 4px;
 		border-spacing: 0;
 		border-collapse: collapse;
-		background-color: transparent;
 	}
 
 	.table-header {
@@ -109,34 +105,12 @@
 
 	.row {
 		position: relative;
-		// display: block;
 		cursor: pointer;
-		// background-color: pink;
-		// transform-origin: 0 0;
-		border-bottom: #2fa8e1 1px solid;
 		background-color: #fff;
-		// padding: 0 50px;
+		border-bottom: #2fa8e1 1px solid;
 
 		&.deleted {
 			background-color: rgb(229, 229, 229);
-			// &::before {
-			// 	content: ' ';
-			// 	position: absolute;
-			// 	top: 0;
-			// 	left: -18px;
-			// 	background-color: red;
-			// 	width: 120%;
-			// 	height: 100%;
-			// 	z-index: -1;
-			// }
-
-			// animation: deleted 2000ms forwards;
-
-			.data {
-				.btn {
-					pointer-events: none;
-				}
-			}
 		}
 
 		&:hover {

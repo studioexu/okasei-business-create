@@ -12,13 +12,6 @@
 </div>
 
 <style lang="scss">
-	.bed-quantity {
-		// width: 500px;
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
 	.bed-container {
 		display: flex;
 		flex-direction: row;

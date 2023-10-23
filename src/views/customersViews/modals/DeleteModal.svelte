@@ -15,7 +15,7 @@
 
 	let isDeleted: boolean = false
 
-	const handleCancel = () => {
+	const handleCloseModal = () => {
 		itemId = ''
 		isDeleted = false
 	}
@@ -57,9 +57,9 @@
 
 		<div class="modal__footer">
 			{#if isDeleted}
-				<Button buttonClass={'btn--round'} handleClick={handleCancel}>OK</Button>
+				<Button buttonClass={'btn--round'} handleClick={handleCloseModal}>OK</Button>
 			{:else}
-				<Button buttonClass={'btn--round'} handleClick={handleCancel}>キャンセル</Button>
+				<Button buttonClass={'btn--round'} handleClick={handleCloseModal}>キャンセル</Button>
 				<form
 					id="delete-form"
 					class="delete-form"

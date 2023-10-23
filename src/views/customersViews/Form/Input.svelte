@@ -23,7 +23,6 @@
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
-
 	export let address: AddressInfo = {
 		prefecture: '',
 		city: '',
@@ -34,14 +33,31 @@
 
 	name === 'customer-number' ? (disabled = true) : (disabled = false)
 
-	const handleChange = (e: any) => {
+	/**
+	 * Check if the value of the input is valid, when the focus is not on the input.
+	 * @param e
+	 */
+	const handleBlurInput = (e: any) => {
 		const input = e.target.value
 		isValid = inputIsValid(name, input)
 	}
 
-	const handleSubmit = async (e: any) => {
+	/**
+	 * Check if the input is valid, when the input is updated.
+	 * @param value: input's value
+	 */
+	const checkValueOnChange = (value: string) => {
+		if (!isValid) {
+			isValid = inputIsValid(name, value)
+		}
+	}
+
+	/**
+	 * Fetch the address corresponding to the postal code.
+	 * @param e
+	 */
+	const handlePostalCodeSearchSubmit = async (e: any) => {
 		e.preventDefault()
-		// console.log(document.getElementById(name)?.value)
 		if (isValid) {
 			const api = 'https://zipcloud.ibsnet.co.jp/api/search?zipcode='
 			const postalCode = (<HTMLInputElement>document.getElementById(name))?.value
@@ -50,7 +66,6 @@
 			await fetch(url)
 				.then(res => res.json())
 				.then(data => {
-					console.log(data.results[0])
 					const results = data.results[0]
 
 					;(address.prefecture = results.address1),
@@ -58,20 +73,17 @@
 						(address.address1 = results.address2.split('市')[1] + results.address3)
 				})
 				.catch(err => console.log(err))
-
-			// if (response) {
-			// 	address = response
-			// }
 		}
 	}
 
-	$: console.log(address)
+	$: checkValueOnChange(value)
 </script>
 
 <div class="input-wrapper {wrapperClass} {isValid ? '' : 'error'}">
 	{#if label}
 		<label class="label {labelClass}" for={name}>{required ? label + '*' : label}</label>
 	{/if}
+
 	<div class="input-w">
 		<input
 			type="text"
@@ -80,13 +92,14 @@
 			{name}
 			{placeholder}
 			bind:value
-			on:blur={handleChange}
+			on:blur={handleBlurInput}
+			on:focus={() => (isValid = true)}
 			{disabled}
 		/>
 		<span class="error-msg">{errorMsg}</span>
 	</div>
 	{#if autoSearch && name === 'postalCode'}
-		<form id="search-form" action="" method="GET" on:submit={handleSubmit}>
+		<form id="search-form" action="" method="GET" on:submit={handlePostalCodeSearchSubmit}>
 			<input type="hidden" bind:value />
 			<Button form="search-form" buttonClass={'btn--sm btn--filled'}>自動検索</Button>
 		</form>
@@ -129,6 +142,10 @@
 			border: 1px solid rgb(206, 205, 205);
 			border-radius: 3px;
 
+			&::placeholder {
+				color: rgb(206, 205, 205);
+			}
+
 			&:focus {
 				border-color: #2fa8e1;
 			}
@@ -141,15 +158,12 @@
 
 	.number {
 		&--sm {
-			// width: calc(58px - 10px);
 			@include responsiveInputWidth((58));
 		}
 		&--md {
-			// width: calc(103px - 10px);
 			@include responsiveInputWidth((103));
 		}
 		&--lg {
-			// width: calc(152px - 10px);
 			@include responsiveInputWidth((152));
 		}
 	}

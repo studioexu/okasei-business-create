@@ -8,18 +8,13 @@
 	export let data
 
 	let customer = new CustomerFactory(data.customer, 'customer')
-	// let customer = data.customer
-	// console.log('ANYAAAA')
-
-	// console.log(data.customer)
-
 	let verificationPageDisplayed = false
 	let modalIsOpened: boolean = false
 
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
 		branchNumber: customer.custBranchCD,
-		facilityName: customer.custName,
+		customerName: customer.custName,
 		kana: customer.custKana,
 		facilityNumber: customer.instId,
 		businessType: customer.custType,
@@ -44,7 +39,7 @@
 
 	let noErrors: CustomerEntriesErrors = {
 		branchNumber: true,
-		facilityName: true,
+		customerName: true,
 		kana: true,
 		facilityNumber: true,
 		businessType: true,
@@ -78,7 +73,6 @@
 		{#if !modalIsOpened}
 			<Confirmation bind:verificationPageDisplayed bind:initialState />
 		{/if}
-		<!-- <div out:flip> -->
 		<Form
 			bind:verificationPageDisplayed
 			bind:initialState
@@ -86,7 +80,6 @@
 			bind:modalIsOpened
 			bind:noErrors
 		/>
-		<!-- </div> -->
 	</div>
 
 	{#if !modalIsOpened}

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { dataFormatter } from '@/routes/customers/utils/formatter'
+
 	export let areaClass: string = ''
 	export let content: string = ''
 	export let title: string = ''
@@ -6,7 +8,7 @@
 
 <div class="info-wrapper {areaClass}">
 	<h3 class="title">{title}</h3>
-	<p class="data">{content}</p>
+	<p class="data">{dataFormatter(content, areaClass)}</p>
 	{#if areaClass === 'numberOfFacilities'}
 		<span class="unit">店</span>
 	{/if}
@@ -16,7 +18,7 @@
 </div>
 
 <style lang="scss">
-	$areas: customerNumber, branchNumber, facilityName, kana, facilityNumber, businessType, postalCode,
+	$areas: customerNumber, branchNumber, customerName, kana, facilityNumber, businessType, postalCode,
 		prefecture, city, address1, address2, phoneNumber, fax, foundation, month, year, homepage,
 		numberOfEmployees, numberOfFacilities;
 
@@ -45,9 +47,11 @@
 		}
 	}
 
+	.address1,
+	.address2,
 	.customerNumber,
 	.kana,
-	.facilityName,
+	.customerName,
 	.facilityNumber,
 	.postalCode,
 	.prefecture,

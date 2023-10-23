@@ -10,8 +10,6 @@
 <script lang="ts">
 	$: path = $page.url.pathname
 
-	const isAdmin = $user.role === 'システム管理者'
-
 	const onClick = () => {
 		user.set(<User>{})
 		goto('/')
@@ -19,7 +17,12 @@
 </script>
 
 {#if path !== '/'}
-	<Header {path} {isAdmin} id={`${$user.employeeNumber}`} name={$user.name} />
+	<Header
+		{path}
+		isAdmin={$user.role === 'システム管理者'}
+		id={`${$user.employeeNumber}`}
+		name={$user.name}
+	/>
 	<Sidebar {path} on:click={onClick} />
 {/if}
 <main class:main={path !== '/'}>

@@ -34,7 +34,7 @@
 </script>
 
 <div class="date-selector">
-	<label class="label" for="foundation-date">設立年月日</label>
+	<h3 class="label">設立年月日</h3>
 	<Selector
 		bind:value={year}
 		dataType={'year'}
@@ -45,6 +45,7 @@
 	/>
 	<Select
 		options={months}
+		name={'months'}
 		unit="月"
 		bind:value={month}
 		wrapperClass={'mb-0'}

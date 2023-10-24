@@ -40,7 +40,7 @@
 
 	$: assignAddressInfo(address)
 
-	const hojinKojin = [' ', '法人', '個人']
+	const hojinKojin = ['', '法人', '個人']
 
 	/**
 	 * Triggered when the form is submit.

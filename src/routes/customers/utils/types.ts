@@ -3,6 +3,12 @@ export interface Detail {
 	numBed: string
 }
 
+export interface BedInput {
+	index: number
+	department: string
+	quantity: string
+}
+
 export interface CustomerInfo {
 	id?: string
 	custCD?: string | undefined
@@ -63,7 +69,7 @@ export interface CustomerEntries {
 	year: string
 	month: string
 	founder: string
-	bedding: any[]
+	bedding: BedInput[]
 	numberOfEmployees: string
 	homepage: string
 	numberOfFacilities: string

@@ -55,7 +55,7 @@
 </script>
 
 <div class="container">
-	<label class="label" for="">診療科目</label>
+	<h3 class="label">診療科目</h3>
 
 	<div class="container container--vertical">
 		{#each bedInputArray as bed}

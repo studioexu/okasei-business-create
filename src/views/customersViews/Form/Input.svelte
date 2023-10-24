@@ -13,7 +13,7 @@
 
 	export let placeholder: string = ''
 	export let value: string = ''
-	export let name: string = ''
+	export let name: string
 	export let label: string = ''
 	export let inputClass: string = ''
 	export let autoSearch = false
@@ -60,7 +60,8 @@
 		e.preventDefault()
 		if (isValid) {
 			const api = 'https://zipcloud.ibsnet.co.jp/api/search?zipcode='
-			const postalCode = (<HTMLInputElement>document.getElementById(name))?.value
+			// const postalCode = (<HTMLInputElement>document.getElementById(name))?.value
+			const postalCode = value
 			const url = api + postalCode
 
 			await fetch(url)
@@ -98,11 +99,11 @@
 		/>
 		<span class="error-msg">{errorMsg}</span>
 	</div>
+
 	{#if autoSearch && name === 'postalCode'}
-		<form id="search-form" action="" method="GET" on:submit={handlePostalCodeSearchSubmit}>
-			<input type="hidden" bind:value />
-			<Button form="search-form" buttonClass={'btn--sm btn--filled'}>自動検索</Button>
-		</form>
+		<Button buttonClass={'btn--sm btn--filled'} handleClick={handlePostalCodeSearchSubmit}>
+			自動検索
+		</Button>
 	{/if}
 
 	{#if unit !== ''}

@@ -4,6 +4,7 @@
 
 <div class="input-wrapper bedding">
 	<h3 class="title">診療科目</h3>
+
 	<div class="bed-quantity">
 		<slot />
 
@@ -32,7 +33,6 @@
 		}
 
 		.bed-quantity {
-			// width: 500px;
 			display: flex;
 			flex-direction: column;
 			gap: 1rem;

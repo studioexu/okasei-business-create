@@ -1,4 +1,5 @@
 <script lang="ts">
+	import type { BedInput } from '@/routes/customers/utils/types'
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import Icon from '@/components/Icon.svelte'
@@ -11,19 +12,18 @@
 		const itemToDelete = parseInt(e.target.closest('.bed-configuration').id)
 		bedInputArray = bedInputArray.filter(bed => bed.index !== itemToDelete)
 	}
-
-	interface BedInput {
-		index: number
-		department: string
-		quantity: string
-	}
 </script>
 
 <div class="bed-configuration" id={bed.index.toString()} data-index={bed.index}>
-	<Select options={department} wrapperClass="mb-0" bind:value={bed.department} />
+	<Select
+		options={department}
+		wrapperClass="mb-0"
+		bind:value={bed.department}
+		name={'department' + bed.index}
+	/>
 	<Input
 		inputClass="number--lg"
-		name="quantity"
+		name={'quantity' + bed.index}
 		label="病床数"
 		wrapperClass="mb-0"
 		bind:value={bed.quantity}
@@ -49,7 +49,7 @@
 		align-items: center;
 		justify-content: center;
 		background-color: transparent;
-		widows: 32px;
+		width: 32px;
 		height: 32px;
 	}
 </style>

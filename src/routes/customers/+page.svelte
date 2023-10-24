@@ -90,8 +90,8 @@
 		/>
 
 		<div class="container">
-			<label class="switch-label" for="checkbox">
-				<div class="switch">
+			<div class="toggle-wrapper">
+				<label class="switch" for="checkbox">
 					<input
 						class="checkbox"
 						type="checkbox"
@@ -100,9 +100,9 @@
 						on:click={handleCheck}
 					/>
 					<span class="slider" />
-				</div>
-				以前削除した施設も含む
-			</label>
+				</label>
+				<h3 class="switch-label">以前削除した施設も含む</h3>
+			</div>
 
 			<a class="btn btn--new" href="/customers/new">＋新規登録</a>
 		</div>
@@ -146,10 +146,15 @@
 		float: right;
 	}
 
-	.switch-label {
+	.toggle-wrapper {
 		display: flex;
 		gap: 10px;
 		align-items: center;
+	}
+
+	.switch-label {
+		font-weight: 400;
+		font-size: 18px;
 	}
 
 	.switch {

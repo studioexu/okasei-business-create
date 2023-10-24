@@ -1,5 +1,4 @@
 import { prefectures } from '../data/data'
-const months = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12']
 
 /**
  * We want to check if the user only use katakana
@@ -28,17 +27,19 @@ export const phoneNumberValidation = (phoneNumber: string) => {
 /**
  * We check if the postal Code is valid.
  * 郵便番号が正しいかどうか確認する。
- * @param postalCode : string, the user can entered any postal code (e.g.: 600-0000, 6000000, 〒600-0000 are all accepted)
+ * @param postalCode : string
  * @returns boolean
  */
-// export const postalCodeValidation = (postalCode: string) => {
-// 	const regex = /〒?[0-9]{3}-?[0-9]{4}/g
-// 	return regex.test(postalCode)
-// }
 export const postalCodeValidation = (postalCode: string) => {
 	const regex = /[0-9]{7}/g
 	return regex.test(postalCode)
 }
+
+//OLD version accepting "-" and postal code icon "〒"
+// export const postalCodeValidation = (postalCode: string) => {
+// 	const regex = /〒?[0-9]{3}-?[0-9]{4}/g
+// 	return regex.test(postalCode)
+// }
 
 /**
  * check if the year input is correct
@@ -46,14 +47,19 @@ export const postalCodeValidation = (postalCode: string) => {
  * @param year: string
  * @returns boolean
  */
-export const yearValidation = (year: string) => {
+export const checkIfYearIsValid = (year: string) => {
 	const yearInt = parseInt(year)
 	const currentYear = new Date().getFullYear()
 
 	return yearInt !== 0 && yearInt <= currentYear
 }
 
-export const monthIsValid = (input: string) => {
+/**
+ *
+ * @param input : we check if the month entered is between 0 excluded and 12 included
+ * @returns boolean
+ */
+export const checkIfMonthIsValid = (input: string): boolean => {
 	const monthInt = parseInt(input)
 
 	return monthInt > 0 && monthInt <= 12
@@ -65,7 +71,7 @@ export const monthIsValid = (input: string) => {
  * @param input : string
  * @returns boolean
  */
-export const numberOFCharacterValidation = (input: string, maxCharacter: number) => {
+export const numberOFCharacterValidation = (input: string, maxCharacter: number): boolean => {
 	const lengthOfInput = input.length
 
 	return lengthOfInput <= maxCharacter && lengthOfInput > 0
@@ -77,16 +83,17 @@ export const numberOFCharacterValidation = (input: string, maxCharacter: number)
  * @param input : string corresponding to the seletected prefecture
  * @returns
  */
-export const checkIfPrefectureIsValid = (input: string) => {
+export const checkIfPrefectureIsValid = (input: string): boolean => {
 	return prefectures.includes(input)
 }
 
 /**
  * We check in the input is a number once it is converted into an int.
+ * Intに変更し、数字であれかどうかと確認する。
  * @param input : string input from the user
- * @returns
+ * @returns boolean
  */
-export const checkIfInputIsNumber = (input: string) => {
+export const checkIfInputIsNumber = (input: string): boolean => {
 	return !isNaN(parseInt(input))
 }
 
@@ -132,10 +139,10 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return input === '' || phoneNumberValidation(input)
 
 		case 'year':
-			return input === '' || yearValidation(input)
+			return input === '' || checkIfYearIsValid(input)
 
 		case 'month':
-			return input === '' || monthIsValid(input)
+			return input === '' || checkIfMonthIsValid(input)
 
 		case 'founder':
 			return input === '' || numberOFCharacterValidation(input, 128)

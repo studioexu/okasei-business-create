@@ -17,13 +17,17 @@
 
 <div class="input-wrapper {name} {wrapperClass} {isValid ? '' : 'error'}">
 	{#if label !== ''}
-		<label class="label {labelClass}" for="organization-type">{label}{required ? '*' : ''}</label>
+		<label class="label {labelClass}" for={name}>{label}{required ? '*' : ''}</label>
 	{/if}
 
 	<div class="input-w">
-		<select class="select" bind:value>
+		<select class="select" bind:value id={name}>
 			{#each options as option}
-				<option value={option}>{option}</option>
+				{#if option.length === 0}
+					<option value={option} label="" />
+				{:else}
+					<option value={option}>{option}</option>
+				{/if}
 			{/each}
 		</select>
 		{#if unit !== ''}

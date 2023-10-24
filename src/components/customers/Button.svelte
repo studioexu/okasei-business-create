@@ -10,9 +10,15 @@
 	}
 </script>
 
-<button class="btn {buttonClass}" {form} on:click={iclick}>
-	<slot />
-</button>
+{#if form.length !== 0}
+	<button class="btn {buttonClass}" {form} on:click={iclick}>
+		<slot />
+	</button>
+{:else}
+	<button class="btn {buttonClass}" on:click={iclick}>
+		<slot />
+	</button>
+{/if}
 
 <style lang="scss">
 	$primary-color: #2fa8e1;

@@ -127,10 +127,10 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return numberOFCharacterValidation(input, 20) || input === ''
 
 		case 'address1':
-			return numberOFCharacterValidation(input, 100) || input === ''
+			return numberOFCharacterValidation(input, 200) || input === ''
 
 		case 'address2':
-			return numberOFCharacterValidation(input, 100) || input === ''
+			return numberOFCharacterValidation(input, 200) || input === ''
 
 		case 'phoneNumber':
 			return phoneNumberValidation(input)
@@ -154,7 +154,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return input === '' || checkIfInputIsNumber(input)
 
 		case 'homepage':
-			return input === '' || numberOFCharacterValidation(input, 100)
+			return input === '' || numberOFCharacterValidation(input, 200)
 
 		default:
 			return true

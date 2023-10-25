@@ -8,7 +8,7 @@
 				.then(text => {
 					const svg = new DOMParser().parseFromString(text, 'image/svg+xml').documentElement
 					svg.classList.add('svg-icon')
-					svg.setAttribute('fill', color ?? '#fff')
+					svg.setAttribute('fill', color ?? '#595857')
 
 					return svg
 				})

@@ -1,8 +1,10 @@
 <script lang="ts">
 	import BedConfiguration from './BedConfiguration.svelte'
 	import Button from '@/components/customers/Button.svelte'
+	import Select from './Select.svelte'
 
 	export let bedding: BedInput[]
+	export const departments: string[] = ['内科', '外科', '診療内科']
 
 	interface BedInput {
 		index: number
@@ -12,23 +14,24 @@
 
 	let totalOfBed: number = 0
 	let bedInputArray: BedInput[] = []
+	bedInputArray = [{ index: 0, department: '内科', quantity: '0' }]
 
-	if (bedding.length === 0) {
-		bedInputArray = [{ index: 0, department: '', quantity: '0' }]
-	} else {
-		bedding.map((bed, index) => {
-			// bedInputArray.push({ index: index, department: bed.department, quantity: bed.quantity })
-			bedInputArray = [
-				...bedInputArray,
-				{
-					index: index,
-					department: bed.department,
-					quantity: bed.quantity
-				}
-			]
-			index++
-		})
-	}
+	// if (bedding.length === 0) {
+	// 	bedInputArray = [{ index: 0, department: '内科', quantity: '0' }]
+	// } else {
+	// 	bedding.map((bed, index) => {
+	// 		// bedInputArray.push({ index: index, department: bed.department, quantity: bed.quantity })
+	// 		bedInputArray = [
+	// 			...bedInputArray,
+	// 			{
+	// 				index: index,
+	// 				department: bed.department,
+	// 				quantity: bed.quantity
+	// 			}
+	// 		]
+	// 		index++
+	// 	})
+	// }
 
 	/**
 	 * We go through the array of bed input and calculate the number total of beds.
@@ -47,12 +50,13 @@
 	/**
 	 * It will add a new bed input in the form
 	 */
-	const handleAddBed = () => {
+	const handleAddBed = (e: any) => {
+		e.preventDefault()
 		bedInputArray = [
 			...bedInputArray,
 			{
 				index: bedInputArray[bedInputArray.length - 1].index + 1,
-				department: '',
+				department: '内科',
 				quantity: '0'
 			}
 		]
@@ -66,9 +70,14 @@
 
 	$: totalOfBed = caculateTotalOfBeds(bedInputArray)
 	$: bedding = bedInputArray
+	// $: bedInputArray
+
+	// $: displayArray = bedInputArray
+
+	$: console.log('bedInputArray')
 
 	$: console.log(bedInputArray)
-	// $: console.log(bedding)
+	$: console.log(bedding)
 
 	// $: console.log('total' + totalOfBed)
 </script>
@@ -77,8 +86,7 @@
 	<h3 class="label">診療科目</h3>
 
 	<div class="container container--vertical">
-		{#each bedInputArray as bed}
-			{console.log(bed)}
+		{#each bedInputArray as bed, index}
 			<BedConfiguration
 				bind:bed
 				bind:department={bed.department}

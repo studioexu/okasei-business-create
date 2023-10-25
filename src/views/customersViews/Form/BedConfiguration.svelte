@@ -7,7 +7,7 @@
 	export const departments: string[] = ['内科', '外科', '診療内科']
 	export let bed: BedInput
 	export let bedInputArray: BedInput[]
-	export let department: string = '内科'
+	export let department: string
 	export let quantity: string
 
 	const deleteItem = (e: any) => {

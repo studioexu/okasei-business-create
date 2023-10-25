@@ -76,6 +76,8 @@
 	}
 
 	$: checkValueOnChange(value)
+
+	$: console.log('my input value : ' + value)
 </script>
 
 <div class="input-wrapper {wrapperClass} {isValid ? '' : 'error'}">

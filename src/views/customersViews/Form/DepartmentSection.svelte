@@ -1,7 +1,6 @@
 <script lang="ts">
 	import BedConfiguration from './BedConfiguration.svelte'
 	import Button from '@/components/customers/Button.svelte'
-	import Select from './Select.svelte'
 
 	export let bedding: BedInput[]
 	export const departments: string[] = ['内科', '外科', '診療内科']
@@ -14,24 +13,22 @@
 
 	let totalOfBed: number = 0
 	let bedInputArray: BedInput[] = []
-	bedInputArray = [{ index: 0, department: '内科', quantity: '0' }]
 
-	// if (bedding.length === 0) {
-	// 	bedInputArray = [{ index: 0, department: '内科', quantity: '0' }]
-	// } else {
-	// 	bedding.map((bed, index) => {
-	// 		// bedInputArray.push({ index: index, department: bed.department, quantity: bed.quantity })
-	// 		bedInputArray = [
-	// 			...bedInputArray,
-	// 			{
-	// 				index: index,
-	// 				department: bed.department,
-	// 				quantity: bed.quantity
-	// 			}
-	// 		]
-	// 		index++
-	// 	})
-	// }
+	if (bedding.length === 0) {
+		bedInputArray = [{ index: 0, department: '内科', quantity: '0' }]
+	} else {
+		bedding.map((bed, index) => {
+			bedInputArray = [
+				...bedInputArray,
+				{
+					index: index,
+					department: bed.department,
+					quantity: bed.quantity
+				}
+			]
+			index++
+		})
+	}
 
 	/**
 	 * We go through the array of bed input and calculate the number total of beds.
@@ -60,26 +57,10 @@
 				quantity: '0'
 			}
 		]
-
-		// bedInputArray.push({
-		// 	index: bedInputArray[bedInputArray.length - 1].index + 1,
-		// 	department: '',
-		// 	quantity: '0'
-		// })
 	}
 
 	$: totalOfBed = caculateTotalOfBeds(bedInputArray)
 	$: bedding = bedInputArray
-	// $: bedInputArray
-
-	// $: displayArray = bedInputArray
-
-	$: console.log('bedInputArray')
-
-	$: console.log(bedInputArray)
-	$: console.log(bedding)
-
-	// $: console.log('total' + totalOfBed)
 </script>
 
 <div class="container">

@@ -2,6 +2,9 @@ import type { CustomerEntries } from '../utils/types'
 import { parseBeforePost } from '../utils/parsers'
 import { create } from '../utils/actions'
 
+const localUrl = 'http://localhost:3000/customers/'
+const demoUrl = 'https://fake-server-2x0o.onrender.com/customers/'
+
 export const actions = {
 	create: async ({ request }) => {
 		const data = await request.formData()
@@ -13,7 +16,7 @@ export const actions = {
 
 			let newCustomer = parseBeforePost(initialState)
 
-			create(newCustomer, 'http://localhost:3000/customers/')
+			create(newCustomer, demoUrl)
 			// create(newCustomer, 'https://fake-server-2x0o.onrender.com/api/customers')
 		}
 	}

@@ -15,7 +15,15 @@
 		bedInputArray = bedInputArray.filter(bed => bed.index !== itemToDelete)
 	}
 
-	$: console.log(bed.department + '   ' + bed.quantity)
+	const checkBedQuantity = (bedQuantity: string): string => {
+		if (isNaN(parseInt(bedQuantity))) {
+			bedQuantity = '0'
+		}
+
+		return bedQuantity
+	}
+
+	// $: quantity = checkBedQuantity(quantity)
 </script>
 
 <div class="bed-configuration" id={bed.index.toString()} data-index={bed.index}>
@@ -26,6 +34,7 @@
 		label="病床数"
 		wrapperClass="mb-0"
 		bind:value={quantity}
+		extraCheckFunction={checkBedQuantity}
 	/>
 
 	<button type="button" class="btn btn--delete" on:click={deleteItem}>

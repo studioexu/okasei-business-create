@@ -12,16 +12,11 @@
 </div>
 
 <style lang="scss">
-	.bed-quantity {
-		display: flex;
-		flex-direction: column;
-		gap: 1rem;
-	}
-
 	.bed-container {
 		display: flex;
 		flex-direction: row;
 		align-items: center;
+		justify-content: space-between;
 		gap: calc((35 / 1366) * 100vw);
 		.quantity {
 			display: flex;

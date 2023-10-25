@@ -4,13 +4,16 @@ import type { CustomerEntries } from '../../utils/types.ts'
 import { parseBeforeUpdate } from '../../utils/parsers.js'
 import type { CustomerBackend } from '../../utils/classes.js'
 
+const localUrl = 'http://localhost:3000/customers/'
+const demoUrl = 'https://fake-server-2x0o.onrender.com/customers/'
+
 /**
  * We load the necessary data.
  * @param param0 corresponds to the parameters of the page
  * @returns
  */
 export const load = async ({ params }) => {
-	const data: CustomerBackend[] = await loadData('http://localhost:3000/customers/')
+	const data: CustomerBackend[] = await loadData(demoUrl)
 	const customer: CustomerBackend | undefined = data.find(
 		(customer: CustomerBackend) => customer.Cust_CD?.toString() === params.id.toString()
 	)
@@ -42,7 +45,7 @@ export const actions = {
 			const updatedcustomer = parseBeforeUpdate(initialState, registration)
 
 			if (initialState.id) {
-				update(updatedcustomer, 'http://localhost:3000/customers/', initialState.id)
+				update(updatedcustomer, demoUrl, initialState.id)
 			}
 		}
 	}

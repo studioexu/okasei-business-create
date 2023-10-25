@@ -18,6 +18,7 @@
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
+	export let extraCheckFunction: Function | null = null
 	export let address: AddressAutoInfo = {
 		prefecture: '',
 		city: '',
@@ -35,6 +36,10 @@
 	const handleBlurInput = (e: any) => {
 		const input = e.target.value
 		isValid = inputIsValid(name, input)
+
+		if (extraCheckFunction) {
+			value = extraCheckFunction(input)
+		}
 	}
 
 	/**
@@ -55,7 +60,6 @@
 		e.preventDefault()
 		if (isValid) {
 			const api = 'https://zipcloud.ibsnet.co.jp/api/search?zipcode='
-			// const postalCode = (<HTMLInputElement>document.getElementById(name))?.value
 			const postalCode = value
 			const url = api + postalCode
 
@@ -63,21 +67,16 @@
 				.then(res => res.json())
 				.then(data => {
 					const results = data.results[0]
-					console.log(data)
 
 					address.prefecture = results.address1
 					address.city = results.address2
 					address.address1 = results.address3
-					// address.city = results.address2.slice(0, results.address2.indexOf('市') + 1)
-					// address.address1 = results.address2.split('市')[1] + results.address3
 				})
 				.catch(err => console.log(err))
 		}
 	}
 
 	$: checkValueOnChange(value)
-
-	$: console.log('my input value : ' + value)
 </script>
 
 <div class="input-wrapper {wrapperClass} {isValid ? '' : 'error'}">

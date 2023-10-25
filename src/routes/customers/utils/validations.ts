@@ -7,7 +7,7 @@ import { prefectures } from '../data/data'
  * @returns boolean
  */
 export const kanaValidation = (kanaString: string) => {
-	const regex = /^[ァ-ン]+$/
+	const regex = /^[ァ-ン ー]+$/
 	return regex.test(kanaString)
 }
 
@@ -124,13 +124,13 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return checkIfPrefectureIsValid(input)
 
 		case 'city':
-			return numberOFCharacterValidation(input, 10) || input === ''
+			return numberOFCharacterValidation(input, 20) || input === ''
 
 		case 'address1':
-			return numberOFCharacterValidation(input, 50) || input === ''
+			return numberOFCharacterValidation(input, 100) || input === ''
 
 		case 'address2':
-			return numberOFCharacterValidation(input, 50) || input === ''
+			return numberOFCharacterValidation(input, 100) || input === ''
 
 		case 'phoneNumber':
 			return phoneNumberValidation(input)
@@ -145,7 +145,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return input === '' || checkIfMonthIsValid(input)
 
 		case 'founder':
-			return input === '' || numberOFCharacterValidation(input, 128)
+			return input === '' || numberOFCharacterValidation(input, 100)
 
 		case 'quantity':
 			return checkIfInputIsNumber(input)
@@ -154,7 +154,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return input === '' || checkIfInputIsNumber(input)
 
 		case 'homepage':
-			return input === '' || numberOFCharacterValidation(input, 128)
+			return input === '' || numberOFCharacterValidation(input, 100)
 
 		default:
 			return true

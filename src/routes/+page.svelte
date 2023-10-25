@@ -1,104 +1,37 @@
 <script lang="ts" context="module">
-	import { goto } from '$app/navigation'
-	import { user, users } from '@/stores/users'
-	import type { Login } from '@/libs/types'
-	import { debounce } from '@/libs/utils'
 	import Icon from '@/components/Icon.svelte'
-
-	const keys: Login[] = ['employeeNumber', 'password']
-
-	const errorTexts: {
-		employeeNumber: string
-		password: string
-	} = {
-		employeeNumber: '社員番号は0より大きい数を入力してください。',
-		password: '社員番号とパスワードが一致しません。'
-	}
 </script>
 
 <script lang="ts">
-	let error: Login | undefined = undefined
-	let isHidden = true
-
-	const loginData: {
-		employeeNumber: string
-		password: string
-	} = {
-		employeeNumber: '',
-		password: ''
-	}
-
-	$: isDisabled = keys.some(key => loginData[key] === '' || error)
-
-	const onInput = debounce((event: Event, key: Login) => {
-		error = undefined
-		const content: string = (<HTMLInputElement>event.target).value
-		loginData[key] = key === 'password' ? content : content.replace(/^0+(?=\d)/, '')
-
-		if (key === 'employeeNumber' && parseInt(loginData[key], 10) <= 0) error = key
-	}, 200)
-
-	const onSubmit = debounce(async (event: Event) => {
-		event.preventDefault()
-
-		if (!isDisabled) {
-			try {
-				const formData = new FormData()
-
-				for (const key in loginData) formData.append(key, <string>loginData[<Login>key])
-
-				if (loginData.password !== 'pass') error = 'password'
-				else {
-					const currentUser = $users.find(
-						localUser => localUser.employeeNumber === parseInt(loginData.employeeNumber),
-						10
-					)
-
-					if (currentUser) {
-						user.set(currentUser)
-						goto('/users')
-					} else error = 'password'
-				}
-			} catch (error) {}
-		}
-	}, 200)
+	$: isHidden = true
 </script>
 
 <div class="login">
 	<div class="left">
 		<img class="logo" src="./../../logo.svg" alt="logo" />
 	</div>
-	<form class="right" on:submit={onSubmit}>
-		{#if error}
-			<span class="font-error">{errorTexts[error]}</span>
-		{/if}
-		{#each keys as key}
-			<fieldset class="fieldset">
-				<Icon icon={{ path: key === 'password' ? 'password' : 'user' }} />
-				<input
-					class:error={(error && key === 'employeeNumber') || error === 'password'}
-					type={key === 'employeeNumber' ? 'number' : isHidden ? 'password' : 'text'}
-					value={loginData[key]}
-					placeholder={key === 'password' ? 'パスワード' : '社員番号'}
-					on:input={event => onInput(event, key)}
-				/>
-				{#if key === 'password'}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<!-- svelte-ignore a11y-no-static-element-interactions -->
-					<span on:click={() => (isHidden = !isHidden)}>
-						{#if isHidden}
-							<Icon icon={{ path: 'eye-slash' }} />
-						{:else}
-							<Icon icon={{ path: 'eye' }} />
-						{/if}
-					</span>
+	<div class="right">
+		<fieldset class="fieldset">
+			<Icon icon={{ path: 'user', color: '#595857' }} />
+			<input type="text" placeholder="社員番号" />
+		</fieldset>
+		<fieldset class="fieldset">
+			<Icon icon={{ path: 'password', color: '#595857' }} />
+			<input type={isHidden ? 'password' : 'text'} placeholder="パスワード" />
+			<!-- svelte-ignore a11y-click-events-have-key-events -->
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
+			<span on:click={() => (isHidden = !isHidden)}>
+				{#if isHidden}
+					<Icon icon={{ path: 'eye-slash', color: '#595857' }} />
+				{:else}
+					<Icon icon={{ path: 'eye', color: '#595857' }} />
 				{/if}
-			</fieldset>
-		{/each}
-		<button class="primary login-btn" class:disabled={isDisabled} type="submit">ログイン</button>
+			</span>
+		</fieldset>
+		<button class="login-btn">ログイン</button>
 		<span class="horizontal-line" />
-		<button class="password-btn" type="button">パスワード変更</button>
-	</form>
+		<button class="password-btn">パスワード変更</button>
+	</div>
 </div>
 
 <style lang="scss">
@@ -127,14 +60,9 @@
 		}
 
 		> .right {
-			background: #fff;
+			background-color: #fff;
 			border-radius: 8px;
 			text-align: center;
-
-			> span {
-				display: block;
-				margin-bottom: 8px;
-			}
 
 			> .fieldset {
 				position: relative;
@@ -145,11 +73,13 @@
 
 				> input {
 					width: 100%;
+					border: 1px solid #7b7c7d;
+					border-radius: 0;
 					padding: 8px 16px;
 					margin-left: 16px;
 
 					&::placeholder {
-						color: var(--gray);
+						color: #7b7c7d;
 					}
 				}
 
@@ -166,9 +96,15 @@
 				width: 320px;
 				border-radius: 16px;
 				padding: 16px 24px;
+
+				&:hover {
+					opacity: 0.5;
+				}
 			}
 
 			.login-btn {
+				background: var(--primary-color);
+				color: #fff;
 				font-weight: bold;
 			}
 

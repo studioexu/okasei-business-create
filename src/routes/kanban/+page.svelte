@@ -16,15 +16,7 @@
 </script>
 
 <script lang="ts">
-	let boards: {
-		id: string
-		tasks: {
-			id: string
-			title: string
-			status: string
-		}[]
-		text: string
-	}[] = [
+	const boards = [
 		{
 			id: 'todo',
 			tasks: [
@@ -74,6 +66,8 @@
 	let isUpper: boolean = false
 
 	const dragEnterOnBoard = (event: Event, index: number) => {
+		event.preventDefault()
+
 		if (getId(event) && currentTask.id !== '') {
 			if (hoveringBoard === index) resetMargin(hoveringTask.id)
 
@@ -140,7 +134,6 @@
 		}
 	}
 
-
 	const dragOver = async (event: Event) => {
 		event.preventDefault()
 
@@ -180,32 +173,36 @@
 
 <div class="kanban">
 	{#each boards as board, index}
-		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div
+			id={board.id}
 			class="board"
 			class:is-hovering={index + 1 === hoveringBoard && currentBoard + 1 !== hoveringBoard}
-			id={board.id}
-			on:dragenter={event => dragEnterOnBoard(event, index)}
-			on:dragover={event => event.preventDefault()}
-			on:drop={() => drop(index)}
 		>
-			<span>{board.text}</span>
-			{#each board.tasks as task, taskIndex}
-				<!-- svelte-ignore a11y-click-events-have-key-events -->
-				<div
-					class="task"
-					id={task.id}
-					draggable={true}
-					on:dragstart={event => dragStart(event, index, taskIndex)}
-					on:dragenter={event => dragEnterOnTask(event, taskIndex)}
-					on:dragover={dragOver}
-					on:dragend={dragEnd}
-					on:click={() => click(task.id)}
-				>
-					<p>{task.title}</p>
-					<span>{task.status}</span>
-				</div>
-			{/each}
+			<h3>{board.text}</h3>
+			<!-- svelte-ignore a11y-no-static-element-interactions -->
+			<div
+				class="board-container"
+				on:dragenter={event => dragEnterOnBoard(event, index)}
+				on:dragover={event => event.preventDefault()}
+				on:drop={() => drop(index)}
+			>
+				{#each board.tasks as task, taskIndex}
+					<!-- svelte-ignore a11y-click-events-have-key-events -->
+					<div
+						class="task"
+						id={task.id}
+						draggable={true}
+						on:dragstart={event => dragStart(event, index, taskIndex)}
+						on:dragenter={event => dragEnterOnTask(event, taskIndex)}
+						on:dragover={dragOver}
+						on:dragend={dragEnd}
+						on:click={() => click(task.id)}
+					>
+						<p>{task.title}</p>
+						<span>{task.status}</span>
+					</div>
+				{/each}
+			</div>
 		</div>
 	{/each}
 </div>
@@ -215,20 +212,6 @@
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
-	}
-
-	.board {
-		display: inline-block;
-		width: 30%;
-		height: 800px;
-		margin: 0 auto;
-
-		> span {
-			display: block;
-			color: #fff;
-			text-align: center;
-			margin: 16px 0;
-		}
 	}
 
 	#todo {
@@ -255,20 +238,40 @@
 		}
 	}
 
-	.task {
-		width: 80%;
-		height: 100px;
-		background: #bbb;
-		padding: 8px;
-		margin: 0 auto 16px auto;
-		cursor: grab;
+	.board {
+		display: inline-block;
+		width: 30%;
+		height: 800px;
+		padding: 16px 0;
+		margin: 0 auto;
 
-		&:active {
-			cursor: grabbing;
+		> h3 {
+			display: block;
+			color: #fff;
+			text-align: center;
+			margin-bottom: 16px;
 		}
 
-		> p {
-			margin-bottom: 16px;
+		&-container {
+			width: 100%;
+			height: 100%;
+
+			.task {
+				width: 80%;
+				height: 100px;
+				background: #bbb;
+				padding: 8px;
+				margin: 0 auto 16px auto;
+				cursor: grab;
+
+				&:active {
+					cursor: grabbing;
+				}
+
+				> p {
+					margin-bottom: 16px;
+				}
+			}
 		}
 	}
 </style>

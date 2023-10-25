@@ -1,6 +1,6 @@
 <script lang="ts">
 	export let path: string
-	export let authority: string
+	export let isAdmin: boolean
 	export let id: string
 	export let name: string
 
@@ -15,7 +15,7 @@
 	const titles: { path: string | RegExp; title: string }[] = [
 		{ path: '/users', title: '社員一覧' },
 		{ path: '/users/new', title: '新規社員登録' },
-		{ path: /\/users\/+/, title: '社員情報編集' },
+		{ path: /^\/users\/[1-9]\d?$/, title: '社員情報編集' },
 		{ path: '/customers', title: '顧客一覧' },
 		{ path: '/customers/new', title: '新規顧客登録' },
 		{ path: /\/customers\/+/, title: '顧客情報編集' },
@@ -26,7 +26,8 @@
 		{ path: '/negotiations/new', title: '新規商談登録' },
 		{ path: /\/negotiations\/+/, title: '商談情報編集' },
 		{ path: '/history', title: '変更履歴' },
-		{ path: '/settings', title: '設定' }
+		{ path: '/settings', title: '設定' },
+		{ path: '/kanban', title: 'Kanbanテスト' }
 	]
 </script>
 
@@ -37,11 +38,13 @@
 		<h1 class="font-large">{title}</h1>
 	</div>
 	<div class="right">
-		{#if authority === 'admin'}
+		{#if isAdmin}
 			<span class="authority">管理者</span>
 		{/if}
-		<span>社員番号: {id}</span>
-		<span>名前: {name}</span>
+		{#if id !== '' && name !== ''}
+			<span>社員番号: {id}</span>
+			<span>名前: {name}</span>
+		{/if}
 	</div>
 </header>
 

@@ -1,6 +1,6 @@
 <script lang="ts">
-	export let value: string = ''
-	export let options: string[] = ['']
+	export let value: string
+	export let options: string[] = [' ']
 	export let label: string = ''
 	export let unit: string = ''
 	export let labelClass: string = ''
@@ -23,11 +23,7 @@
 	<div class="input-w">
 		<select class="select" bind:value id={name}>
 			{#each options as option}
-				{#if option.length === 0}
-					<option value={option} label="" />
-				{:else}
-					<option value={option}>{option}</option>
-				{/if}
+				<option value={option}>{option}</option>
 			{/each}
 		</select>
 		{#if unit !== ''}

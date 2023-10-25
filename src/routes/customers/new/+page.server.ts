@@ -14,6 +14,7 @@ export const actions = {
 			let newCustomer = parseBeforePost(initialState)
 
 			create(newCustomer, 'http://localhost:3000/customers/')
+			// create(newCustomer, 'https://fake-server-2x0o.onrender.com/api/customers')
 		}
 	}
 }

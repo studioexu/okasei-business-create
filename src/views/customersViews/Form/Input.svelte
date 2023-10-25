@@ -2,14 +2,9 @@
 </script>
 
 <script lang="ts">
+	import type { AddressAutoInfo } from '@/routes/customers/utils/types'
 	import Button from '@/components/customers/Button.svelte'
 	import { inputIsValid } from '@/routes/customers/utils/validations'
-
-	interface AddressInfo {
-		prefecture: string
-		city: string
-		address1: string
-	}
 
 	export let placeholder: string = ''
 	export let value: string = ''
@@ -23,7 +18,7 @@
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
-	export let address: AddressInfo = {
+	export let address: AddressAutoInfo = {
 		prefecture: '',
 		city: '',
 		address1: ''
@@ -68,10 +63,13 @@
 				.then(res => res.json())
 				.then(data => {
 					const results = data.results[0]
+					console.log(data)
 
-					;(address.prefecture = results.address1),
-						(address.city = results.address2.slice(0, results.address2.indexOf('市') + 1)),
-						(address.address1 = results.address2.split('市')[1] + results.address3)
+					address.prefecture = results.address1
+					address.city = results.address2
+					address.address1 = results.address3
+					// address.city = results.address2.slice(0, results.address2.indexOf('市') + 1)
+					// address.address1 = results.address2.split('市')[1] + results.address3
 				})
 				.catch(err => console.log(err))
 		}

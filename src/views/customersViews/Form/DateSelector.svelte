@@ -11,13 +11,7 @@
 	export let year: string = ''
 	export let month: string = ''
 
-	// const currentYear = new Date().getFullYear()
-	// const years: string[] = ['']
-	const months: string[] = ['']
-
-	// for (let i = 1850; i < currentYear; i++) {
-	// 	years.push(i.toString())
-	// }
+	const months: string[] = [' ']
 
 	for (let i = 1; i <= 12; i++) {
 		months.push(i.toString())
@@ -29,8 +23,6 @@
 	for (let i = minYear; i < currentYear; i++) {
 		years.push(i.toString())
 	}
-
-	$: console.log(year)
 </script>
 
 <div class="date-selector">

@@ -16,6 +16,10 @@
 		(customer: CustomerInfo) => new CustomerFactory(customer, 'customer')
 	)
 
+	// let allCustomers: CustomerFactory[] = data.data.map(
+	// 	(customer: CustomerInfo) => new CustomerFactory(customer, 'jsonServerOnline')
+	// )
+
 	let filteredCustomers: CustomerFactory[]
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let newData: CustomerFactory[] = customersToDisplay

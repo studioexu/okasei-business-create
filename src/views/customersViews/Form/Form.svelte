@@ -1,9 +1,14 @@
 <script lang="ts">
+	import type {
+		CustomerEntries,
+		CustomerEntriesErrors,
+		AddressAutoInfo
+	} from '@/routes/customers/utils/types'
+
 	import { prefectures } from '@/routes/customers/data/data.js'
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
-	import type { CustomerEntries, CustomerEntriesErrors } from '@/routes/customers/utils/types'
 	import Seletector from './Selector.svelte'
 	import { enhance } from '$app/forms'
 	import DepartmentSection from './DepartmentSection.svelte'
@@ -14,19 +19,13 @@
 	export let modalIsOpened: boolean
 	export let noErrors: CustomerEntriesErrors
 
-	interface AddressInfo {
-		prefecture: string
-		city: string
-		address1: string
-	}
-
-	let address: AddressInfo = {
+	let address: AddressAutoInfo = {
 		prefecture: '',
 		city: '',
 		address1: ''
 	}
 
-	const assignAddressInfo = (address: AddressInfo) => {
+	const assignAddressInfo = (address: AddressAutoInfo) => {
 		if (address.prefecture.length !== 0) {
 			initialState.prefecture = address.prefecture
 		}
@@ -36,11 +35,13 @@
 		if (address.address1.length !== 0) {
 			initialState.address1 = address.address1
 		}
+
+		initialState.address2 = ''
 	}
 
 	$: assignAddressInfo(address)
 
-	const hojinKojin = ['', '法人', '個人']
+	const hojinKojin = ['法人', '個人']
 
 	/**
 	 * Triggered when the form is submit.
@@ -189,6 +190,7 @@
 					placeholder="丁目・番地"
 					bind:value={initialState.address1}
 					bind:isValid={noErrors.address1}
+					errorMsg={'200文字以内で入力してください'}
 				/>
 				<!-- Input -->
 
@@ -200,6 +202,7 @@
 					placeholder="建物名・部屋番号"
 					bind:value={initialState.address2}
 					bind:isValid={noErrors.address2}
+					errorMsg={'200文字以内で入力してください'}
 				/>
 				<!-- Input -->
 			</div>
@@ -287,6 +290,7 @@
 				placeholder={'www.homepage.com'}
 				bind:value={initialState.homepage}
 				bind:isValid={noErrors.homepage}
+				errorMsg={'200文字以内で入力してください'}
 			/>
 			<!-- Input -->
 

@@ -17,7 +17,15 @@
 		bedInputArray = [{ index: 0, department: '', quantity: '0' }]
 	} else {
 		bedding.map((bed, index) => {
-			bedInputArray.push({ index: index, department: bed.department, quantity: bed.quantity })
+			// bedInputArray.push({ index: index, department: bed.department, quantity: bed.quantity })
+			bedInputArray = [
+				...bedInputArray,
+				{
+					index: index,
+					department: bed.department,
+					quantity: bed.quantity
+				}
+			]
 			index++
 		})
 	}
@@ -43,15 +51,26 @@
 		bedInputArray = [
 			...bedInputArray,
 			{
-				index: bedInputArray.length === 0 ? 0 : bedInputArray[bedInputArray.length - 1].index + 1,
+				index: bedInputArray[bedInputArray.length - 1].index + 1,
 				department: '',
 				quantity: '0'
 			}
 		]
+
+		// bedInputArray.push({
+		// 	index: bedInputArray[bedInputArray.length - 1].index + 1,
+		// 	department: '',
+		// 	quantity: '0'
+		// })
 	}
 
 	$: totalOfBed = caculateTotalOfBeds(bedInputArray)
 	$: bedding = bedInputArray
+
+	$: console.log(bedInputArray)
+	// $: console.log(bedding)
+
+	// $: console.log('total' + totalOfBed)
 </script>
 
 <div class="container">
@@ -59,7 +78,13 @@
 
 	<div class="container container--vertical">
 		{#each bedInputArray as bed}
-			<BedConfiguration bind:bed bind:bedInputArray />
+			{console.log(bed)}
+			<BedConfiguration
+				bind:bed
+				bind:department={bed.department}
+				bind:quantity={bed.quantity}
+				bind:bedInputArray
+			/>
 		{/each}
 	</div>
 

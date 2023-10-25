@@ -12,6 +12,8 @@
 	export let data
 
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'customer')
+	// let customer: CustomerFactory = new CustomerFactory(data.customer, 'jsonServerOnline')
+
 	let bedQuantity: number = 0
 
 	customer.departments.detail.forEach((bed: any) => (bedQuantity += parseInt(bed.quantity)))

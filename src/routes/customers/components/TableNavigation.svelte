@@ -16,6 +16,8 @@
 	$: currentPage =
 		currentPage > numberOfPages && numberOfPages !== 0 ? (currentPage = numberOfPages) : currentPage
 
+	$: console.log(currentPage)
+
 	/**
 	 * Update the page navigation in the footer according to the current page.
 	 * @param numberOfPages: number, corresponding also to the maximum of pages
@@ -38,17 +40,17 @@
 			return
 		}
 
-		if (currentPage >= parseInt(pageArray[4])) {
+		if (currentPage <= 5) {
 			pageArray = []
-			for (let i = currentPage; i <= currentPage + 4; i++) {
+			for (let i = 1; i <= 5; i++) {
 				pageArray.push(i.toString())
 			}
 			return
 		}
 
-		if (currentPage <= 5) {
+		if (currentPage >= parseInt(pageArray[4])) {
 			pageArray = []
-			for (let i = 1; i <= 5; i++) {
+			for (let i = currentPage; i <= currentPage + 4; i++) {
 				pageArray.push(i.toString())
 			}
 			return

@@ -4,16 +4,32 @@
 	import BeddingWrapper from './BeddingWrapper.svelte'
 	import FoundationWrapper from './FoundationWrapper.svelte'
 	import Wrapper from './Wrapper.svelte'
-	import type { CustomerEntries } from '@/routes/customers/utils/types'
+	import type { CustomerEntries, BedInput } from '@/routes/customers/utils/types'
 
 	export let initialState: CustomerEntries
 	export let verificationPageDisplayed: boolean
 
 	let bedQuantity: number = 0
 
-	$: initialState.bedding.map(
-		bed => (bedQuantity += bed.quantity === '' ? 0 : parseInt(bed.quantity))
-	)
+	/**
+	 * We go through the array of bed input and calculate the number total of beds.
+	 * @param beds: array of bedInput
+	 */
+	const caculateTotalOfBeds = (beds: BedInput[]): number => {
+		let sum: number = 0
+		beds.map((bed: BedInput) => {
+			const numberOfBed = isNaN(parseInt(bed.quantity)) ? 0 : parseInt(bed.quantity)
+			sum += numberOfBed
+		})
+
+		return sum
+	}
+
+	// $: initialState.bedding.map(
+	// 	bed => (bedQuantity += bed.quantity === '' ? 0 : parseInt(bed.quantity))
+	// )
+
+	$: bedQuantity = caculateTotalOfBeds(initialState.bedding)
 </script>
 
 {#if verificationPageDisplayed}

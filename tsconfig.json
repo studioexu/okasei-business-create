@@ -14,5 +14,5 @@
 		"types": ["@sveltejs/kit", "@sveltejs/adapter-node"],
 		"ignoreDeprecations": "5.0"
 	},
-	"include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.svelte"]
+	"include": ["src/**/*.d.ts", "src/**/*.ts", "src/**/*.svelte", "src/store.ts"]
 }

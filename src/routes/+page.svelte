@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
 	import { goto } from '$app/navigation'
 	import { user, users } from '@/stores/users'
-	import type { Login, User } from '@/libs/types'
+	import type { Login } from '@/libs/types'
 	import { debounce } from '@/libs/utils'
 	import Icon from '@/components/Icon.svelte'
 
@@ -49,15 +49,15 @@
 
 				if (loginData.password !== 'pass') error = 'password'
 				else {
-					user.set(
-						<User>(
-							$users.find(
-								localUser => localUser.employeeNumber === parseInt(loginData.employeeNumber),
-								10
-							)
-						)
+					const currentUser = $users.find(
+						localUser => localUser.employeeNumber === parseInt(loginData.employeeNumber),
+						10
 					)
-					goto('/users')
+
+					if (currentUser) {
+						user.set(currentUser)
+						goto('/users')
+					} else error = 'password'
 				}
 			} catch (error) {}
 		}

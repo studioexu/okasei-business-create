@@ -41,8 +41,10 @@
 		{#if isAdmin}
 			<span class="authority">管理者</span>
 		{/if}
-		<span>社員番号: {id}</span>
-		<span>名前: {name}</span>
+		{#if id !== '' && name !== ''}
+			<span>社員番号: {id}</span>
+			<span>名前: {name}</span>
+		{/if}
 	</div>
 </header>
 

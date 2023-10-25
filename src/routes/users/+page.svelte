@@ -4,7 +4,7 @@
 	import Icon from '@/components/Icon.svelte'
 	import { debounce, toKebab } from '@/libs/utils'
 	import { user, users } from '@/stores/users'
-	import type { SortedItemForUser, User } from '@/libs/types'
+	import type { Role, SortedItemForUser, User } from '@/libs/types'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 </script>
 
@@ -38,6 +38,9 @@
 	$: sortedUsers = $users.filter(user =>
 		Object.keys(sortedValues).every(key => {
 			const localKey = <SortedItemForUser>key
+			if (localKey === 'name')
+				return `${user[localKey].toLowerCase()}`.includes(sortedValues[localKey].toLowerCase())
+
 			return `${user[localKey]}`.includes(sortedValues[localKey])
 		})
 	)
@@ -115,8 +118,20 @@
 
 			case 'delete':
 				try {
-					users.set($users.filter(user => user.employeeNumber !== currentUser))
-					phase = 'success'
+					users.set($users.filter(localUser => localUser.employeeNumber !== currentUser))
+
+					if ($user.employeeNumber === currentUser) {
+						user.set({
+							employeeNumber: 0,
+							name: '',
+							belongsTo: '',
+							role: <Role>'',
+							email: ''
+						})
+
+						goto('/')
+						phase = 'shown'
+					} else phase = 'success'
 				} catch (error) {
 					phase = 'error'
 				}
@@ -170,9 +185,9 @@
 		<thead>
 			<tr>
 				<th class="employee-number">社員番号</th>
-				<th class="name">氏名</th>
-				<th class="belongs-to">所属</th>
-				<th class="role">ロール</th>
+				<th>氏名</th>
+				<th>所属</th>
+				<th>ロール</th>
 				<th class="email">メールアドレス</th>
 				{#if isAdmin}
 					<th class="icon" />
@@ -185,7 +200,7 @@
 				{#each dividedUsers[current] as user, index}
 					<tr>
 						<td class="employee-number">{user.employeeNumber}</td>
-						<td class="name">{user.name}</td>
+						<td>{user.name}</td>
 						<td>{user.belongsTo}</td>
 						<td>{user.role}</td>
 						<td class="email">{user.email}</td>
@@ -272,10 +287,12 @@
 	}
 
 	.users {
-		display: flex;
-		justify-content: end;
-		flex-wrap: wrap;
+		overflow-x: overlay;
 		margin-bottom: 48px;
+
+		&::-webkit-scrollbar {
+			height: 0;
+		}
 
 		&-table {
 			width: 100%;
@@ -285,9 +302,11 @@
 
 			thead,
 			tbody {
-				display: flex;
-				justify-content: center;
-				flex-wrap: wrap;
+				display: block;
+
+				tr {
+					display: flex;
+				}
 			}
 
 			thead tr {
@@ -306,11 +325,7 @@
 			}
 
 			.employee-number {
-				width: 160px;
-			}
-
-			.name {
-				width: 240px;
+				width: 144px;
 			}
 
 			.email {

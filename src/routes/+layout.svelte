@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { user } from '@/stores/users'
-	import type { User } from '@/libs/types'
+	import type { Role } from '@/libs/types'
 	import Header from '@/views/Header.svelte'
 	import Sidebar from '@/views/Sidebar.svelte'
 </script>
@@ -11,7 +11,13 @@
 	$: path = $page.url.pathname
 
 	const onClick = () => {
-		user.set(<User>{})
+		user.set({
+			employeeNumber: 0,
+			name: '',
+			belongsTo: '',
+			role: <Role>'',
+			email: ''
+		})
 		goto('/')
 	}
 </script>

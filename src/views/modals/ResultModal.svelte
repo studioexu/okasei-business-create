@@ -3,36 +3,24 @@
 </script>
 
 <script lang="ts">
-	export let phase: 'shown' | 'success' | 'error' = 'shown'
+	export let isSucceeded: boolean = false
 
 	const dispatch = createEventDispatcher()
-	const onClick = (key: string) => dispatch('click', { key })
+	const onClick = () => dispatch('click')
 </script>
 
-<div class="delete-modal">
+<div class="result-modal">
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
-	<div class="back" on:click={() => onClick('cancel')} />
+	<div class="back" on:click={onClick} />
 	<div class="container">
-		{#if phase === 'shown'}
-			<p>本当に削除しますか？</p>
-			<div class="btns">
-				<div>
-					<button class="secondary" on:click={() => onClick('cancel')}>キャンセル</button>
-					<button class="primary" on:click={() => onClick('delete')}>削除</button>
-				</div>
-			</div>
-		{:else}
-			<p>{phase === 'success' ? '削除しました' : 'エラーが発生しました'}</p>
-			<button on:click={() => onClick(phase)}
-				>{phase === 'success' ? 'OK' : 'もう一度試す'}</button
-			>
-		{/if}
+		<p>{isSucceeded ? '登録しました' : 'エラーが発生しました'}</p>
+		<button on:click={onClick}>{isSucceeded ? 'OK' : 'もう一度試す'}</button>
 	</div>
 </div>
 
 <style lang="scss">
-	.delete-modal {
+	.result-modal {
 		display: flex;
 		align-items: center;
 		justify-content: center;
@@ -43,7 +31,7 @@
 		height: 100vh;
 		z-index: 100;
 
-    .back {
+		.back {
 			position: absolute;
 			top: 0;
 			left: 0;
@@ -68,22 +56,7 @@
 				margin-bottom: 32px;
 			}
 
-			.btns {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-
-				div {
-					display: inline-flex;
-				}
-
-				button:last-child {
-					background: var(--error);
-					margin-left: 32px;
-				}
-			}
-
-			> button {
+			button {
 				min-width: 112px;
 				background: #fff;
 				color: var(--black);

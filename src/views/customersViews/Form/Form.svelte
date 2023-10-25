@@ -25,6 +25,10 @@
 		address1: ''
 	}
 
+	/**
+	 * assign address
+	 * @param address
+	 */
 	const assignAddressInfo = (address: AddressAutoInfo) => {
 		if (address.prefecture.length !== 0) {
 			initialState.prefecture = address.prefecture

@@ -1,9 +1,12 @@
 import { error } from '@sveltejs/kit'
 import { loadData, deleteCustomer } from './utils/actions.js'
-import { currentUrl } from './data/url'
+
+const localUrl = 'http://localhost:3000/customers/'
+const demoUrl = 'https://fake-server-2x0o.onrender.com/customers/'
 
 export const load = async () => {
-	const data: any[] = await loadData(currentUrl)
+	const data: any[] = await loadData(demoUrl)
+	// const data: any[] = await loadData('https://fake-server-2x0o.onrender.com/api/customers')
 
 	if (!data) throw error(404)
 
@@ -15,6 +18,10 @@ export const actions = {
 		const data = await request.formData()
 		let id: any = data.get('id') === null ? undefined : data.get('id')
 
-		deleteCustomer(id, currentUrl)
+		console.log(id)
+
+		// deleteCustomer(id, 'http://localhost:3000/customers/')
+		// deleteCustomer(id, 'https://fake-server-2x0o.onrender.com/api/customers')
+		deleteCustomer(id, demoUrl)
 	}
 }

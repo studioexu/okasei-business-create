@@ -16,6 +16,8 @@
 	$: currentPage =
 		currentPage > numberOfPages && numberOfPages !== 0 ? (currentPage = numberOfPages) : currentPage
 
+	$: console.log(currentPage)
+
 	/**
 	 * Update the page navigation in the footer according to the current page.
 	 * @param numberOfPages: number, corresponding also to the maximum of pages
@@ -32,13 +34,13 @@
 
 		if (currentPage >= numberOfPages - 4 && currentPage <= numberOfPages) {
 			pageArray = []
-			for (let i = currentPage - 1; i <= numberOfPages; i++) {
+			for (let i = numberOfPages - 4; i <= numberOfPages; i++) {
 				pageArray.push(i.toString())
 			}
 			return
 		}
 
-		if (currentPage < 5) {
+		if (currentPage <= 5) {
 			pageArray = []
 			for (let i = 1; i <= 5; i++) {
 				pageArray.push(i.toString())
@@ -48,15 +50,15 @@
 
 		if (currentPage >= parseInt(pageArray[4])) {
 			pageArray = []
-			for (let i = currentPage - 1; i <= currentPage + 3; i++) {
+			for (let i = currentPage; i <= currentPage + 4; i++) {
 				pageArray.push(i.toString())
 			}
 			return
 		}
 
-		if (currentPage <= parseInt(pageArray[0])) {
+		if (currentPage < parseInt(pageArray[0])) {
 			pageArray = []
-			for (let i = currentPage - 1; i <= currentPage + 3; i++) {
+			for (let i = currentPage - 4; i <= currentPage; i++) {
 				pageArray.push(i.toString())
 			}
 			return
@@ -95,11 +97,9 @@
 </script>
 
 <div class="table-navigation">
-	{#if currentPage > 1}
-		<button class="btn btn--prev" on:click={handlePrevious}>
-			<Icon icon={{ path: 'chevron-right', color: '#595857' }} />
-		</button>
-	{/if}
+	<button class="btn btn--prev" on:click={handlePrevious}>
+		<Icon icon={{ path: 'chevron-right', color: '#595857' }} />
+	</button>
 
 	<ul class="page-list">
 		{#each pageArray as page}
@@ -113,11 +113,9 @@
 		{/each}
 	</ul>
 
-	{#if currentPage < numberOfPages}
-		<button class="btn btn--next" on:click={handleNext}
-			><Icon icon={{ path: 'chevron-right', color: '#595857' }} />
-		</button>
-	{/if}
+	<button class="btn btn--next" on:click={handleNext}
+		><Icon icon={{ path: 'chevron-right', color: '#595857' }} />
+	</button>
 </div>
 
 <style lang="scss">
@@ -140,7 +138,7 @@
 		position: relative;
 		height: 32px;
 		margin: 0;
-		background-color: var(--primary-color);
+		background-color: #2fa8e1;
 		color: #fff;
 		overflow: hidden;
 
@@ -169,48 +167,39 @@
 		}
 
 		&--page {
-			width: 40px;
-			height: 40px;
+			width: 25px;
+			height: 25px;
 			background-color: transparent;
-			color: var(--black);
-			font-size: 18px;
-			font-family: Arial, Helvetica, sans-serif;
+			color: black;
 			border-radius: 100%;
 			transition: all 300ms;
 
 			&.current {
-				background-color: var(--primary-color);
+				background-color: #2fa8e1;
 				color: #fff;
 			}
 
 			&:hover {
-				// color: #fff;
-				// background-color: var(--primary-color);
-				// background-color: hsl(198, 100%, 41%, 0.5);
-				opacity: 0.5;
+				color: #fff;
+				background-color: #2fa8e1;
 			}
 		}
 	}
 
 	.btn--next,
 	.btn--prev {
-		position: relative;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		width: 1.5rem;
 		height: 1.5rem;
-		width: 40px;
-		height: 40px;
 		background-color: transparent;
-		border: 1px solid var(--gray);
-		border: none;
+		border: 1px solid #5b5a5a;
 
-		transition: opacity 300ms;
+		transition: background-color 300ms;
 
 		&:hover {
-			// background-color: #fff;
-			opacity: 0.5;
+			background-color: #fff;
 		}
 	}
 

@@ -24,7 +24,7 @@
 
 			&__title {
 				// color: #707070;
-				color: var(--gray);
+				color: rgb(206, 205, 205);
 				font-size: 18px;
 				font-weight: 500;
 				width: auto;

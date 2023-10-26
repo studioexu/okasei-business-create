@@ -1,7 +1,6 @@
 <script lang="ts">
 	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
 
-	//hello
 	import Icon from '@/components/Icon.svelte'
 
 	export let currentPage: number

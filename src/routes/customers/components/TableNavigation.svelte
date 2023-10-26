@@ -32,13 +32,13 @@
 
 		if (currentPage >= numberOfPages - 4 && currentPage <= numberOfPages) {
 			pageArray = []
-			for (let i = numberOfPages - 4; i <= numberOfPages; i++) {
+			for (let i = currentPage - 1; i <= numberOfPages; i++) {
 				pageArray.push(i.toString())
 			}
 			return
 		}
 
-		if (currentPage <= 5) {
+		if (currentPage < 5) {
 			pageArray = []
 			for (let i = 1; i <= 5; i++) {
 				pageArray.push(i.toString())
@@ -48,15 +48,15 @@
 
 		if (currentPage >= parseInt(pageArray[4])) {
 			pageArray = []
-			for (let i = currentPage; i <= currentPage + 4; i++) {
+			for (let i = currentPage - 1; i <= currentPage + 3; i++) {
 				pageArray.push(i.toString())
 			}
 			return
 		}
 
-		if (currentPage < parseInt(pageArray[0])) {
+		if (currentPage <= parseInt(pageArray[0])) {
 			pageArray = []
-			for (let i = currentPage - 4; i <= currentPage; i++) {
+			for (let i = currentPage - 1; i <= currentPage + 3; i++) {
 				pageArray.push(i.toString())
 			}
 			return
@@ -95,9 +95,11 @@
 </script>
 
 <div class="table-navigation">
-	<button class="btn btn--prev" on:click={handlePrevious}>
-		<Icon icon={{ path: 'chevron-right', color: '#595857' }} />
-	</button>
+	{#if currentPage > 1}
+		<button class="btn btn--prev" on:click={handlePrevious}>
+			<Icon icon={{ path: 'chevron-right', color: '#595857' }} />
+		</button>
+	{/if}
 
 	<ul class="page-list">
 		{#each pageArray as page}
@@ -111,9 +113,11 @@
 		{/each}
 	</ul>
 
-	<button class="btn btn--next" on:click={handleNext}
-		><Icon icon={{ path: 'chevron-right', color: '#595857' }} />
-	</button>
+	{#if currentPage < numberOfPages}
+		<button class="btn btn--next" on:click={handleNext}
+			><Icon icon={{ path: 'chevron-right', color: '#595857' }} />
+		</button>
+	{/if}
 </div>
 
 <style lang="scss">

@@ -115,7 +115,7 @@ export class Customer {
 		return this._instId
 	}
 
-	public get numEmployess() {
+	public get numEmployees() {
 		return this._numEmployees
 	}
 

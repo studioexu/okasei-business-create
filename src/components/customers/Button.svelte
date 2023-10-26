@@ -21,16 +21,19 @@
 {/if}
 
 <style lang="scss">
-	$primary-color: #2fa8e1;
+	$primary-color: #0093d0;
 	$white: #fff;
+	$error: #eb3c3c;
+	$gray: #7b7c7d;
 
 	.btn {
 		width: 108px;
 		height: 45px;
 		margin: 0;
+		font-size: 18px;
 		background-color: $primary-color;
 		color: $white;
-		border-radius: 3px;
+		border-radius: 8px;
 		overflow: hidden;
 
 		&--sm {
@@ -69,7 +72,7 @@
 			transition: all 300ms;
 
 			&:hover {
-				background-color: #2fa8e1;
+				background-color: $primary-color;
 				color: #fff;
 			}
 		}
@@ -77,24 +80,24 @@
 		&--round {
 			width: 182px;
 			height: 43px;
-			border: 1px solid #707070;
-			color: #707070;
+			border: 1px solid $gray;
+			color: $gray;
 			background-color: #fff;
 			border-radius: 24px;
 			&:hover {
-				background-color: #707070;
+				background-color: $gray;
 				color: #fff;
 			}
 
 			&--delete {
-				background-color: rgb(47, 168, 225);
-				border-color: rgb(47, 168, 225);
+				background-color: $primary-color;
+				border-color: $primary-color;
 				color: #fff;
 				transition: all 300ms;
 
 				&:hover {
-					background-color: red;
-					border-color: red;
+					background-color: $error;
+					border-color: $error;
 				}
 			}
 		}

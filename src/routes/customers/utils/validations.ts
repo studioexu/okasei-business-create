@@ -1,4 +1,4 @@
-import { prefectures } from '../data/data'
+import { prefectures } from '../data/prefectures'
 
 /**
  * We want to check if the user only use katakana

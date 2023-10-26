@@ -41,7 +41,7 @@
 			gap: 18px;
 
 			&__title {
-				color: rgb(206, 205, 205);
+				color: var(--gray);
 				font-size: 18px;
 				font-weight: 500;
 				width: 130px;

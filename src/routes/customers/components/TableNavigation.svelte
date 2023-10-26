@@ -16,8 +16,6 @@
 	$: currentPage =
 		currentPage > numberOfPages && numberOfPages !== 0 ? (currentPage = numberOfPages) : currentPage
 
-	$: console.log(currentPage)
-
 	/**
 	 * Update the page navigation in the footer according to the current page.
 	 * @param numberOfPages: number, corresponding also to the maximum of pages
@@ -138,7 +136,7 @@
 		position: relative;
 		height: 32px;
 		margin: 0;
-		background-color: #2fa8e1;
+		background-color: var(--primary-color);
 		color: #fff;
 		overflow: hidden;
 
@@ -167,39 +165,48 @@
 		}
 
 		&--page {
-			width: 25px;
-			height: 25px;
+			width: 40px;
+			height: 40px;
 			background-color: transparent;
-			color: black;
+			color: var(--black);
+			font-size: 18px;
+			font-family: Arial, Helvetica, sans-serif;
 			border-radius: 100%;
 			transition: all 300ms;
 
 			&.current {
-				background-color: #2fa8e1;
+				background-color: var(--primary-color);
 				color: #fff;
 			}
 
 			&:hover {
-				color: #fff;
-				background-color: #2fa8e1;
+				// color: #fff;
+				// background-color: var(--primary-color);
+				// background-color: hsl(198, 100%, 41%, 0.5);
+				opacity: 0.5;
 			}
 		}
 	}
 
 	.btn--next,
 	.btn--prev {
+		position: relative;
 		display: flex;
 		justify-content: center;
 		align-items: center;
 		width: 1.5rem;
 		height: 1.5rem;
+		width: 40px;
+		height: 40px;
 		background-color: transparent;
-		border: 1px solid #5b5a5a;
+		border: 1px solid var(--gray);
+		border: none;
 
-		transition: background-color 300ms;
+		transition: opacity 300ms;
 
 		&:hover {
-			background-color: #fff;
+			// background-color: #fff;
+			opacity: 0.5;
 		}
 	}
 

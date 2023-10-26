@@ -1,7 +1,5 @@
 <script lang="ts">
 	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
-
-	import Button from '@/components/customers/Button.svelte'
 	import Input from './Input.svelte'
 
 	export let data: CustomerFactory[]
@@ -57,6 +55,8 @@
 	 * @param e
 	 */
 	function handleSearch(e?: any) {
+		console.log('nya')
+
 		let dataBis: CustomerFactory[] = data
 
 		if (instId !== '') {
@@ -88,21 +88,30 @@
 		name={'facility-name'}
 		label={'施設名'}
 		bind:value={custName}
+		handleInput={handleSearch}
 	/>
 	<Input
 		additionalClass={'txt--sm'}
 		name={'customer-number'}
 		label={'医療機関番号'}
 		bind:value={instId}
+		handleInput={handleSearch}
 	/>
 	<Input
 		additionalClass={'txt--sm'}
 		name={'postalcode'}
 		label={'郵便番号'}
 		bind:value={postalCode}
+		handleInput={handleSearch}
 	/>
-	<Input additionalClass={'txt--md'} name={'phone'} label={'電話番号'} bind:value={phoneNumber} />
-	<Button buttonClass={'btn--filled btn--sm btn--right'} handleClick={handleSearch}>検索</Button>
+	<Input
+		additionalClass={'txt--md'}
+		name={'phone'}
+		label={'電話番号'}
+		bind:value={phoneNumber}
+		handleInput={handleSearch}
+	/>
+	<!-- <Button buttonClass={'btn--filled btn--sm btn--right'} handleClick={handleSearch}>検索</Button> -->
 </form>
 
 <style lang="scss">

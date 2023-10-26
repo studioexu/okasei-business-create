@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { dataFormatter, postalCodeFormatter } from '../../utils/formatter'
+	import { dataFormatter } from '../../utils/formatter'
 
 	export let areaClass: string = ''
 	export let content: string = ''
@@ -30,7 +30,7 @@
 		align-items: center;
 
 		.title {
-			color: rgb(206, 205, 205);
+			color: var(--gray);
 			font-size: 18px;
 			font-weight: 500;
 			width: auto;

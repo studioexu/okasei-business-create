@@ -1,3 +1,5 @@
+import type { CustomerEntries } from './types'
+
 interface bedding {
 	department: string
 	quantity: string

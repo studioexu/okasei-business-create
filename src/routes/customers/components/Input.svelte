@@ -7,11 +7,20 @@
 	export let labelClass: string = ''
 	export let unit: string = ''
 	export let wrapperClass: string = ''
+	export let handleInput: Function
 </script>
 
 <div class="input-wrapper {wrapperClass}">
 	<label class="label {labelClass}" for={name}>{label}</label>
-	<input type="text" class="input {additionalClass}" id={name} {name} {placeholder} bind:value />
+	<input
+		type="text"
+		class="input {additionalClass}"
+		id={name}
+		{name}
+		{placeholder}
+		bind:value
+		on:input={() => handleInput()}
+	/>
 	{#if unit !== ''}
 		<span class="unit">{unit}</span>
 	{/if}
@@ -36,11 +45,11 @@
 		.input {
 			height: calc(32px - 2px);
 			padding-left: 10px;
-			border: 1px solid rgb(206, 205, 205);
-			border-radius: 3px;
+			border: 1px solid var(--gray);
+			border-radius: 8px;
 
 			&:focus {
-				border-color: #2fa8e1;
+				border-color: var(--primary-color);
 			}
 		}
 	}
@@ -56,9 +65,7 @@
 		}
 		&--lg {
 			width: calc(433px - 10px);
-			// @include responsiveInputWidth((433));
 			@include responsiveInputWidth((226));
-			// @include responsiveInputWidth((259));
 		}
 	}
 </style>

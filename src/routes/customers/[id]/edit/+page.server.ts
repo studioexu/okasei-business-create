@@ -43,6 +43,8 @@ export const actions = {
 			const updatedcustomer = parseBeforeUpdate(initialState, registration)
 
 			if (initialState.id) {
+				console.log(updatedcustomer)
+
 				update(updatedcustomer, currentUrl, initialState.id)
 			}
 		}

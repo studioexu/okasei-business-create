@@ -12,9 +12,6 @@
 	export let data
 
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'customer')
-	// let customer: CustomerFactory = new CustomerFactory(data.customer, 'jsonServerOnline')
-
-	console.log(customer)
 
 	let bedQuantity: number = 0
 
@@ -109,6 +106,14 @@
 <style lang="scss">
 	.container {
 		display: grid;
+		overflow: hidden;
+		padding: 0 37px;
+		padding-top: 28px;
+		padding-bottom: 48px;
+		width: auto;
+		border-radius: 16px;
+		background-color: #fff;
+		box-shadow: 0px 8px 8px rgb(200, 200, 200);
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 		grid-template-rows: auto;
 		grid-template-areas:
@@ -126,19 +131,6 @@
 			'numberOfEmployees numberOfEmployees numberOfEmployees numberOfEmployees . . . . . .'
 			'homepage homepage homepage homepage homepage homepage homepage homepage homepage homepage'
 			'numberOfFacilities numberOfFacilities numberOfFacilities . . . . . . .';
-	}
-
-	.container {
-		overflow: hidden;
-		padding: 0 37px;
-		padding-top: 28px;
-		padding-bottom: 48px;
-		// width: calc(((1240 - 74) / 1366) * 100vw);
-		// width: calc(((1240 - 74) / 1366) * 100vw);
-		width: auto;
-
-		background-color: #fff;
-		box-shadow: 0px 8px 8px rgb(200, 200, 200);
 	}
 
 	.section__footer {

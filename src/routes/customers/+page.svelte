@@ -17,10 +17,6 @@
 		(customer: CustomerInfo) => new CustomerFactory(customer, 'customer')
 	)
 
-	// let allCustomers: CustomerFactory[] = data.data.map(
-	// 	(customer: CustomerInfo) => new CustomerFactory(customer, 'jsonServerOnline')
-	// )
-
 	let filteredCustomers: CustomerFactory[]
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let newData: CustomerFactory[] = customersToDisplay
@@ -143,18 +139,6 @@
 
 	.checkbox {
 		margin-right: 11px;
-	}
-
-	.btn {
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		height: 32px;
-		padding: 8px;
-		background-color: var(--primary-color);
-		color: #fff;
-		border-radius: 3px;
-		float: right;
 	}
 
 	.toggle-wrapper {

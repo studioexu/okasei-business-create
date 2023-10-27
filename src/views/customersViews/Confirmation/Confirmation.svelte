@@ -90,6 +90,7 @@
 		padding-top: 28px;
 		padding-bottom: 48px;
 		width: auto;
+		border-radius: 16px;
 		background-color: #fff;
 		box-shadow: 0px 8px 8px rgb(200, 200, 200);
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;

@@ -9,10 +9,6 @@
 	export let isValid: boolean = true
 	export let errorMsg: string = ''
 	export let required: boolean = false
-
-	const businessTypeValidation = (businessType: string) => {
-		return businessType === '個人' || businessType === '法人'
-	}
 </script>
 
 <div class="input-wrapper {name} {wrapperClass} {isValid ? '' : 'error'}">

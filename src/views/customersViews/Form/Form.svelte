@@ -318,7 +318,6 @@
 	}
 
 	.form {
-		font-family: 'Noto Sans JP';
 		&__form {
 			padding: 0 37px;
 			padding-top: 28px;
@@ -327,6 +326,7 @@
 			width: calc(((1240 - 74) / 1366) * 100vw);
 			width: calc(((1240 - 74) / 1366) * 100vw);
 			width: auto;
+			border-radius: 16px;
 			box-shadow: 0px 8px 8px rgb(200, 200, 200);
 		}
 	}

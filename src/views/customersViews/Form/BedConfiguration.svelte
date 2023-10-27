@@ -22,8 +22,6 @@
 
 		return bedQuantity
 	}
-
-	// $: quantity = checkBedQuantity(quantity)
 </script>
 
 <div class="bed-configuration" id={bed.index.toString()} data-index={bed.index}>

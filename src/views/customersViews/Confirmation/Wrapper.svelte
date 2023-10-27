@@ -28,19 +28,9 @@
 		padding: 11px 0;
 		column-gap: 18px;
 		align-items: center;
-		// overflow: hidden;
-		// &::after {
-		// 	content: ' ';
-		// 	position: absolute;
-		// 	width: calc(((1028) / 1366) * 100vw);
-		// 	left: 0;
-		// 	bottom: 0;
-		// 	height: 2px;
-		// 	background-color: rgb(206, 205, 205);
-		// }
 
 		.title {
-			color: rgb(206, 205, 205);
+			color: var(--gray);
 			font-size: 18px;
 			font-weight: 500;
 			width: auto;

@@ -1,4 +1,5 @@
 import { prefectures } from '../data/data'
+import { isValidPhoneNumber } from 'libphonenumber-js'
 
 /**
  * We want to check if the user only use katakana
@@ -21,7 +22,8 @@ export const phoneNumberValidation = (phoneNumber: string) => {
 	const regex =
 		/^(([0-9]{10}$)|([0-9]{3}-[0-9]{3}-[0-9]{4}$)|([0-9]{2}-[0-9]{4}-[0-9]{4}$)|([0-9]{3}-[0-9]{4}-[0-9]{4}$))/g
 
-	return regex.test(phoneNumber)
+	// return regex.test(phoneNumber)
+	return isValidPhoneNumber(phoneNumber, 'JP')
 }
 
 /**

@@ -24,7 +24,6 @@
 			gap: calc((20 / 1366) * 100vw);
 
 			&__title {
-				// color: #707070;
 				color: rgb(206, 205, 205);
 				font-size: 18px;
 				font-weight: 500;

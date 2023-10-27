@@ -5,7 +5,6 @@ import { parseBeforeUpdate } from '../../utils/parsers.js'
 import type { CustomerBackend } from '../../utils/classes.js'
 import { currentApi } from '../../data/api.js'
 
-
 /**
  * We load the necessary data.
  * @param param0 corresponds to the parameters of the page
@@ -13,7 +12,6 @@ import { currentApi } from '../../data/api.js'
  */
 export const load = async ({ params }) => {
 	const data: CustomerBackend[] = await loadData(currentApi)
-
 	const customer: CustomerBackend | undefined = data.find(
 		(customer: CustomerBackend) => customer.Cust_CD?.toString() === params.id.toString()
 	)
@@ -45,8 +43,9 @@ export const actions = {
 			const updatedcustomer = parseBeforeUpdate(initialState, registration)
 
 			if (initialState.id) {
-				update(updatedcustomer, currentApi, initialState.id)
+				console.log(updatedcustomer)
 
+				update(updatedcustomer, currentApi, initialState.id)
 			}
 		}
 	}

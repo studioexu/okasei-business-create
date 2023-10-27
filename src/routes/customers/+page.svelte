@@ -9,6 +9,7 @@
 	import SearchMenu from './components/SearchMenu.svelte'
 	import DeleteModal from '@/views/customersViews/modals/DeleteModal.svelte'
 	import { CustomerFactory } from './utils/Factories/CustomerFactory'
+	import Button from '@/components/customers/Button.svelte'
 
 	export let data
 
@@ -73,6 +74,10 @@
 			newData = customersToDisplay
 		}
 	}
+
+	const handleAddNewCustomer = () => {
+		window.location.href = '/customers/new'
+	}
 </script>
 
 <section class="section section--customers-management" id="customers-management">
@@ -108,7 +113,9 @@
 				<h3 class="switch-label">以前削除した施設も含む</h3>
 			</div>
 
-			<a class="btn btn--new" href="/customers/new">＋新規登録</a>
+			<Button buttonClass={'btn btn--filled btn--sm'} handleClick={handleAddNewCustomer}>
+				＋新規登録
+			</Button>
 		</div>
 	</header>
 
@@ -144,7 +151,7 @@
 		justify-content: center;
 		height: 32px;
 		padding: 8px;
-		background-color: #2fa8e1;
+		background-color: var(--primary-color);
 		color: #fff;
 		border-radius: 3px;
 		float: right;
@@ -198,11 +205,9 @@
 
 		.checkbox:checked {
 			& + .slider {
-				background-color: #2fa8e1;
+				background-color: var(--primary-color);
 				transition: background-color 300ms ease-out;
 				&::before {
-					// left: auto;
-					// right: 4px;
 					transform: translateX(16px);
 					transition: transform 300ms ease-out;
 				}

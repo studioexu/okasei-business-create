@@ -2,7 +2,7 @@
 	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
 
 	import TableRow from './TableRow.svelte'
-	import { crossfade, fade, fly } from 'svelte/transition'
+	import { crossfade } from 'svelte/transition'
 	import { flip } from 'svelte/animate'
 	import { quintOut } from 'svelte/easing'
 
@@ -21,8 +21,6 @@
 	const handleRowClick = (e: any) => {
 		const classList = e.target.closest('.data').classList.value
 		const rowId = e.target.closest('.row').getAttribute('data-id')
-
-		console.log(rowId)
 
 		if (classList.includes('update') || classList.includes('erase')) {
 			return
@@ -85,9 +83,10 @@
 	.table-wrapper {
 		padding: 0 18px;
 		background-color: #fff;
-		border-radius: 3px;
+		border-radius: 16px;
 		overflow: hidden;
 	}
+
 	.customer-list {
 		width: 100%;
 		padding: 0 calc((18 / 1366) * 100vw);
@@ -107,7 +106,7 @@
 		position: relative;
 		cursor: pointer;
 		background-color: #fff;
-		border-bottom: #2fa8e1 1px solid;
+		border-bottom: var(--primary-color) 1px solid;
 
 		&.deleted {
 			background-color: rgb(229, 229, 229);

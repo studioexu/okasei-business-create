@@ -1,7 +1,7 @@
 import type { CustomerEntries } from '../utils/types'
 import { parseBeforePost } from '../utils/parsers'
 import { create } from '../utils/actions'
-import { currentUrl } from '../data/url'
+import { currentApi } from '../data/api'
 
 export const actions = {
 	create: async ({ request }) => {
@@ -14,7 +14,7 @@ export const actions = {
 
 			let newCustomer = parseBeforePost(initialState)
 
-			create(newCustomer, currentUrl)
+			create(newCustomer, currentApi)
 		}
 	}
 }

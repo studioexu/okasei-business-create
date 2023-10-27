@@ -1,9 +1,9 @@
 import { error } from '@sveltejs/kit'
 import { loadData, deleteCustomer } from './utils/actions.js'
-import { currentUrl } from './data/url'
+import { currentApi } from './data/api.js'
 
 export const load = async () => {
-	const data: any[] = await loadData(currentUrl)
+	const data: any[] = await loadData(currentApi)
 
 	if (!data) throw error(404)
 
@@ -15,6 +15,6 @@ export const actions = {
 		const data = await request.formData()
 		let id: any = data.get('id') === null ? undefined : data.get('id')
 
-		deleteCustomer(id, currentUrl)
+		deleteCustomer(id, currentApi)
 	}
 }

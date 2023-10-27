@@ -1,4 +1,4 @@
-import { prefectures } from '../data/data'
+import { prefectures } from '../data/prefectures'
 import { isValidPhoneNumber } from 'libphonenumber-js'
 
 /**

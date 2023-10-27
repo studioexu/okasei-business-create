@@ -137,7 +137,7 @@
 
 		.title {
 			margin-bottom: 1.5rem;
-			font-size: 16px;
+			font-size: 18px;
 		}
 	}
 

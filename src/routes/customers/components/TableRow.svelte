@@ -28,18 +28,18 @@
 <td class="data update">
 	<button class="btn btn--update {isActive ? '' : 'disabled'}" on:click={handleEditItem}>
 		{#if isActive}
-			<Icon icon={{ path: 'notepad', color: '#0093d0' }} />
+			<Icon icon={{ path: 'edit', color: '#0093d0' }} />
 		{:else}
-			<Icon icon={{ path: 'notepad', color: 'rgb(200, 200, 200)' }} />
+			<Icon icon={{ path: 'edit', color: 'rgb(200, 200, 200)' }} />
 		{/if}
 	</button>
 </td>
 <td class="data erase">
 	<button class="btn btn--erase {isActive ? '' : 'disabled'}" {id} on:click={handleDeleteItem}>
 		{#if isActive}
-			<Icon icon={{ path: 'trash-bin', color: '#0093d0' }} />
+			<Icon icon={{ path: 'delete', color: '#0093d0' }} />
 		{:else}
-			<Icon icon={{ path: 'trash-bin', color: 'rgb(200, 200, 200)' }} />
+			<Icon icon={{ path: 'delete', color: 'rgb(200, 200, 200)' }} />
 		{/if}
 	</button>
 </td>
@@ -62,6 +62,10 @@
 
 		&.disabled {
 			pointer-events: none;
+		}
+
+		> :global(.svg-icon) {
+			height: 18px * 1.2;
 		}
 	}
 

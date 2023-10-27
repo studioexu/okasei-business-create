@@ -82,6 +82,7 @@
 <style lang="scss">
 	.table-wrapper {
 		padding: 0 18px;
+		color: var(--black);
 		background-color: #fff;
 		border-radius: 16px;
 		overflow: hidden;

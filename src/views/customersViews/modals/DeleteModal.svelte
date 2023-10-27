@@ -78,6 +78,7 @@
 
 <style lang="scss">
 	.modal-wrapper {
+		color: var(--black);
 		position: absolute;
 		display: flex;
 		justify-content: center;

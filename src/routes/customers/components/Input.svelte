@@ -37,9 +37,10 @@
 		align-items: center;
 
 		.label {
+			width: max-content;
 			font-size: 18px;
 			font-weight: 500;
-			width: max-content;
+			color: var(--black);
 		}
 
 		.input {

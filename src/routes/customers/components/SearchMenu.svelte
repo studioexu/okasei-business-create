@@ -121,5 +121,6 @@
 		flex-wrap: wrap;
 		gap: 1vw;
 		margin-bottom: 1.5rem;
+		color: var(--black);
 	}
 </style>

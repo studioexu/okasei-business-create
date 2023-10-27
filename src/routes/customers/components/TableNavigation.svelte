@@ -184,9 +184,6 @@
 			}
 
 			&:hover {
-				// color: #fff;
-				// background-color: var(--primary-color);
-				// background-color: hsl(198, 100%, 41%, 0.5);
 				opacity: 0.5;
 			}
 		}

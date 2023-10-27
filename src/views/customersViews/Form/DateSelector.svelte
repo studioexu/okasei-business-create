@@ -1,10 +1,6 @@
 <script lang="ts">
-	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import Selector from './Selector.svelte'
-
-	import ListOfYear from './Selector.svelte'
-
 	export let monthIsValid = true
 	export let yearIsValid = true
 

@@ -21,10 +21,12 @@
 <style lang="scss">
 	.foundation {
 		position: relative;
-		grid-area: foundation;
 		display: flex;
-		gap: calc((67 / 1366) * 100vw);
 		padding: 11px 0;
+		gap: calc((67 / 1366) * 100vw);
+
+		grid-area: foundation;
+
 		&::after {
 			content: ' ';
 			position: absolute;

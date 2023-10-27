@@ -81,11 +81,11 @@
 		border-radius: 3px;
 		padding-left: 10px;
 		font-size: 1rem;
-		border: 1px solid var(--gray);
-		border-radius: 8px;
+		border: 1px solid rgb(206, 205, 205);
+		border-radius: 3px;
 
 		&:focus {
-			border-color: var(--primary-color);
+			border-color: #2fa8e1;
 		}
 	}
 
@@ -95,7 +95,7 @@
 
 	.error {
 		.input {
-			border: 1.5px solid var(--error);
+			border: 1.5px solid #f55d3e;
 		}
 	}
 
@@ -118,7 +118,7 @@
 		position: absolute;
 		right: 0;
 		bottom: -14px;
-		color: var(--error);
+		color: #f55d3e;
 		font-size: 10px;
 		font-weight: 600;
 		min-width: 250px;
@@ -129,7 +129,7 @@
 	.error {
 		.input {
 			transition: border 300ms;
-			border: 1.5px solid var(--error);
+			border: 1.5px solid #f55d3e;
 			animation: buzz 100ms;
 			animation-iteration-count: 3;
 		}

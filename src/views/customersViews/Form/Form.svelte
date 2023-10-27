@@ -5,7 +5,7 @@
 		AddressAutoInfo
 	} from '@/routes/customers/utils/types'
 
-	import { prefectures } from '@/routes/customers/data/prefectures.js'
+	import { prefectures } from '@/routes/customers/data/data.js'
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
@@ -25,6 +25,10 @@
 		address1: ''
 	}
 
+	/**
+	 * assign address
+	 * @param address
+	 */
 	const assignAddressInfo = (address: AddressAutoInfo) => {
 		if (address.prefecture.length !== 0) {
 			initialState.prefecture = address.prefecture

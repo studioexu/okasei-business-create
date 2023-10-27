@@ -14,8 +14,6 @@
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'customer')
 	// let customer: CustomerFactory = new CustomerFactory(data.customer, 'jsonServerOnline')
 
-	console.log(customer)
-
 	let bedQuantity: number = 0
 
 	customer.departments.detail.forEach((bed: any) => (bedQuantity += parseInt(bed.quantity)))
@@ -47,8 +45,16 @@
 		<Wrapper areaClass="fax" content={customer.address.fax} title={'FAX番号'} />
 
 		<Wrapper areaClass="homepage" content={customer.url} title={'ホームページ'} />
-		<Wrapper areaClass="numberOfEmployees" content={customer.numEmployees} title={'従業員数'} />
-		<Wrapper areaClass="numberOfFacilities" content={customer.numBranch} title={'関連施設拠点数'} />
+		<Wrapper
+			areaClass="numberOfEmployees"
+			content={customer.numberOfEmployees}
+			title={'従業員数'}
+		/>
+		<Wrapper
+			areaClass="numberOfFacilities"
+			content={customer.numberOfFacilities}
+			title={'関連施設拠点数'}
+		/>
 
 		<DepartmentWrapper total={bedQuantity}>
 			{#each customer.departments.detail as bedding}

@@ -42,6 +42,11 @@
 			padding: 0 11px;
 		}
 
+		&--md {
+			height: 41px;
+			padding: 0 8px;
+		}
+
 		&--filled {
 			position: relative;
 
@@ -98,6 +103,7 @@
 				&:hover {
 					background-color: $error;
 					border-color: $error;
+					opacity: 1;
 				}
 			}
 		}

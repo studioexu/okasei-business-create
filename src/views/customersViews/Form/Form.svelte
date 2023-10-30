@@ -68,18 +68,21 @@
 >
 	<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
 	<div class="form__form">
+		<p class="required-legend"><span class="required-mark">*</span> 必須</p>
+
 		<fieldset class="fieldset fieldset--info1">
 			<legend class="hidden">情報１</legend>
 			<div class="container">
-				<Input
+				<!-- <Input
 					inputClass={'number--md'}
 					name={'customer-number'}
 					label={'顧客番号'}
 					labelClass={'label-width--md'}
 					bind:value={initialState.id}
-				/>
+				/> -->
 				<Input
-					inputClass={'number--sm'}
+					inputClass={'number--md'}
+					labelClass={'label-width--md'}
 					name={'branch-number'}
 					label={'枝番'}
 					bind:value={initialState.branchNumber}
@@ -307,8 +310,6 @@
 			<!-- Input -->
 		</fieldset>
 		<!-- .fieldset--info2 -->
-
-		<span class="required-legend">* 必須</span>
 	</div>
 </form>
 
@@ -333,9 +334,9 @@
 
 	.container {
 		display: flex;
-		column-gap: 2rem;
 		align-items: flex-start;
 		justify-content: flex-start;
+		column-gap: 2rem;
 		flex-wrap: wrap;
 		row-gap: 1rem;
 	}
@@ -352,5 +353,9 @@
 
 	.required-legend {
 		float: right;
+		font-size: 14px;
+		.required-mark {
+			color: var(--error);
+		}
 	}
 </style>

@@ -30,7 +30,10 @@
 
 <div class="input-wrapper {dataType} {isValid ? '' : 'error'} {classInput}">
 	{#if label !== ''}
-		<label for={dataType} class="label {labelClass}">{label}{required ? '*' : ''}</label>
+		<label for={dataType} class="label {labelClass}">
+			{label}
+			<span class="required-mark">{required ? '*' : ''}</span>
+		</label>
 	{/if}
 
 	<div class="input-w">
@@ -77,7 +80,9 @@
 	}
 	.input {
 		height: 32px;
-		@include responsiveInputWidth((114));
+		// @include responsiveInputWidth((114));
+		width: calc(((106 - 10 - 2) / 1366) * 100vw);
+
 		border-radius: 3px;
 		padding-left: 10px;
 		font-size: 1rem;
@@ -142,5 +147,9 @@
 
 	.input-w {
 		position: relative;
+	}
+
+	.required-mark {
+		color: var(--error);
 	}
 </style>

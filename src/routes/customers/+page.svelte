@@ -86,7 +86,7 @@
 	/>
 
 	<header class="section__header">
-		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>
+		<!-- <h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2> -->
 		<SearchMenu
 			bind:data={allCustomers}
 			bind:newData
@@ -109,7 +109,7 @@
 				<h3 class="switch-label">以前削除した施設も含む</h3>
 			</div>
 
-			<Button buttonClass={'btn btn--filled btn--sm'} handleClick={handleAddNewCustomer}>
+			<Button buttonClass={'btn btn--filled btn--md'} handleClick={handleAddNewCustomer}>
 				＋新規登録
 			</Button>
 		</div>
@@ -127,6 +127,7 @@
 <style lang="scss">
 	.section {
 		padding-bottom: 24px;
+		color: var(--black);
 	}
 	.section__header {
 		margin-bottom: 2rem;
@@ -201,6 +202,7 @@
 
 	.container {
 		display: flex;
+		padding: 0 18px;
 		justify-content: space-between;
 		align-items: center;
 	}

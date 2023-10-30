@@ -1,6 +1,4 @@
 <script lang="ts" context="module">
-	import { debounce } from '@/libs/utils'
-
 	const blankBoards: {
 		id: string
 		tasks: { id: number; title: string; status: string }[]
@@ -41,7 +39,7 @@
 	let draggingElement: HTMLElement | undefined = undefined
 	let draggingData: { board: number; task: number } = { board: minus, task: minus }
 
-	const onDragOver = debounce((event: MouseEvent, index: number) => {
+	const onDragOver = (event: MouseEvent, index: number) => {
 		event.preventDefault()
 
 		const element = getElement(event)
@@ -63,7 +61,7 @@
 
 			if (task) task.status = boardList[index]
 		}
-	}, 100)
+	}
 
 	const onDragStart = (event: MouseEvent, index: number, taskIndex: number) => {
 		draggingData = { board: index, task: taskIndex }

@@ -13,7 +13,10 @@
 
 <div class="input-wrapper {name} {wrapperClass} {isValid ? '' : 'error'}">
 	{#if label !== ''}
-		<label class="label {labelClass}" for={name}>{label}{required ? '*' : ''}</label>
+		<label class="label {labelClass}" for={name}>
+			{label}
+			<span class="required-mark">{required ? '*' : ''}</span>
+		</label>
 	{/if}
 
 	<div class="input-w">
@@ -100,5 +103,9 @@
 
 	.input-w {
 		position: relative;
+	}
+
+	.required-mark {
+		color: var(--error);
 	}
 </style>

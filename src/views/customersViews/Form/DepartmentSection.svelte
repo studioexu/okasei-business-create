@@ -103,7 +103,13 @@
 		column-gap: 10px;
 		row-gap: 11px;
 		.label {
+			display: flex;
+			align-items: center;
+			height: 32px;
 			min-width: 130px;
+
+			font-size: 18px;
+			font-weight: 400;
 		}
 	}
 

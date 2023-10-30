@@ -97,7 +97,7 @@
 <div class="table-navigation">
 	{#if currentPage > 1}
 		<button class="btn btn--prev" on:click={handlePrevious}>
-			<Icon icon={{ path: 'chevron-right', color: '#595857' }} />
+			<Icon icon={{ path: 'to-next', color: '#595857' }} />
 		</button>
 	{/if}
 
@@ -115,7 +115,7 @@
 
 	{#if currentPage < numberOfPages}
 		<button class="btn btn--next" on:click={handleNext}
-			><Icon icon={{ path: 'chevron-right', color: '#595857' }} />
+			><Icon icon={{ path: 'to-next', color: '#595857' }} />
 		</button>
 	{/if}
 </div>
@@ -204,6 +204,10 @@
 		border: none;
 
 		transition: opacity 300ms;
+
+		> :global(.svg-icon) {
+			height: 18px * 1.2;
+		}
 
 		&:hover {
 			// background-color: #fff;

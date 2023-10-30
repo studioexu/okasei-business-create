@@ -105,7 +105,7 @@
 		handleInput={handleSearch}
 	/>
 	<Input
-		additionalClass={'txt--md'}
+		additionalClass={'txt--sm'}
 		name={'phone'}
 		label={'電話番号'}
 		bind:value={phoneNumber}
@@ -118,9 +118,12 @@
 	.search-menu {
 		display: flex;
 		justify-content: flex-start;
+		justify-content: space-between;
+		padding: 0 18px;
 		flex-wrap: wrap;
-		gap: 1vw;
+		// gap: 1vw;
 		margin-bottom: 1.5rem;
 		color: var(--black);
+		row-gap: 10px;
 	}
 </style>

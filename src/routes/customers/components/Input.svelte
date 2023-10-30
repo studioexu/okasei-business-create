@@ -28,7 +28,7 @@
 
 <style lang="scss">
 	@mixin responsiveInputWidth($width) {
-		width: calc((($width - 10 - 2) / 1366) * 100vw);
+		width: calc((($width - 8 - 2) / 1366) * 100vw);
 	}
 
 	.input-wrapper {
@@ -45,7 +45,7 @@
 
 		.input {
 			height: calc(32px - 2px);
-			padding-left: 10px;
+			padding-left: 8px;
 			border: 1px solid var(--gray);
 			border-radius: 8px;
 
@@ -57,16 +57,38 @@
 
 	.txt {
 		&--sm {
-			width: calc(((137 - 10) / 1366)) * 100vw;
 			@include responsiveInputWidth((137));
 		}
 		&--md {
-			width: calc(421px - 10px);
 			@include responsiveInputWidth((166));
 		}
 		&--lg {
-			width: calc(433px - 10px);
 			@include responsiveInputWidth((226));
+		}
+	}
+
+	@media all and (max-width: 1130px) {
+		.input-wrapper:nth-child(1) {
+			width: 100%;
+			justify-content: center;
+			flex-grow: 3;
+
+			.label {
+				min-width: 60px;
+			}
+
+			.input {
+				width: 100%;
+			}
+		}
+
+		.txt {
+			&--sm {
+				@include responsiveInputWidth((160));
+			}
+			&--lg {
+				width: 226px;
+			}
 		}
 	}
 </style>

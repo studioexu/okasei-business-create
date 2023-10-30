@@ -86,7 +86,7 @@
 	/>
 
 	<header class="section__header">
-		<h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2>
+		<!-- <h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2> -->
 		<SearchMenu
 			bind:data={allCustomers}
 			bind:newData
@@ -202,6 +202,7 @@
 
 	.container {
 		display: flex;
+		padding: 0 18px;
 		justify-content: space-between;
 		align-items: center;
 	}

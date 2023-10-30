@@ -23,7 +23,6 @@
 <td class="data customer-number">{id}</td>
 <td class="data facility-name">{customerName}</td>
 <td class="data address">{address.prefecture}{address.city}</td>
-<!-- <td class="data status">{status}日</td> -->
 <td class="data update-date">{status}日 {updateDate}</td>
 <td class="data update">
 	<button class="btn btn--update {isActive ? '' : 'disabled'}" on:click={handleEditItem}>

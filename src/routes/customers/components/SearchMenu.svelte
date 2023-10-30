@@ -120,8 +120,8 @@
 		justify-content: flex-start;
 		justify-content: space-between;
 		padding: 0 18px;
+		// padding: 0 2rem;
 		flex-wrap: wrap;
-		// gap: 1vw;
 		margin-bottom: 1.5rem;
 		color: var(--black);
 		row-gap: 10px;

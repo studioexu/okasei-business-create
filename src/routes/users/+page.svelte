@@ -381,7 +381,7 @@
 			}
 
 			.active {
-				background: var(--primary-color);
+				background: var(--primary);
 				color: #fff;
 				cursor: default;
 

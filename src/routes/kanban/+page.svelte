@@ -1,208 +1,109 @@
 <script lang="ts" context="module">
 	import { debounce } from '@/libs/utils'
 
-	const getId = (event: Event) => (<HTMLElement>event.target).getAttribute('id')
+	const blankBoards: {
+		id: string
+		tasks: { id: number; title: string; status: string }[]
+		text: string
+	}[] = [
+		{ id: 'todo', tasks: [], text: 'Todo' },
+		{ id: 'in-progress', tasks: [], text: 'In progress' },
+		{ id: 'done', tasks: [], text: 'Done' }
+	]
+	const boardList = blankBoards.map(board => board.id)
+	const minus: number = Number.NEGATIVE_INFINITY
 
-	const resetMargin = (id: string) => {
-		const element = document.getElementById(id)
-
-		if (element) {
-			element.style.marginTop = '0px'
-			element.style.marginBottom = '16px'
-		}
-	}
-
-	const click = (id: string) => alert(`Task ID: ${id} がクリックされました`)
+	const getElement = (event: MouseEvent) => <HTMLElement>event.target
+	const onClick = (id: number) => alert(`Task ID: ${id}がクリックされました`)
 </script>
 
 <script lang="ts">
-	const boards = [
-		{
-			id: 'todo',
-			tasks: [
-				{ id: 'task7', title: 'Title7', status: 'todo' },
-				{ id: 'task10', title: 'Title10', status: 'todo' },
-				{ id: 'task11', title: 'Title11', status: 'todo' }
-			],
-			text: 'Todo'
-		},
-		{
-			id: 'in-progress',
-			tasks: [
-				{ id: 'task6', title: 'Title6', status: 'in-progress' },
-				{ id: 'task8', title: 'Title8', status: 'in-progress' },
-				{ id: 'task9', title: 'Title9', status: 'in-progress' }
-			],
-			text: 'In progress'
-		},
-		{
-			id: 'done',
-			tasks: [
-				{ id: 'task1', title: 'Title1', status: 'done' },
-				{ id: 'task2', title: 'Title2', status: 'done' },
-				{ id: 'task3', title: 'Title3', status: 'done' },
-				{ id: 'task4', title: 'Title4', status: 'done' },
-				{ id: 'task5', title: 'Title5', status: 'done' }
-			],
-			text: 'Done'
-		}
+	const tasks = [
+		{ id: 1, title: 'Title1', status: 'done' },
+		{ id: 2, title: 'Title2', status: 'done' },
+		{ id: 3, title: 'Title3', status: 'done' },
+		{ id: 4, title: 'Title4', status: 'done' },
+		{ id: 5, title: 'Title5', status: 'done' },
+		{ id: 6, title: 'Title6', status: 'in-progress' },
+		{ id: 7, title: 'Title7', status: 'todo' },
+		{ id: 8, title: 'Title8', status: 'in-progress' },
+		{ id: 9, title: 'Title9', status: 'in-progress' },
+		{ id: 10, title: 'Title10', status: 'todo' },
+		{ id: 11, title: 'Title11', status: 'todo' }
 	]
-	let currentTask: { id: string; index?: number } = { id: '' }
-	let currentBoard = 0
-	let newBoard = 0
-	let hoveringBoard = 0
-	let hoveringTask: { id: string; index?: number } = { id: '' }
 
-	$: taskElement = document.getElementById(currentTask.id)
+	const boards = blankBoards.map(board => ({
+		id: board.id,
+		tasks: tasks.filter(task => task.status === board.id),
+		text: board.text
+	}))
 
-	$: isAdjacent =
-		currentBoard === newBoard &&
-		currentTask.index !== undefined &&
-		hoveringTask.index !== undefined &&
-		Math.abs(currentTask.index - hoveringTask.index) === 1
+	let draggingElement: HTMLElement | undefined = undefined
+	let draggingData: { board: number; task: number } = { board: minus, task: minus }
 
-	let isDropped: boolean = false
-	let currentClientY: number = 0
-	let isUpper: boolean = false
-
-	const dragEnterOnBoard = (event: Event, index: number) => {
+	const onDragOver = debounce((event: MouseEvent, index: number) => {
 		event.preventDefault()
 
-		if (getId(event) && currentTask.id !== '') {
-			if (hoveringBoard === index) resetMargin(hoveringTask.id)
+		const element = getElement(event)
 
-			newBoard = index
-			hoveringBoard = index + 1
-		}
-	}
+		if (draggingElement && element.classList.contains('board')) {
+			let closestTask: HTMLElement | undefined = undefined
 
-	const drop = (index: number) => {
-		let task: { id: string; title: string; status: string } | undefined
+			for (const task of element.querySelectorAll('.task:not(.is-dragging)')) {
+				if (closestTask) continue
 
-		boards[currentBoard].tasks = boards[currentBoard].tasks?.filter(
-			(localTask: { id: string; title: string; status: string }) => {
-				if (localTask.id !== currentTask.id) return localTask
+				const offset = event.clientY - task.getBoundingClientRect().top
 
-				task = localTask
+				if (offset < 0 && offset > minus) closestTask = <HTMLElement>task
 			}
-		)
 
-		if (task) {
-			if (currentBoard !== newBoard) task.status = boards[newBoard].id
-			const tasks = boards[newBoard].tasks
+			element.insertBefore(draggingElement, closestTask ?? null)
 
-			if (hoveringTask.index === undefined) boards[index].tasks.push(task)
-			else if (isUpper && hoveringTask.index === 0) boards[index].tasks.unshift(task)
-			else {
-				tasks.splice(isAdjacent || isUpper ? hoveringTask.index : hoveringTask.index + 1, 0, task)
-				boards[index].tasks = [...tasks]
-			}
+			const task = tasks.find(task => task.id === parseInt(draggingElement?.id ?? '', 10))
+
+			if (task) task.status = boardList[index]
 		}
+	}, 100)
 
-		console.log(hoveringBoard, hoveringTask)
-
-		task = undefined
-		taskElement?.removeAttribute('style')
-		currentTask = { id: '' }
-		currentBoard = 0
-		newBoard = 0
-		hoveringBoard = 0
-		resetMargin(hoveringTask.id)
-		hoveringTask = { id: '' }
-		isDropped = true
+	const onDragStart = (event: MouseEvent, index: number, taskIndex: number) => {
+		draggingData = { board: index, task: taskIndex }
+		draggingElement = getElement(event)
 	}
 
-	const dragStart = (event: Event, index: number, taskIndex: number) => {
-		const id = getId(event)
-
-		if (id) currentTask = { id, index: taskIndex }
-
-		if (taskElement) taskElement.style.opacity = '0.2'
-
-		currentBoard = index
-	}
-
-	const dragEnterOnTask = (event: Event, index: number) => {
-		const id = getId(event)
-
-		if (id && id !== currentTask.id) {
-			if (hoveringTask.id === '' && !hoveringTask.index) hoveringTask = { id, index }
-			else if (id !== hoveringTask.id && hoveringTask.index) {
-				resetMargin(hoveringTask.id)
-				hoveringTask = { id, index }
-			}
-		}
-	}
-
-	const dragOver = async (event: Event) => {
-		event.preventDefault()
-
-		if (getId(event) && getId(event) !== currentTask.id)
-			debounce((rect: DOMRect, clientY: number) => {
-				if (currentClientY !== clientY) {
-					const element = document.getElementById(hoveringTask.id)
-
-					if (element) {
-						isUpper = isAdjacent
-							? currentTask.index! - hoveringTask.index! === 1
-							: clientY - rect.top < rect.height / 2
-
-						element.style[isUpper ? 'marginTop' : 'marginBottom'] = `${rect.height + 16 * 2}px`
-						element.style[isUpper ? 'marginBottom' : 'marginTop'] = `${isUpper ? '16' : '0'}px`
-					}
-
-					currentClientY = clientY
-				}
-			}, 200)((<HTMLElement>event.target).getBoundingClientRect(), (<MouseEvent>event).clientY)
-	}
-
-	const dragEnd = () => {
-		if (isDropped) isDropped = false
-		else {
-			taskElement?.removeAttribute('style')
-			currentTask = { id: '' }
-			currentBoard = 0
-			newBoard = 0
-			hoveringBoard = 0
-			resetMargin(hoveringTask.id)
-			hoveringTask = { id: '' }
-			isDropped = false
-		}
+	const onDragEnd = () => {
+		draggingData = { board: minus, task: minus }
+		draggingElement = undefined
 	}
 </script>
 
 <div class="kanban">
+	<!-- {@html html} -->
 	{#each boards as board, index}
+		<!-- svelte-ignore a11y-no-static-element-interactions -->
 		<div
 			id={board.id}
 			class="board"
-			class:is-hovering={index + 1 === hoveringBoard && currentBoard + 1 !== hoveringBoard}
+			class:is-hovering={index === draggingData.board}
+			on:dragover={event => onDragOver(event, index)}
 		>
 			<h3>{board.text}</h3>
-			<!-- svelte-ignore a11y-no-static-element-interactions -->
-			<div
-				class="board-container"
-				on:dragenter={event => dragEnterOnBoard(event, index)}
-				on:dragover={event => event.preventDefault()}
-				on:drop={() => drop(index)}
-			>
-				{#each board.tasks as task, taskIndex}
-					<!-- svelte-ignore a11y-click-events-have-key-events -->
-					<div
-						class="task"
-						id={task.id}
-						draggable={true}
-						on:dragstart={event => dragStart(event, index, taskIndex)}
-						on:dragenter={event => dragEnterOnTask(event, taskIndex)}
-						on:dragover={dragOver}
-						on:dragend={dragEnd}
-						on:click={() => click(task.id)}
-					>
-						<p>{task.title}</p>
-						<span>{task.status}</span>
-					</div>
-				{/each}
-			</div>
+			{#each board.tasks as task, taskIndex}
+				<!-- svelte-ignore a11y-click-events-have-key-events -->
+				<!-- svelte-ignore a11y-no-static-element-interactions -->
+				<div
+					class="task"
+					class:is-dragging={index === draggingData.board && taskIndex === draggingData.task}
+					id={task.id.toString()}
+					draggable={true}
+					data-status={task.status}
+					on:click={() => onClick(task.id)}
+					on:dragstart={event => onDragStart(event, index, taskIndex)}
+					on:dragend={onDragEnd}
+				>
+					<p>{task.title}</p>
+					<span>{task.status}</span>
+				</div>
+			{/each}
 		</div>
 	{/each}
 </div>
@@ -212,57 +113,57 @@
 		display: flex;
 		justify-content: space-between;
 		width: 100%;
-	}
 
-	#todo {
-		background: red;
+		.board {
+			display: flex;
+			flex-direction: column;
+			gap: 16px;
+			width: 30%;
+			height: 800px;
+			padding: 16px 0;
+			margin: 0 auto;
 
-		&.is-hovering {
-			background: rgba(red, 0.5);
-		}
-	}
+			&#todo {
+				background: red;
 
-	#in-progress {
-		background: blue;
+				&.is-hovering {
+					background: rgba(red, 0.5);
+				}
+			}
 
-		&.is-hovering {
-			background: rgba(blue, 0.5);
-		}
-	}
+			&#in-progress {
+				background: blue;
 
-	#done {
-		background: green;
+				&.is-hovering {
+					background: rgba(blue, 0.5);
+				}
+			}
 
-		&.is-hovering {
-			background: rgba(green, 0.5);
-		}
-	}
+			&#done {
+				background: green;
 
-	.board {
-		display: inline-block;
-		width: 30%;
-		height: 800px;
-		padding: 16px 0;
-		margin: 0 auto;
+				&.is-hovering {
+					background: rgba(green, 0.5);
+				}
+			}
 
-		> h3 {
-			display: block;
-			color: #fff;
-			text-align: center;
-			margin-bottom: 16px;
-		}
-
-		&-container {
-			width: 100%;
-			height: 100%;
+			> h3 {
+				display: block;
+				color: #fff;
+				text-align: center;
+			}
 
 			.task {
 				width: 80%;
 				height: 100px;
 				background: #bbb;
 				padding: 8px;
-				margin: 0 auto 16px auto;
+				margin: 0 auto;
 				cursor: grab;
+
+				&.is-dragging {
+					opacity: 0.5;
+				}
 
 				&:active {
 					cursor: grabbing;

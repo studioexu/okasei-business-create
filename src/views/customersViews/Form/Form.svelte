@@ -334,9 +334,9 @@
 
 	.container {
 		display: flex;
-		column-gap: 2rem;
 		align-items: flex-start;
 		justify-content: flex-start;
+		column-gap: 2rem;
 		flex-wrap: wrap;
 		row-gap: 1rem;
 	}

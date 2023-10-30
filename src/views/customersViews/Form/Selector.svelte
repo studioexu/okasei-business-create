@@ -80,7 +80,9 @@
 	}
 	.input {
 		height: 32px;
-		@include responsiveInputWidth((114));
+		// @include responsiveInputWidth((114));
+		width: calc(((106 - 10 - 2) / 1366) * 100vw);
+
 		border-radius: 3px;
 		padding-left: 10px;
 		font-size: 1rem;

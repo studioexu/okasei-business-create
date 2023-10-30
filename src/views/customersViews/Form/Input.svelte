@@ -174,9 +174,11 @@
 	.txt {
 		&--sm {
 			@include responsiveInputWidth((114));
+			@include responsiveInputWidth((152));
 		}
 		&--md {
 			@include responsiveInputWidth((114));
+			@include responsiveInputWidth((152));
 		}
 		&--lg {
 			@include responsiveInputWidth((359));

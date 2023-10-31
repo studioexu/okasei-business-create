@@ -1,10 +1,10 @@
 <script lang="ts" context="module">
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
-	import Icon from '@/components/Icon.svelte'
 	import { debounce, toKebab } from '@/libs/utils'
 	import { user, users } from '@/stores/users'
 	import type { Role, SortedItemForUser, User } from '@/libs/types'
+	import Icon from '@/components/Icon.svelte'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 </script>
 
@@ -302,11 +302,9 @@
 
 			thead,
 			tbody {
-				display: block;
-
-				tr {
-					display: flex;
-				}
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
 			}
 
 			thead tr {

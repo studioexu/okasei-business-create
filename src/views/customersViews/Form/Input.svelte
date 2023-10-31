@@ -87,20 +87,20 @@
 		</label>
 	{/if}
 
-	<div class="input-w">
-		<input
-			type="text"
-			class="input {inputClass}"
-			id={name}
-			{name}
-			{placeholder}
-			bind:value
-			on:blur={handleBlurInput}
-			on:focus={() => (isValid = true)}
-			{disabled}
-		/>
-		<span class="error-msg">{errorMsg}</span>
-	</div>
+	<!-- <div class="input-w"> -->
+	<input
+		type="text"
+		class="input {inputClass}"
+		id={name}
+		{name}
+		{placeholder}
+		bind:value
+		on:blur={handleBlurInput}
+		on:focus={() => (isValid = true)}
+		{disabled}
+	/>
+	<span class="error-msg">{errorMsg}</span>
+	<!-- </div> -->
 
 	{#if autoSearch && name === 'postalCode'}
 		<Button buttonClass={'btn--sm btn--filled'} handleClick={handlePostalCodeSearchSubmit}>
@@ -121,9 +121,10 @@
 	.input-wrapper {
 		position: relative;
 		display: flex;
-		gap: 10px;
 		align-items: center;
+		width: fit-content;
 		margin-bottom: 20px;
+		gap: 10px;
 
 		.label {
 			width: max-content;

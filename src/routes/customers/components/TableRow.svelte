@@ -7,12 +7,14 @@
 	export let updateDate: string = ''
 	export let id: string = ''
 	export let status: string
-	export let itemId: string = ''
+	export let currentUser: string = ''
+	export let isShown: boolean = false
 
-	$: itemId
+	$: currentUser
 
 	const handleDeleteItem = async (e: any) => {
-		itemId = id
+		isShown = true
+		currentUser = id
 	}
 
 	const handleEditItem = async (e: any) => {

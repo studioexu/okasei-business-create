@@ -5,6 +5,7 @@
 	import Form from '@/views/customersViews/Form/Form.svelte'
 	import RegisteredModal from '@/views/customersViews/modals/RegisteredModal.svelte'
 	import RegistrationFooter from '@/views/customersViews/RegistrationFooter/RegistrationFooter.svelte'
+	import ResultModal from '@/views/modals/ResultModal.svelte'
 
 	let modalIsOpened: boolean = false
 	let verificationPageDisplayed = false
@@ -56,7 +57,8 @@
 </script>
 
 <section class="section section--form">
-	<RegisteredModal bind:isOpened={modalIsOpened} />
+	<!-- <RegisteredModal bind:isOpened={modalIsOpened} /> -->
+	<ResultModal />
 
 	{#if !modalIsOpened}
 		<header class="section__header">

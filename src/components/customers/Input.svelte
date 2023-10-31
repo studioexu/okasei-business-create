@@ -28,10 +28,6 @@
 		address1: ''
 	}
 
-	let disabled: boolean
-
-	name === 'customer-number' ? (disabled = true) : (disabled = false)
-
 	/**
 	 * Check if the value of the input is valid, when the focus is not on the input.
 	 * @param e
@@ -90,20 +86,18 @@
 		</label>
 	{/if}
 
-	<div class="input-w">
-		<input
-			type="text"
-			class="input {inputClass}"
-			id={name}
-			{name}
-			{placeholder}
-			bind:value
-			on:blur={handleBlurInput}
-			on:focus={() => (isValid = true)}
-			{disabled}
-		/>
-		<span class="error-msg">{errorMsg}</span>
-	</div>
+	<input
+		type="text"
+		class="input {inputClass}"
+		id={name}
+		{name}
+		{placeholder}
+		bind:value
+		on:blur={handleBlurInput}
+		on:focus={() => (isValid = true)}
+	/>
+
+	<span class="error-msg">{errorMsg}</span>
 
 	{#if autoSearch && name === 'postalCode'}
 		<Button buttonClass={'btn--sm btn--filled'} handleClick={handlePostalCodeSearchSubmit}>
@@ -124,14 +118,19 @@
 	.input-wrapper {
 		position: relative;
 		display: flex;
-		gap: 10px;
 		align-items: center;
+		gap: 10px;
+		width: fit-content;
 		margin-bottom: 20px;
 
 		.label {
 			width: max-content;
 			font-size: 18px;
 			font-weight: 500;
+
+			.required-mark {
+				color: var(--error);
+			}
 
 			&-width {
 				&--md {
@@ -217,10 +216,6 @@
 		}
 	}
 
-	.input-w {
-		position: relative;
-	}
-
 	@keyframes buzz {
 		0% {
 			transform: translateX(0px);
@@ -233,9 +228,5 @@
 		100% {
 			transform: translateX(10px);
 		}
-	}
-
-	.required-mark {
-		color: var(--error);
 	}
 </style>

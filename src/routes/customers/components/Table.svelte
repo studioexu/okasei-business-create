@@ -6,13 +6,14 @@
 	import { flip } from 'svelte/animate'
 	import { quintOut } from 'svelte/easing'
 
-	export let itemId: string = ''
+	export let currentUser: string = ''
 	export let dataToDisplay: CustomerFactory[]
+	export let isShown: boolean
 
 	const [send, receive] = crossfade({})
 
-	$: itemId
 	$: dataToDisplay
+	$: currentUser
 
 	/**
 	 * When clicked on the row, the user is redirected to the profile of the customer.
@@ -59,7 +60,6 @@
 							address={customer.address}
 							bind:isActive={customer.isActive}
 							id={customer.custCD}
-							bind:itemId
 							status={!customer.isActive
 								? '削除'
 								: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
@@ -71,6 +71,8 @@
 								: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
 								? customer.updateDateTime.date
 								: customer.registDateTime.date}
+							bind:currentUser
+							bind:isShown
 						/>
 					</tr>
 				{/each}

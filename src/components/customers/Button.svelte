@@ -31,8 +31,8 @@
 		height: 45px;
 		margin: 0;
 		font-size: 18px;
-		background-color: $primary-color;
-		color: $white;
+		background-color: var(--primary-color);
+		color: #fff;
 		border-radius: 8px;
 		overflow: hidden;
 
@@ -72,12 +72,12 @@
 
 		&--transparent {
 			background-color: transparent;
-			color: #2fa8e1;
-			border: #2fa8e1 1px solid;
+			color: var(--primary-color);
+			border: var(--primary-color) 1px solid;
 			transition: all 300ms;
 
 			&:hover {
-				background-color: $primary-color;
+				background-color: var(--primary-color);
 				color: #fff;
 			}
 		}
@@ -85,24 +85,24 @@
 		&--round {
 			width: 182px;
 			height: 43px;
-			border: 1px solid $gray;
-			color: $gray;
+			border: 1px solid var(--gray);
+			color: var(--gray);
 			background-color: #fff;
 			border-radius: 24px;
 			&:hover {
-				background-color: $gray;
+				background-color: var(--gray);
 				color: #fff;
 			}
 
 			&--delete {
-				background-color: $primary-color;
-				border-color: $primary-color;
+				background-color: var(--primary-color);
+				border-color: var(--primary-color);
 				color: #fff;
 				transition: all 300ms;
 
 				&:hover {
-					background-color: $error;
-					border-color: $error;
+					background-color: var(--error);
+					border-color: var(--error);
 					opacity: 1;
 				}
 			}

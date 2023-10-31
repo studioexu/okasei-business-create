@@ -7,9 +7,12 @@
 	import Table from './components/Table.svelte'
 	import TableNavigation from './components/TableNavigation.svelte'
 	import SearchMenu from './components/SearchMenu.svelte'
-	import DeleteModal from '@/views/customersViews/modals/DeleteModal.svelte'
+	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import { CustomerFactory } from './utils/Factories/CustomerFactory'
 	import Button from '@/components/customers/Button.svelte'
+	import { deleteCustomer, deleteItem } from './utils/actions'
+	import { currentApi } from './data/api'
+	import { goto } from '$app/navigation'
 
 	export let data
 
@@ -22,11 +25,9 @@
 	let newData: CustomerFactory[] = customersToDisplay
 	let dataToDisplay: CustomerFactory[] = []
 	let currentPage: number = 1
-	let itemId: string = ''
 	let displayDeleteCustomersIsChecked = false
 
 	$: filteredCustomers
-	$: itemId
 	$: newData
 	$: lastDataIndex =
 		currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1
@@ -74,16 +75,63 @@
 	const handleAddNewCustomer = () => {
 		window.location.href = '/customers/new'
 	}
+
+	let isShown: boolean = false
+	let currentUser: string | undefined = undefined
+	let phase: 'shown' | 'success' | 'error' = 'shown'
+
+	const onClick = (event: { detail: { key: string } }) => {
+		console.log(event.detail.key)
+		switch (event.detail.key) {
+			case 'cancel':
+				isShown = false
+				break
+			case 'delete':
+				try {
+					if (currentUser !== undefined) {
+						deleteCustomer(currentUser, currentApi)
+
+						allCustomers = allCustomers.filter(customer => {
+							if (customer.custCD === currentUser) {
+								customer.isActive = false
+							}
+
+							return customer
+						})
+
+						//update the displayed data depending if we want to display the deleted customers or not.
+						if (displayDeleteCustomersIsChecked) {
+							customersToDisplay = allCustomers
+							newData = customersToDisplay
+						} else {
+							customersToDisplay = allCustomers.filter(customer => customer.isActive)
+							newData = customersToDisplay
+						}
+
+						goto('/customers')
+						phase = 'success'
+					}
+				} catch (error) {
+					phase = 'error'
+				}
+				break
+
+			case 'success':
+				isShown = false
+				phase = 'shown'
+				break
+
+			case 'error':
+				phase = 'shown'
+				break
+		}
+	}
 </script>
 
 <section class="section section--customers-management" id="customers-management">
-	<DeleteModal
-		bind:itemId
-		bind:customersToDisplay
-		{displayDeleteCustomersIsChecked}
-		bind:newData
-		bind:allCustomers
-	/>
+	{#if isShown}
+		<DeleteModal {phase} on:click={onClick} />
+	{/if}
 
 	<header class="section__header">
 		<!-- <h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2> -->
@@ -116,7 +164,7 @@
 	</header>
 
 	<div class="section__main">
-		<Table {dataToDisplay} bind:itemId />
+		<Table {dataToDisplay} bind:currentUser bind:isShown />
 	</div>
 
 	<footer class="section__footer">

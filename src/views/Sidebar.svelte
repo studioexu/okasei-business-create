@@ -1,50 +1,44 @@
 <script lang="ts" context="module">
 	import { createEventDispatcher } from 'svelte'
 	import Icon from '@/components/Icon.svelte'
+
+	const templateMenus: { path: string; hasNew?: boolean; text: string }[] = [
+		{ path: 'users', hasNew: true, text: '社員一覧' },
+		{ path: 'customers', hasNew: true, text: '顧客一覧' },
+		{ path: 'purchases', hasNew: true, text: '買取一覧' },
+		{ path: 'negotiations', hasNew: true, text: '商談一覧' },
+		{ path: 'sales', text: '営業支援' },
+		{ path: 'history', text: '変更履歴' },
+		{ path: 'settings', text: '設定' }
+	]
 </script>
 
 <script lang="ts">
 	export let path: string
 
-	const menus: { path: string; routes: string[]; regexp?: RegExp; text: string }[] = [
-		{
-			path: 'users',
-			routes: ['/users', '/users/[id]', '/users/new'],
-			regexp: /^\/users\/[1-9]\d?$/,
-			text: '社員一覧'
-		},
-		{
-			path: 'customers',
-			routes: ['/customers', '/customers/[id]', '/customers/new'],
-			text: '顧客一覧'
-		},
-		{
-			path: 'purchases',
-			routes: ['/purchases', '/purchases/[id]', '/purchases/new'],
-			text: '買取一覧'
-		},
-		{
-			path: 'negotiations',
-			routes: ['/negotiations', '/negotiations/[id]', '/negotiations/new'],
-			text: '商談一覧'
-		},
-		{ path: 'history', routes: ['/history'], text: '変更履歴' },
-		{ path: 'settings', routes: ['/settings'], text: '設定' }
-	]
-	const checkIsActive = (routes: string[], regexp?: RegExp, path: string = '') =>
-		routes.includes(path) || regexp?.test(path)
+	const menus: { path: string; routes: string[]; regexp?: RegExp; text: string }[] =
+		templateMenus.map(menu => {
+			const { path, hasNew, text } = menu
+			return {
+				path,
+				routes: [`/${path}`, ...(hasNew ? [`/${path}/new`] : [])],
+				regexp: hasNew ? new RegExp(`^\/${path}\/[1-9]\d?$`) : undefined,
+				text
+			}
+		})
+
 	const dispatch = createEventDispatcher()
 </script>
 
 <nav class="nav">
 	<ul class="nav-menu">
 		{#each menus as menu}
-			<li class:active={checkIsActive(menu.routes, menu.regexp, path)}>
+			<li class:active={menu.routes.includes(path) || menu.regexp?.test(path)}>
 				<a href={menu.path}>
-					<span class:invisible={!checkIsActive(menu.routes, menu.regexp, path)}>
+					<span class:invisible={!menu.routes.includes(path) && !menu.regexp?.test(path)}>
 						<Icon icon={{ path: menu.path, color: '#0093d0' }} />
 					</span>
-					<span class:invisible={checkIsActive(menu.routes, menu.regexp, path)}>
+					<span class:invisible={menu.routes.includes(path) || menu.regexp?.test(path)}>
 						<Icon icon={{ path: menu.path, color: '#fff' }} />
 					</span>
 					{menu.text}

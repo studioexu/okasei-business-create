@@ -1,10 +1,11 @@
 <script lang="ts" context="module">
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
-	import Icon from '@/components/Icon.svelte'
 	import { debounce, toKebab } from '@/libs/utils'
 	import { user, users } from '@/stores/users'
-	import type { Role, SortedItemForUser, User } from '@/libs/types'
+	import type { Role, SortedItemForUser } from '@/libs/types'
+	import Icon from '@/components/Icon.svelte'
+	import Pagination from '@/views/Pagination.svelte'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 </script>
 
@@ -50,23 +51,7 @@
 			? sortedUsers.flatMap((_, i, self) => (i % 10 ? [] : [self.slice(i, i + 10)]))
 			: []
 
-	const max: number = 3
 	let current: number = 0
-
-	$: generatePagination = (users: User[][]): number[] => {
-		const numbers: number[] = []
-
-		for (let i = 0; i < Math.min(users.length, max); i++) {
-			if (current < max - 1 || users.length <= max) numbers.push(i + 1)
-			else if (users.length - max < current && current < users.length)
-				numbers.unshift(users.length - i)
-			else numbers.push(current + i)
-		}
-
-		return numbers
-	}
-
-	$: pagination = generatePagination(dividedUsers)
 
 	let isShown: boolean = false
 	let currentUser: number | undefined = undefined
@@ -84,30 +69,8 @@
 		currentUser = dividedUsers[current][<number>index].employeeNumber
 	}
 
-	const movePage = (
-		page: 'to-first' | 'prev' | 'next' | 'to-last' | number,
-		isActive: boolean = false
-	): void => {
-		switch (page) {
-			case 'to-first':
-				current = 0
-				break
-
-			case 'prev':
-				current--
-				break
-
-			case 'next':
-				current++
-				break
-
-			case 'to-last':
-				current = dividedUsers.length - 1
-				break
-
-			default:
-				if (!isActive) current = page
-		}
+	const movePage = (event: { detail: { current: number } }): void => {
+		current = event.detail.current
 	}
 
 	const onClick = (event: { detail: { key: string } }) => {
@@ -227,28 +190,7 @@
 		</tbody>
 	</table>
 </div>
-<div class="pagination">
-	<div class="pagination-container">
-		{#if current > 1 && dividedUsers.length > max}
-			<button on:click={() => movePage(0)}><Icon icon={{ path: 'to-first' }} /></button>
-		{/if}
-		{#if current > 0}
-			<button on:click={() => movePage('prev')}><Icon icon={{ path: 'to-prev' }} /></button>
-		{/if}
-		{#each pagination as num}
-			<button
-				class:active={num - 1 === current}
-				on:click={() => movePage(num - 1, num - 1 === current)}>{num}</button
-			>
-		{/each}
-		{#if current < dividedUsers.length - 1}
-			<button on:click={() => movePage('next')}><Icon icon={{ path: 'to-next' }} /></button>
-		{/if}
-		{#if current < dividedUsers.length - 2 && dividedUsers.length > max}
-			<button on:click={() => movePage('to-last')}><Icon icon={{ path: 'to-last' }} /></button>
-		{/if}
-	</div>
-</div>
+<Pagination pages={dividedUsers} {current} on:click={movePage} />
 {#if isAdmin && isShown}
 	<DeleteModal {phase} on:click={onClick} />
 {/if}
@@ -302,11 +244,9 @@
 
 			thead,
 			tbody {
-				display: block;
-
-				tr {
-					display: flex;
-				}
+				display: flex;
+				flex-wrap: wrap;
+				justify-content: center;
 			}
 
 			thead tr {
@@ -348,45 +288,6 @@
 					> :global(.svg-icon) {
 						height: 18px * 1.2;
 					}
-				}
-			}
-		}
-	}
-
-	.pagination {
-		text-align: center;
-
-		&-container {
-			display: inline-flex;
-			justify-content: center;
-
-			> button {
-				display: flex;
-				align-items: center;
-				justify-content: center;
-				width: 40px;
-				height: 40px;
-				background: none;
-				color: var(--black);
-				border-radius: 20px;
-				margin-right: 32px;
-
-				&:last-child {
-					margin-right: 0;
-				}
-
-				> :global(.svg-icon) {
-					height: 18px * 1.2;
-				}
-			}
-
-			.active {
-				background: var(--primary);
-				color: #fff;
-				cursor: default;
-
-				&:hover {
-					opacity: 1;
 				}
 			}
 		}

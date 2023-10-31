@@ -18,6 +18,8 @@
 	export let initialState: CustomerEntries
 	export let modalIsOpened: boolean
 	export let noErrors: CustomerEntriesErrors
+	export let isShown: boolean = false
+	export let isSucceeded: boolean = false
 
 	let address: AddressAutoInfo = {
 		prefecture: '',
@@ -51,7 +53,8 @@
 	 */
 	const handleSubmit = (e: any): void => {
 		if (verificationPageDisplayed) {
-			modalIsOpened = true
+			isShown = true
+			isSucceeded = true
 		}
 	}
 </script>

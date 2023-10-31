@@ -1,14 +1,22 @@
 <script lang="ts">
+	import { goto } from '$app/navigation'
 	import type { CustomerEntries, CustomerEntriesErrors } from '../utils/types'
 
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
-	import RegisteredModal from '@/views/customersViews/modals/RegisteredModal.svelte'
 	import RegistrationFooter from '@/views/customersViews/RegistrationFooter/RegistrationFooter.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
 	let modalIsOpened: boolean = false
 	let verificationPageDisplayed = false
+
+	let isSucceeded: boolean = false
+	let isShown: boolean = false
+	let isNavigating: boolean = false
+
+	const goBack = () => {
+		goto('/customers')
+	}
 
 	let initialState: CustomerEntries = {
 		branchNumber: '',
@@ -58,9 +66,10 @@
 
 <section class="section section--form">
 	<!-- <RegisteredModal bind:isOpened={modalIsOpened} /> -->
-	<ResultModal />
-
-	{#if !modalIsOpened}
+	{#if isShown}
+		<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
+	{/if}
+	{#if !isShown}
 		<header class="section__header">
 			{#if verificationPageDisplayed}
 				<h2 class="section__header__title">下記の内容で登録しますか？</h2>
@@ -69,7 +78,7 @@
 	{/if}
 
 	<div class="section__main">
-		{#if !modalIsOpened}
+		{#if !isShown}
 			<Confirmation bind:initialState bind:verificationPageDisplayed />
 		{/if}
 		<Form
@@ -78,10 +87,12 @@
 			formType={'create'}
 			bind:modalIsOpened
 			bind:noErrors
+			bind:isShown
+			bind:isSucceeded
 		/>
 	</div>
 
-	{#if !modalIsOpened}
+	{#if !isShown}
 		<RegistrationFooter bind:initialState bind:noErrors bind:verificationPageDisplayed />
 	{/if}
 </section>

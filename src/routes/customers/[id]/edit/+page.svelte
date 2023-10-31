@@ -2,9 +2,10 @@
 	import type { CustomerEntries, CustomerEntriesErrors } from '../../utils/types'
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
-	import RegisteredModal from '@/views/customersViews/modals/RegisteredModal.svelte'
 	import RegistrationFooter from '@/views/customersViews/RegistrationFooter/RegistrationFooter.svelte'
 	import { CustomerFactory } from '../../utils/Factories/CustomerFactory'
+	import ResultModal from '@/views/modals/ResultModal.svelte'
+	import { goto } from '$app/navigation'
 	export let data
 
 	let customer = new CustomerFactory(data.customer, 'customer')
@@ -58,10 +59,21 @@
 		homepage: true,
 		numberOfFacilities: true
 	}
+
+	let isSucceeded: boolean = false
+	let isShown: boolean = false
+	let isNavigating: boolean = false
+
+	const goBack = () => {
+		goto('/customers')
+	}
 </script>
 
 <section class="section section--form">
-	<RegisteredModal bind:isOpened={modalIsOpened} />
+	<!-- <RegisteredModal bind:isOpened={modalIsOpened} /> -->
+	{#if isShown}
+		<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
+	{/if}
 
 	<header class="section__header">
 		{#if verificationPageDisplayed && !modalIsOpened}
@@ -70,7 +82,7 @@
 	</header>
 
 	<div class="section__main">
-		{#if !modalIsOpened}
+		{#if !isShown}
 			<Confirmation bind:verificationPageDisplayed bind:initialState />
 		{/if}
 		<Form
@@ -79,10 +91,12 @@
 			formType={'update'}
 			bind:modalIsOpened
 			bind:noErrors
+			bind:isShown
+			bind:isSucceeded
 		/>
 	</div>
 
-	{#if !modalIsOpened}
+	{#if !isShown}
 		<RegistrationFooter bind:initialState bind:noErrors bind:verificationPageDisplayed />
 	{/if}
 </section>

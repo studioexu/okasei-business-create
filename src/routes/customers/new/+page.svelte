@@ -7,7 +7,6 @@
 	import RegistrationFooter from '@/views/customersViews/RegistrationFooter/RegistrationFooter.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
-	let modalIsOpened: boolean = false
 	let verificationPageDisplayed = false
 
 	let isSucceeded: boolean = false
@@ -65,10 +64,10 @@
 </script>
 
 <section class="section section--form">
-	<!-- <RegisteredModal bind:isOpened={modalIsOpened} /> -->
 	{#if isShown}
 		<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
 	{/if}
+
 	{#if !isShown}
 		<header class="section__header">
 			{#if verificationPageDisplayed}
@@ -78,14 +77,13 @@
 	{/if}
 
 	<div class="section__main">
-		{#if !isShown}
-			<Confirmation bind:initialState bind:verificationPageDisplayed />
+		{#if !isShown && verificationPageDisplayed}
+			<Confirmation bind:initialState />
 		{/if}
 		<Form
 			bind:verificationPageDisplayed
 			bind:initialState
 			formType={'create'}
-			bind:modalIsOpened
 			bind:noErrors
 			bind:isShown
 			bind:isSucceeded

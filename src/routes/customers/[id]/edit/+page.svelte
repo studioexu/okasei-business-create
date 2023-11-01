@@ -10,7 +10,6 @@
 
 	let customer = new CustomerFactory(data.customer, 'customer')
 	let verificationPageDisplayed = false
-	let modalIsOpened: boolean = false
 
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
@@ -76,20 +75,19 @@
 	{/if}
 
 	<header class="section__header">
-		{#if verificationPageDisplayed && !modalIsOpened}
+		{#if verificationPageDisplayed && !isShown}
 			<h2 class="section__header__title">下記の内容で登録しますか？</h2>
 		{/if}
 	</header>
 
 	<div class="section__main">
-		{#if !isShown}
-			<Confirmation bind:verificationPageDisplayed bind:initialState />
+		{#if !isShown && verificationPageDisplayed}
+			<Confirmation bind:initialState />
 		{/if}
 		<Form
 			bind:verificationPageDisplayed
 			bind:initialState
 			formType={'update'}
-			bind:modalIsOpened
 			bind:noErrors
 			bind:isShown
 			bind:isSucceeded

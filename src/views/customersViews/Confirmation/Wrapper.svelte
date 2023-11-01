@@ -9,18 +9,18 @@
 <div class="info-wrapper {areaClass}">
 	<h3 class="title">{title}</h3>
 	<p class="data">{dataFormatter(content, areaClass)}</p>
-	{#if areaClass === 'numberOfFacilities'}
+	{#if areaClass === 'number-of-facilities'}
 		<span class="unit">店</span>
 	{/if}
-	{#if areaClass === 'numberOfEmployees'}
+	{#if areaClass === 'number-of-employees'}
 		<span class="unit">名</span>
 	{/if}
 </div>
 
 <style lang="scss">
-	$areas: customerNumber, branchNumber, customerName, kana, facilityNumber, businessType, postalCode,
-		prefecture, city, address1, address2, phoneNumber, fax, foundation, month, year, homepage,
-		numberOfEmployees, numberOfFacilities;
+	$areas: customer-number, branch-number, customer-name, kana, facility-number, business-type,
+		postal-code, prefecture, city, address1, address2, phone-number, fax, foundation, month, year,
+		homepage, number-of-employees, number-of-facilities;
 
 	.info-wrapper {
 		position: relative;
@@ -39,16 +39,16 @@
 
 	.address1,
 	.address2,
-	.customerNumber,
+	.customer-number,
 	.kana,
-	.customerName,
-	.facilityNumber,
-	.postalCode,
+	.customer-name,
+	.facility-number,
+	.postal-code,
 	.prefecture,
-	.phoneNumber,
-	.numberOfEmployees,
+	.phone-number,
+	.number-of-employees,
 	.homepage,
-	.numberOfFacilities {
+	.number-of-facilities {
 		.title {
 			width: 130px;
 		}
@@ -74,7 +74,7 @@
 		grid-area: city;
 	}
 
-	.customerNumber {
-		grid-area: customerNumber;
+	.customer-number {
+		grid-area: customer-number;
 	}
 </style>

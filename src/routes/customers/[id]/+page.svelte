@@ -3,11 +3,13 @@
 
 <script lang="ts">
 	import Button from '@/components/customers/Button.svelte'
+	import type { CustomerEntries } from '@/routes/customers/utils/types'
 	import BedContainer from './components/BedContainer.svelte'
 	import DepartmentWrapper from './components/DepartmentWrapper.svelte'
 	import FoundationWrapper from './components/FoundationWrapper.svelte'
 	import Wrapper from './components/Wrapper.svelte'
 	import { CustomerFactory } from '../utils/Factories/CustomerFactory'
+	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 
 	export let data
 
@@ -23,41 +25,37 @@
 	const handleLinkClicked = () => {
 		window.location.href = '/customers/' + customer.custCD + '/edit'
 	}
+
+	let initialState: CustomerEntries = {
+		id: customer.custCD,
+		branchNumber: customer.custBranchCD,
+		customerName: customer.custName,
+		kana: customer.custKana,
+		facilityNumber: customer.instId,
+		businessType: customer.custType,
+		postalCode: customer.address.postalCode,
+		prefecture: customer.address.prefecture,
+		city: customer.address.city,
+		address1: customer.address.address1,
+		address2: customer.address.address2,
+		phoneNumber: customer.address.phoneNumber,
+		fax: customer.address.fax,
+		year: customer.foundation.establishDate,
+		month: customer.foundation.establishDate,
+		founder: customer.foundation.establishedBy,
+		bedding: customer.departmentDetail,
+		numberOfEmployees: customer.numEmployees,
+		homepage: customer.url,
+		numberOfFacilities: customer.numBranch,
+		registrationDate: customer.registration.registDate,
+		registrationTime: customer.registration.registBy,
+		isActive: customer.isActive
+	}
 </script>
 
 <section class="section section--confirmation">
-	<div class="container">
-		<Wrapper areaClass="customerNumber" content={customer.custCD} title={'顧客番号'} />
-		<Wrapper areaClass="branchNumber" content={customer.custBranchCD} title={'枝番'} />
-		<Wrapper areaClass="customerName" content={customer.custName} title={'施設名'} />
-		<Wrapper areaClass="kana" content={customer.custKana} title={'カナ'} />
-
-		<Wrapper areaClass="facilityNumber" content={customer.instId} title={'医療機関番号'} />
-		<Wrapper areaClass="businessType" content={customer.custType} title={'区分'} />
-
-		<Wrapper areaClass="postalCode" content={customer.address.postalCode} title={'郵便番号'} />
-		<Wrapper areaClass="prefecture" content={customer.address.prefecture} title={'都道府県'} />
-		<Wrapper areaClass="city" content={customer.address.city} title={'市区町村'} />
-		<Wrapper areaClass="address1" content={customer.address.address1} title={'住所１'} />
-		<Wrapper areaClass="address2" content={customer.address.address2} title={'住所2'} />
-		<Wrapper areaClass="phoneNumber" content={customer.address.phoneNumber} title={'電話番号'} />
-		<Wrapper areaClass="fax" content={customer.address.fax} title={'FAX番号'} />
-
-		<Wrapper areaClass="homepage" content={customer.url} title={'ホームページ'} />
-		<Wrapper areaClass="numberOfEmployees" content={customer.numEmployees} title={'従業員数'} />
-		<Wrapper areaClass="numberOfFacilities" content={customer.numBranch} title={'関連施設拠点数'} />
-
-		<DepartmentWrapper total={bedQuantity}>
-			{#each customer.departments.detail as bedding}
-				<BedContainer department={bedding.department} quantity={bedding.quantity} />
-			{/each}
-		</DepartmentWrapper>
-
-		<FoundationWrapper
-			year={customer.foundation.year}
-			month={customer.foundation.month}
-			founder={customer.foundation.founder}
-		/>
+	<div class="section__main">
+		<Confirmation {initialState} />
 	</div>
 
 	<footer class="section__footer">
@@ -104,35 +102,6 @@
 </section>
 
 <style lang="scss">
-	.container {
-		display: grid;
-		overflow: hidden;
-		padding: 0 37px;
-		padding-top: 28px;
-		padding-bottom: 48px;
-		width: auto;
-		border-radius: 16px;
-		background-color: #fff;
-		box-shadow: 0px 8px 8px rgb(200, 200, 200);
-		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
-		grid-template-rows: auto;
-		grid-template-areas:
-			'customerNumber customerNumber CustomerNumber branchNumber branchNumber branchNumber. . . .'
-			'customerName customerName customerName customerName customerName customerName customerName customerName customerName customerName'
-			'kana kana kana kana kana kana kana kana kana kana'
-			'facilityNumber facilityNumber facilityNumber businessType businessType businessType  . . . .'
-			'postalCode postalCode postalCode . . . . . . . '
-			'prefecture prefecture prefecture city city city . . . .'
-			'address1 address1 address1 address1 address1 address1 address1 address1 address1 address1'
-			'address2 address2 address2 address2 address2 address2 address2 address2 address2 address2'
-			'phoneNumber phoneNumber phoneNumber fax fax fax . . . .'
-			'foundation foundation foundation foundation foundation  foundation foundation foundation foundation foundation'
-			'bedding bedding bedding bedding bedding bedding bedding . . .'
-			'numberOfEmployees numberOfEmployees numberOfEmployees numberOfEmployees . . . . . .'
-			'homepage homepage homepage homepage homepage homepage homepage homepage homepage homepage'
-			'numberOfFacilities numberOfFacilities numberOfFacilities . . . . . . .';
-	}
-
 	.section__footer {
 		display: flex;
 		justify-content: space-between;

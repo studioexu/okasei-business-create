@@ -21,11 +21,6 @@
 {/if}
 
 <style lang="scss">
-	$primary-color: #0093d0;
-	$white: #fff;
-	$error: #eb3c3c;
-	$gray: #7b7c7d;
-
 	.btn {
 		width: 108px;
 		height: 45px;
@@ -58,7 +53,7 @@
 				left: 0;
 				top: 0;
 
-				background-color: $white;
+				background-color: #fff;
 				opacity: 0;
 				transition: opacity 300ms;
 			}
@@ -79,32 +74,6 @@
 			&:hover {
 				background-color: var(--primary-color);
 				color: #fff;
-			}
-		}
-
-		&--round {
-			width: 182px;
-			height: 43px;
-			border: 1px solid var(--gray);
-			color: var(--gray);
-			background-color: #fff;
-			border-radius: 24px;
-			&:hover {
-				background-color: var(--gray);
-				color: #fff;
-			}
-
-			&--delete {
-				background-color: var(--primary-color);
-				border-color: var(--primary-color);
-				color: #fff;
-				transition: all 300ms;
-
-				&:hover {
-					background-color: var(--error);
-					border-color: var(--error);
-					opacity: 1;
-				}
 			}
 		}
 

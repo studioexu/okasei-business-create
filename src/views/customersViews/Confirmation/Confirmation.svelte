@@ -1,13 +1,13 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition'
 	import BedContainer from './BedContainer.svelte'
-	import BeddingWrapper from './BeddingWrapper.svelte'
+	import DepartmentWrapper from './DepartmentWrapper.svelte'
 	import FoundationWrapper from './FoundationWrapper.svelte'
 	import Wrapper from './Wrapper.svelte'
 	import type { CustomerEntries, BedInput } from '@/routes/customers/utils/types'
 
 	export let initialState: CustomerEntries
-	export let verificationPageDisplayed: boolean
+	// export let verificationPageDisplayed: boolean
 
 	let bedQuantity: number = 0
 
@@ -25,62 +25,59 @@
 		return sum
 	}
 
-	// $: initialState.bedding.map(
-	// 	bed => (bedQuantity += bed.quantity === '' ? 0 : parseInt(bed.quantity))
-	// )
-
 	$: bedQuantity = caculateTotalOfBeds(initialState.bedding)
 </script>
 
-{#if verificationPageDisplayed}
-	<div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
-		<div class="container">
-			<Wrapper areaClass="customerNumber" content={initialState.id} title={'顧客番号'} />
-			<Wrapper areaClass="branchNumber" content={initialState.branchNumber} title={'枝番'} />
-			<Wrapper areaClass="customerName" content={initialState.customerName} title={'施設名'} />
-			<Wrapper areaClass="kana" content={initialState.kana} title={'カナ'} />
+<!-- {#if verificationPageDisplayed} -->
+<div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
+	<div class="container">
+		<Wrapper areaClass="customer-number" content={initialState.id} title={'顧客番号'} />
+		<Wrapper areaClass="branch-number" content={initialState.branchNumber} title={'枝番'} />
+		<Wrapper areaClass="customer-name" content={initialState.customerName} title={'施設名'} />
+		<Wrapper areaClass="kana" content={initialState.kana} title={'カナ'} />
 
-			<Wrapper
-				areaClass="facilityNumber"
-				content={initialState.facilityNumber}
-				title={'医療機関番号'}
-			/>
-			<Wrapper areaClass="businessType" content={initialState.businessType} title={'区分'} />
+		<Wrapper
+			areaClass="facility-number"
+			content={initialState.facilityNumber}
+			title={'医療機関番号'}
+		/>
+		<Wrapper areaClass="business-type" content={initialState.businessType} title={'区分'} />
 
-			<Wrapper areaClass="postalCode" content={initialState.postalCode} title={'郵便番号'} />
-			<Wrapper areaClass="prefecture" content={initialState.prefecture} title={'都道府県'} />
-			<Wrapper areaClass="city" content={initialState.city} title={'市区町村'} />
-			<Wrapper areaClass="address1" content={initialState.address1} title={'住所１'} />
-			<Wrapper areaClass="address2" content={initialState.address2} title={'住所2'} />
-			<Wrapper areaClass="phoneNumber" content={initialState.phoneNumber} title={'電話番号'} />
-			<Wrapper areaClass="fax" content={initialState.fax} title={'FAX番号'} />
+		<Wrapper areaClass="postal-code" content={initialState.postalCode} title={'郵便番号'} />
+		<Wrapper areaClass="prefecture" content={initialState.prefecture} title={'都道府県'} />
+		<Wrapper areaClass="city" content={initialState.city} title={'市区町村'} />
+		<Wrapper areaClass="address1" content={initialState.address1} title={'住所１'} />
+		<Wrapper areaClass="address2" content={initialState.address2} title={'住所2'} />
+		<Wrapper areaClass="phone-number" content={initialState.phoneNumber} title={'電話番号'} />
+		<Wrapper areaClass="fax" content={initialState.fax} title={'FAX番号'} />
 
-			<Wrapper areaClass="homepage" content={initialState.homepage} title={'ホームページ'} />
-			<Wrapper
-				areaClass="numberOfEmployees"
-				content={initialState.numberOfEmployees}
-				title={'従業員数'}
-			/>
-			<Wrapper
-				areaClass="numberOfFacilities"
-				content={initialState.numberOfFacilities}
-				title={'関連施設拠点数'}
-			/>
+		<Wrapper areaClass="homepage" content={initialState.homepage} title={'ホームページ'} />
+		<Wrapper
+			areaClass="number-of-employees"
+			content={initialState.numberOfEmployees}
+			title={'従業員数'}
+		/>
+		<Wrapper
+			areaClass="number-of-facilities"
+			content={initialState.numberOfFacilities}
+			title={'関連施設拠点数'}
+		/>
 
-			<BeddingWrapper total={bedQuantity}>
-				{#each initialState.bedding as bedding}
-					<BedContainer department={bedding.department} quantity={bedding.quantity} />
-				{/each}
-			</BeddingWrapper>
+		<DepartmentWrapper total={bedQuantity}>
+			{#each initialState.bedding as bedding}
+				<BedContainer department={bedding.department} quantity={bedding.quantity} />
+			{/each}
+		</DepartmentWrapper>
 
-			<FoundationWrapper
-				year={initialState.year}
-				month={initialState.month}
-				founder={initialState.founder}
-			/>
-		</div>
+		<FoundationWrapper
+			year={initialState.year}
+			month={initialState.month}
+			founder={initialState.founder}
+		/>
 	</div>
-{/if}
+</div>
+
+<!-- {/if} -->
 
 <style lang="scss">
 	.container {
@@ -96,19 +93,19 @@
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 		grid-template-rows: auto;
 		grid-template-areas:
-			'customerNumber customerNumber CustomerNumber branchNumber branchNumber branchNumber. . . .'
-			'customerName customerName customerName customerName customerName customerName customerName customerName customerName customerName'
+			'customer-number customer-number customer-number branch-number branch-number branch-number. . . .'
+			'customer-name customer-name customer-name customer-name customer-name customer-name customer-name customer-name customer-name customer-name'
 			'kana kana kana kana kana kana kana kana kana kana'
-			'facilityNumber facilityNumber facilityNumber businessType businessType businessType  . . . .'
-			'postalCode postalCode postalCode . . . . . . . '
+			'facility-number facility-number facility-number business-type business-type business-type  . . . .'
+			'postal-code postal-code postal-code . . . . . . . '
 			'prefecture prefecture prefecture city city city . . . .'
 			'address1 address1 address1 address1 address1 address1 address1 address1 address1 address1'
 			'address2 address2 address2 address2 address2 address2 address2 address2 address2 address2'
-			'phoneNumber phoneNumber phoneNumber fax fax fax . . . .'
+			'phone-number phone-number phone-number fax fax fax . . . .'
 			'foundation foundation foundation foundation foundation  foundation foundation foundation foundation foundation'
 			'bedding bedding bedding bedding bedding bedding bedding . . .'
-			'numberOfEmployees numberOfEmployees numberOfEmployees numberOfEmployees . . . . . .'
+			'number-of-employees number-of-employees number-of-employees number-of-employees . . . . . .'
 			'homepage homepage homepage homepage homepage homepage homepage homepage homepage homepage'
-			'numberOfFacilities numberOfFacilities numberOfFacilities . . . . . . .';
+			'number-of-facilities number-of-facilities number-of-facilities . . . . . . .';
 	}
 </style>

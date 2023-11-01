@@ -29,9 +29,9 @@ export const phoneNumberFormatter = (phoneNumber: string) => {
  */
 export const dataFormatter = (input: string, formatType?: string): string => {
 	switch (formatType) {
-		case 'phoneNumber':
+		case 'phone-number':
 			return phoneNumberFormatter(input)
-		case 'postalCode':
+		case 'postal-code':
 			return postalCodeFormatter(input)
 		default:
 			return input

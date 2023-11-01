@@ -107,16 +107,16 @@ export const checkIfInputIsNumber = (input: string): boolean => {
  */
 export const inputIsValid = (name: string, input: string): boolean => {
 	switch (name) {
-		case 'branchNumber':
+		case 'branch-number':
 			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 4)
 
-		case 'customerName':
+		case 'customer-name':
 			return numberOFCharacterValidation(input, 128)
 
 		case 'kana':
 			return kanaValidation(input)
 
-		case 'facilityNumber':
+		case 'facility-number':
 			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 10)
 
 		case 'postalCode':
@@ -134,7 +134,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 		case 'address2':
 			return numberOFCharacterValidation(input, 200) || input === ''
 
-		case 'phoneNumber':
+		case 'phone-number':
 			return phoneNumberValidation(input)
 
 		case 'fax':
@@ -152,7 +152,10 @@ export const inputIsValid = (name: string, input: string): boolean => {
 		case 'quantity':
 			return checkIfInputIsNumber(input)
 
-		case 'numberOfEmployees':
+		case 'number-of-employees':
+			return input === '' || checkIfInputIsNumber(input)
+
+		case 'number-of-facilities':
 			return input === '' || checkIfInputIsNumber(input)
 
 		case 'homepage':

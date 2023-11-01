@@ -7,7 +7,7 @@
 	export let year: string = ''
 	export let month: string = ''
 
-	const months: string[] = [' ']
+	const months: string[] = ['']
 
 	for (let i = 1; i <= 12; i++) {
 		months.push(i.toString())
@@ -28,7 +28,6 @@
 		dataType={'year'}
 		datas={years}
 		unit="年"
-		classInput={'mb-0'}
 		bind:isValid={yearIsValid}
 	/>
 	<Select
@@ -36,7 +35,6 @@
 		name={'months'}
 		unit="月"
 		bind:value={month}
-		wrapperClass={'mb-0'}
 		bind:isValid={monthIsValid}
 	/>
 </div>
@@ -44,9 +42,9 @@
 <style lang="scss">
 	.date-selector {
 		display: flex;
-		gap: 10px;
 		justify-content: flex-start;
-		align-items: center;
+		align-items: flex-start;
+		gap: 10px;
 
 		.label {
 			font-size: 18px;

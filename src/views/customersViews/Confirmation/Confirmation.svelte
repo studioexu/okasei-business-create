@@ -28,7 +28,6 @@
 	$: bedQuantity = caculateTotalOfBeds(initialState.bedding)
 </script>
 
-<!-- {#if confirmationPageIsShown} -->
 <div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
 	<div class="container">
 		<Wrapper areaClass="customer-number" content={initialState.id} title={'顧客番号'} />
@@ -76,8 +75,6 @@
 		/>
 	</div>
 </div>
-
-<!-- {/if} -->
 
 <style lang="scss">
 	.container {

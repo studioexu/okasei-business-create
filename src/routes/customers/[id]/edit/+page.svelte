@@ -108,7 +108,6 @@
 </script>
 
 <section class="section section--form">
-	<!-- <RegisteredModal bind:isOpened={modalIsOpened} /> -->
 	{#if isShown}
 		<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
 	{/if}

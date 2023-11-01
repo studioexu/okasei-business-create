@@ -10,7 +10,7 @@
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
 	import Button from '@/components/Button.svelte'
-	import { deleteCustomer, deleteItem } from '@/utils/customers/actions'
+	import { deleteCustomer } from '@/utils/customers/actions'
 	import { currentApi } from '../../data/api'
 	import { goto } from '$app/navigation'
 
@@ -134,7 +134,6 @@
 	{/if}
 
 	<header class="section__header">
-		<!-- <h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2> -->
 		<SearchMenu
 			bind:data={allCustomers}
 			bind:newData

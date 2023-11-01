@@ -131,10 +131,7 @@
 	</div>
 
 	{#if !isShown}
-		<!-- <RegistrationFooter bind:initialState bind:noErrors bind:confirmationPageIsShown /> -->
-
 		<footer class="section__footer">
-			<!-- <div class="form__footer"> -->
 			{#if confirmationPageIsShown}
 				<div in:fade>
 					<Button buttonClass={'btn--transparent'} handleClick={handleEditClicked}>修正</Button>
@@ -143,7 +140,6 @@
 			{:else}
 				<Button buttonClass={'btn--filled'} handleClick={handleCheckForm}>登録</Button>
 			{/if}
-			<!-- </div> -->
 		</footer>
 	{/if}
 </section>

@@ -55,8 +55,6 @@
 	 * @param e
 	 */
 	function handleSearch(e?: any) {
-		console.log('nya')
-
 		let dataBis: CustomerFactory[] = data
 
 		if (instId !== '') {
@@ -84,34 +82,33 @@
 
 <form class="search-menu">
 	<Input
-		additionalClass={'txt--lg'}
 		name={'facility-name'}
 		label={'施設名'}
-		bind:value={custName}
+		inputSize={'input--lg'}
 		handleInput={handleSearch}
+		bind:value={custName}
 	/>
 	<Input
-		additionalClass={'txt--sm'}
 		name={'customer-number'}
 		label={'医療機関番号'}
+		inputSize={'input--md'}
+		handleInput={handleSearch}
 		bind:value={instId}
-		handleInput={handleSearch}
 	/>
 	<Input
-		additionalClass={'txt--sm'}
-		name={'postalcode'}
+		name={'postal-code'}
 		label={'郵便番号'}
-		bind:value={postalCode}
+		inputSize={'input--md'}
 		handleInput={handleSearch}
+		bind:value={postalCode}
 	/>
 	<Input
-		additionalClass={'txt--sm'}
 		name={'phone'}
 		label={'電話番号'}
-		bind:value={phoneNumber}
+		inputSize={'input--md'}
 		handleInput={handleSearch}
+		bind:value={phoneNumber}
 	/>
-	<!-- <Button buttonClass={'btn--filled btn--sm btn--right'} handleClick={handleSearch}>検索</Button> -->
 </form>
 
 <style lang="scss">
@@ -119,11 +116,12 @@
 		display: flex;
 		justify-content: flex-start;
 		justify-content: space-between;
-		padding: 0 18px;
-		// padding: 0 2rem;
-		flex-wrap: wrap;
 		margin-bottom: 1.5rem;
-		color: var(--black);
+		padding: 0 18px;
+
 		row-gap: 10px;
+		flex-wrap: wrap;
+
+		color: var(--black);
 	}
 </style>

@@ -36,7 +36,7 @@
 	</button>
 </td>
 <td class="data erase">
-	<button class="btn btn--erase {isActive ? '' : 'disabled'}" {id} on:click={handleDeleteItem}>
+	<button class="btn btn--delete {isActive ? '' : 'disabled'}" {id} on:click={handleDeleteItem}>
 		{#if isActive}
 			<Icon icon={{ path: 'delete', color: '#0093d0' }} />
 		{:else}

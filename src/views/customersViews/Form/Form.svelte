@@ -18,7 +18,7 @@
 	export let formType: string
 	export let confirmationPageIsShown: boolean
 	export let initialState: CustomerEntries
-	export let noErrors: CustomerEntriesErrors
+	export let formIsValid: CustomerEntriesErrors
 	export let isShown: boolean = false
 	export let isSucceeded: boolean = false
 
@@ -38,7 +38,7 @@
 	 */
 	const handlePostalCodeSearchSubmit = async (e: any) => {
 		e.preventDefault()
-		if (noErrors.postalCode) {
+		if (formIsValid.postalCode) {
 			const api = 'https://zipcloud.ibsnet.co.jp/api/search?zipcode='
 			const postalCode = initialState.postalCode
 			const url = api + postalCode
@@ -111,7 +111,7 @@
 				inputSize={'input--sm'}
 				required={true}
 				bind:value={initialState.branchNumber}
-				bind:isValid={noErrors.branchNumber}
+				bind:isValid={formIsValid.branchNumber}
 			/>
 		</div>
 
@@ -124,7 +124,7 @@
 				inputSize={'input--xl'}
 				required={true}
 				bind:value={initialState.customerName}
-				bind:isValid={noErrors.customerName}
+				bind:isValid={formIsValid.customerName}
 			/>
 		</div>
 
@@ -137,7 +137,7 @@
 				inputSize={'input--xl'}
 				required={true}
 				bind:value={initialState.kana}
-				bind:isValid={noErrors.kana}
+				bind:isValid={formIsValid.kana}
 			/>
 		</div>
 
@@ -149,7 +149,7 @@
 				inputSize="input--sm"
 				required={true}
 				bind:value={initialState.facilityNumber}
-				bind:isValid={noErrors.facilityNumber}
+				bind:isValid={formIsValid.facilityNumber}
 			/>
 
 			<Select
@@ -176,7 +176,7 @@
 				inputSize="input--sm"
 				required={true}
 				bind:value={initialState.postalCode}
-				bind:isValid={noErrors.postalCode}
+				bind:isValid={formIsValid.postalCode}
 			/>
 
 			<Button buttonClass={'btn--sm btn--filled'} handleClick={handlePostalCodeSearchSubmit}>
@@ -193,7 +193,7 @@
 				errorMsg={'都道府県を一つ選んでください'}
 				required={true}
 				bind:value={initialState.prefecture}
-				bind:isValid={noErrors.prefecture}
+				bind:isValid={formIsValid.prefecture}
 			/>
 			<!-- Input -->
 
@@ -204,7 +204,7 @@
 				errorMsg={'正しい街をご入力ください'}
 				inputSize="input--md"
 				bind:value={initialState.city}
-				bind:isValid={noErrors.city}
+				bind:isValid={formIsValid.city}
 			/>
 			<!-- Input -->
 		</div>
@@ -218,7 +218,7 @@
 				errorMsg={'200文字以内で入力してください'}
 				inputSize="input--lg"
 				bind:value={initialState.address1}
-				bind:isValid={noErrors.address1}
+				bind:isValid={formIsValid.address1}
 			/>
 			<!-- Input -->
 		</div>
@@ -231,7 +231,7 @@
 				errorMsg={'200文字以内で入力してください'}
 				inputSize="input--lg"
 				bind:value={initialState.address2}
-				bind:isValid={noErrors.address2}
+				bind:isValid={formIsValid.address2}
 			/>
 			<!-- Input -->
 		</div>
@@ -245,7 +245,7 @@
 				inputSize="input--md"
 				required={true}
 				bind:value={initialState.phoneNumber}
-				bind:isValid={noErrors.phoneNumber}
+				bind:isValid={formIsValid.phoneNumber}
 			/>
 			<!-- Input -->
 
@@ -256,7 +256,7 @@
 				errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
 				inputSize="input--md"
 				bind:value={initialState.fax}
-				bind:isValid={noErrors.fax}
+				bind:isValid={formIsValid.fax}
 			/>
 			<!-- Input -->
 		</div>
@@ -270,8 +270,8 @@
 			<DateSelector
 				bind:year={initialState.year}
 				bind:month={initialState.month}
-				bind:monthIsValid={noErrors.month}
-				bind:yearIsValid={noErrors.year}
+				bind:monthIsValid={formIsValid.month}
+				bind:yearIsValid={formIsValid.year}
 			/>
 			<!-- DateSelector -->
 			<Input
@@ -281,7 +281,7 @@
 				errorMsg={'正しい名前を入力して下さい'}
 				inputSize="input--lg"
 				bind:value={initialState.founder}
-				bind:isValid={noErrors.founder}
+				bind:isValid={formIsValid.founder}
 			/>
 			<!-- Input -->
 		</div>
@@ -306,7 +306,7 @@
 				errorMsg={'数字で入力して下さい'}
 				inputSize="input--sm"
 				bind:value={initialState.numberOfEmployees}
-				bind:isValid={noErrors.numberOfEmployees}
+				bind:isValid={formIsValid.numberOfEmployees}
 			/>
 			<!-- Input -->
 		</div>
@@ -331,7 +331,7 @@
 				errorMsg={'200文字以内で入力してください'}
 				inputSize="input--lg"
 				bind:value={initialState.homepage}
-				bind:isValid={noErrors.homepage}
+				bind:isValid={formIsValid.homepage}
 			/>
 			<!-- Input -->
 		</div>
@@ -363,7 +363,7 @@
 				errorMsg={'数字で入力して下さい'}
 				inputSize="input--sm"
 				bind:value={initialState.numberOfFacilities}
-				bind:isValid={noErrors.numberOfFacilities}
+				bind:isValid={formIsValid.numberOfFacilities}
 			/>
 			<!-- Input -->
 		</div>

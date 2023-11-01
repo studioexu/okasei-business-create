@@ -43,7 +43,7 @@
 		isActive: true
 	}
 
-	let noErrors: CustomerEntriesErrors = {
+	let formIsValid: CustomerEntriesErrors = {
 		branchNumber: true,
 		customerName: true,
 		kana: true,
@@ -85,7 +85,7 @@
 			const name: string = customerKeys[i]
 			const input: string = customerValues[i]
 
-			noErrors[name as keyof CustomerEntriesErrors] = inputIsValid(name, input)
+			formIsValid[name as keyof CustomerEntriesErrors] = inputIsValid(name, input)
 			errorArray.push(!inputIsValid(name, input))
 		}
 
@@ -124,7 +124,7 @@
 			bind:confirmationPageIsShown
 			bind:initialState
 			formType={'create'}
-			bind:noErrors
+			bind:formIsValid
 			bind:isShown
 			bind:isSucceeded
 		/>

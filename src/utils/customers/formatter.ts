@@ -37,3 +37,11 @@ export const dataFormatter = (input: string, formatType?: string): string => {
 			return input
 	}
 }
+
+export const toCamelCase = (text: string): string => {
+	const textArray = text.split('-')
+	for (let i = 1; i < textArray.length; i++) {
+		textArray[i] = textArray[i].charAt(0).toUpperCase() + textArray[i].substring(1)
+	}
+	return textArray.join('')
+}

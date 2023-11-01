@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
+	import type { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
 
 	import Icon from '@/components/Icon.svelte'
 

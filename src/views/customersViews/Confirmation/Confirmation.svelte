@@ -4,10 +4,10 @@
 	import DepartmentWrapper from './DepartmentWrapper.svelte'
 	import FoundationWrapper from './FoundationWrapper.svelte'
 	import Wrapper from './Wrapper.svelte'
-	import type { CustomerEntries, BedInput } from '@/routes/customers/utils/types'
+	import type { CustomerEntries, BedInput } from '@/utils/customers/types'
 
 	export let initialState: CustomerEntries
-	// export let verificationPageDisplayed: boolean
+	// export let confirmationPageIsShown: boolean
 
 	let bedQuantity: number = 0
 
@@ -28,7 +28,7 @@
 	$: bedQuantity = caculateTotalOfBeds(initialState.bedding)
 </script>
 
-<!-- {#if verificationPageDisplayed} -->
+<!-- {#if confirmationPageIsShown} -->
 <div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
 	<div class="container">
 		<Wrapper areaClass="customer-number" content={initialState.id} title={'顧客番号'} />

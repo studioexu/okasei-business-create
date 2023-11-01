@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
+	import type { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
 
 	import TableRow from './TableRow.svelte'
 	import { crossfade } from 'svelte/transition'

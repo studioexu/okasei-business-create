@@ -1,22 +1,22 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
-	import { prefectures } from '@/routes/customers/data/prefectures.js'
+	import { prefectures } from '@/data/prefectures.js'
 
 	import type {
 		CustomerEntries,
 		CustomerEntriesErrors,
 		AddressAutoInfo
-	} from '@/routes/customers/utils/types'
+	} from '@/utils/customers/types'
 
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
 	import DateSelector from './DateSelector.svelte'
 	import Selector from './Selector.svelte'
 	import DepartmentSection from './DepartmentSection.svelte'
-	import Button from '@/components/customers/Button.svelte'
+	import Button from '@/components/Button.svelte'
 
 	export let formType: string
-	export let verificationPageDisplayed: boolean
+	export let confirmationPageIsShown: boolean
 	export let initialState: CustomerEntries
 	export let noErrors: CustomerEntriesErrors
 	export let isShown: boolean = false
@@ -27,6 +27,10 @@
 		city: '',
 		address1: ''
 	}
+
+	let businessContent = ''
+	let comments = ''
+	let commentType = ''
 
 	/**
 	 * Fetch the address corresponding to the postal code.
@@ -77,7 +81,7 @@
 	 * @param e
 	 */
 	const handleSubmit = (e: any): void => {
-		if (verificationPageDisplayed) {
+		if (confirmationPageIsShown) {
 			isShown = true
 			isSucceeded = true
 		}
@@ -85,7 +89,7 @@
 </script>
 
 <form
-	class="form {verificationPageDisplayed ? 'hidden' : ''}"
+	class="form {confirmationPageIsShown ? 'hidden' : ''}"
 	method={'POST'}
 	action={formType === 'create'
 		? '/customers/new?/create'
@@ -300,9 +304,21 @@
 				name="number-of-employees"
 				unit="名"
 				errorMsg={'数字で入力して下さい'}
-				inputSize="input--md"
+				inputSize="input--sm"
 				bind:value={initialState.numberOfEmployees}
 				bind:isValid={noErrors.numberOfEmployees}
+			/>
+			<!-- Input -->
+		</div>
+
+		<div class="form-row">
+			<Input
+				label="事業内容"
+				name="business-content"
+				placeholder={'未入力'}
+				errorMsg={'200文字以内で入力してください'}
+				inputSize="input--lg"
+				bind:value={businessContent}
 			/>
 			<!-- Input -->
 		</div>
@@ -321,12 +337,31 @@
 		</div>
 
 		<div class="form-row">
+			<!-- <h3 class="label">Google評価</h3> -->
+			<Select
+				options={['hello', 'hi']}
+				name={'comment-type'}
+				label={'Google評価'}
+				bind:value={commentType}
+			/>
+			<Input
+				label="口コミ"
+				name="commnents"
+				placeholder={'件数、内容など'}
+				errorMsg={'200文字以内で入力してください'}
+				inputSize="input--lg"
+				bind:value={comments}
+			/>
+			<!-- Input -->
+		</div>
+
+		<div class="form-row">
 			<Input
 				label="関連施設拠点数"
 				name="number-of-facilities"
 				unit="店"
 				errorMsg={'数字で入力して下さい'}
-				inputSize="number--lg"
+				inputSize="input--sm"
 				bind:value={initialState.numberOfFacilities}
 				bind:isValid={noErrors.numberOfFacilities}
 			/>

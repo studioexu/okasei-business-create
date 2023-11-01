@@ -1,7 +1,7 @@
-import type { CustomerEntries } from '../utils/types'
-import { parseBeforePost } from '../utils/parsers'
-import { create } from '../utils/actions'
-import { currentApi } from '../data/api'
+import type { CustomerEntries } from '@/utils/customers/types'
+import { parseBeforePost } from '@/utils/customers/parsers'
+import { create } from '@/utils/customers/actions'
+import { currentApi } from '@/data/api'
 
 export const actions = {
 	create: async ({ request }) => {

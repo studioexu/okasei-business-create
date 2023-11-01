@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import type { CustomerEntries, CustomerEntriesErrors } from '../utils/types'
+	import type { CustomerEntries, CustomerEntriesErrors } from '@/utils/customers/types'
 
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
-	import RegistrationFooter from '@/views/customersViews/RegistrationFooter/RegistrationFooter.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
+	import Button from '@/components/Button.svelte'
 
-	let verificationPageDisplayed = false
+	import { inputIsValid } from '@/utils/customers/validations'
+	import { fade } from 'svelte/transition'
+
+	let confirmationPageIsShown = false
 
 	let isSucceeded: boolean = false
 	let isShown: boolean = false
@@ -61,6 +64,43 @@
 		homepage: true,
 		numberOfFacilities: true
 	}
+
+	const handleEditClicked = () => {
+		confirmationPageIsShown = false
+	}
+
+	/**
+	 * Take the form and check if all the entries are valid.
+	 * If there is one error, the function will return false.
+	 * @param formEntries: Object of entries
+	 * @returns boolean
+	 */
+	const checkIfFormIsValid = (formEntries: Object): boolean => {
+		let errorArray: boolean[] = []
+		let isValid = true
+		const customerKeys = Object.keys(formEntries)
+		const customerValues = Object.values(formEntries)
+
+		for (let i = 0; i < customerKeys.length; i++) {
+			const name: string = customerKeys[i]
+			const input: string = customerValues[i]
+
+			noErrors[name as keyof CustomerEntriesErrors] = inputIsValid(name, input)
+			errorArray.push(!inputIsValid(name, input))
+		}
+
+		errorArray.forEach(error => {
+			if (error) {
+				isValid = false
+			}
+		})
+
+		return isValid
+	}
+
+	const handleCheckForm = () => {
+		confirmationPageIsShown = checkIfFormIsValid(initialState)
+	}
 </script>
 
 <section class="section section--form">
@@ -70,18 +110,18 @@
 
 	{#if !isShown}
 		<header class="section__header">
-			{#if verificationPageDisplayed}
+			{#if confirmationPageIsShown}
 				<h2 class="section__header__title">下記の内容で登録しますか？</h2>
 			{/if}
 		</header>
 	{/if}
 
 	<div class="section__main">
-		{#if !isShown && verificationPageDisplayed}
+		{#if !isShown && confirmationPageIsShown}
 			<Confirmation bind:initialState />
 		{/if}
 		<Form
-			bind:verificationPageDisplayed
+			bind:confirmationPageIsShown
 			bind:initialState
 			formType={'create'}
 			bind:noErrors
@@ -91,7 +131,20 @@
 	</div>
 
 	{#if !isShown}
-		<RegistrationFooter bind:initialState bind:noErrors bind:verificationPageDisplayed />
+		<!-- <RegistrationFooter bind:initialState bind:noErrors bind:confirmationPageIsShown /> -->
+
+		<footer class="section__footer">
+			<!-- <div class="form__footer"> -->
+			{#if confirmationPageIsShown}
+				<div in:fade>
+					<Button buttonClass={'btn--transparent'} handleClick={handleEditClicked}>修正</Button>
+				</div>
+				<Button buttonClass={'btn--filled'} form="registration-form">登録</Button>
+			{:else}
+				<Button buttonClass={'btn--filled'} handleClick={handleCheckForm}>登録</Button>
+			{/if}
+			<!-- </div> -->
+		</footer>
 	{/if}
 </section>
 
@@ -106,6 +159,14 @@
 
 		&__main {
 			position: relative;
+		}
+
+		&__footer {
+			display: flex;
+			justify-content: flex-end;
+			gap: 1rem;
+			margin-top: 1.5rem;
+			padding-bottom: 24px;
 		}
 	}
 </style>

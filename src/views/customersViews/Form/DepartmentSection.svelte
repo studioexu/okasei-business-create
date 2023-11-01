@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Button from '@/components/customers/Button.svelte'
+	import Button from '@/components/Button.svelte'
 	import Selector from './Selector.svelte'
 	import Input from './Input.svelte'
 	import Icon from '@/components/Icon.svelte'

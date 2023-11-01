@@ -2,13 +2,10 @@
 </script>
 
 <script lang="ts">
-	import Button from '@/components/customers/Button.svelte'
-	import type { CustomerEntries } from '@/routes/customers/utils/types'
-	import BedContainer from './components/BedContainer.svelte'
-	import DepartmentWrapper from './components/DepartmentWrapper.svelte'
-	import FoundationWrapper from './components/FoundationWrapper.svelte'
-	import Wrapper from './components/Wrapper.svelte'
-	import { CustomerFactory } from '../utils/Factories/CustomerFactory'
+	import Button from '@/components/Button.svelte'
+	import type { CustomerEntries } from '@/utils/customers/types'
+
+	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 
 	export let data

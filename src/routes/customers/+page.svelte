@@ -2,16 +2,16 @@
 </script>
 
 <script lang="ts">
-	import type { CustomerInfo } from './utils/types'
+	import type { CustomerInfo } from '@/utils/customers/types'
 
 	import Table from './components/Table.svelte'
 	import TableNavigation from './components/TableNavigation.svelte'
 	import SearchMenu from './components/SearchMenu.svelte'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
-	import { CustomerFactory } from './utils/Factories/CustomerFactory'
-	import Button from '@/components/customers/Button.svelte'
-	import { deleteCustomer, deleteItem } from './utils/actions'
-	import { currentApi } from './data/api'
+	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
+	import Button from '@/components/Button.svelte'
+	import { deleteCustomer, deleteItem } from '@/utils/customers/actions'
+	import { currentApi } from '../../data/api'
 	import { goto } from '$app/navigation'
 
 	export let data

@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { toCamelCase } from '@/utils/customers/formatter'
+
 	export let label: string = ''
 	export let placeholder: string = ''
 	export let errorMsg: string = ''
@@ -10,12 +12,12 @@
 	export let required: boolean = false
 	export let isValid: boolean = true
 
-	import { inputIsValid } from '@/routes/customers/utils/validations'
+	import { inputIsValid } from '@/utils/customers/validations'
 
 	const handleChange = (e: any) => {
 		const input = e.target.value
 
-		isValid = inputIsValid(dataType, input)
+		isValid = inputIsValid(toCamelCase(dataType), input)
 	}
 
 	const checkValueOnChange = (value: string) => {
@@ -86,6 +88,10 @@
 			height: 32px;
 			width: calc(((106 - 10 - 2) / 1366) * 100vw);
 			padding-left: 10px;
+
+			&::placeholder {
+				color: rgb(206, 205, 205);
+			}
 
 			&:focus {
 				border-color: var(--primary-color);

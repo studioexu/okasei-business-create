@@ -2,7 +2,8 @@
 </script>
 
 <script lang="ts">
-	import { inputIsValid } from '@/routes/customers/utils/validations'
+	import { inputIsValid } from '@/utils/customers/validations'
+	import { toCamelCase } from '@/utils/customers/formatter'
 
 	export let placeholder: string = ''
 	export let value: string = ''
@@ -26,7 +27,7 @@
 	 */
 	const handleBlurInput = (e: any) => {
 		const input = e.target.value
-		isValid = inputIsValid(name, input)
+		isValid = inputIsValid(toCamelCase(name), input)
 
 		if (functionOnBlur) {
 			value = functionOnBlur(input)

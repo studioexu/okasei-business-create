@@ -36,11 +36,10 @@
 		gap: 10px;
 		align-items: center;
 		margin-bottom: 20px;
-		.label {
-			&:first-child {
-				.label {
-					width: 130px;
-				}
+
+		&:first-child {
+			.label {
+				width: 130px;
 			}
 		}
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { dataFormatter } from '@/routes/customers/utils/formatter'
+	import { dataFormatter } from '@/utils/customers/formatter'
 
 	export let areaClass: string = ''
 	export let content: string = ''

@@ -1,4 +1,4 @@
-import { prefectures } from '../data/prefectures'
+import { prefectures } from '@/data/prefectures'
 import { isValidPhoneNumber } from 'libphonenumber-js'
 
 /**
@@ -107,16 +107,16 @@ export const checkIfInputIsNumber = (input: string): boolean => {
  */
 export const inputIsValid = (name: string, input: string): boolean => {
 	switch (name) {
-		case 'branch-number':
+		case 'branchNumber':
 			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 4)
 
-		case 'customer-name':
+		case 'customerName':
 			return numberOFCharacterValidation(input, 128)
 
 		case 'kana':
 			return kanaValidation(input)
 
-		case 'facility-number':
+		case 'facilityNumber':
 			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 10)
 
 		case 'postalCode':
@@ -134,7 +134,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 		case 'address2':
 			return numberOFCharacterValidation(input, 200) || input === ''
 
-		case 'phone-number':
+		case 'phoneNumber':
 			return phoneNumberValidation(input)
 
 		case 'fax':
@@ -152,10 +152,10 @@ export const inputIsValid = (name: string, input: string): boolean => {
 		case 'quantity':
 			return checkIfInputIsNumber(input)
 
-		case 'number-of-employees':
+		case 'numberOfEmployees':
 			return input === '' || checkIfInputIsNumber(input)
 
-		case 'number-of-facilities':
+		case 'numberOfFacilities':
 			return input === '' || checkIfInputIsNumber(input)
 
 		case 'homepage':

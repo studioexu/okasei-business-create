@@ -3,7 +3,7 @@
 	import Input from './Input.svelte'
 
 	export let data: CustomerFactory[]
-	export let newData: CustomerFactory[]
+	export let customersToDisplay: CustomerFactory[]
 	export let displayDeleteCusomtersIsChecked: boolean
 	export let filteredCustomers: CustomerFactory[]
 
@@ -55,26 +55,26 @@
 	 * @param e
 	 */
 	function handleSearch(e?: any) {
-		let dataBis: CustomerFactory[] = data
+		let filteredData: CustomerFactory[] = data
 
 		if (instId !== '') {
-			dataBis = filterData(dataBis, 'customer-number', instId)
+			filteredData = filterData(filteredData, 'customer-number', instId)
 		}
 
 		if (phoneNumber !== '') {
-			dataBis = filterData(dataBis, 'phone-number', phoneNumber)
+			filteredData = filterData(filteredData, 'phone-number', phoneNumber)
 		}
 
 		if (postalCode !== '') {
-			dataBis = filterData(dataBis, 'postal-code', postalCode)
+			filteredData = filterData(filteredData, 'postal-code', postalCode)
 		}
 
 		if (custName !== '') {
-			dataBis = filterData(dataBis, 'facility-name', custName)
+			filteredData = filterData(filteredData, 'facility-name', custName)
 		}
 
-		filteredCustomers = dataBis
-		newData = displayDeleteCusomtersIsChecked
+		filteredCustomers = filteredData
+		customersToDisplay = displayDeleteCusomtersIsChecked
 			? filteredCustomers
 			: filteredCustomers.filter(customer => customer.isActive)
 	}

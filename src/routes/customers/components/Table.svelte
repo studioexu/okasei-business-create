@@ -7,12 +7,12 @@
 	import { quintOut } from 'svelte/easing'
 
 	export let currentUser: string = ''
-	export let dataToDisplay: CustomerFactory[]
+	export let customersToDisplayOnPage: CustomerFactory[]
 	export let isShown: boolean
 
 	const [send, receive] = crossfade({})
 
-	$: dataToDisplay
+	$: customersToDisplayOnPage
 	$: currentUser
 
 	/**
@@ -30,7 +30,7 @@
 	}
 </script>
 
-{#if dataToDisplay.length === 0}
+{#if customersToDisplayOnPage.length === 0}
 	<p class="no-data">データがございません。</p>
 {:else}
 	<div class="table-wrapper">
@@ -46,7 +46,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each dataToDisplay as customer (customer.custCD)}
+				{#each customersToDisplayOnPage as customer (customer.custCD)}
 					<tr
 						class="row {customer.isActive ? '' : 'deleted'}"
 						data-id={customer.custCD}

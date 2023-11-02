@@ -5,7 +5,6 @@
 	import type { CustomerInfo } from '@/utils/customers/types'
 
 	import Table from './components/Table.svelte'
-	import TableNavigation from './components/TableNavigation.svelte'
 	import SearchMenu from './components/SearchMenu.svelte'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
@@ -21,23 +20,21 @@
 		(customer: CustomerInfo) => new CustomerFactory(customer, 'customer')
 	)
 
-	let filteredCustomers: CustomerFactory[]
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
-	let newData: CustomerFactory[] = customersToDisplay
-	let dataToDisplay: CustomerFactory[] = []
+	let filteredCustomers: CustomerFactory[]
+	let customersToDisplayOnPage: CustomerFactory[] = []
+
 	let currentPage: number = 0
 	let displayDeleteCustomersIsChecked = false
 
 	$: filteredCustomers
-	$: newData
-	// $: lastDataIndex =
-	// 	currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1
-
 	$: lastDataIndex =
-		(currentPage + 1) * 6 - 1 >= newData.length - 1 ? newData.length - 1 : (currentPage + 1) * 6 - 1
+		(currentPage + 1) * 6 - 1 >= customersToDisplay.length - 1
+			? customersToDisplay.length - 1
+			: (currentPage + 1) * 6 - 1
 	$: firstDataIndex = currentPage * 6
 
-	$: updateDataToDisplay(newData, firstDataIndex, lastDataIndex)
+	$: updatecustomersToDisplayOnPage(customersToDisplay, firstDataIndex, lastDataIndex)
 
 	$: dividedUsers =
 		customersToDisplay.length > 0
@@ -50,14 +47,14 @@
 	 * @param firstDataIndex: number, is the first customer we want to display from the data array
 	 * @param lastDataIndex: number, is the last customer we want to display from the data array
 	 */
-	const updateDataToDisplay = (
+	const updatecustomersToDisplayOnPage = (
 		data: CustomerFactory[],
 		firstDataIndex: number,
 		lastDataIndex: number
 	) => {
-		dataToDisplay = []
+		customersToDisplayOnPage = []
 		for (let i = firstDataIndex; i <= lastDataIndex; i++) {
-			dataToDisplay = [...dataToDisplay, data[i]]
+			customersToDisplayOnPage = [...customersToDisplayOnPage, data[i]]
 		}
 	}
 
@@ -69,15 +66,14 @@
 	 */
 	const handleCheck = (e: any) => {
 		displayDeleteCustomersIsChecked = e.target.checked
+
 		if (displayDeleteCustomersIsChecked) {
 			customersToDisplay = filteredCustomers === undefined ? allCustomers : filteredCustomers
-			newData = customersToDisplay
 		} else {
 			customersToDisplay =
 				filteredCustomers === undefined
 					? allCustomers.filter(customer => customer.isActive)
 					: filteredCustomers.filter(customer => customer.isActive)
-			newData = customersToDisplay
 		}
 	}
 
@@ -110,10 +106,8 @@
 						//update the displayed data depending if we want to display the deleted customers or not.
 						if (displayDeleteCustomersIsChecked) {
 							customersToDisplay = allCustomers
-							newData = customersToDisplay
 						} else {
 							customersToDisplay = allCustomers.filter(customer => customer.isActive)
-							newData = customersToDisplay
 						}
 
 						goto('/customers')
@@ -134,6 +128,10 @@
 				break
 		}
 	}
+
+	const movePage = (event: { detail: { current: number } }): void => {
+		currentPage = event.detail.current
+	}
 </script>
 
 <section class="section section--customers-management" id="customers-management">
@@ -144,7 +142,7 @@
 	<header class="section__header">
 		<SearchMenu
 			bind:data={allCustomers}
-			bind:newData
+			bind:customersToDisplay
 			bind:filteredCustomers
 			displayDeleteCusomtersIsChecked={displayDeleteCustomersIsChecked}
 		/>
@@ -171,12 +169,11 @@
 	</header>
 
 	<div class="section__main">
-		<Table {dataToDisplay} bind:currentUser bind:isShown />
+		<Table {customersToDisplayOnPage} bind:currentUser bind:isShown />
 	</div>
 
 	<footer class="section__footer">
-		<!-- <TableNavigation bind:currentPage bind:newData /> -->
-		<Pagination bind:current={currentPage} bind:pages={dividedUsers} />
+		<Pagination bind:current={currentPage} bind:pages={dividedUsers} on:click={movePage} />
 	</footer>
 </section>
 
@@ -187,11 +184,6 @@
 
 		&__header {
 			margin-bottom: 2rem;
-
-			.title {
-				margin-bottom: 1.5rem;
-				font-size: 18px;
-			}
 		}
 
 		&__footer {

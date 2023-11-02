@@ -5,7 +5,7 @@
 	export let placeholder: string = ''
 	export let errorMsg: string = ''
 	export let unit: string = ''
-	export let dataType: string = ''
+	export let name: string = ''
 	export let datas: string[] = []
 	export let value: string = ''
 
@@ -17,21 +17,21 @@
 	const handleChange = (e: any) => {
 		const input = e.target.value
 
-		isValid = inputIsValid(toCamelCase(dataType), input)
+		isValid = inputIsValid(toCamelCase(name), input)
 	}
 
 	const checkValueOnChange = (value: string) => {
 		if (!isValid) {
-			isValid = inputIsValid(dataType, value)
+			isValid = inputIsValid(name, value)
 		}
 	}
 
 	$: checkValueOnChange(value)
 </script>
 
-<div class="input-wrapper {dataType} {isValid ? '' : 'error'}">
+<div class="input-wrapper {name} {isValid ? '' : 'error'}">
 	{#if label !== ''}
-		<label for={dataType} class="label">
+		<label for={name} class="label">
 			{label}
 			<span class="required-mark">{required ? '*' : ''}</span>
 		</label>
@@ -39,10 +39,10 @@
 
 	<input
 		class="input"
-		id={dataType}
-		name={dataType}
+		id={name}
+		{name}
 		autocomplete="off"
-		list="{dataType}s"
+		list="{name}s"
 		on:blur={handleChange}
 		on:click={() => (value = '')}
 		bind:value
@@ -53,7 +53,7 @@
 		<span class="unit">{unit}</span>
 	{/if}
 
-	<datalist id="{dataType}s" class="datalist">
+	<datalist id="{name}s" class="datalist">
 		{#each datas as data}
 			<option class="option" value={data}>{data}</option>
 		{/each}
@@ -82,6 +82,9 @@
 
 		.label {
 			width: max-content;
+			height: 32px;
+			display: flex;
+			align-items: center;
 		}
 
 		.input {
@@ -108,6 +111,11 @@
 			min-width: 250px;
 			text-align: right;
 			opacity: 0;
+		}
+
+		.unit {
+			display: flex;
+			align-items: center;
 		}
 	}
 

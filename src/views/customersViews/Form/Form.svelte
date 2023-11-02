@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
-	import { prefectures } from '@/data/prefectures.js'
+	import { prefectures, months, years } from '@/data/data'
 
 	import type {
 		CustomerEntries,
@@ -10,8 +10,7 @@
 
 	import Input from './Input.svelte'
 	import Select from './Select.svelte'
-	import DateSelector from './DateSelector.svelte'
-	import Selector from './Selector.svelte'
+	import SelectInput from './SelectInput.svelte'
 	import DepartmentSection from './DepartmentSection.svelte'
 	import Button from '@/components/Button.svelte'
 
@@ -71,8 +70,6 @@
 	}
 
 	$: assignAddressInfo(address)
-
-	const hojinKojin = ['法人', '個人']
 
 	/**
 	 * Triggered when the form is submit.
@@ -157,7 +154,7 @@
 				name={'business-type'}
 				errorMsg={'一つを選んで下さい'}
 				required={true}
-				options={hojinKojin}
+				options={['法人', '個人']}
 				bind:value={initialState.businessType}
 			/>
 		</div>
@@ -185,9 +182,9 @@
 		</div>
 
 		<div class="form-row">
-			<Selector
+			<SelectInput
 				label={'都道府県'}
-				dataType="prefecture"
+				name="prefecture"
 				datas={prefectures}
 				placeholder="○○県"
 				errorMsg={'都道府県を一つ選んでください'}
@@ -267,11 +264,21 @@
 	<fieldset class="fieldset fieldset--foundation">
 		<legend class="hidden">創立</legend>
 		<div class="form-row">
-			<DateSelector
-				bind:year={initialState.year}
-				bind:month={initialState.month}
-				bind:monthIsValid={formIsValid.month}
-				bind:yearIsValid={formIsValid.year}
+			<SelectInput
+				label={'設立年月日'}
+				name={'year'}
+				datas={years}
+				unit="年"
+				bind:value={initialState.year}
+				bind:isValid={formIsValid.year}
+			/>
+
+			<Select
+				options={months}
+				name={'months'}
+				unit="月"
+				bind:value={initialState.month}
+				bind:isValid={formIsValid.month}
 			/>
 			<!-- DateSelector -->
 			<Input
@@ -339,7 +346,7 @@
 		<div class="form-row">
 			<!-- <h3 class="label">Google評価</h3> -->
 			<Select
-				options={['hello', 'hi']}
+				options={['有り', '無し']}
 				name={'comment-type'}
 				label={'Google評価'}
 				bind:value={commentType}

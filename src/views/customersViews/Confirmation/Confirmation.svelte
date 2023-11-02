@@ -3,7 +3,7 @@
 	import BedContainer from './BedContainer.svelte'
 	import DepartmentWrapper from './DepartmentWrapper.svelte'
 	import FoundationWrapper from './FoundationWrapper.svelte'
-	import Wrapper from './Wrapper.svelte'
+	import DetailWrapper from './DetailWrapper.svelte'
 	import type { CustomerEntries, BedInput } from '@/utils/customers/types'
 
 	export let initialState: CustomerEntries
@@ -30,33 +30,33 @@
 
 <div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
 	<div class="container">
-		<Wrapper areaClass="customer-number" content={initialState.id} title={'顧客番号'} />
-		<Wrapper areaClass="branch-number" content={initialState.branchNumber} title={'枝番'} />
-		<Wrapper areaClass="customer-name" content={initialState.customerName} title={'施設名'} />
-		<Wrapper areaClass="kana" content={initialState.kana} title={'カナ'} />
+		<DetailWrapper areaClass="customer-number" content={initialState.id} title={'顧客番号'} />
+		<DetailWrapper areaClass="branch-number" content={initialState.branchNumber} title={'枝番'} />
+		<DetailWrapper areaClass="customer-name" content={initialState.customerName} title={'施設名'} />
+		<DetailWrapper areaClass="kana" content={initialState.kana} title={'カナ'} />
 
-		<Wrapper
+		<DetailWrapper
 			areaClass="facility-number"
 			content={initialState.facilityNumber}
 			title={'医療機関番号'}
 		/>
-		<Wrapper areaClass="business-type" content={initialState.businessType} title={'区分'} />
+		<DetailWrapper areaClass="business-type" content={initialState.businessType} title={'区分'} />
 
-		<Wrapper areaClass="postal-code" content={initialState.postalCode} title={'郵便番号'} />
-		<Wrapper areaClass="prefecture" content={initialState.prefecture} title={'都道府県'} />
-		<Wrapper areaClass="city" content={initialState.city} title={'市区町村'} />
-		<Wrapper areaClass="address1" content={initialState.address1} title={'住所１'} />
-		<Wrapper areaClass="address2" content={initialState.address2} title={'住所2'} />
-		<Wrapper areaClass="phone-number" content={initialState.phoneNumber} title={'電話番号'} />
-		<Wrapper areaClass="fax" content={initialState.fax} title={'FAX番号'} />
+		<DetailWrapper areaClass="postal-code" content={initialState.postalCode} title={'郵便番号'} />
+		<DetailWrapper areaClass="prefecture" content={initialState.prefecture} title={'都道府県'} />
+		<DetailWrapper areaClass="city" content={initialState.city} title={'市区町村'} />
+		<DetailWrapper areaClass="address1" content={initialState.address1} title={'住所１'} />
+		<DetailWrapper areaClass="address2" content={initialState.address2} title={'住所2'} />
+		<DetailWrapper areaClass="phone-number" content={initialState.phoneNumber} title={'電話番号'} />
+		<DetailWrapper areaClass="fax" content={initialState.fax} title={'FAX番号'} />
 
-		<Wrapper areaClass="homepage" content={initialState.homepage} title={'ホームページ'} />
-		<Wrapper
+		<DetailWrapper areaClass="homepage" content={initialState.homepage} title={'ホームページ'} />
+		<DetailWrapper
 			areaClass="number-of-employees"
 			content={initialState.numberOfEmployees}
 			title={'従業員数'}
 		/>
-		<Wrapper
+		<DetailWrapper
 			areaClass="number-of-facilities"
 			content={initialState.numberOfFacilities}
 			title={'関連施設拠点数'}

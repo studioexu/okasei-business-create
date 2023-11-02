@@ -47,6 +47,8 @@
 			height: 32px;
 			width: calc(((106 - 10 - 2) / 1366) * 100vw);
 			padding-left: 10px;
+			font-size: 18px;
+			color: var(--black);
 			border: 1px solid var(--gray);
 			border-radius: 8px;
 			outline: none;
@@ -58,6 +60,8 @@
 
 		.unit {
 			height: 32px;
+			display: flex;
+			align-items: center;
 		}
 
 		.error-msg {

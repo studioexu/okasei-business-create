@@ -11,7 +11,6 @@
 	import { fade } from 'svelte/transition'
 
 	let confirmationPageIsShown = false
-
 	let isSucceeded: boolean = false
 	let isShown: boolean = false
 	let isNavigating: boolean = false
@@ -121,9 +120,9 @@
 			<Confirmation bind:initialState />
 		{/if}
 		<Form
+			formType={'create'}
 			bind:confirmationPageIsShown
 			bind:initialState
-			formType={'create'}
 			bind:formIsValid
 			bind:isShown
 			bind:isSucceeded

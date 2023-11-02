@@ -13,6 +13,7 @@
 	import { deleteCustomer } from '@/utils/customers/actions'
 	import { currentApi } from '../../data/api'
 	import { goto } from '$app/navigation'
+	import Pagination from '@/views/Pagination.svelte'
 
 	export let data
 
@@ -24,16 +25,24 @@
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let newData: CustomerFactory[] = customersToDisplay
 	let dataToDisplay: CustomerFactory[] = []
-	let currentPage: number = 1
+	let currentPage: number = 0
 	let displayDeleteCustomersIsChecked = false
 
 	$: filteredCustomers
 	$: newData
+	// $: lastDataIndex =
+	// 	currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1
+
 	$: lastDataIndex =
-		currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1
-	$: firstDataIndex = currentPage === 1 ? 0 : (currentPage - 1) * 6
+		(currentPage + 1) * 6 - 1 >= newData.length - 1 ? newData.length - 1 : (currentPage + 1) * 6 - 1
+	$: firstDataIndex = currentPage * 6
 
 	$: updateDataToDisplay(newData, firstDataIndex, lastDataIndex)
+
+	$: dividedUsers =
+		customersToDisplay.length > 0
+			? customersToDisplay.flatMap((_, i, self) => (i % 6 ? [] : [self.slice(i, i + 6)]))
+			: []
 
 	/**
 	 * Update the data display according the current page.
@@ -81,7 +90,6 @@
 	let phase: 'shown' | 'success' | 'error' = 'shown'
 
 	const onClick = (event: { detail: { key: string } }) => {
-		console.log(event.detail.key)
 		switch (event.detail.key) {
 			case 'cancel':
 				isShown = false
@@ -167,7 +175,8 @@
 	</div>
 
 	<footer class="section__footer">
-		<TableNavigation bind:currentPage bind:newData />
+		<!-- <TableNavigation bind:currentPage bind:newData /> -->
+		<Pagination bind:current={currentPage} bind:pages={dividedUsers} />
 	</footer>
 </section>
 
@@ -175,13 +184,18 @@
 	.section {
 		padding-bottom: 24px;
 		color: var(--black);
-	}
-	.section__header {
-		margin-bottom: 2rem;
 
-		.title {
-			margin-bottom: 1.5rem;
-			font-size: 18px;
+		&__header {
+			margin-bottom: 2rem;
+
+			.title {
+				margin-bottom: 1.5rem;
+				font-size: 18px;
+			}
+		}
+
+		&__footer {
+			margin-top: 18px;
 		}
 	}
 
@@ -237,7 +251,7 @@
 
 		.checkbox:checked {
 			& + .slider {
-				background-color: var(--primary-color);
+				background-color: var(--primary);
 				transition: background-color 300ms ease-out;
 				&::before {
 					transform: translateX(16px);

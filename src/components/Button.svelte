@@ -26,7 +26,7 @@
 		height: 45px;
 		margin: 0;
 		font-size: 18px;
-		background-color: var(--primary-color);
+		background-color: var(--primary);
 		color: #fff;
 		border-radius: 8px;
 		overflow: hidden;
@@ -67,12 +67,12 @@
 
 		&--transparent {
 			background-color: transparent;
-			color: var(--primary-color);
-			border: var(--primary-color) 1px solid;
+			color: var(--primary);
+			border: var(--primary) 1px solid;
 			transition: all 300ms;
 
 			&:hover {
-				background-color: var(--primary-color);
+				background-color: var(--primary);
 				color: #fff;
 			}
 		}

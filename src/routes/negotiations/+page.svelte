@@ -432,7 +432,7 @@
 		}
 
 		&::-webkit-scrollbar-thumb {
-			background-color: var(--primary-color);
+			background-color: var(--primary);
 			border-radius: 16px;
 		}
 	}
@@ -451,12 +451,12 @@
 			height: 42px;
 			font-weight: bold;
 			font-family: 'Noto Sans JP';
-			background-color: var(--background-color);
-			color: var(--primary-color);
+			background-color: var(--background);
+			color: var(--primary);
 		}
 
 		.trow {
-			border-bottom: 1px solid var(--primary-color);
+			border-bottom: 1px solid var(--primary);
 
 			&:last-child {
 				border: none;
@@ -479,7 +479,7 @@
 				}
 
 				&--B {
-					color: var(--primary-color);
+					color: var(--primary);
 				}
 			}
 		}

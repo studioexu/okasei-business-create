@@ -19,11 +19,6 @@
 	let allCustomers: CustomerFactory[] = data.data.map(
 		(customer: CustomerInfo) => new CustomerFactory(customer, 'customer')
 	)
-	// console.log(data)
-
-	// let allCustomers: CustomerFactory[] = data.data.map(
-	// 	(customer: CustomerInfo) => new CustomerFactory(customer, 'newAPI')
-	// )
 
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let filteredCustomers: CustomerFactory[]

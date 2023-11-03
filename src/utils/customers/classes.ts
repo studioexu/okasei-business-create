@@ -196,7 +196,7 @@ export class CustomerBackend {
 
 export class CustomerNewApi {
 	id?: string
-	cd?: string | undefined
+	cd?: string
 	branch_cd: string
 	name: string
 	kana: string
@@ -213,7 +213,7 @@ export class CustomerNewApi {
 	url: string
 	number_of_branch: string
 	establish_date: string
-	establish_By: string
+	establish_by: string
 	is_active: boolean
 	departments: {
 		detail: Detail[]
@@ -229,13 +229,13 @@ export class CustomerNewApi {
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.id) {
 			this.id = data.id
-			this.cd = data.id
+			this.cd = data.custCd === '' || data.custCd === undefined ? '1' : data.custCd
 		}
 		this.branch_cd = data.branchNumber
 		this.name = data.customerName
 		this.kana = data.kana
 		this.institution_cd = data.facilityNumber
-		this.type = data.businessType
+		this.type = data.businessType === '法人' ? 'C' : 'I'
 		this.postal_cd = data.postalCode
 		this.ken = data.prefecture
 		this.city = data.city
@@ -247,17 +247,17 @@ export class CustomerNewApi {
 		this.url = data.homepage
 		this.number_of_branch = data.numberOfFacilities
 		this.establish_date = data.year
-		this.establish_By = data.founder
+		this.establish_by = data.founder
 		this.is_active = data.isActive
 		this.departments = {
 			detail: data.bedding,
 			bed_total: data.bed_total
 		}
-		this.register_at = registration?.registDate || data.registration?.Regist_Date
-		this.register_by = registration?.registBy || data.registration?.Regist_By
-		this.update_at = update?.updateDate || data.update?.Update_Date
-		this.update_by = update?.updateBy || data.update?.Update_By
-		this.delete_at = deleted?.deleteDate || data.delete?.Delete_Date
-		this.delete_by = deleted?.deleteBy || data.delete?.Delete_By
+		this.register_at = registration?.registDate || data.register_at
+		this.register_by = registration?.registBy || data.register_by
+		this.update_at = update?.updateDate || data.update_at
+		this.update_by = update?.updateBy || data.update_by
+		this.delete_at = deleted?.deleteDate || data.delete_at
+		this.delete_by = deleted?.deleteBy || data.delete_by
 	}
 }

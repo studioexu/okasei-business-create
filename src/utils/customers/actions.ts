@@ -44,6 +44,8 @@ export const create = async (newCustomer: Object, url: string) => {
 		headers: { 'Content-type': 'application/json;charset=UTF-8' },
 		body: JSON.stringify(newCustomer)
 	})
+		.then(res => res.json())
+		.then(data => console.log(data))
 		.then(() => console.log('Customer successfully created'))
 		.catch(err => console.log(err))
 }
@@ -88,6 +90,7 @@ export const deleteCustomer = (customerId: string, url: string) => {
 				.then(res => res.json())
 				.then(data => {
 					console.log('Customer successfully deleted')
+					console.log(data)
 				})
 				.catch(err => console.log(err))
 		})

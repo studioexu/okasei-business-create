@@ -53,6 +53,7 @@ export interface CustomerInfo {
 }
 
 export interface CustomerEntries {
+	custCd?: string
 	id?: string
 	branchNumber: string
 	customerName: string

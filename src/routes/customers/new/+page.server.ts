@@ -13,7 +13,9 @@ export const actions = {
 			initialState = JSON.parse(initialStateString)
 
 			let newCustomer = parseBeforePost(initialState)
+			// console.log(newCustomer)
 
+			// create(newCustomer, 'http://18.182.209.227/customer/register/')
 			create(newCustomer, currentApi)
 		}
 	}

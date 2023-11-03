@@ -4,6 +4,9 @@
 	import Button from '@/components/customers/Button.svelte'
 	import { user } from '@/stores/users'
 
+	let searchIsShown = false
+	let displayMenuIsShown = false
+
 	const tableHeaders: { label: string; id: keyof DataIsShown | keyof Users }[] = [
 		{ label: '施設名', id: 'customerName' },
 		{ label: 'ステータス', id: 'status' },
@@ -342,23 +345,28 @@
 	<header class="section__header">
 		<div class="container">
 			<button class="primary">＋新規追加</button>
-			<button class="primary">data to display</button>
+			<button class="primary" on:click={() => (displayMenuIsShown = !displayMenuIsShown)}
+				>data to display</button
+			>
 			<button class="primary">縛り込み検索</button>
 		</div>
 
-		<div class="container data-to-dislay">
-			{#each tableHeaders as header}
-				<label for={header.id}>
-					<input
-						type="checkbox"
-						name={header.id}
-						id={header.id}
-						checked
-						on:change={handleChange}
-					/>{header.label}
-				</label>
-			{/each}
-		</div>
+		{#if displayMenuIsShown}
+			<div class="container data-to-display">
+				{#each tableHeaders as header}
+					<label class="label-checkbox" for={header.id}>
+						<input
+							class="checkbox"
+							type="checkbox"
+							name={header.id}
+							id={header.id}
+							checked
+							on:change={handleChange}
+						/>{header.label}
+					</label>
+				{/each}
+			</div>
+		{/if}
 	</header>
 
 	<div class="section__main">
@@ -416,6 +424,15 @@
 		display: flex;
 		justify-content: flex-end;
 		gap: 18px;
+
+		&.data-to-display {
+			margin-top: 20px;
+			flex-wrap: wrap;
+			justify-content: space-between;
+			background-color: #fff;
+			padding: 18px;
+			border-radius: 18px;
+		}
 	}
 
 	.table-wrapper {
@@ -451,7 +468,7 @@
 			height: 42px;
 			font-weight: bold;
 			font-family: 'Noto Sans JP';
-			background-color: var(--background);
+			background-color: var(--back);
 			color: var(--primary);
 		}
 
@@ -487,5 +504,9 @@
 		.tdata:nth-child(2n) {
 			background-color: pink;
 		}
+	}
+
+	.checkbox {
+		margin-right: 11px;
 	}
 </style>

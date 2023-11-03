@@ -3,14 +3,13 @@
 	export let options: string[] = [' ']
 	export let label: string = ''
 	export let unit: string = ''
-	export let wrapperClass: string = ''
 	export let name: string = ''
 	export let isValid: boolean = true
 	export let errorMsg: string = ''
 	export let required: boolean = false
 </script>
 
-<div class="input-wrapper {name} {wrapperClass} {isValid ? '' : 'error'}">
+<div class="input-wrapper {name} {isValid ? '' : 'error'}">
 	{#if label !== ''}
 		<label class="label" for={name}>
 			{label}
@@ -45,7 +44,7 @@
 
 		.select {
 			height: 32px;
-			width: calc(((106 - 10 - 2) / 1366) * 100vw);
+			width: calc(((103 - 10 - 2) / 1366) * 100vw);
 			padding-left: 10px;
 			font-size: 18px;
 			color: var(--black);

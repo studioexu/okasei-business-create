@@ -20,7 +20,7 @@
 <style lang="scss">
 	$areas: customer-number, branch-number, customer-name, kana, facility-number, business-type,
 		postal-code, prefecture, city, address1, address2, phone-number, fax, foundation, month, year,
-		homepage, number-of-employees, number-of-facilities;
+		homepage, number-of-employees, number-of-facilities, business-list, google-review, closing-month;
 
 	.info-wrapper {
 		position: relative;
@@ -48,7 +48,9 @@
 	.phone-number,
 	.number-of-employees,
 	.homepage,
-	.number-of-facilities {
+	.number-of-facilities,
+	.business-list,
+	.google-review {
 		.title {
 			width: 130px;
 		}

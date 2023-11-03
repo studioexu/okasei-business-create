@@ -110,6 +110,14 @@
 				bind:value={initialState.branchNumber}
 				bind:isValid={formIsValid.branchNumber}
 			/>
+
+			<Select
+				label={'決算月'}
+				options={months}
+				name={'closing-month'}
+				unit="月"
+				bind:value={initialState.closingMonth}
+			/>
 		</div>
 
 		<div class="form-row">
@@ -344,22 +352,25 @@
 		</div>
 
 		<div class="form-row">
-			<!-- <h3 class="label">Google評価</h3> -->
-			<Select
-				options={['有り', '無し']}
-				name={'comment-type'}
-				label={'Google評価'}
-				bind:value={commentType}
-			/>
-			<Input
-				label="口コミ"
-				name="commnents"
-				placeholder={'件数、内容など'}
-				errorMsg={'200文字以内で入力してください'}
-				inputSize="input--lg"
-				bind:value={comments}
-			/>
-			<!-- Input -->
+			<div class="input-wrapper">
+				<label class="label" for="google-review"> Google評価 </label>
+
+				<select class="select" bind:value={initialState.googleReview} id="google-review">
+					<option value={false}>無し</option>
+					<option value={true}>有り</option>
+				</select>
+			</div>
+
+			{#if initialState.googleReview}
+				<Input
+					label="口コミ"
+					name="commnents"
+					placeholder={'件数、内容など'}
+					errorMsg={'200文字以内で入力してください'}
+					inputSize="input--lg"
+					bind:value={initialState.reviews}
+				/>
+			{/if}
 		</div>
 
 		<div class="form-row">
@@ -418,5 +429,69 @@
 		.required-mark {
 			color: var(--error);
 		}
+	}
+
+	.input-wrapper {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+		margin-bottom: 20px;
+
+		&:first-child {
+			.label {
+				width: 130px;
+			}
+		}
+
+		.select {
+			height: 32px;
+			width: calc(((106 - 10 - 2) / 1366) * 100vw);
+			padding-left: 10px;
+			font-size: 18px;
+			color: var(--black);
+			border: 1px solid var(--gray);
+			border-radius: 8px;
+			outline: none;
+
+			&:focus {
+				border-color: var(--primary-color);
+			}
+		}
+
+		.unit {
+			height: 32px;
+			display: flex;
+			align-items: center;
+		}
+
+		.error-msg {
+			position: absolute;
+			right: 0;
+			bottom: -14px;
+			color: var(--error);
+			font-size: 10px;
+			font-weight: 600;
+			min-width: 250px;
+			text-align: right;
+			opacity: 0;
+		}
+	}
+
+	.error {
+		.select {
+			transition: border 300ms;
+			border: 1.5px solid var(--error);
+			animation: buzz 100ms;
+			animation-iteration-count: 3;
+		}
+
+		.error-msg {
+			opacity: 1;
+			transition: all 300ms;
+		}
+	}
+
+	.required-mark {
+		color: var(--error);
 	}
 </style>

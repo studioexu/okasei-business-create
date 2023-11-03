@@ -7,7 +7,6 @@
 	import type { CustomerEntries, BedInput } from '@/utils/customers/types'
 
 	export let initialState: CustomerEntries
-	// export let confirmationPageIsShown: boolean
 
 	let bedQuantity: number = 0
 
@@ -30,8 +29,13 @@
 
 <div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
 	<div class="container">
-		<DetailWrapper areaClass="customer-number" content={initialState.id} title={'顧客番号'} />
+		<DetailWrapper
+			areaClass="customer-number"
+			content={initialState.id !== undefined ? initialState.id : ''}
+			title={'顧客番号'}
+		/>
 		<DetailWrapper areaClass="branch-number" content={initialState.branchNumber} title={'枝番'} />
+		<DetailWrapper areaClass="closing-month" content={initialState.closingMonth} title={'決算月'} />
 		<DetailWrapper areaClass="customer-name" content={initialState.customerName} title={'施設名'} />
 		<DetailWrapper areaClass="kana" content={initialState.kana} title={'カナ'} />
 
@@ -62,6 +66,17 @@
 			title={'関連施設拠点数'}
 		/>
 
+		<DetailWrapper
+			areaClass="google-review"
+			content={initialState.reviews !== undefined ? initialState.reviews : ''}
+			title={'口コミ'}
+		/>
+		<DetailWrapper
+			areaClass="business-list"
+			content={initialState.businessList !== undefined ? initialState.businessList : ''}
+			title={'事業一覧'}
+		/>
+
 		<DepartmentWrapper total={bedQuantity}>
 			{#each initialState.bedding as bedding}
 				<BedContainer department={bedding.department} quantity={bedding.quantity} />
@@ -90,7 +105,7 @@
 		grid-template-columns: 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr 1fr;
 		grid-template-rows: auto;
 		grid-template-areas:
-			'customer-number customer-number customer-number branch-number branch-number branch-number. . . .'
+			'customer-number customer-number customer-number branch-number branch-number branch-number . . closing-month closing-month'
 			'customer-name customer-name customer-name customer-name customer-name customer-name customer-name customer-name customer-name customer-name'
 			'kana kana kana kana kana kana kana kana kana kana'
 			'facility-number facility-number facility-number business-type business-type business-type  . . . .'
@@ -103,6 +118,8 @@
 			'bedding bedding bedding bedding bedding bedding bedding . . .'
 			'number-of-employees number-of-employees number-of-employees number-of-employees . . . . . .'
 			'homepage homepage homepage homepage homepage homepage homepage homepage homepage homepage'
+			'business-list business-list business-list business-list . . . . . . '
+			'google-review google-review google-review google-review . . . . . . '
 			'number-of-facilities number-of-facilities number-of-facilities . . . . . . .';
 	}
 </style>

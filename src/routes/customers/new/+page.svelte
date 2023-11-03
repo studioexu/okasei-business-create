@@ -39,7 +39,11 @@
 		numberOfEmployees: '',
 		homepage: '',
 		numberOfFacilities: '',
-		isActive: true
+		isActive: true,
+		googleReview: false,
+		reviews: '',
+		businessList: '',
+		closingMonth: ''
 	}
 
 	let formIsValid: CustomerEntriesErrors = {

@@ -36,7 +36,11 @@
 		numberOfFacilities: customer.numBranch,
 		registrationDate: customer.registration.registDate,
 		registrationTime: customer.registration.registBy,
-		isActive: customer.isActive
+		isActive: customer.isActive,
+		googleReview: customer.googleReview,
+		reviews: customer.reviews,
+		businessList: customer.businessList,
+		closingMonth: customer.closingMonth
 	}
 
 	let formIsValid: CustomerEntriesErrors = {

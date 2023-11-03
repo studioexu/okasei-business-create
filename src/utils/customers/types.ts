@@ -76,6 +76,10 @@ export interface CustomerEntries {
 	registrationDate?: string
 	registrationTime?: string
 	isActive: boolean
+	googleReview: boolean
+	reviews: string
+	businessList: string
+	closingMonth: string
 }
 
 export interface CustomerEntriesErrors {

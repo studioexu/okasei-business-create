@@ -138,6 +138,10 @@ export class CustomerBackend {
 		Delete_Date: string
 		Delete_By: number
 	}
+	googleReview: boolean
+	reviews: string
+	closingMonth: string
+	business: string
 
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.id) {
@@ -182,5 +186,78 @@ export class CustomerBackend {
 			Delete_Date: deleted?.deleteDate || data.delete?.Delete_Date,
 			Delete_By: deleted?.deleteBy || data.delete?.Delete_By
 		}
+
+		this.business = data.business
+		this.googleReview = data.googleReview
+		this.reviews = data.reviews
+		this.closingMonth = data.closingMonth
+	}
+}
+
+export class CustomerNewApi {
+	id?: string
+	cd?: string | undefined
+	branch_cd: string
+	name: string
+	kana: string
+	institution_cd: string
+	type: string
+	postal_cd: string
+	ken: string
+	city: string
+	address1: string
+	address2: string
+	phone: string
+	fax: string
+	number_of_employee: string
+	url: string
+	number_of_branch: string
+	establish_date: string
+	establish_By: string
+	is_active: boolean
+	departments: {
+		detail: Detail[]
+		bed_total: number
+	}
+	register_at: string
+	register_by: number
+	update_at: string
+	update_by: number
+	delete_at: string
+	delete_by: number
+
+	constructor(data: any, registration?: any, update?: any, deleted?: any) {
+		if (data.id) {
+			this.id = data.id
+			this.cd = data.id
+		}
+		this.branch_cd = data.branchNumber
+		this.name = data.customerName
+		this.kana = data.kana
+		this.institution_cd = data.facilityNumber
+		this.type = data.businessType
+		this.postal_cd = data.postalCode
+		this.ken = data.prefecture
+		this.city = data.city
+		this.address1 = data.address1
+		this.address2 = data.address2
+		this.phone = data.phoneNumber
+		this.fax = data.fax
+		this.number_of_employee = data.numberOfEmployees
+		this.url = data.homepage
+		this.number_of_branch = data.numberOfFacilities
+		this.establish_date = data.year
+		this.establish_By = data.founder
+		this.is_active = data.isActive
+		this.departments = {
+			detail: data.bedding,
+			bed_total: data.bed_total
+		}
+		this.register_at = registration?.registDate || data.registration?.Regist_Date
+		this.register_by = registration?.registBy || data.registration?.Regist_By
+		this.update_at = update?.updateDate || data.update?.Update_Date
+		this.update_by = update?.updateBy || data.update?.Update_By
+		this.delete_at = deleted?.deleteDate || data.delete?.Delete_Date
+		this.delete_by = deleted?.deleteBy || data.delete?.Delete_By
 	}
 }

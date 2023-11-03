@@ -63,10 +63,6 @@
 </div>
 
 <style lang="scss">
-	@mixin responsiveInputWidth($width) {
-		width: calc((($width - 10 - 2) / 1366) * 100vw);
-	}
-
 	.input-wrapper {
 		display: flex;
 		gap: 10px;
@@ -89,7 +85,7 @@
 
 		.input {
 			height: 32px;
-			width: calc(((106 - 10 - 2) / 1366) * 100vw);
+			width: calc(((103 - 10 - 2) / 1366) * 100vw);
 			padding-left: 10px;
 
 			&::placeholder {

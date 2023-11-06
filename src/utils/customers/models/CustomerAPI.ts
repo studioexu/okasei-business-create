@@ -47,8 +47,10 @@ export class CustomerAPI {
 	}
 
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
-		if (data.Cust_CD) {
+		if (data.id) {
 			this._id = data.id
+		}
+		if (data.cd) {
 			this._custCD = data.cd
 		}
 		this._custBranchCD = data.branch_cd
@@ -69,17 +71,19 @@ export class CustomerAPI {
 		this._url = data.url
 		this._numBranch = data.number_of_branch
 		this._foundation = {
-			establishDate: data.foundation.establish_date,
-			establishedBy: data.foundation.establish_by
+			establishDate: data.establish_date,
+			establishedBy: data.establish_by
 		}
-		this._isActive = data.is_active
+
+		this._isActive = data.is_active ? data.is_active : true
+
 		this._departments = {
 			detail: data.departments.detail,
 			bedTotal: data.departments.bed_total
 		}
 		this._registration = {
-			registDate: registration?.registDate || data.regist_at,
-			registBy: registration?.registBy || data.regist_by
+			registDate: registration?.registDate || data.register_at,
+			registBy: registration?.registBy || data.register_by
 		}
 		this._update = {
 			updateDate: update?.updateDate || data.update?.Update_Date,
@@ -140,7 +144,7 @@ export class CustomerAPI {
 	}
 
 	public get registDateTime() {
-		const dateTime = this._registration.registDate.split(' ')
+		const dateTime = this._registration.registDate.split('T')
 		const date = dateTime[0]
 		const time = dateTime[1]
 

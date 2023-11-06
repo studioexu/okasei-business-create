@@ -4,7 +4,7 @@
 
 	export let data: CustomerFactory[]
 	export let customersToDisplay: CustomerFactory[]
-	export let displayDeleteCusomtersIsChecked: boolean
+	export let deletedCustomersAreShown: boolean
 	export let filteredCustomers: CustomerFactory[]
 
 	let instId: string = ''
@@ -74,7 +74,7 @@
 		}
 
 		filteredCustomers = filteredData
-		customersToDisplay = displayDeleteCusomtersIsChecked
+		customersToDisplay = deletedCustomersAreShown
 			? filteredCustomers
 			: filteredCustomers.filter(customer => customer.isActive)
 	}

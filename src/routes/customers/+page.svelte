@@ -4,15 +4,16 @@
 <script lang="ts">
 	import type { CustomerInfo } from '@/utils/customers/types'
 
+	import Pagination from '@/views/Pagination.svelte'
 	import Table from './components/Table.svelte'
 	import SearchMenu from './components/SearchMenu.svelte'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
-	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
 	import Button from '@/components/Button.svelte'
+
+	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
 	import { deleteCustomer } from '@/utils/customers/actions'
 	import { currentApi } from '../../data/api'
 	import { goto } from '$app/navigation'
-	import Pagination from '@/views/Pagination.svelte'
 
 	export let data
 
@@ -20,12 +21,16 @@
 		(customer: CustomerInfo) => new CustomerFactory(customer, 'customer')
 	)
 
+	// let allCustomers = data.data.map(
+	// 	(customer: CustomerInfo) => new CustomerFactory(customer, 'newApi')
+	// )
+
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let filteredCustomers: CustomerFactory[]
 	let customersToDisplayOnPage: CustomerFactory[] = []
 
 	let currentPage: number = 0
-	let displayDeleteCustomersIsChecked = false
+	let deletedCustomersAreShown = false
 
 	$: filteredCustomers
 	$: lastDataIndex =
@@ -49,11 +54,11 @@
 	 */
 	const updatecustomersToDisplayOnPage = (
 		data: CustomerFactory[],
-		firstDataIndex: number,
-		lastDataIndex: number
+		firstCustomerIndex: number,
+		lastCustomerIndex: number
 	) => {
 		customersToDisplayOnPage = []
-		for (let i = firstDataIndex; i <= lastDataIndex; i++) {
+		for (let i = firstCustomerIndex; i <= lastCustomerIndex; i++) {
 			customersToDisplayOnPage = [...customersToDisplayOnPage, data[i]]
 		}
 	}
@@ -61,13 +66,13 @@
 	/**
 	 * The toggle is ON, we display all the customers (deleted and active).
 	 * The toggle is OFF, We only display the active customers.
-	 * We change the state of displayDeleteCusomtersIsChecked.
+	 * We change the state of deletedCustomersAreShown.
 	 * @param e
 	 */
 	const handleCheck = (e: any) => {
-		displayDeleteCustomersIsChecked = e.target.checked
+		deletedCustomersAreShown = e.target.checked
 
-		if (displayDeleteCustomersIsChecked) {
+		if (deletedCustomersAreShown) {
 			customersToDisplay = filteredCustomers === undefined ? allCustomers : filteredCustomers
 		} else {
 			customersToDisplay =
@@ -75,10 +80,6 @@
 					? allCustomers.filter(customer => customer.isActive)
 					: filteredCustomers.filter(customer => customer.isActive)
 		}
-	}
-
-	const handleAddNewCustomer = () => {
-		window.location.href = '/customers/new'
 	}
 
 	let isShown: boolean = false
@@ -104,7 +105,7 @@
 						})
 
 						//update the displayed data depending if we want to display the deleted customers or not.
-						if (displayDeleteCustomersIsChecked) {
+						if (deletedCustomersAreShown) {
 							customersToDisplay = allCustomers
 						} else {
 							customersToDisplay = allCustomers.filter(customer => customer.isActive)
@@ -144,7 +145,7 @@
 			bind:data={allCustomers}
 			bind:customersToDisplay
 			bind:filteredCustomers
-			displayDeleteCusomtersIsChecked={displayDeleteCustomersIsChecked}
+			{deletedCustomersAreShown}
 		/>
 
 		<div class="container">
@@ -162,7 +163,12 @@
 				<h3 class="switch-label">以前削除した施設も含む</h3>
 			</div>
 
-			<Button buttonClass={'btn btn--filled btn--md'} handleClick={handleAddNewCustomer}>
+			<Button
+				buttonClass={'btn btn--filled btn--md'}
+				handleClick={() => {
+					window.location.href = '/customers/new'
+				}}
+			>
 				＋新規登録
 			</Button>
 		</div>

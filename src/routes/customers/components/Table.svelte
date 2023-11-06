@@ -46,7 +46,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each customersToDisplayOnPage as customer (customer.custCD)}
+				{#each customersToDisplayOnPage as customer (customer._id)}
 					<tr
 						class="row {customer.isActive ? '' : 'deleted'}"
 						data-id={customer.custCD}
@@ -58,7 +58,6 @@
 						<TableRow
 							customerName={customer.custName}
 							address={customer.address}
-							bind:isActive={customer.isActive}
 							id={customer.custCD}
 							status={!customer.isActive
 								? '削除'
@@ -73,6 +72,7 @@
 								: customer.registDateTime.date}
 							bind:currentUser
 							bind:isShown
+							bind:isActive={customer.isActive}
 						/>
 					</tr>
 				{/each}

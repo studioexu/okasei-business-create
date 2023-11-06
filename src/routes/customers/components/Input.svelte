@@ -4,7 +4,6 @@
 	export let name: string = ''
 	export let label: string = ''
 	export let inputSize: string = ''
-	export let unit: string = ''
 	export let handleInput: Function
 </script>
 
@@ -19,9 +18,6 @@
 		bind:value
 		on:input={() => handleInput()}
 	/>
-	{#if unit !== ''}
-		<span class="unit">{unit}</span>
-	{/if}
 </div>
 
 <style lang="scss">

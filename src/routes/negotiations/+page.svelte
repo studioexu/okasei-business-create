@@ -3,9 +3,24 @@
 <script lang="ts">
 	import Button from '@/components/customers/Button.svelte'
 	import { user } from '@/stores/users'
+	import Input from './Components/Input.svelte'
+	import Icon from '@/components/Icon.svelte'
 
 	let searchIsShown = false
 	let displayMenuIsShown = false
+
+	const years: string[] = ['']
+	const months: string[] = ['']
+	const currentYear = new Date().getFullYear()
+	const minYear = 2000
+
+	for (let i = minYear; i < currentYear; i++) {
+		years.push(i.toString())
+	}
+
+	for (let i = 1; i <= 12; i++) {
+		months.push(i.toString())
+	}
 
 	const tableHeaders: { label: string; id: keyof DataIsShown | keyof Users }[] = [
 		{ label: '施設名', id: 'customerName' },
@@ -24,8 +39,7 @@
 		{ label: '担当者名', id: 'personInCharge' },
 		{ label: 'メモ', id: 'memo' },
 		{ label: 'DM発送', id: 'shippingStatus' },
-		{ label: 'PR動画', id: 'video' },
-		{ label: 'delete', id: 'delete' }
+		{ label: 'PR動画', id: 'video' }
 	]
 
 	interface DataIsShown {
@@ -46,7 +60,6 @@
 		memo: boolean
 		shippingStatus: boolean
 		video: boolean
-		delete: boolean
 	}
 
 	interface Users {
@@ -67,7 +80,6 @@
 		memo: string
 		shippingStatus: string
 		video: string
-		delete: string
 	}
 
 	const dataIsShown: DataIsShown = {
@@ -87,8 +99,7 @@
 		personInCharge: true,
 		memo: true,
 		shippingStatus: true,
-		video: true,
-		delete: true
+		video: true
 	}
 
 	const users: Users[] = [
@@ -109,8 +120,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		},
 		{
 			customerName: 'hello world yeah yeah lod hakka lodo',
@@ -129,8 +139,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		},
 		{
 			customerName: 'hello world',
@@ -149,8 +158,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		},
 		{
 			customerName: 'hello world yeah yeah lod hakka lodo',
@@ -169,8 +177,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		},
 		{
 			customerName: 'hello world',
@@ -189,8 +196,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		},
 		{
 			customerName: 'hello world yeah yeah lod hakka lodo',
@@ -209,8 +215,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		},
 		{
 			customerName: 'hello world',
@@ -229,8 +234,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		},
 		{
 			customerName: 'hello world yeah yeah lod hakka lodo',
@@ -249,8 +253,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		},
 		{
 			customerName: 'hello world',
@@ -269,8 +272,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		},
 		{
 			customerName: 'hello world yeah yeah lod hakka lodo',
@@ -289,8 +291,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		},
 		{
 			customerName: 'hello world',
@@ -309,8 +310,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		},
 		{
 			customerName: 'hello world yeah yeah lod hakka lodo',
@@ -329,8 +329,7 @@
 			personInCharge: '山田太郎',
 			memo: 'KA-9800　83Ｒセンターロック',
 			shippingStatus: '郵送済み',
-			video: '2023.05.30',
-			delete: ''
+			video: '2023.05.30'
 		}
 	]
 
@@ -339,6 +338,11 @@
 
 		dataIsShown[id] = e.target.checked
 	}
+
+	// const openModal = (index: number) => {
+	// 	isShown = true
+	// 	currentUser = dividedUsers[current][<number>index].employeeNumber
+	// }
 </script>
 
 <section class="section">
@@ -348,7 +352,8 @@
 			<button class="primary" on:click={() => (displayMenuIsShown = !displayMenuIsShown)}
 				>data to display</button
 			>
-			<button class="primary">縛り込み検索</button>
+			<button class="primary" on:click={() => (searchIsShown = !searchIsShown)}>縛り込み検索</button
+			>
 		</div>
 
 		{#if displayMenuIsShown}
@@ -365,6 +370,33 @@
 						/>{header.label}
 					</label>
 				{/each}
+			</div>
+		{/if}
+
+		{#if searchIsShown}
+			<div class="search-menu">
+				<Input label={'施設名'} inputSize={'input--lg'} name={'name-search'} />
+
+				<div class="container">
+					<h2 class="label">商談開始月</h2>
+					<label for="year">
+						<select name="year" id="year">
+							{#each years as year}
+								<option value={year}>{year}</option>
+							{/each}
+						</select>
+						年
+					</label>
+
+					<label for="month">
+						<select name="month" id="month">
+							{#each months as month}
+								<option value={month}>{month}</option>
+							{/each}
+						</select>
+						月
+					</label>
+				</div>
 			</div>
 		{/if}
 	</header>
@@ -394,6 +426,11 @@
 									>
 								{/if}
 							{/each}
+							<td class="tdata icon">
+								<!-- <span on:click={() => openModal(index)}> -->
+								<Icon icon={{ path: 'delete', color: '#0093d0' }} />
+								<!-- </span> -->
+							</td>
 						</tr>
 					{/each}
 				</tbody>
@@ -502,11 +539,50 @@
 		}
 
 		.tdata:nth-child(2n) {
-			background-color: pink;
+			background-color: rgb(244, 244, 244);
 		}
 	}
 
 	.checkbox {
 		margin-right: 11px;
+	}
+
+	.search-menu {
+		margin-top: 20px;
+		padding: 16px 12px;
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		gap: 24px;
+		background-color: rgb(196, 227, 247);
+		border-radius: 16px;
+
+		.container {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			gap: 18px;
+
+			.label {
+				font-size: 18px;
+				font-weight: 400;
+			}
+		}
+	}
+
+	.icon {
+		width: 64px;
+
+		span {
+			cursor: pointer;
+
+			&:hover {
+				opacity: 0.5;
+			}
+		}
+
+		> :global(.svg-icon) {
+			height: 18px * 1.2;
+		}
 	}
 </style>

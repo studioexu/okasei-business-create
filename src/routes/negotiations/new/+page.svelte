@@ -3,6 +3,7 @@
 <script lang="ts">
 	// import Input from './Components/Input.svelte'
 	import Input from '../new/Components/Input.svelte'
+	import DateInput from './Components/DateInput.svelte'
 
 	let currentFieldsetDisplayed = 'customerInfo'
 
@@ -28,6 +29,20 @@
 	for (let i = 0; i <= 23; i++) {
 		hours.push(i.toString())
 	}
+
+	const videoCheckbox = [
+		'動画視聴　依頼',
+		'動画視聴　確認',
+		'新品　購入経験',
+		'増台提案',
+		'値上げ：全世界の値上げ傾向。物流・保管・電気等の徹底',
+		'傷、色あせ：中古商材の為、多少の傷や色あせ有り。洗浄・メンテの徹底',
+		'商品確保：中古商材の為、購入契約者優先の商品確保',
+		'締め支払い：契約書締結による締め支払い',
+		'前払い（特別値引き）の説明',
+		'中古　購入経験',
+		'新品　購入経験'
+	]
 </script>
 
 <section class="section">
@@ -224,7 +239,8 @@
 						</label>
 					</div>
 					<div class="form-row">
-						<h3>商談開始日</h3>
+						<!-- <h3>商談開始日</h3> -->
+						<DateInput name={'negociation-start'} label={'商談開始日'} />
 						<label for="year">
 							<select name="year" id="year">
 								{#each years as year}
@@ -479,6 +495,25 @@
 
 						<Input name={'presentation-video'} label={'PR動画'} />
 					</div>
+
+					<div class="checkbox-container">
+						{#each videoCheckbox as element}
+							<label for={element}> <input type="checkbox" name={element} />{element}</label>
+						{/each}
+					</div>
+
+					<div class="form-row">
+						<label for="bottleneck">ボトルネック確認</label>
+						<textarea name="bottleneck" id="bottleneck" cols="30" rows="10" />
+					</div>
+					<div class="form-row">
+						<label for="chance">機会（チャンス）</label>
+						<textarea name="chance" id="chance" cols="30" rows="10" />
+					</div>
+					<div class="form-row">
+						<label for="risk">脅威（リスク）</label>
+						<textarea name="risk" id="risk" cols="30" rows="10" />
+					</div>
 				</div>
 			</fieldset>
 		{/if}
@@ -486,7 +521,41 @@
 		{#if currentFieldsetDisplayed === 'negociationHistory'}
 			<fieldset class="fieldset">
 				<legend class="fieldset__header">商談経緯</legend>
-				<div class="fieldset__main">hello</div>
+				<div class="fieldset__main">
+					<div class="form-row">
+						<h3>成否日</h3>
+						<label for="year">
+							<select name="year" id="year">
+								{#each years as year}
+									<option value={year}>{year}</option>
+								{/each}
+							</select>
+							年
+						</label>
+
+						<label for="month">
+							<select name="month" id="month">
+								{#each months as month}
+									<option value={month}>{month}</option>
+								{/each}
+							</select>
+							月
+						</label>
+
+						<label for="day">
+							<select name="day" id="day">
+								{#each days as day}
+									<option value={day}>{day}</option>
+								{/each}
+							</select>
+							日
+						</label>
+
+						<Input name={'history-memo'} />
+
+						<button class="btn primary">削除</button>
+					</div>
+				</div>
 			</fieldset>
 		{/if}
 	</div>
@@ -529,5 +598,10 @@
 			padding-bottom: 48px;
 			margin-top: 20px;
 		}
+	}
+
+	.checkbox-container {
+		display: flex;
+		flex-direction: column;
 	}
 </style>

@@ -9,7 +9,6 @@ export const load = async ({ params }) => {
 	const customer: CustomerBackend | undefined = data.find(
 		(customer: CustomerBackend) => customer.Cust_CD?.toString() === params.id.toString()
 	)
-	console.log(customer)
 
 	if (!customer) throw error(404)
 

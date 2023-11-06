@@ -97,30 +97,30 @@
 		border-radius: 4px;
 		border-spacing: 0;
 		border-collapse: collapse;
-	}
 
-	.table-header {
-		text-align: left;
-		padding: 18px calc((27 / 1366) * 100vw);
-		display: none;
-	}
-
-	.row {
-		position: relative;
-		cursor: pointer;
-		background-color: #fff;
-		border-bottom: var(--primary-color) 1px solid;
-
-		&.deleted {
-			background-color: rgb(229, 229, 229);
+		.table-header {
+			text-align: left;
+			padding: 18px calc((27 / 1366) * 100vw);
+			display: none;
 		}
 
-		&:hover {
-			background-color: hsl(199, 75%, 53%, 0.1);
-		}
+		.row {
+			position: relative;
+			cursor: pointer;
+			background-color: #fff;
+			border-bottom: var(--primary-color) 1px solid;
 
-		&:last-child {
-			border-bottom: none;
+			&.deleted {
+				background-color: rgb(229, 229, 229);
+			}
+
+			&:hover {
+				background-color: hsl(199, 75%, 53%, 0.1);
+			}
+
+			&:last-child {
+				border-bottom: none;
+			}
 		}
 	}
 </style>

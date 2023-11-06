@@ -95,6 +95,10 @@ export class CustomerAPI {
 		}
 	}
 
+	public get id() {
+		return this._id
+	}
+
 	public get custCD() {
 		return this._custCD
 	}

@@ -21,10 +21,6 @@
 		(customer: CustomerInfo) => new CustomerFactory(customer, 'customer')
 	)
 
-	// let allCustomers = data.data.map(
-	// 	(customer: CustomerInfo) => new CustomerFactory(customer, 'newApi')
-	// )
-
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let filteredCustomers: CustomerFactory[]
 	let customersToDisplayOnPage: CustomerFactory[] = []
@@ -197,63 +193,63 @@
 		}
 	}
 
-	.checkbox {
-		margin-right: 11px;
-	}
-
 	.toggle-wrapper {
 		display: flex;
 		gap: 10px;
 		align-items: center;
-	}
-
-	.switch-label {
-		font-weight: 400;
-		font-size: 18px;
-	}
-
-	.switch {
-		position: relative;
-		height: 24px;
-		width: 40px;
-		cursor: pointer;
 
 		.checkbox {
-			opacity: 0;
-			width: 0;
-			height: 0;
+			margin-right: 11px;
 		}
 
-		.slider {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			left: 0;
-			top: 0;
-			border-radius: 50px;
-			background-color: rgb(200, 200, 200);
-			transition: background-color 300ms ease-out;
+		.switch-label {
+			font-weight: 400;
+			font-size: 18px;
 		}
 
-		.slider::before {
-			position: absolute;
-			content: ' ';
-			width: 16px;
-			height: 16px;
-			background-color: #fff;
-			left: 4px;
-			top: 4px;
-			border-radius: 100%;
-			transition: transform 300ms ease-out;
-		}
+		.switch {
+			position: relative;
+			height: 24px;
+			width: 40px;
+			cursor: pointer;
 
-		.checkbox:checked {
-			& + .slider {
-				background-color: var(--primary);
+			.checkbox {
+				opacity: 0;
+				width: 0;
+				height: 0;
+			}
+
+			.slider {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				left: 0;
+				top: 0;
+				border-radius: 50px;
+				background-color: rgb(200, 200, 200);
 				transition: background-color 300ms ease-out;
-				&::before {
-					transform: translateX(16px);
-					transition: transform 300ms ease-out;
+			}
+
+			.slider::before {
+				position: absolute;
+				content: ' ';
+				width: 16px;
+				height: 16px;
+				background-color: #fff;
+				left: 4px;
+				top: 4px;
+				border-radius: 100%;
+				transition: transform 300ms ease-out;
+			}
+
+			.checkbox:checked {
+				& + .slider {
+					background-color: var(--primary);
+					transition: background-color 300ms ease-out;
+					&::before {
+						transform: translateX(16px);
+						transition: transform 300ms ease-out;
+					}
 				}
 			}
 		}

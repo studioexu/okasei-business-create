@@ -13,7 +13,6 @@
 	let confirmationPageIsShown = false
 	let isSucceeded: boolean = false
 	let isShown: boolean = false
-	let isNavigating: boolean = false
 
 	const goBack = () => {
 		goto('/customers')

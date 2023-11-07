@@ -1,13 +1,17 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
+	import UploadModal from '@/views/modals/UploadModal.svelte'
 	// import Input from './Components/Input.svelte'
 	import Selector from '@/views/customersViews/Form/Selector.svelte'
 	import Input from '../new/Components/Input.svelte'
 	import DateInput from './Components/DateInput.svelte'
 	import Select from './Components/Select.svelte'
+	let isShown = false
 
 	let currentFieldsetDisplayed = 'customerInfo'
+
+	const pictureToUpload = []
 
 	const clickOnAdd = () => {}
 
@@ -46,7 +50,62 @@
 		'前払い（特別値引き）の説明',
 		'中古　購入経験'
 	]
+
+	let phase: 'shown' | 'success' | 'error' = 'shown'
+
+	const onClick = (event: { detail: { key: string } }) => {
+		switch (event.detail.key) {
+			case 'cancel':
+				isShown = false
+				break
+
+			case 'upload':
+				pictureToUpload.push()
+
+			// case 'delete':
+			// 	try {
+			// 		users.set($users.filter(localUser => localUser.employeeNumber !== currentUser))
+
+			// 		if ($user.employeeNumber === currentUser) {
+			// 			user.set({
+			// 				employeeNumber: 0,
+			// 				name: '',
+			// 				belongsTo: '',
+			// 				role: <Role>'',
+			// 				email: ''
+			// 			})
+
+			// 			goto('/')
+			// 			phase = 'shown'
+			// 		} else phase = 'success'
+			// 	} catch (error) {
+			// 		phase = 'error'
+			// 	}
+			// 	break
+
+			case 'success':
+				isShown = false
+				phase = 'shown'
+				break
+
+			case 'error':
+				phase = 'shown'
+				break
+		}
+	}
+
+	$: {
+		if (isShown && phase === 'success')
+			setTimeout(() => {
+				isShown = false
+				phase = 'shown'
+			}, 2000)
+	}
 </script>
+
+{#if isShown}
+	<UploadModal {phase} on:click={onClick} />
+{/if}
 
 <section class="section">
 	<header class="section__header">
@@ -228,7 +287,7 @@
 							<input name="file" id="file" type="file" />
 							<label for="file">画像追加</label>
 							<input type="text" placeholder="memo" />
-							<button class="primary">保存</button>
+							<button class="primary" on:click={() => (isShown = true)}>ADD</button>
 						</div>
 					</div>
 				</div>

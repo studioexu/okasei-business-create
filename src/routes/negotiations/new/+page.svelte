@@ -2,10 +2,14 @@
 
 <script lang="ts">
 	// import Input from './Components/Input.svelte'
+	import Selector from '@/views/customersViews/Form/Selector.svelte'
 	import Input from '../new/Components/Input.svelte'
 	import DateInput from './Components/DateInput.svelte'
+	import Select from './Components/Select.svelte'
 
 	let currentFieldsetDisplayed = 'customerInfo'
+
+	const clickOnAdd = () => {}
 
 	const years: string[] = ['']
 	const months: string[] = ['']
@@ -40,8 +44,7 @@
 		'商品確保：中古商材の為、購入契約者優先の商品確保',
 		'締め支払い：契約書締結による締め支払い',
 		'前払い（特別値引き）の説明',
-		'中古　購入経験',
-		'新品　購入経験'
+		'中古　購入経験'
 	]
 </script>
 
@@ -214,6 +217,20 @@
 							inputSize={'input--xl'}
 						/>
 					</div>
+
+					<div class="form-row">
+						<h3 class="label">参考書類など 画像データ</h3>
+						<div>
+							<div class="container">
+								<img class="image" src="" alt="" />
+								<p class="image-description">no image</p>
+							</div>
+							<input name="file" id="file" type="file" />
+							<label for="file">画像追加</label>
+							<input type="text" placeholder="memo" />
+							<button class="primary">保存</button>
+						</div>
+					</div>
 				</div>
 			</fieldset>
 		{/if}
@@ -223,122 +240,48 @@
 				<legend class="fieldset__header">商談情報</legend>
 				<div class="fieldset__main">
 					<div class="form-row">
-						<label for="status">
-							ステータス
-							<select name="status" id="status">
-								<option value="order">注文</option>
-								<option value="new">新規受注</option>
-
-								<option value="new-demande">再問合せ</option>
-
-								<option value="send-off">見送り</option>
-
-								<option value="failed">失注</option>
-								<option value="no-stock">在庫無し</option>
-							</select>
-						</label>
+						<Select
+							label={'ステータス'}
+							name={'status'}
+							options={['注文', '新規受注', '再問合せ', '見送り', '失注', '在庫無し']}
+						/>
 					</div>
 					<div class="form-row">
-						<!-- <h3>商談開始日</h3> -->
 						<DateInput name={'negociation-start'} label={'商談開始日'} />
-						<label for="year">
-							<select name="year" id="year">
-								{#each years as year}
-									<option value={year}>{year}</option>
-								{/each}
-							</select>
-							年
-						</label>
-
-						<label for="month">
-							<select name="month" id="month">
-								{#each months as month}
-									<option value={month}>{month}</option>
-								{/each}
-							</select>
-							月
-						</label>
-						<label for="day">
-							<select name="day" id="day">
-								{#each days as day}
-									<option value={day}>{day}</option>
-								{/each}
-							</select>
-							日
-						</label>
 					</div>
 
 					<div class="form-row">
-						<label for="condition">
-							可能性
-							<select name="condition" id="condition">
-								<option value="A">A</option>
-								<option value="B">B</option>
-								<option value="C">C</option>
-								<option value="M">M</option>
-								<option value="MM">MM</option>
-							</select>
-						</label>
+						<Select label={'可能性'} name={'condition'} options={['A', 'B', 'C', 'M', 'MM']} />
 
-						<label for="inflow">
-							流入
-							<select name="inflow" id="inflow">
-								<option value="A">新規FAX</option>
-								<option value="B">新規HP</option>
-								<option value="C">新規メール</option>
-								<option value="M">新規営業</option>
-								<option value="MM">顧客</option>
-								<option value="MM">顧客FAX</option>
-								<option value="MM">顧客HP</option>
-								<option value="MM">顧客メール</option>
-								<option value="MM">確認中</option>
-								<option value="MM">新規紹介</option>
-								<option value="MM">失注顧客</option>
-							</select>
-						</label>
+						<Select
+							name={'inflow'}
+							label={'流入'}
+							options={[
+								'新規FAX',
+								'新規HP',
+								'新規メール',
+								'新規営業',
+								'顧客',
+								'顧客FAX',
+								'顧客HP',
+								'顧客メール',
+								'確認中',
+								'新規紹介',
+								'失注顧客'
+							]}
+						/>
 					</div>
 
 					<div class="form-row">
-						<label for="preference">
-							相見積もり
-							<select name="inflow" id="inflow">
-								<option value="A">新品・中古</option>
-								<option value="B">新品</option>
-								<option value="C">中古</option>
-								<option value="M">不明</option>
-								<option value="MM">確認前</option>
-								<option value="MM">無し</option>
-							</select>
-						</label>
+						<Select
+							label={'相見積もり'}
+							name={'preference'}
+							options={['新品・中古', '新品', '中古', '不明', '確認前', '無し']}
+						/>
 					</div>
 
 					<div class="form-row">
-						<h3>納期</h3>
-						<label for="year">
-							<select name="year" id="year">
-								{#each years as year}
-									<option value={year}>{year}</option>
-								{/each}
-							</select>
-							年
-						</label>
-
-						<label for="month">
-							<select name="month" id="month">
-								{#each months as month}
-									<option value={month}>{month}</option>
-								{/each}
-							</select>
-							月
-						</label>
-						<label for="day">
-							<select name="day" id="day">
-								{#each days as day}
-									<option value={day}>{day}</option>
-								{/each}
-							</select>
-							日
-						</label>
+						<DateInput name={'billing'} label={'納期'} />
 
 						<label for="not-confirmed">
 							<input type="checkbox" name="not-confirmed" id="not-confirmed" />
@@ -351,46 +294,23 @@
 					</div>
 
 					<div class="form-row">
-						<label for="payment-method">
-							<select name="payment-method" id="payment-method">
-								<option value="">確認前</option>
-								<option value="">確認中</option>
-								<option value="">前払い（振込）</option>
-								<option value="">前払い（代引き）</option>
-								<option value="">クレジットカード</option>
-								<option value="">前金＋後払い</option>
-								<option value="">全額後払い</option>
-							</select>
-						</label>
+						<Select
+							name={'payment-method'}
+							label={'支払い方法'}
+							options={[
+								'確認前',
+								'確認中',
+								'前払い（振込）',
+								'前払い（代引き）',
+								'クレジットカード',
+								'前金＋後払い',
+								'全額後払い'
+							]}
+						/>
 					</div>
 
 					<div class="form-row">
-						<h3>成否日</h3>
-						<label for="year">
-							<select name="year" id="year">
-								{#each years as year}
-									<option value={year}>{year}</option>
-								{/each}
-							</select>
-							年
-						</label>
-
-						<label for="month">
-							<select name="month" id="month">
-								{#each months as month}
-									<option value={month}>{month}</option>
-								{/each}
-							</select>
-							月
-						</label>
-						<label for="day">
-							<select name="day" id="day">
-								{#each days as day}
-									<option value={day}>{day}</option>
-								{/each}
-							</select>
-							日
-						</label>
+						<DateInput label={'成否日'} name={'outcome'} />
 
 						<label for="not-confirmed">
 							<input type="checkbox" name="not-confirmed" id="not-confirmed" />
@@ -399,32 +319,7 @@
 					</div>
 
 					<div class="form-row">
-						<h3>次回連絡日時</h3>
-						<label for="year">
-							<select name="year" id="year">
-								{#each years as year}
-									<option value={year}>{year}</option>
-								{/each}
-							</select>
-							年
-						</label>
-
-						<label for="month">
-							<select name="month" id="month">
-								{#each months as month}
-									<option value={month}>{month}</option>
-								{/each}
-							</select>
-							月
-						</label>
-						<label for="day">
-							<select name="day" id="day">
-								{#each days as day}
-									<option value={day}>{day}</option>
-								{/each}
-							</select>
-							日
-						</label>
+						<DateInput label={'次回連絡日時'} name={'next-contact'} />
 
 						<label for="time">
 							<select name="time" id="time">
@@ -432,7 +327,7 @@
 									<option value={hour}>{hour}</option>
 								{/each}
 							</select>
-							日
+							時
 						</label>
 					</div>
 
@@ -450,21 +345,53 @@
 						<Input name={'address2'} inputSize={'input--sm'} label={'住所２'} />
 					</div>
 					<div class="form-row">
-						<h3>距離</h3>
-						<label for="distance">
-							<input type="text" name="distance" id="distance" />
-							km
-						</label>
-
-						<label for="duration">
-							<input type="text" name="duration" id="duration" />
-							時間
-						</label>
+						<Input label={'距離'} name={'distance'} unit={'km'} />
+						<Input name={'duration'} unit={'時間'} />
 					</div>
 
 					<!-- estimation section -->
+					<div class="form-row">
+						<div>
+							<h3 class="label">見積もり金額</h3>
+							<button class="btn primary">＋見積追加</button>
+						</div>
+						<div class="container">
+							<div class="form-row">
+								<DateInput label={'発行日'} name={'issue-date'} />
+							</div>
+							<div class="form-row">
+								<DateInput label={'見積期日'} name={'estimation-due-date'} />
+							</div>
+							<div class="form-row">
+								<Input label={'税抜価格'} name={'price-without-tax'} unit="円" />
+								<Input label={'消費税'} name={'tax'} unit="円" />
+							</div>
+							<div class="form-row">
+								<Input label={'商品'} name={'product'} />
+								<button class="btn primary">商品選択</button>
+								<Input unit={'台'} name={'quantity'} />
+							</div>
+							<div class="form-row">
+								<button class="btn primary">＋商品追加</button>
+							</div>
+							<button class="btn primary delete-btn">削除</button>
+						</div>
+					</div>
 
 					<!-- important memo seciton  -->
+
+					<div class="form-row">
+						<h3 class="label">重要メモ</h3>
+						<div>
+							<div class="container">
+								<DateInput name={'memo-date'} />
+								<textarea name={'important-meme'} id="important-memo" />
+								<button class="btn primary delete-btn">削除</button>
+							</div>
+
+							<button class="btn primary">＋新規追加</button>
+						</div>
+					</div>
 
 					<div class="form-row">
 						<Input name={'representative'} placeholder={'未入力'} label={'自社担当者'} />
@@ -474,45 +401,42 @@
 					</div>
 
 					<div class="form-row">
-						<label for="news">
-							オカセイ便り
-							<select name="news" id="news">
-								<option value="">新規依頼</option>
-								<option value="">新規送付済み</option>
-								<option value="">顧客登録済み</option>
-							</select>
-						</label>
+						<Select
+							label={'オカセイ便り'}
+							name={'news'}
+							options={['新規依頼', '新規送付済み', '顧客登録済み']}
+						/>
 
-						<label for="dm">
-							DM発送
-							<select name="dm" id="dm">
-								<option value="">不要</option>
-								<option value="">要(未手配)</option>
-								<option value="">郵送済み</option>
-								<option value="">持参</option>
-							</select>
-						</label>
+						<Select
+							label={'DM発送'}
+							name={'dm'}
+							options={['不要', '要(未手配)', '郵送済み', '持参']}
+						/>
 
 						<Input name={'presentation-video'} label={'PR動画'} />
 					</div>
 
-					<div class="checkbox-container">
+					<div class="checkboxes-container">
 						{#each videoCheckbox as element}
-							<label for={element}> <input type="checkbox" name={element} />{element}</label>
+							<label class="checkbox-container" for={element}>
+								{element}
+								<input class="checkbox" type="checkbox" name={element} id={element} />
+								<span class="checkmark" />
+							</label>
 						{/each}
 					</div>
 
 					<div class="form-row">
-						<label for="bottleneck">ボトルネック確認</label>
+						<label class="label" for="bottleneck">ボトルネック確認</label>
 						<textarea name="bottleneck" id="bottleneck" cols="30" rows="10" />
 					</div>
 					<div class="form-row">
-						<label for="chance">機会（チャンス）</label>
+						<label class="label" for="chance">機会（チャンス）</label>
 						<textarea name="chance" id="chance" cols="30" rows="10" />
 					</div>
 					<div class="form-row">
-						<label for="risk">脅威（リスク）</label>
-						<textarea name="risk" id="risk" cols="30" rows="10" />
+						<label class="label" for="risk">脅威（リスク）</label>
+						<textarea name="risk" id="risk" />
 					</div>
 				</div>
 			</fieldset>
@@ -523,33 +447,7 @@
 				<legend class="fieldset__header">商談経緯</legend>
 				<div class="fieldset__main">
 					<div class="form-row">
-						<h3>成否日</h3>
-						<label for="year">
-							<select name="year" id="year">
-								{#each years as year}
-									<option value={year}>{year}</option>
-								{/each}
-							</select>
-							年
-						</label>
-
-						<label for="month">
-							<select name="month" id="month">
-								{#each months as month}
-									<option value={month}>{month}</option>
-								{/each}
-							</select>
-							月
-						</label>
-
-						<label for="day">
-							<select name="day" id="day">
-								{#each days as day}
-									<option value={day}>{day}</option>
-								{/each}
-							</select>
-							日
-						</label>
+						<DateInput label={'成否日'} name={'outcome-day'} />
 
 						<Input name={'history-memo'} />
 
@@ -567,7 +465,7 @@
 	.form-row {
 		display: flex;
 		justify-content: flex-start;
-		gap: 18px;
+		gap: 12px;
 		margin-bottom: 20px;
 	}
 
@@ -600,8 +498,123 @@
 		}
 	}
 
-	.checkbox-container {
+	.checkboxes-container {
 		display: flex;
 		flex-direction: column;
+	}
+
+	textarea {
+		resize: none;
+		width: calc(100% - 24px);
+		height: calc(100px - 24px);
+		border-radius: 8px;
+		padding: 12px;
+	}
+
+	.container {
+		position: relative;
+		background-color: #f4f4f4;
+		padding: 10px 21px;
+		border-radius: 8px;
+		width: 100%;
+	}
+
+	.label {
+		font-size: 18px;
+		font-weight: 400;
+		width: 130px;
+	}
+
+	.delete-btn {
+		position: absolute;
+		bottom: 10px;
+		right: 21px;
+	}
+
+	.checkbox-container {
+		display: flex;
+		justify-content: flex-end;
+		flex-direction: row-reverse;
+		align-items: center;
+		width: 100%;
+		position: relative;
+		// padding-left: 35px;
+		gap: 18px;
+		margin-bottom: 12px;
+		cursor: pointer;
+		font-size: 18px;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+
+		& :hover {
+			.checkbox ~ .checkmark {
+				background-color: #ccc;
+			}
+		}
+
+		& :after {
+			content: '';
+			// position: absolute;
+			display: none;
+		}
+
+		.checkmark {
+			// position: absolute;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			top: 0;
+			left: 0;
+			height: 20px;
+			width: 20px;
+			// background-color: #eee;
+			border: 1px solid var(--black);
+			border-radius: 3px;
+
+			&:after {
+				width: 3px;
+				height: 8px;
+				border: solid white;
+				border-width: 0 3px 3px 0;
+				-webkit-transform: rotate(45deg);
+				-ms-transform: rotate(45deg);
+				transform: rotate(45deg);
+			}
+		}
+
+		.checkbox {
+			position: absolute;
+			opacity: 0;
+			cursor: pointer;
+			height: 0;
+			width: 0;
+
+			&:checked ~ .checkmark {
+				background-color: var(--primary);
+
+				&:after {
+					display: block;
+				}
+			}
+		}
+	}
+
+	.image {
+		height: 100px;
+		width: 100px;
+		background-color: pink;
+	}
+
+	#file {
+		// width: 0;
+		// height: 0;
+		// opacity: 0;
+
+		& ~ label {
+			background-color: var(--primary);
+			color: #fff;
+		}
 	}
 </style>

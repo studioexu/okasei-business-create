@@ -4,12 +4,12 @@
 	export let label: string = ''
 	export let options: string[] = []
 
-	export let value: string
+	export let value: string = ''
 </script>
 
 <div class="input-wrapper">
 	{#if type !== 'date' && label.length !== 0}
-		<label for={name}>
+		<label class="label" for={name}>
 			{label}
 		</label>
 	{/if}
@@ -31,6 +31,12 @@
 	.input-wrapper {
 		display: flex;
 		gap: 12px;
+
+		&:first-child {
+			.label {
+				width: 130px;
+			}
+		}
 	}
 	.select {
 		height: 32px;

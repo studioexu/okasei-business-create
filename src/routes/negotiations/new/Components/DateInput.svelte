@@ -3,7 +3,7 @@
 
 	export let name: string
 	export let withTime: boolean = false
-	export let label: string
+	export let label: string = ''
 
 	export let value: string = ''
 
@@ -15,34 +15,40 @@
 	const minYear = 2000
 
 	let maxDaysInMonth = 31
+	const formatDateElement = (element: string) => {
+		if (parseInt(element) < 10) {
+			return '0' + element
+		} else {
+			return element
+		}
+	}
 
-	let month: string
-	let year: string
-	let day: string
-	let hour: string
+	let month: string = value.length > 0 ? value.split('-')[0] : ''
+	let year: string = value.length > 0 ? value.split('-')[1] : ''
+	let day: string = value.length > 0 ? value.split('-')[2] : ''
+	// let hour: string
 
-	$: value = year + month + day + hour
-
-	$: console.log(value)
+	$: value =
+		month !== '' && year !== '' && day !== ''
+			? year + '-' + formatDateElement(month) + '-' + formatDateElement(day)
+			: ''
 
 	$: monthInt = parseInt(month)
 
+	const checkIsLeapYear = (year: number) => {
+		if (year % 4 === 0) {
+			if (year % 100 === 0) {
+				if (year === 400) return true
+				else return false
+			} else return true
+		} else return false
+	}
+
 	const adjustNumberOfDays = (month: number) => {
-		// switch (month) {
-		// 	case 2:
-		// 		return 28
-		// 	case :
-		// 		return 28
-		// 	case 2:
-		// 		return 28
-		// 	case 2:
-		// 		return 28
-
-		// 	default:
-		// 		break
-		// }
-
 		if (month === 2) {
+			if (checkIsLeapYear(parseInt(year))) {
+				return 29
+			}
 			return 28
 		} else if (month <= 7 && month % 2 !== 0) {
 			return 31
@@ -54,7 +60,7 @@
 	}
 
 	$: maxDaysInMonth = adjustNumberOfDays(monthInt)
-	$: console.log(maxDaysInMonth)
+	// $: console.log(maxDaysInMonth)
 
 	for (let i = minYear; i < currentYear; i++) {
 		years.push(i.toString())
@@ -74,7 +80,7 @@
 
 	$: days = updateNumberOfDaysInAMonth(maxDaysInMonth)
 
-	$: console.log(days)
+	// $: console.log(days)
 
 	for (let i = 0; i <= 23; i++) {
 		hours.push(i.toString())
@@ -82,22 +88,29 @@
 </script>
 
 <div class="date-input">
-	<h3 class="label">{label}</h3>
+	{#if label}
+		<h3 class="label">{label}</h3>
+	{/if}
 	<Select type="date" name={name + '-year'} label={'年'} options={years} bind:value={year} />
 	<Select type="date" name={name + '-month'} label={'月'} options={months} bind:value={month} />
 	<Select type="date" name={name + '-day'} label={'日'} options={days} bind:value={day} />
 
-	{#if withTime}
+	<!-- {#if withTime}
 		<Select type="date" name={name + '-time'} label={'時'} options={hours} bind:value={hour} />
-	{/if}
+	{/if} -->
 </div>
 
 <style class="scss">
 	.date-input {
 		display: flex;
 		flex-direction: row;
-		gap: 18px;
+		gap: 12px;
 		align-items: center;
+		&:first-child {
+			& > .label {
+				width: 130px;
+			}
+		}
 	}
 
 	.label {

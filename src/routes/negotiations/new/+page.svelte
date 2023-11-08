@@ -11,7 +11,9 @@
 
 	let currentFieldsetDisplayed = 'customerInfo'
 
-	const pictureToUpload = []
+	let imagesToUpload: File[] = []
+
+	$: imagesToUpload
 
 	const clickOnAdd = () => {}
 
@@ -53,14 +55,23 @@
 
 	let phase: 'shown' | 'success' | 'error' = 'shown'
 
-	const onClick = (event: { detail: { key: string } }) => {
+	const onClick = (event: { detail: { key: string; fileToUpload: File } }) => {
 		switch (event.detail.key) {
 			case 'cancel':
 				isShown = false
 				break
 
 			case 'upload':
-				pictureToUpload.push()
+				let newArray = imagesToUpload
+
+				console.log('file to upload')
+
+				console.log(event.detail.fileToUpload)
+
+				newArray.push(event.detail.fileToUpload)
+
+				// console.log(imagesToUpload)
+				imagesToUpload = newArray
 
 			// case 'delete':
 			// 	try {
@@ -279,15 +290,30 @@
 
 					<div class="form-row">
 						<h3 class="label">参考書類など 画像データ</h3>
-						<div>
-							<div class="container">
-								<img class="image" src="" alt="" />
-								<p class="image-description">no image</p>
-							</div>
-							<input name="file" id="file" type="file" />
-							<label for="file">画像追加</label>
-							<input type="text" placeholder="memo" />
-							<button class="primary" on:click={() => (isShown = true)}>ADD</button>
+						<div style="width: 100%;">
+							{#if imagesToUpload.length === 0}
+								<div class="image-wrapper">
+									<button class="image-empty" on:click={() => (isShown = true)}>
+										<span>+</span>
+									</button>
+									<p class="image-description">画像がアップロードされていません。</p>
+								</div>
+							{:else}
+								{#each imagesToUpload as image}
+									<div class="image-wrapper">
+										<img class="image" src={URL.createObjectURL(image)} alt="" />
+										<!-- <Input placeholder="メモ" name={'image-description'} inputSize={'input--lg'} /> -->
+										<input type="text" placeholder="メモ" class="image-description" />
+										<button class="primary delete">削除</button>
+									</div>
+								{/each}
+							{/if}
+							<!-- <input name="file" id="file" type="file" />
+							<label for="file">画像追加</label> -->
+							<!-- <input type="text" placeholder="memo" /> -->
+							<button class="add-picture-btn primary" on:click={() => (isShown = true)}
+								>＋画像追加</button
+							>
 						</div>
 					</div>
 				</div>
@@ -661,9 +687,11 @@
 	}
 
 	.image {
-		height: 100px;
-		width: 100px;
-		background-color: pink;
+		height: 124px;
+		width: 200px;
+		// width: 100px;
+		// background-color: pink;
+		object-fit: contain;
 	}
 
 	#file {
@@ -675,5 +703,56 @@
 			background-color: var(--primary);
 			color: #fff;
 		}
+	}
+
+	.image-wrapper {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-end;
+		gap: 18px;
+		background-color: #f4f4f4;
+		padding: 10px 21px;
+		border-radius: 8px;
+		margin-bottom: 12px;
+	}
+
+	.image-empty {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 124px;
+		width: 200px;
+		border: 2px dashed var(--primary);
+		border-radius: 8px;
+		margin: 0;
+
+		span {
+			font-size: 48px;
+			color: var(--primary);
+		}
+	}
+
+	.add-picture-btn {
+		// width: 180px;
+		margin: 0;
+		margin-top: 20px;
+	}
+
+	.image-description {
+		height: 32px;
+		width: 100%;
+		// margin: 0 auto;
+	}
+
+	.delete {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+
+		padding: 0;
+		height: 32px;
+		width: 100px;
+		min-width: 0;
 	}
 </style>

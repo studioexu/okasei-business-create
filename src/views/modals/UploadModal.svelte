@@ -5,8 +5,15 @@
 <script lang="ts">
 	export let phase: 'shown' | 'success' | 'error' = 'shown'
 
+	let fileToUpload: File
+
+	const handleChange = e => {
+		console.log(e.target.files[0])
+		fileToUpload = e.target.files[0]
+	}
+
 	const dispatch = createEventDispatcher()
-	const onClick = (key: string) => dispatch('click', { key })
+	const onClick = (key: string) => dispatch('click', { key, fileToUpload })
 
 	const handleDrop = (e: any) => {
 		e.preventDefault()
@@ -25,7 +32,13 @@
 		<div class="modal-main" on:drop={handleDrop}>
 			<p>ここにファイルをドラッグ&ドロップ</p>
 			<p>または</p>
-			<input type="file" id="file" name="file" />
+			<input
+				type="file"
+				id="file"
+				name="file"
+				accept="image/png, image/jpeg, .pdf"
+				on:change={handleChange}
+			/>
 			<label class="primary modal-btn" for="file"> ファイルを選択する </label>
 			<p>アップロードできるファイル形式は、JPEG/PNG/PDFのみです。</p>
 		</div>
@@ -47,7 +60,6 @@
 		width: 100vw;
 		left: 0;
 		top: 0;
-		// background-color: var(--black);
 		z-index: 100;
 
 		.back {
@@ -61,16 +73,9 @@
 		}
 
 		.container {
-			// position: absolute;
-			// content: '';
-			// left: 50%;
-			// top: 50%;
-			// transform: translate(-50%, -50%);
 			width: fit-content;
 			border-radius: 16px;
 			padding: 37px 50px;
-			// height: 50vh;
-			// width: 50vw;
 			background-color: var(--primary);
 			z-index: 200;
 		}
@@ -104,11 +109,11 @@
 		margin-top: 26px;
 	}
 
-	#file {
-		width: 0;
-		height: 0;
-		opacity: 0;
-	}
+	// #file {
+	// 	width: 0;
+	// 	height: 0;
+	// 	opacity: 0;
+	// }
 
 	.modal-btn {
 		display: inline-block;

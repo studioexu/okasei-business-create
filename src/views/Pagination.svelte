@@ -21,53 +21,35 @@
 		return numbers
 	}
 
-	const movePage = (page: 'prev' | 'next' | number, isActive?: boolean): void => {
-		switch (page) {
-			case 'prev':
-				current--
-				break
-
-			case 'next':
-				current++
-				break
-
-			default:
-				if (!isActive) current = page
-		}
-
-		const dispatch = createEventDispatcher()
-		dispatch('click', { current })
-	}
+	const dispatch = createEventDispatcher()
+	const onClick = (page: number) => dispatch('click', { page })
 </script>
 
 <div class="pagination">
 	<div class="pagination-container">
 		{#if current > 1 && pages.length > max}
-			<button on:click={() => movePage(0)}>
-				<Icon icon={{ path: 'to-first' }} />
+			<button on:click={() => onClick(0)}>
+				<Icon icon={{ path: 'to-first', color: 'black' }} />
 			</button>
 		{/if}
 		{#if current > 0}
-			<button on:click={() => movePage('prev')}>
-				<Icon icon={{ path: 'to-prev' }} />
+			<button on:click={() => onClick(current - 1)}>
+				<Icon icon={{ path: 'to-prev', color: 'black' }} />
 			</button>
 		{/if}
-		{#each generatePagination() as num}
-			<button
-				class:active={num - 1 === current}
-				on:click={() => movePage(num - 1, num - 1 === current)}
-			>
-				{num}
+		{#each generatePagination() as page}
+			<button class:active={page - 1 === current} on:click={() => onClick(page - 1)}>
+				{page}
 			</button>
 		{/each}
 		{#if current < pages.length - 1}
-			<button on:click={() => movePage('next')}>
-				<Icon icon={{ path: 'to-next' }} />
+			<button on:click={() => onClick(current + 1)}>
+				<Icon icon={{ path: 'to-next', color: 'black' }} />
 			</button>
 		{/if}
 		{#if current < pages.length - 2 && pages.length > max}
-			<button on:click={() => movePage(pages.length - 1)}>
-				<Icon icon={{ path: 'to-last' }} />
+			<button on:click={() => onClick(pages.length - 1)}>
+				<Icon icon={{ path: 'to-last', color: 'black' }} />
 			</button>
 		{/if}
 	</div>

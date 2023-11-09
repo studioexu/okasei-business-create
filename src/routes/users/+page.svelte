@@ -7,28 +7,16 @@
 	import Icon from '@/components/Icon.svelte'
 	import Pagination from '@/views/Pagination.svelte'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
+
+	const fieldsets: { id: SortedItemForUser; type: string; list?: string; text: string }[] = [
+		{ id: 'employeeNumber', type: 'number', text: '社員番号' },
+		{ id: 'name', type: 'text', text: '氏名' },
+		{ id: 'belongsTo', type: 'text', text: '所属' }
+	]
 </script>
 
 <script lang="ts">
 	const isAdmin: boolean = $user.role === 'システム管理者'
-
-	const fieldsets: { id: SortedItemForUser; type: string; list?: string; text: string }[] = [
-		{
-			id: 'employeeNumber',
-			type: 'number',
-			text: '社員番号'
-		},
-		{
-			id: 'name',
-			type: 'text',
-			text: '氏名'
-		},
-		{
-			id: 'belongsTo',
-			type: 'text',
-			text: '所属'
-		}
-	]
 
 	const sortedValues: { employeeNumber: string; name: string; belongsTo: string } = {
 		employeeNumber: '',
@@ -69,8 +57,8 @@
 		currentUser = dividedUsers[current][<number>index].employeeNumber
 	}
 
-	const movePage = (event: { detail: { current: number } }): void => {
-		current = event.detail.current
+	const movePage = (event: { detail: { page: number } }): void => {
+		current = event.detail.page
 	}
 
 	const onClick = (event: { detail: { key: string } }) => {
@@ -247,6 +235,11 @@
 				display: flex;
 				flex-wrap: wrap;
 				justify-content: center;
+
+				tr {
+					display: flex;
+					flex-wrap: nowrap;
+				}
 			}
 
 			thead tr {

@@ -7,7 +7,7 @@
 
 	let fileToUpload: File
 
-	const handleChange = e => {
+	const handleChange = (e: any) => {
 		console.log(e.target.files[0])
 		fileToUpload = e.target.files[0]
 	}
@@ -82,7 +82,6 @@
 	}
 
 	.modal-main {
-		// width: max-content;
 		padding: 30px 18%;
 		border: 2px dashed #fff;
 		text-align: center;

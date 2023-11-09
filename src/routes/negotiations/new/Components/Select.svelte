@@ -40,6 +40,8 @@
 	}
 	.select {
 		height: 32px;
+		// padding: 7px 0;
+
 		width: calc(((106 - 10 - 2) / 1366) * 100vw);
 		padding-left: 10px;
 		font-size: 18px;

@@ -1,7 +1,6 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
-	import Button from '@/components/customers/Button.svelte'
 	import { user } from '@/stores/users'
 	import Input from './Components/Input.svelte'
 	import Icon from '@/components/Icon.svelte'

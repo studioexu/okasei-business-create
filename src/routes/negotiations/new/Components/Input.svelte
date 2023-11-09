@@ -79,7 +79,7 @@
 		align-items: center;
 		width: fit-content;
 		// margin-bottom: 20px;
-		gap: 10px;
+		gap: 12px;
 
 		&:first-child {
 			.label {
@@ -89,7 +89,10 @@
 
 		.input {
 			height: 32px;
+			// padding: 7px 0;
 			padding-left: 10px;
+			font-size: 18px;
+			// width: 100%;
 
 			&::placeholder {
 				color: rgb(206, 205, 205);

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Button from '@/components/customers/Button.svelte'
+	import Button from '@/components/Button.svelte'
 	export let isOpened: boolean = false
 
 	/**

@@ -36,7 +36,7 @@
 			<li class:active={menu.routes.includes(path) || menu.regexp?.test(path)}>
 				<a href={menu.path}>
 					<span class:invisible={!menu.routes.includes(path) && !menu.regexp?.test(path)}>
-						<Icon icon={{ path: menu.path, color: '#0093d0' }} />
+						<Icon icon={{ path: menu.path, color: 'primary' }} />
 					</span>
 					<span class:invisible={menu.routes.includes(path) || menu.regexp?.test(path)}>
 						<Icon icon={{ path: menu.path, color: '#fff' }} />

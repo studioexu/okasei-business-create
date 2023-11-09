@@ -27,7 +27,7 @@
 <td class="data update">
 	<button class="btn btn--update {isActive ? '' : 'disabled'}" on:click={handleEditItem}>
 		{#if isActive}
-			<Icon icon={{ path: 'edit', color: '#0093d0' }} />
+			<Icon icon={{ path: 'edit', color: 'primary' }} />
 		{:else}
 			<Icon icon={{ path: 'edit', color: 'rgb(200, 200, 200)' }} />
 		{/if}
@@ -36,7 +36,7 @@
 <td class="data erase">
 	<button class="btn btn--erase {isActive ? '' : 'disabled'}" {id} on:click={handleDeleteItem}>
 		{#if isActive}
-			<Icon icon={{ path: 'delete', color: '#0093d0' }} />
+			<Icon icon={{ path: 'delete', color: 'primary' }} />
 		{:else}
 			<Icon icon={{ path: 'delete', color: 'rgb(200, 200, 200)' }} />
 		{/if}

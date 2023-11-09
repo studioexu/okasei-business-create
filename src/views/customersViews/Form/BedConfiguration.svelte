@@ -37,7 +37,7 @@
 
 	<button type="button" class="btn btn--delete" on:click={deleteItem}>
 		{#if bedInputArray.length > 1}
-			<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
+			<Icon icon={{ path: 'close-btn', color: 'primary' }} />
 		{/if}
 	</button>
 </div>

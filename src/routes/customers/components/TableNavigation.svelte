@@ -97,7 +97,7 @@
 <div class="table-navigation">
 	{#if currentPage > 1}
 		<button class="btn btn--prev" on:click={handlePrevious}>
-			<Icon icon={{ path: 'to-next', color: '#595857' }} />
+			<Icon icon={{ path: 'to-next', color: 'black' }} />
 		</button>
 	{/if}
 
@@ -115,7 +115,7 @@
 
 	{#if currentPage < numberOfPages}
 		<button class="btn btn--next" on:click={handleNext}
-			><Icon icon={{ path: 'to-next', color: '#595857' }} />
+			><Icon icon={{ path: 'to-next', color: 'black' }} />
 		</button>
 	{/if}
 </div>

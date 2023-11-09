@@ -46,6 +46,11 @@ export class Customer {
 		deleteBy: string
 	}
 
+	private _googleReview: boolean
+	private _reviews: string
+	private _businessList: string
+	private _closingMonth: string
+
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.Cust_CD) {
 			this._id = data.Cust_CD
@@ -89,6 +94,10 @@ export class Customer {
 			deleteDate: deleted?.deleteDate || data.delete?.Delete_Date,
 			deleteBy: deleted?.deleteBy || data.delete?.Delete_By
 		}
+		this._googleReview = data.googleReview
+		this._reviews = data.reviews
+		this._businessList = data.businessList
+		this._closingMonth = data.closingMonth
 	}
 
 	public get custCD() {
@@ -201,5 +210,21 @@ export class Customer {
 
 	public set isActive(active: boolean) {
 		this._isActive = active
+	}
+
+	public get googleReview() {
+		return this._googleReview
+	}
+
+	public get reviews() {
+		return this._reviews
+	}
+
+	public get businessList() {
+		return this._businessList
+	}
+
+	public get closingMonth() {
+		return this._closingMonth
 	}
 }

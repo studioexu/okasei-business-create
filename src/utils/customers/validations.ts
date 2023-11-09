@@ -1,4 +1,4 @@
-import { prefectures } from '../data/prefectures'
+import { prefectures } from '@/data/data'
 import { isValidPhoneNumber } from 'libphonenumber-js'
 
 /**
@@ -22,7 +22,6 @@ export const phoneNumberValidation = (phoneNumber: string) => {
 	const regex =
 		/^(([0-9]{10}$)|([0-9]{3}-[0-9]{3}-[0-9]{4}$)|([0-9]{2}-[0-9]{4}-[0-9]{4}$)|([0-9]{3}-[0-9]{4}-[0-9]{4}$))/g
 
-	// return regex.test(phoneNumber)
 	return isValidPhoneNumber(phoneNumber, 'JP')
 }
 
@@ -33,15 +32,9 @@ export const phoneNumberValidation = (phoneNumber: string) => {
  * @returns boolean
  */
 export const postalCodeValidation = (postalCode: string) => {
-	const regex = /[0-9]{7}/g
+	const regex = /^[0-9]{7}$/
 	return regex.test(postalCode)
 }
-
-//OLD version accepting "-" and postal code icon "〒"
-// export const postalCodeValidation = (postalCode: string) => {
-// 	const regex = /〒?[0-9]{3}-?[0-9]{4}/g
-// 	return regex.test(postalCode)
-// }
 
 /**
  * check if the year input is correct
@@ -153,6 +146,9 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return checkIfInputIsNumber(input)
 
 		case 'numberOfEmployees':
+			return input === '' || checkIfInputIsNumber(input)
+
+		case 'numberOfFacilities':
 			return input === '' || checkIfInputIsNumber(input)
 
 		case 'homepage':

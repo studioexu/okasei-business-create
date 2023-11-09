@@ -3,7 +3,7 @@ interface Detail {
 	numBeds: number
 }
 
-export class CustomerBis {
+export class CustomerAPI {
 	private _id?: string
 	private _custCD?: string | undefined
 	private _custBranchCD: string
@@ -47,39 +47,43 @@ export class CustomerBis {
 	}
 
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
-		if (data.Cust_CD) {
+		if (data.id) {
 			this._id = data.id
-			this._custCD = data.Cust_CD
 		}
-		this._custBranchCD = data.Cust_Branch_CD
-		this._custName = data.Cust_Name
-		this._custKana = data.Cust_Kana
-		this._instId = data.Inst_ID
-		this._custType = data.Cust_Type
+		if (data.cd) {
+			this._custCD = data.cd
+		}
+		this._custBranchCD = data.branch_cd
+		this._custName = data.name
+		this._custKana = data.kana
+		this._instId = data.institution_cd
+		this._custType = data.type
 		this._address = {
-			postalCode: data.Address.Cust_Postal,
-			prefecture: data.Address.Cust_Ken,
-			city: data.Address.Cust_City,
-			address1: data.Address.Cust_Addr1,
-			address2: data.Address.Cust_Addr2,
-			phoneNumber: data.Address.Cust_Phone,
-			fax: data.Address.Cust_Fax
+			postalCode: data.postal_cd,
+			prefecture: data.ken,
+			city: data.city,
+			address1: data.address1,
+			address2: data.address2,
+			phoneNumber: data.phone,
+			fax: data.fax
 		}
-		this._numEmployees = data.Num_Employees
-		this._url = data.Cust_URL
-		this._numBranch = data.Num_Branch
+		this._numEmployees = data.number_of_employees
+		this._url = data.url
+		this._numBranch = data.number_of_branch
 		this._foundation = {
-			establishDate: data.foundation.Establish_Date,
-			establishedBy: data.foundation.Established_By
+			establishDate: data.establish_date,
+			establishedBy: data.establish_by
 		}
-		this._isActive = data.is_active
+
+		this._isActive = data.is_active ? data.is_active : true
+
 		this._departments = {
 			detail: data.departments.detail,
 			bedTotal: data.departments.bed_total
 		}
 		this._registration = {
-			registDate: registration?.registDate || data.registration?.Regist_Date,
-			registBy: registration?.registBy || data.registration?.Regist_By
+			registDate: registration?.registDate || data.register_at,
+			registBy: registration?.registBy || data.register_by
 		}
 		this._update = {
 			updateDate: update?.updateDate || data.update?.Update_Date,
@@ -89,6 +93,10 @@ export class CustomerBis {
 			deleteDate: deleted?.deleteDate || data.delete?.Delete_Date,
 			deleteBy: deleted?.deleteBy || data.delete?.Delete_By
 		}
+	}
+
+	public get id() {
+		return this._id
 	}
 
 	public get custCD() {
@@ -140,7 +148,7 @@ export class CustomerBis {
 	}
 
 	public get registDateTime() {
-		const dateTime = this._registration.registDate.split(' ')
+		const dateTime = this._registration.registDate.split('T')
 		const date = dateTime[0]
 		const time = dateTime[1]
 

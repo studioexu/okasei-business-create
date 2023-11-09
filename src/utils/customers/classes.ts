@@ -1,99 +1,6 @@
-interface bedding {
-	department: string
-	quantity: string
-}
-
 interface Detail {
 	dept_ID: number
 	num_beds: number
-}
-
-export class Customer {
-	id?: string
-	branchNumber: string
-	customerNumber?: string | undefined
-	customerName: string
-	kana: string
-	facilityNumber: string
-	businessType: string
-	address: {
-		postalCode: string
-		prefecture: string
-		city: string
-		address1: string
-		address2: string
-		phoneNumber: string
-		fax: string
-	}
-	numberOfEmployees: string
-	homepage: string
-	numberOfFacilities: string
-	foundation: {
-		month: string
-		year: string
-		founder: string
-	}
-	bedding: bedding[]
-	registration: {
-		status: string
-		registrationDate: string
-		registrationTime: string
-	}
-	update: {
-		status: string
-		lastUpdatedDate: string
-		lastUpdatedTime: string
-	}
-	delete: {
-		status: string
-		deletedDate: string
-		deletedTime: string
-	}
-
-	constructor(data: any, registration?: any, update?: any, deleted?: any) {
-		if (data.id) {
-			this.id = data.id
-			this.customerNumber = data.id
-		}
-		this.branchNumber = data.branchNumber
-		this.customerName = data.customerName
-		this.kana = data.kana
-		this.facilityNumber = data.facilityNumber
-		this.businessType = data.businessType
-		this.address = {
-			postalCode: data.postalCode,
-			prefecture: data.prefecture,
-			city: data.city,
-			address1: data.address1,
-			address2: data.address2,
-			phoneNumber: data.phoneNumber,
-			fax: data.fax
-		}
-		this.numberOfEmployees = data.numberOfEmployees
-		this.homepage = data.homepage
-		this.numberOfFacilities = data.numberOfFacilities
-		this.foundation = {
-			month: data.month,
-			year: data.year,
-			founder: data.founder
-		}
-		this.bedding = data.bedding
-		this.registration = {
-			status: registration?.status,
-			registrationDate: registration?.date,
-			registrationTime: registration?.time
-		}
-		this.update = {
-			status: update?.status,
-			lastUpdatedDate: update?.date,
-			lastUpdatedTime: update?.time
-		}
-		this.delete = {
-			status: deleted?.status,
-			deletedDate: deleted?.date,
-			deletedTime: deleted?.time
-		}
-	}
 }
 
 export class CustomerBackend {
@@ -138,6 +45,10 @@ export class CustomerBackend {
 		Delete_Date: string
 		Delete_By: number
 	}
+	googleReview: boolean
+	reviews: string
+	closingMonth: string
+	business: string
 
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.id) {
@@ -182,5 +93,78 @@ export class CustomerBackend {
 			Delete_Date: deleted?.deleteDate || data.delete?.Delete_Date,
 			Delete_By: deleted?.deleteBy || data.delete?.Delete_By
 		}
+
+		this.business = data.business
+		this.googleReview = data.googleReview
+		this.reviews = data.reviews
+		this.closingMonth = data.closingMonth
+	}
+}
+
+export class CustomerNewApi {
+	id?: string
+	cd?: string
+	branch_cd: string
+	name: string
+	kana: string
+	institution_cd: string
+	type: string
+	postal_cd: string
+	ken: string
+	city: string
+	address1: string
+	address2: string
+	phone: string
+	fax: string
+	number_of_employee: string
+	url: string
+	number_of_branch: string
+	establish_date: string
+	establish_by: string
+	is_active: boolean
+	departments: {
+		detail: Detail[]
+		bed_total: number
+	}
+	register_at: string
+	register_by: number
+	update_at: string
+	update_by: number
+	delete_at: string
+	delete_by: number
+
+	constructor(data: any, registration?: any, update?: any, deleted?: any) {
+		if (data.id) {
+			this.id = data.id
+			this.cd = data.custCd === '' || data.custCd === undefined ? '1' : data.custCd
+		}
+		this.branch_cd = data.branchNumber
+		this.name = data.customerName
+		this.kana = data.kana
+		this.institution_cd = data.facilityNumber
+		this.type = data.businessType === '法人' ? 'C' : 'I'
+		this.postal_cd = data.postalCode
+		this.ken = data.prefecture
+		this.city = data.city
+		this.address1 = data.address1
+		this.address2 = data.address2
+		this.phone = data.phoneNumber
+		this.fax = data.fax
+		this.number_of_employee = data.numberOfEmployees
+		this.url = data.homepage
+		this.number_of_branch = data.numberOfFacilities
+		this.establish_date = data.year
+		this.establish_by = data.founder
+		this.is_active = data.isActive
+		this.departments = {
+			detail: data.bedding,
+			bed_total: data.bed_total
+		}
+		this.register_at = registration?.registDate || data.register_at
+		this.register_by = registration?.registBy || data.register_by
+		this.update_at = update?.updateDate || data.update_at
+		this.update_by = update?.updateBy || data.update_by
+		this.delete_at = deleted?.deleteDate || data.delete_at
+		this.delete_by = deleted?.deleteBy || data.delete_by
 	}
 }

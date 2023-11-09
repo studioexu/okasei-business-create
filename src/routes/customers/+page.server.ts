@@ -1,6 +1,8 @@
 import { error } from '@sveltejs/kit'
-import { loadData, deleteCustomer } from './utils/actions.js'
-import { currentApi } from './data/api.js'
+import { loadData, deleteCustomer } from '@/utils/customers/actions.js'
+import { currentApi } from '@/data/api.js'
+
+const apiUrl = 'http://18.182.209.227/customer/list/customer'
 
 export const load = async () => {
 	const data: any[] = await loadData(currentApi)

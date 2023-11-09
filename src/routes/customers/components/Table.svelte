@@ -1,18 +1,19 @@
 <script lang="ts">
-	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
+	import type { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
 
 	import TableRow from './TableRow.svelte'
 	import { crossfade } from 'svelte/transition'
 	import { flip } from 'svelte/animate'
 	import { quintOut } from 'svelte/easing'
 
-	export let itemId: string = ''
-	export let dataToDisplay: CustomerFactory[]
+	export let currentUser: string = ''
+	export let customersToDisplayOnPage: CustomerFactory[]
+	export let isShown: boolean
 
 	const [send, receive] = crossfade({})
 
-	$: itemId
-	$: dataToDisplay
+	$: customersToDisplayOnPage
+	$: currentUser
 
 	/**
 	 * When clicked on the row, the user is redirected to the profile of the customer.
@@ -29,7 +30,7 @@
 	}
 </script>
 
-{#if dataToDisplay.length === 0}
+{#if customersToDisplayOnPage.length === 0}
 	<p class="no-data">データがございません。</p>
 {:else}
 	<div class="table-wrapper">
@@ -45,7 +46,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each dataToDisplay as customer (customer.custCD)}
+				{#each customersToDisplayOnPage as customer (customer._id)}
 					<tr
 						class="row {customer.isActive ? '' : 'deleted'}"
 						data-id={customer.custCD}
@@ -57,9 +58,7 @@
 						<TableRow
 							customerName={customer.custName}
 							address={customer.address}
-							bind:isActive={customer.isActive}
 							id={customer.custCD}
-							bind:itemId
 							status={!customer.isActive
 								? '削除'
 								: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
@@ -71,6 +70,9 @@
 								: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
 								? customer.updateDateTime.date
 								: customer.registDateTime.date}
+							bind:currentUser
+							bind:isShown
+							bind:isActive={customer.isActive}
 						/>
 					</tr>
 				{/each}
@@ -95,30 +97,30 @@
 		border-radius: 4px;
 		border-spacing: 0;
 		border-collapse: collapse;
-	}
 
-	.table-header {
-		text-align: left;
-		padding: 18px calc((27 / 1366) * 100vw);
-		display: none;
-	}
-
-	.row {
-		position: relative;
-		cursor: pointer;
-		background-color: #fff;
-		border-bottom: var(--primary-color) 1px solid;
-
-		&.deleted {
-			background-color: rgb(229, 229, 229);
+		.table-header {
+			text-align: left;
+			padding: 18px calc((27 / 1366) * 100vw);
+			display: none;
 		}
 
-		&:hover {
-			background-color: hsl(199, 75%, 53%, 0.1);
-		}
+		.row {
+			position: relative;
+			cursor: pointer;
+			background-color: #fff;
+			border-bottom: var(--primary-color) 1px solid;
 
-		&:last-child {
-			border-bottom: none;
+			&.deleted {
+				background-color: rgb(229, 229, 229);
+			}
+
+			&:hover {
+				background-color: hsl(199, 75%, 53%, 0.1);
+			}
+
+			&:last-child {
+				border-bottom: none;
+			}
 		}
 	}
 </style>

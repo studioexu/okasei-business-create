@@ -29,11 +29,19 @@ export const phoneNumberFormatter = (phoneNumber: string) => {
  */
 export const dataFormatter = (input: string, formatType?: string): string => {
 	switch (formatType) {
-		case 'phoneNumber':
+		case 'phone-number':
 			return phoneNumberFormatter(input)
-		case 'postalCode':
+		case 'postal-code':
 			return postalCodeFormatter(input)
 		default:
 			return input
 	}
+}
+
+export const toCamelCase = (text: string): string => {
+	const textArray = text.split('-')
+	for (let i = 1; i < textArray.length; i++) {
+		textArray[i] = textArray[i].charAt(0).toUpperCase() + textArray[i].substring(1)
+	}
+	return textArray.join('')
 }

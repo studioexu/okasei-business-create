@@ -1,5 +1,5 @@
 import type { CustomerEntries } from './types'
-import { CustomerBackend } from './classes'
+import { CustomerBackend, CustomerNewApi } from './classes'
 
 /**
  * Get the time and date
@@ -27,7 +27,10 @@ const getDateTime = (): string => {
  * @param entries user's entries
  * @returns customer Object with the right format and the registration date/ 登録日時と正しいフォマットのカスタマーのオブジェクト
  */
-export const parseBeforePost = (entries: CustomerEntries): CustomerBackend => {
+export const parseBeforePost = (
+	entries: CustomerEntries,
+	api?: string
+): CustomerBackend | CustomerNewApi => {
 	const timeArray = getDateTime()
 
 	const registration = {
@@ -35,7 +38,11 @@ export const parseBeforePost = (entries: CustomerEntries): CustomerBackend => {
 		registBy: 1
 	}
 
-	return new CustomerBackend(entries, registration)
+	if ((api = 'newApi')) {
+		return new CustomerNewApi(entries, registration)
+	} else {
+		return new CustomerBackend(entries, registration)
+	}
 }
 
 /**

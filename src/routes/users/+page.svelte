@@ -132,51 +132,53 @@
 	</div>
 </div>
 <div class="users">
-	<table class="users-table">
-		<thead>
-			<tr>
-				<th class="employee-number">社員番号</th>
-				<th>氏名</th>
-				<th>所属</th>
-				<th>ロール</th>
-				<th class="email">メールアドレス</th>
-				{#if isAdmin}
-					<th class="icon" />
-					<th class="icon" />
-				{/if}
-			</tr>
-		</thead>
-		<tbody>
-			{#if dividedUsers.length > 0}
-				{#each dividedUsers[current] as user, index}
-					<tr>
-						<td class="employee-number">{user.employeeNumber}</td>
-						<td>{user.name}</td>
-						<td>{user.belongsTo}</td>
-						<td>{user.role}</td>
-						<td class="email">{user.email}</td>
-						{#if isAdmin}
-							<!-- svelte-ignore a11y-click-events-have-key-events -->
-							<!-- svelte-ignore a11y-no-static-element-interactions -->
-							<td class="icon"
-								><span
-									on:click={() => goto(`/users/${dividedUsers[current][index].employeeNumber}`)}
-									><Icon icon={{ path: 'edit', color: '#0093d0' }} /></span
-								></td
-							>
-							<!-- svelte-ignore a11y-click-events-have-key-events -->
-							<!-- svelte-ignore a11y-no-static-element-interactions -->
-							<td class="icon">
-								<span on:click={() => openModal(index)}
-									><Icon icon={{ path: 'delete', color: '#0093d0' }} /></span
+	<div class="users-container">
+		<table class="users-table">
+			<thead>
+				<tr>
+					<th class="employee-number">社員番号</th>
+					<th>氏名</th>
+					<th>所属</th>
+					<th>ロール</th>
+					<th class="email">メールアドレス</th>
+					{#if isAdmin}
+						<th class="icon" />
+						<th class="icon" />
+					{/if}
+				</tr>
+			</thead>
+			<tbody>
+				{#if dividedUsers.length > 0}
+					{#each dividedUsers[current] as user, index}
+						<tr>
+							<td class="employee-number">{user.employeeNumber}</td>
+							<td>{user.name}</td>
+							<td>{user.belongsTo}</td>
+							<td>{user.role}</td>
+							<td class="email">{user.email}</td>
+							{#if isAdmin}
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<!-- svelte-ignore a11y-no-static-element-interactions -->
+								<td class="icon"
+									><span
+										on:click={() => goto(`/users/${dividedUsers[current][index].employeeNumber}`)}
+										><Icon icon={{ path: 'edit', color: '#0093d0' }} /></span
+									></td
 								>
-							</td>
-						{/if}
-					</tr>
-				{/each}
-			{/if}
-		</tbody>
-	</table>
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<!-- svelte-ignore a11y-no-static-element-interactions -->
+								<td class="icon">
+									<span on:click={() => openModal(index)}
+										><Icon icon={{ path: 'delete', color: '#0093d0' }} /></span
+									>
+								</td>
+							{/if}
+						</tr>
+					{/each}
+				{/if}
+			</tbody>
+		</table>
+	</div>
 </div>
 <Pagination pages={dividedUsers} {current} on:click={movePage} />
 {#if isAdmin && isShown}
@@ -217,24 +219,27 @@
 	}
 
 	.users {
-		overflow-x: overlay;
 		margin-bottom: 48px;
 
-		&::-webkit-scrollbar {
-			height: 0;
+		&-container {
+			width: 100%;
+			background: #fff;
+			padding: 32px 0 24px 0;
+			border-radius: 16px;
 		}
 
 		&-table {
-			width: 100%;
-			background: #fff;
-			border-radius: 16px;
-			padding: 32px;
+			display: flex;
+			flex-wrap: wrap;
+			width: calc(100% - 64px);
+			margin: 0 auto;
+			overflow-x: scroll;
 
 			thead,
 			tbody {
 				display: flex;
-				flex-wrap: wrap;
 				justify-content: center;
+				flex-wrap: wrap;
 
 				tr {
 					display: flex;
@@ -244,6 +249,10 @@
 
 			thead tr {
 				border-bottom: 1px solid var(--gray);
+			}
+
+			tbody tr:last-child {
+				margin-bottom: 8px;
 			}
 
 			th,

@@ -6,6 +6,8 @@
 	import DateInput from './Components/DateInput.svelte'
 	import NegociationInfo from './views/Form/NegociationInfo.svelte'
 	import CustomerInfo from './views/Form/CustomerInfo.svelte'
+	import { inputIsValid } from '@/routes/customers/utils/validations'
+	import CustomerInfoConfirmation from './views/Confirmation/CustomerInfoConfirmation.svelte'
 	let isShown = false
 
 	interface Picture {
@@ -29,17 +31,6 @@
 		return array
 	}
 
-	// const updatePictures = (pictureArrayToAdd: File[]) => {
-	// 	let array = []
-	// 	for (let i = 0; i < imagesToUpload.length; i++) {
-	// 		array.push({ file: imagesToUpload[i], memo: '' })
-	// 	}
-
-	// 	return array
-	// }
-
-	// $: initialState1.pictures = imagesToUpload
-
 	let initialState1: custInfo1 = {
 		name: '',
 		cd: '',
@@ -62,6 +53,54 @@
 		approver: '',
 		contactTime: '',
 		pictures: []
+	}
+
+	let initialState1Errors = {
+		name: false,
+		cd: false,
+		branchNumber: false,
+		institutionCd: false,
+		business: false,
+		url: false,
+		googleReview: false,
+		directLine: false,
+		fax: false,
+		email: false,
+		mobile: false,
+		numberOfEmployees: false,
+		numberOfBranches: false,
+		miscellaneous: false,
+		departments: false,
+		personInCharge: false,
+		personInChargeRole: false,
+		persoInChargeMemo: false,
+		approver: false,
+		contactTime: false,
+		pictures: false
+	}
+
+	interface initialState1ErrorsType {
+		name: boolean
+		cd: boolean
+		branchNumber: boolean
+		institutionCd: boolean
+		business: boolean
+		url: boolean
+		googleReview: boolean
+		directLine: boolean
+		fax: boolean
+		email: boolean
+		mobile: boolean
+		numberOfEmployees: boolean
+		numberOfBranches: boolean
+		miscellaneous: boolean
+		departments: boolean
+		personInCharge: boolean
+		personInChargeRole: boolean
+		persoInChargeMemo: boolean
+		approver: boolean
+		contactTime: boolean
+		pictures: boolean
 	}
 
 	interface custInfo1 {
@@ -119,8 +158,101 @@
 		risk: ''
 	}
 
+	let initialState2Errors = {
+		status: false,
+		startingDate: false,
+		condition: false,
+		inflow: false,
+		preference: false,
+		billingDate: false,
+		scheduledDeposit: false,
+		paymentMethod: false,
+		outcome: false,
+		nextContact: false,
+		postalCode: false,
+		prefecture: false,
+		city: false,
+		address1: false,
+		address2: false,
+		distanceKm: false,
+		distanceTime: false,
+		estimate: false,
+		importantMemo: false,
+		employeeInCharge: false,
+		responsiblePerson: false,
+		communication: false,
+		directMessage: false,
+		videoUrl: false,
+		checkboxes: false,
+		checkBottleneck: false,
+		occasion: false,
+		risk: false
+	}
+
 	let initialState3 = {
 		negociationHistory: []
+	}
+
+	$: console.log(initialState1Errors)
+
+	let displayClass: string = ''
+	$: displayClass
+
+	const switchFieldSetDisplayed = (e: any) => {
+		console.log(e.target.id)
+		const targetBtn = e.target
+		const fieldsetToDisplay = targetBtn.id
+		const currentBtn = document.getElementById(currentFieldsetDisplayed)
+		const errorMessage = document.querySelector('.error-message')
+		let isValid = true
+
+		console.log(currentBtn)
+
+		if (fieldsetToDisplay !== currentFieldsetDisplayed) {
+			switch (currentFieldsetDisplayed) {
+				case 'customerInfo':
+					// Object.keys(initialState1).forEach(key => {
+					// 	if (initialState1[key as keyof Object]) {
+					// 		initialState1
+					// 	}
+					// })
+					initialState1Errors.name = !inputIsValid('customerName', initialState1.name)
+
+					isValid = initialStateIsValid(initialState1Errors)
+
+					break
+				case 'negociationInfo':
+					isValid = initialStateIsValid(initialState2Errors)
+					break
+
+				default:
+					break
+			}
+
+			if (!isValid) {
+				currentBtn?.classList.add('error')
+				displayClass = 'display'
+			} else {
+				currentBtn?.classList.remove('error')
+				displayClass = ''
+			}
+
+			if (isValid) {
+				currentFieldsetDisplayed = fieldsetToDisplay
+			}
+		}
+	}
+
+	const initialStateIsValid = (initialStateErrors: Object) => {
+		let isValid = true
+		Object.keys(initialStateErrors).forEach(key => {
+			console.log(initialStateErrors[key as keyof Object])
+			if (initialStateErrors[key as keyof Object]) {
+				return (isValid = false)
+			}
+		})
+
+		return isValid
 	}
 
 	$: console.log(initialState1)
@@ -153,10 +285,10 @@
 
 	$: {
 		if (isShown && phase === 'success')
-			setTimeout(() => {
-				isShown = false
-				phase = 'shown'
-			}, 2000)
+			// setTimeout(() => {
+			isShown = false
+		phase = 'shown'
+		// }, 2000)
 	}
 </script>
 
@@ -167,25 +299,28 @@
 <section class="section">
 	<header class="section__header">
 		<div class="select-form-container">
-			<button
-				class="btn btn--select secondary"
-				on:click={() => (currentFieldsetDisplayed = 'customerInfo')}>お客様情報登録</button
+			<button class="btn btn--select secondary" id="customerInfo" on:click={switchFieldSetDisplayed}
+				>お客様情報登録</button
 			>
 			<button
 				class="btn btn--select secondary"
-				on:click={() => (currentFieldsetDisplayed = 'negociationInfo')}>商談情報登録</button
+				id="negociationInfo"
+				on:click={switchFieldSetDisplayed}>商談情報登録</button
 			>
 			<button
 				class="btn btn--select secondary"
-				on:click={() => (currentFieldsetDisplayed = 'negociationHistory')}>商談経緯登録</button
+				id="negociationHistory"
+				on:click={switchFieldSetDisplayed}>商談経緯登録</button
 			>
 		</div>
+		<p class="error-message {displayClass}">フォームには必須な項目を入力してください</p>
 	</header>
 
 	<div class="section__main">
 		<form action="">
 			{#if currentFieldsetDisplayed === 'customerInfo'}
 				<CustomerInfo bind:initialState1 {updateIndexArray} bind:isShown />
+				<CustomerInfoConfirmation {initialState1} />
 			{/if}
 
 			{#if currentFieldsetDisplayed === 'negociationInfo'}
@@ -282,15 +417,30 @@
 		padding-bottom: 0;
 		height: 32px;
 
-		&.delete {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding: 0;
-			height: 32px;
-			width: 70px;
-			min-width: 0;
-			margin-left: auto;
+		// &.delete {
+		// 	display: flex;
+		// 	align-items: center;
+		// 	justify-content: center;
+		// 	padding: 0;
+		// 	height: 32px;
+		// 	width: 70px;
+		// 	min-width: 0;
+		// 	margin-left: auto;
+		// }
+	}
+
+	:global(button.error) {
+		color: var(--error);
+		border-color: var(--error);
+	}
+
+	.error-message {
+		display: none;
+		font-size: 13px;
+		color: var(--error);
+
+		&.display {
+			display: inline;
 		}
 	}
 </style>

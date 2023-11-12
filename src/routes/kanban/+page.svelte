@@ -1,4 +1,6 @@
 <script lang="ts" context="module">
+	import { toNumber } from '@/libs/utils'
+
 	const blankBoards: {
 		id: string
 		tasks: { id: number; title: string; status: string }[]
@@ -57,7 +59,7 @@
 
 			element.insertBefore(draggingElement, closestTask ?? null)
 
-			const task = tasks.find(task => task.id === parseInt(draggingElement?.id ?? '', 10))
+			const task = tasks.find(task => task.id === toNumber(draggingElement?.id ?? ''))
 
 			if (task) task.status = boardList[index]
 		}

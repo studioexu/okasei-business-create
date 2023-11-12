@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { user, users } from '@/stores/users'
 	import type { Login } from '@/libs/types'
-	import { debounce } from '@/libs/utils'
+	import { debounce, toNumber } from '@/libs/utils'
 	import Icon from '@/components/Icon.svelte'
 
 	const keys: Login[] = ['employeeNumber', 'password']
@@ -35,7 +35,7 @@
 		const content: string = (<HTMLInputElement>event.target).value
 		loginData[key] = key === 'password' ? content : content.replace(/^0+(?=\d)/, '')
 
-		if (key === 'employeeNumber' && parseInt(loginData[key], 10) <= 0) error = key
+		if (key === 'employeeNumber' && toNumber(loginData[key]) <= 0) error = key
 	}, 200)
 
 	const onSubmit = debounce(async (event: Event) => {
@@ -50,7 +50,7 @@
 				if (loginData.password !== 'pass') error = 'password'
 				else {
 					const currentUser = $users.find(
-						localUser => localUser.employeeNumber === parseInt(loginData.employeeNumber),
+						localUser => localUser.employeeNumber === toNumber(loginData.employeeNumber),
 						10
 					)
 

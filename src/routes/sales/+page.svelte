@@ -1,5 +1,5 @@
 <script lang="ts" context="module">
-	import { debounce } from '@/libs/utils'
+	import { debounce, toNumber } from '@/libs/utils'
 
 	const jpDateStr = new Intl.DateTimeFormat('ja-JP').format(new Date())
 	const convertDate = (date: string): Date => new Date(date.replaceAll('/', '-'))
@@ -48,11 +48,11 @@
 	const onInput = debounce((event: Event) => {
 		const value = (<HTMLInputElement>event.target).value
 
-		if (!value.includes('e') && parseInt(value, 10) > 0) monthlyTarget = value
+		if (!value.includes('e') && toNumber(value) > 0) monthlyTarget = value
 	}, 200)
 
 	const onBlur = () => {
-		monthlyTarget = parseInt(monthlyTarget, 10).toLocaleString('ja-JP')
+		monthlyTarget = toNumber(monthlyTarget).toLocaleString('ja-JP')
 		isReadonly = !isReadonly
 	}
 

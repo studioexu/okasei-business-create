@@ -183,35 +183,32 @@
 								font-size: 30px;
 								margin-bottom: 16px;
 								text-align: center;
+							}
+						}
 
-								> span {
-									display: block;
-									font-weight: normal;
+						> div p {
+							text-align: center;
+
+							&:first-child {
+								margin-bottom: 8px;
+							}
+
+							span {
+								color: #fff;
+
+								&:last-child {
+									display: inline-block;
+									text-align: right;
 								}
 							}
 						}
 
-						> div {
-							p {
-								text-align: center;
+						.units span:last-child {
+							width: 64px;
+						}
 
-								span {
-									color: #fff;
-
-									&:last-child {
-										display: inline-block;
-										text-align: right;
-									}
-								}
-							}
-
-							.units span:last-child {
-								width: 64px;
-							}
-
-							.revenue span:last-child {
-								width: 112px;
-							}
+						.revenue span:last-child {
+							width: 112px;
 						}
 					}
 

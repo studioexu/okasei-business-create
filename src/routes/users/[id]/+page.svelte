@@ -188,12 +188,11 @@
 						{/if}
 						<input
 							class:error={fieldset.isError}
-							class:readonly={isConfirming || fieldset.id === 'employeeNumber'}
 							type={fieldset.type}
 							id={toKebab(fieldset.id)}
 							value={currentUser[fieldset.id]}
 							list={fieldset.list ?? ''}
-							readonly={isConfirming}
+							readonly={isConfirming || fieldset.id === 'employeeNumber'}
 							on:input={event => onInput(event, fieldset.id)}
 						/>
 					</div>

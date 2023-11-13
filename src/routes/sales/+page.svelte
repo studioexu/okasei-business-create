@@ -1,123 +1,149 @@
 <script lang="ts" context="module">
 	import { debounce, toNumber } from '@/libs/utils'
 
-	const jpDateStr = new Intl.DateTimeFormat('ja-JP').format(new Date())
+	type Item = 'amount' | 'revenue'
+	interface Data {
+		amounts: number[]
+		revenues: number[]
+	}
+
+	const jpDateStr: string = new Intl.DateTimeFormat('ja-JP').format(new Date())
 	const convertDate = (date: string): Date => new Date(date.replaceAll('/', '-'))
-	const jpDate = convertDate(jpDateStr)
-	const daysOfWeek = ['日', '月', '火', '水', '木', '金', '土']
+	const jpDate: Date = convertDate(jpDateStr)
+	const daysOfWeek: string[] = ['日', '月', '火', '水', '木', '金', '土']
 
 	// It will be used in calling API
 	const yesterday = jpDate.setDate(jpDate.getDate() - 1)
 	const lastWeekDay = jpDate.setDate(jpDate.getDate() - 7)
 
-	const dailyRatio: ('units' | 'revenue')[] = ['units', 'revenue']
-	const labels = { units: '台数', revenue: '金額' }
-	const units = { units: '台', revenue: '円' }
+	const items: Item[] = ['amount', 'revenue']
+	const labels: Record<Item, string> = { amount: '台数', revenue: '金額' }
+	const units: Record<Item, string> = { amount: '台', revenue: '円' }
 
 	const addNumbers = (numbers: number[]): number => numbers.reduce((prev, curr) => prev + curr, 0)
-	const convertPrice = (number: number, ratio: 'units' | 'revenue'): string | number =>
-		ratio === 'revenue' ? number.toLocaleString('ja-JP') : number
 
-	const calculateRatio = (today: number[], past: number[]): number =>
-		Math.round((100 + ((addNumbers(today) - addNumbers(past)) / addNumbers(today)) * 100) * 10) / 10
+	const toJP = (arg: string | number): string =>
+		(typeof arg === 'string' ? toNumber(arg) : arg).toLocaleString('ja-JP')
+
+	const calculate = (today: number[], past: number[]): string => {
+		const todayData: number = addNumbers(today)
+		return (
+			Math.round((100 + ((todayData - addNumbers(past)) / todayData) * 100) * 10) / 10
+		).toFixed(1)
+	}
 </script>
 
 <script lang="ts">
-	let isReadonly = true
-	let monthlyTarget = '100,000,000'
+	let isEditables: Record<Item, boolean> = { amount: false, revenue: false }
+	let monthlyTargets: Record<Item, number> = { amount: 50, revenue: 10000000 }
 
-	const todayData: { units: number[]; revenue: number[] } = {
-		units: [17, 5],
-		revenue: [1600000, 400000]
+	const todayData: Data = {
+		amounts: [17, 5],
+		revenues: [3600000, 400000]
 	}
 
-	const yesterdayData: { units: number[]; revenue: number[] } = {
-		units: [18, 2],
-		revenue: [1700000, 100000]
+	const yesterdayData: Data = {
+		amounts: [18, 2],
+		revenues: [1700000, 100000]
 	}
-	const lastWeekDayData: { units: number[]; revenue: number[] } = {
-		units: [16, 9],
-		revenue: [1600000, 700000]
-	}
-
-	const onFocus = () => {
-		monthlyTarget = monthlyTarget.replaceAll(',', '')
-		isReadonly = !isReadonly
+	const lastWeekDayData: Data = {
+		amounts: [16, 9],
+		revenues: [1600000, 700000]
 	}
 
-	const onInput = debounce((event: Event) => {
+	const comparisons: { label: string; data: Data }[] = [
+		{ label: '前日比', data: yesterdayData },
+		{ label: '前週同日比', data: lastWeekDayData }
+	]
+
+	const pastTotalData: Record<Item, number> = { amount: 2, revenue: 30000 }
+
+	const onInput = debounce((event: Event, item: Item) => {
 		const value = (<HTMLInputElement>event.target).value
 
-		if (!value.includes('e') && toNumber(value) > 0) monthlyTarget = value
+		if (!value.includes('e') && toNumber(value) > 0) monthlyTargets[item] = toNumber(value)
 	}, 200)
 
-	const onBlur = () => {
-		monthlyTarget = toNumber(monthlyTarget).toLocaleString('ja-JP')
-		isReadonly = !isReadonly
-	}
-
-	const addClassName = (ratio: 'units' | 'revenue', past: number[]): string => {
-		const todayNum = addNumbers(todayData[ratio])
+	const addClassName = (item: Item, past: number[]): string => {
+		const todayNum = addNumbers(todayData[`${item}s`])
 		const pastNum = addNumbers(past)
 
 		return todayNum > pastNum ? 'increasing' : todayNum < pastNum ? 'decreasing' : ''
 	}
+
+	const getTotalData = (item: Item): number =>
+		addNumbers([pastTotalData[item], ...todayData[`${item}s`]])
 </script>
 
 <div class="sales">
 	<div class="sales-header">
-		<p class="font-large">{`${jpDateStr}（${daysOfWeek[jpDate.getDay()]}）`}</p>
+		<p class="font-large">{`${jpDateStr}（${daysOfWeek[jpDate.getDay() + 1]}）`}</p>
 		<p>
-			今月の目標
-			<input
-				class:readonly={isReadonly}
-				type={isReadonly ? 'text' : 'number'}
-				value={monthlyTarget}
-				readonly={isReadonly}
-				on:focus={onFocus}
-				on:input={event => onInput(event)}
-				on:blur={onBlur}
-			/>
-			円
+			{#each items as item}
+				<span>
+					今月の目標{labels[item]}
+					<input
+						type={isEditables[item] ? 'number' : 'text'}
+						value={isEditables[item] ? monthlyTargets[item] : toJP(monthlyTargets[item]).trim()}
+						readonly={!isEditables[item]}
+						on:focus={() => (isEditables[item] = true)}
+						on:input={event => onInput(event, item)}
+						on:blur={() => (isEditables[item] = false)}
+					/>
+					{units[item]}
+				</span>
+			{/each}
 		</p>
 	</div>
-	{#each dailyRatio as ratio}
+	{#each items as item}
 		<div class="graph">
 			<div class="graph-label">
 				<div class="left">
-					<p>{labels[ratio]}</p>
-					<p>{convertPrice(addNumbers(todayData[ratio]), ratio)}{units[ratio]}</p>
+					<p>{labels[item]}</p>
+					<p>{toJP(addNumbers(todayData[`${item}s`]))}{units[item]}</p>
 					<div>
-						<p class={ratio}>
-							<span>法人：</span>
-							<span>{convertPrice(todayData[ratio][0], ratio)}{units[ratio]}</span>
-						</p>
-						<p class={ratio}>
-							<span>個人：</span>
-							<span>{convertPrice(todayData[ratio][1], ratio)}{units[ratio]}</span>
-						</p>
+						{#each ['法人', '個人'] as individuality, index}
+							<p class={item}>
+								<span>{individuality}：</span>
+								<span>{toJP(todayData[`${item}s`][index])}{units[item]}</span>
+							</p>
+						{/each}
 					</div>
 				</div>
 				<div class="right">
-					<p>
-						<span>前日比：</span>
-						<span class="font-large">
-							<span class={addClassName(ratio, yesterdayData[ratio])}>
-								{calculateRatio(todayData[ratio], yesterdayData[ratio])}
-							</span>%
-						</span>
-					</p>
-					<p>
-						<span>前週同日比：</span>
-						<span class="font-large">
-							<span class={addClassName(ratio, lastWeekDayData[ratio])}>
-								{calculateRatio(todayData[ratio], lastWeekDayData[ratio])}
-							</span>%
-						</span>
-					</p>
+					{#each comparisons as comparison}
+						<p>
+							<span>{comparison.label}：</span>
+							<span class="font-large">
+								<span class={addClassName(item, comparison.data[`${item}s`])}>
+									{calculate(todayData[`${item}s`], comparison.data[`${item}s`])}
+								</span>%
+							</span>
+						</p>
+					{/each}
 				</div>
 			</div>
-			<div class="graph-container">b</div>
+			<div class="graph-container">
+				{#if getTotalData(item) < monthlyTargets[item]}
+					{#each [monthlyTargets[item], getTotalData(item), pastTotalData[item]] as num}
+						<span
+							class="underachievement"
+							style={`width: ${Math.round((num / monthlyTargets[item]) * 100)}%`}
+						>
+							<!-- {toJP(num)}{units[item]} -->
+						</span>
+					{/each}
+				{:else}
+					{#each [monthlyTargets[item], getTotalData(item), pastTotalData[item]] as num}
+						<span
+							class="achieved"
+							style={`width: ${Math.round((num / monthlyTargets[item]) * 100)}%`}
+						>
+							{toJP(num)}{units[item]}
+						</span>
+					{/each}
+				{/if}
+			</div>
 		</div>
 	{/each}
 </div>
@@ -140,22 +166,32 @@
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
+			margin-bottom: 32px;
 
-			> p:last-child {
-				> input {
+			p:last-child span {
+				&:first-child {
+					margin-right: 16px;
+
+					input {
+						width: 80px;
+					}
+				}
+
+				&:last-child input {
+					width: 144px;
+				}
+
+				input {
 					padding: 8px 16px;
-					margin-left: 16px;
-					margin-right: 8px;
+					margin-left: 8px;
 					text-align: right;
 				}
 			}
 		}
 
 		.graph {
-			margin-top: 32px;
-
-			&:first-of-type {
-				margin-bottom: 64px;
+			&:last-child {
+				margin-top: 64px;
 			}
 
 			&-label {
@@ -203,7 +239,7 @@
 							}
 						}
 
-						.units span:last-child {
+						.amount span:last-child {
 							width: 64px;
 						}
 
@@ -241,8 +277,35 @@
 			}
 
 			&-container {
-				background: blue;
-				padding: 16px;
+				width: 100%;
+				margin-top: 32px;
+
+				span {
+					--height: calc(18px * 1.5 + 32px);
+					display: flex;
+					justify-content: end;
+					height: var(--height);
+					padding: 16px;
+					margin: 0;
+					border-radius: 0 16px 16px 0;
+
+					&.underachievement {
+						&:first-child {
+							background: var(--back);
+						}
+
+						&:nth-child(2) {
+							background: var(--primary);
+							color: #fff;
+							margin-top: calc(-1 * var(--height));
+						}
+
+						&:last-child {
+							background: #ccc;
+							margin-top: calc(-1 * var(--height));
+						}
+					}
+				}
 			}
 		}
 	}

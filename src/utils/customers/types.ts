@@ -3,10 +3,15 @@ export interface Detail {
 	numBed: string
 }
 
-export interface BedInput {
+export interface Picture {
+	file: File
+	memo: string
+}
+
+export interface Department {
 	index: number
 	department: string
-	quantity: string
+	bedQuantity: string
 }
 
 export interface CustomerInfo {
@@ -67,20 +72,27 @@ export interface CustomerEntries {
 	address2: string
 	phoneNumber: string
 	fax: string
+	email: string
+	mobile: string
 	year: string
 	month: string
 	founder: string
-	bedding: BedInput[]
+	departments: Department[]
 	numberOfEmployees: string
 	homepage: string
 	numberOfFacilities: string
-	registrationDate?: string
-	registrationTime?: string
-	isActive: boolean
-	googleReview: boolean
+	isActive: true
+	googleReview: false
 	reviews: string
-	businessList: string
+	businessContent: string
 	closingMonth: string
+	personInCharge: string
+	personInChargeRole: string
+	personInChargeMemo: string
+	approver: string
+	contactTime: string
+	pictures: Picture[]
+	miscellaneous: string
 }
 
 export interface CustomerEntriesErrors {

@@ -32,18 +32,27 @@
 		address2: '',
 		phoneNumber: '',
 		fax: '',
+		email: '',
+		mobile: '',
 		year: '',
 		month: '',
 		founder: '',
-		bedding: [],
+		departments: [],
 		numberOfEmployees: '',
 		homepage: '',
 		numberOfFacilities: '',
 		isActive: true,
 		googleReview: false,
 		reviews: '',
-		businessList: '',
-		closingMonth: ''
+		businessContent: '',
+		closingMonth: '',
+		personInCharge: '',
+		personInChargeRole: '',
+		personInChargeMemo: '',
+		approver: '',
+		contactTime: '',
+		pictures: [],
+		miscellaneous: ''
 	}
 
 	let formIsValid: CustomerEntriesErrors = {

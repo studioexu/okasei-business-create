@@ -1,6 +1,9 @@
 <script lang="ts">
+	import type { Picture } from '@/utils/customers/types'
 	import { enhance } from '$app/forms'
 	import { prefectures, months, years } from '@/data/data'
+
+	import UploadModal from '@/views/modals/UploadModal.svelte'
 
 	import type {
 		CustomerEntries,
@@ -28,9 +31,6 @@
 	}
 
 	let businessContent = ''
-	let comments = ''
-	let commentType = ''
-
 	/**
 	 * Fetch the address corresponding to the postal code.
 	 * @param e
@@ -83,7 +83,53 @@
 			isSucceeded = true
 		}
 	}
+
+	let phase: 'shown' | 'success' | 'error' = 'shown'
+
+	const onClick = (event: { detail: { key: string; fileToUpload: File } }) => {
+		switch (event.detail.key) {
+			case 'cancel':
+				isShown = false
+				break
+
+			case 'upload':
+				let newArray = initialState.pictures
+				newArray.push({ file: event.detail.fileToUpload, memo: '' })
+				initialState.pictures = newArray
+				phase = 'success'
+				break
+
+			case 'success':
+				isShown = false
+				phase = 'shown'
+				break
+
+			case 'error':
+				phase = 'shown'
+				break
+		}
+	}
+
+	$: {
+		if (isShown && phase === 'success')
+			// setTimeout(() => {
+			isShown = false
+		phase = 'shown'
+		// }, 2000)
+	}
+
+	const handleDeleteImage = (e: any) => {
+		const imageToDelete = e.target.closest('.image-wrapper').id
+
+		initialState.pictures = initialState.pictures.filter(
+			(image: Picture) => image.file.name !== imageToDelete
+		)
+	}
 </script>
+
+{#if isShown}
+	<UploadModal {phase} on:click={onClick} />
+{/if}
 
 <form
 	class="form {confirmationPageIsShown ? 'hidden' : ''}"
@@ -99,7 +145,7 @@
 	<p class="required-legend"><span class="required-mark">*</span> 必須</p>
 
 	<fieldset class="fieldset fieldset--info1">
-		<legend class="hidden">情報１</legend>
+		<legend class="legend">情報１</legend>
 		<div class="form-row">
 			<Input
 				label={'枝番'}
@@ -170,7 +216,7 @@
 	<!-- .fieldset--info1 -->
 
 	<fieldset class="fieldset fieldset--address">
-		<legend class="hidden">住所</legend>
+		<legend class="legend">住所</legend>
 
 		<div class="form-row">
 			<Input
@@ -253,6 +299,13 @@
 				bind:isValid={formIsValid.phoneNumber}
 			/>
 			<!-- Input -->
+			<Input
+				name={'mobile-phone'}
+				label={'携帯電話'}
+				placeholder={'未入力'}
+				inputSize={'input--md'}
+				bind:value={initialState.mobile}
+			/>
 
 			<Input
 				label="FAX番号"
@@ -265,12 +318,22 @@
 			/>
 			<!-- Input -->
 		</div>
+
+		<div class="form-row">
+			<Input
+				name={'email'}
+				label={'メール'}
+				placeholder={'未入力'}
+				inputSize={'input--lg'}
+				bind:value={initialState.email}
+			/>
+		</div>
 		<!-- .containter -->
 	</fieldset>
 	<!-- .fieldset--address -->
 
 	<fieldset class="fieldset fieldset--foundation">
-		<legend class="hidden">創立</legend>
+		<legend class="legend">創立</legend>
 		<div class="form-row">
 			<SelectInput
 				label={'設立年月日'}
@@ -305,13 +368,13 @@
 	<!-- .fieldset--foundation -->
 
 	<fieldset class="fieldset fieldset--bed">
-		<legend class="hidden">病床設定</legend>
-		<DepartmentSection bind:bedding={initialState.bedding} />
+		<legend class="legend">病床設定</legend>
+		<DepartmentSection bind:departments={initialState.departments} />
 	</fieldset>
 	<!-- .fieldset--bed -->
 
 	<fieldset class="fieldset fieldset--info2">
-		<legend class="hidden">情報２</legend>
+		<legend class="legend">情報２</legend>
 
 		<div class="form-row">
 			<Input
@@ -357,7 +420,7 @@
 
 				<select class="select" bind:value={initialState.googleReview} id="google-review">
 					<option value={false}>無し</option>
-					<option value={true}>有り</option>
+					<option value={true}>★有り</option>
 				</select>
 			</div>
 
@@ -377,7 +440,7 @@
 			<Input
 				label="関連施設拠点数"
 				name="number-of-facilities"
-				unit="店"
+				unit="軒"
 				errorMsg={'数字で入力して下さい'}
 				inputSize="input--sm"
 				bind:value={initialState.numberOfFacilities}
@@ -385,11 +448,135 @@
 			/>
 			<!-- Input -->
 		</div>
+
+		<div class="form-row">
+			<Input
+				name={'miscellaneous'}
+				label={'その他'}
+				placeholder={'未入力'}
+				inputSize={'input--xl'}
+				bind:value={initialState.miscellaneous}
+			/>
+		</div>
+
+		<!-- <div class="form-row bed">
+			<h3 class="label">診療科目</h3>
+			<div class="column">
+				{#each initialState1.departments as department}
+					<div class="department-wrapper">
+						<Select
+							options={['内科', '外科', '診療内科']}
+							name={'departments'}
+							bind:value={department.department}
+						/>
+						<Input
+							name={'bed-quatity'}
+							label={'病床数'}
+							placeholder={'未入力'}
+							inputSize={'input--sm'}
+							bind:value={department.bedQuantity}
+						/>
+					</div>
+				{/each}
+			</div>
+			<div class="bed-total">
+				<h3 class="label">'病床数合計'</h3>
+				<span class="content">{total}</span>
+			</div> -->
+
+		<!-- </div> -->
+		<!-- <div class="form-row">
+			<h3 class="label" />
+			<button class="btn primary" on:click={handleAddDepartment}>+新規追加</button>
+		</div> -->
 	</fieldset>
 	<!-- .fieldset--info2 -->
+
+	<fieldset class="fieldset">
+		<legend class="legend">担当者</legend>
+		<div class="form-row">
+			<Input
+				name={'person-in-charge'}
+				label={'ご担当者名'}
+				placeholder={'未入力'}
+				inputSize={'input--md'}
+				bind:value={initialState.personInCharge}
+			/>
+			<Input
+				name={'role'}
+				label={'役職'}
+				placeholder={'未入力'}
+				inputSize={'input--sm'}
+				bind:value={initialState.personInChargeRole}
+			/>
+		</div>
+
+		<div class="form-row">
+			<Input
+				name={'person-in-charge-memo'}
+				label={'ご担当メモ'}
+				placeholder={'未入力'}
+				inputSize={'input--xl'}
+				bind:value={initialState.personInChargeMemo}
+			/>
+		</div>
+		<div class="form-row">
+			<Input
+				name={'approver'}
+				label={'決裁者'}
+				placeholder={'未入力'}
+				inputSize={'input--md'}
+				bind:value={initialState.approver}
+			/>
+		</div>
+		<div class="form-row">
+			<Input
+				name={'prefered-contact-time'}
+				label={'連絡の取りやすい時間'}
+				placeholder={'未入力'}
+				inputSize={'input--xl'}
+				bind:value={initialState.contactTime}
+			/>
+		</div>
+	</fieldset>
+
+	<fieldset class="fieldset">
+		<legend class="legend">画像</legend>
+		<div class="form-row">
+			<h3 class="label">参考書類など 画像データ</h3>
+			<div class="container">
+				{#if initialState.pictures.length === 0}
+					<div class="image-wrapper">
+						<button class="image-empty" on:click={() => (isShown = true)}>
+							<span>+</span>
+						</button>
+						<p class="image-description">画像がアップロードされていません。</p>
+					</div>
+				{:else}
+					{#each initialState.pictures as image, index}
+						<div class="image-wrapper" id={image.file.name}>
+							<img class="image" src={URL.createObjectURL(image.file)} alt="" />
+							<Input
+								placeholder="メモ"
+								name={'image-description'}
+								inputSize={'input--lg'}
+								bind:value={image.memo}
+							/>
+							<button class="btn primary delete" on:click={handleDeleteImage}>削除</button>
+						</div>
+					{/each}
+				{/if}
+				<button class="btn add primary" on:click={() => (isShown = true)}>＋画像追加</button>
+			</div>
+		</div>
+	</fieldset>
 </form>
 
 <style lang="scss">
+	.legend {
+		display: none;
+	}
+
 	.hidden {
 		display: none;
 	}
@@ -493,5 +680,79 @@
 
 	.required-mark {
 		color: var(--error);
+	}
+
+	.image-empty {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 124px;
+		width: 200px;
+		border: 2px dashed var(--primary);
+		border-radius: 8px;
+		margin: 0;
+
+		span {
+			font-size: 48px;
+			color: var(--primary);
+		}
+	}
+
+	.image-description {
+		height: 32px;
+		width: 100%;
+	}
+
+	.bed-total {
+		display: flex;
+		align-items: center;
+		height: 32px;
+		align-self: flex-end;
+	}
+
+	.label {
+		font-size: 18px;
+		font-weight: 400;
+		width: 130px;
+	}
+
+	.image {
+		height: 124px;
+		width: 200px;
+		object-fit: contain;
+	}
+
+	.image-wrapper {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-end;
+		gap: 18px;
+		background-color: #f4f4f4;
+		padding: 10px 21px;
+		border-radius: 8px;
+		margin-bottom: 12px;
+	}
+
+	.btn {
+		margin: 0;
+
+		&.delete {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0;
+			height: 32px;
+			width: 70px;
+			min-width: 0;
+			margin-left: auto;
+			// align-self: flex-end;
+			margin-bottom: 20px;
+		}
+	}
+
+	.container {
+		display: block;
+		width: fit-content;
 	}
 </style>

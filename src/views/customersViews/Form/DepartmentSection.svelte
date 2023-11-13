@@ -1,11 +1,12 @@
 <script lang="ts">
+	import type { Department } from '@/utils/customers/types'
 	import Button from '@/components/Button.svelte'
 	import SelectInput from './SelectInput.svelte'
 	import Input from './Input.svelte'
 	import Icon from '@/components/Icon.svelte'
 
-	export let bedding: BedInput[]
-	export const departments: string[] = ['内科', '外科', '診療内科']
+	export let departments: Department[]
+	export const departmentLabels: string[] = ['内科', '外科', '診療内科']
 
 	interface BedInput {
 		index: number
@@ -16,16 +17,16 @@
 	let totalOfBed: number = 0
 	let bedInputArray: BedInput[] = []
 
-	if (bedding.length === 0) {
+	if (departments.length === 0) {
 		bedInputArray = [{ index: 0, department: '内科', quantity: '0' }]
 	} else {
-		bedding.map((bed, index) => {
+		departments.map((bed, index) => {
 			bedInputArray = [
 				...bedInputArray,
 				{
 					index: index,
 					department: bed.department,
-					quantity: bed.quantity
+					quantity: bed.bedQuantity
 				}
 			]
 			index++
@@ -84,7 +85,7 @@
 	<div class="container container--vertical">
 		{#each bedInputArray as bed, index}
 			<div class="bed-configuration" id={bed.index.toString()} data-index={bed.index}>
-				<SelectInput datas={departments} name={'department'} bind:value={bed.department} />
+				<SelectInput datas={departmentLabels} name={'department'} bind:value={bed.department} />
 				<Input
 					label="病床数"
 					name={'quantity'}

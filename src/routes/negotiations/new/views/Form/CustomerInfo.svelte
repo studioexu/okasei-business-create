@@ -242,7 +242,7 @@
 				label={'ご担当メモ'}
 				placeholder={'未入力'}
 				inputSize={'input--xl'}
-				bind:value={initialState1.persoInChargeMemo}
+				bind:value={initialState1.personInChargeMemo}
 			/>
 		</div>
 		<div class="form-row">

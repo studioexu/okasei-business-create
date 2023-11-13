@@ -8,6 +8,7 @@
 	import CustomerInfo from './views/Form/CustomerInfo.svelte'
 	import { inputIsValid } from '@/routes/customers/utils/validations'
 	import CustomerInfoConfirmation from './views/Confirmation/CustomerInfoConfirmation.svelte'
+	import NegociationInfoConfirmation from './views/Confirmation/NegociationInfoConfirmation.svelte'
 	let isShown = false
 
 	interface Picture {
@@ -20,7 +21,7 @@
 		bedQuantity: string
 	}
 
-	let currentFieldsetDisplayed = 'customerInfo'
+	let currentFieldsetDisplayed = 'negociationInfo'
 
 	const updateIndexArray = (maxIndex: number) => {
 		const array: string[] = []
@@ -49,7 +50,7 @@
 		departments: [],
 		personInCharge: '',
 		personInChargeRole: '',
-		persoInChargeMemo: '',
+		personInChargeMemo: '',
 		approver: '',
 		contactTime: '',
 		pictures: []
@@ -73,7 +74,7 @@
 		departments: false,
 		personInCharge: false,
 		personInChargeRole: false,
-		persoInChargeMemo: false,
+		personInChargeMemo: false,
 		approver: false,
 		contactTime: false,
 		pictures: false
@@ -97,7 +98,7 @@
 		departments: boolean
 		personInCharge: boolean
 		personInChargeRole: boolean
-		persoInChargeMemo: boolean
+		personInChargeMemo: boolean
 		approver: boolean
 		contactTime: boolean
 		pictures: boolean
@@ -121,7 +122,7 @@
 		departments: Department[]
 		personInCharge: string
 		personInChargeRole: string
-		persoInChargeMemo: string
+		personInChargeMemo: string
 		approver: string
 		contactTime: string
 		pictures: Picture[]
@@ -138,6 +139,7 @@
 		paymentMethod: '',
 		outcome: '',
 		nextContact: '',
+		lastContact: '',
 		postalCode: '',
 		prefecture: '',
 		city: '',
@@ -325,6 +327,7 @@
 
 			{#if currentFieldsetDisplayed === 'negociationInfo'}
 				<NegociationInfo bind:initialState2 {updateIndexArray} />
+				<NegociationInfoConfirmation {initialState2} />
 			{/if}
 
 			{#if currentFieldsetDisplayed === 'negociationHistory'}

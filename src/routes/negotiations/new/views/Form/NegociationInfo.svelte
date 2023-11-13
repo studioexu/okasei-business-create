@@ -7,6 +7,8 @@
 	export let initialState2: any
 	export let updateIndexArray: Function
 
+	$: console.log(initialState2.estimate)
+
 	let productIndexArray: string[] = []
 	let maxProductIndex = 1
 	let estimateIndexArray: {
@@ -22,6 +24,27 @@
 	$: memoIndexArray = updateIndexArray(maxMemoIndex)
 	$: productIndexArray = updateIndexArray(maxProductIndex)
 	$: estimateIndexArray = updateEstimateIndexArray(maxEstimateIndex)
+
+	let estimateArray = [
+		{
+			issueDate: '',
+			dueDate: '',
+			estimateWithoutTax: '',
+			tax: '',
+			products: [
+				{
+					productName: '',
+					quantity: ''
+				}
+			]
+		}
+	]
+
+	$: estimateArray = updateEstimateIndexArray(maxEstimateIndex)
+
+	$: initialState2.estimate = estimateArray
+
+	$: console.log(estimateArray)
 
 	const videoCheckbox = [
 		{ title: '動画視聴　依頼', isChecked: false },
@@ -42,38 +65,40 @@
 	const updateEstimateIndexArray = (maxIndex: number) => {
 		let array = []
 		for (let i = 0; i < maxIndex; i++) {
-			if (estimateIndexArray[i]) {
-				array.push({
-					index: i.toString(),
-					productIndexArray: estimateIndexArray[i].productIndexArray,
-					maxProductIndex: estimateIndexArray[i].maxProductIndex
-				})
+			if (estimateArray[i]) {
+				array.push(estimateArray[i])
 			} else {
 				array.push({
-					index: i.toString(),
-					productIndexArray: updateIndexArray(1),
-					maxProductIndex: 1
+					issueDate: '',
+					dueDate: '',
+					estimateWithoutTax: '',
+					tax: '',
+					products: [
+						{
+							productName: '',
+							quantity: ''
+						}
+					]
 				})
 			}
 		}
 		return array
 	}
 
-	const handleAddProduct = (index: string) => {
-		const objecToUpdate = estimateIndexArray.find(object => object.index === index)
-		console.log(objecToUpdate?.productIndexArray)
-		const newMax: number =
-			objecToUpdate?.maxProductIndex !== undefined ? objecToUpdate?.maxProductIndex + 1 : 1
-		let newArray: string[]
-		let rightIndex = estimateIndexArray.findIndex(object => object.index === index)
+	const handleDeleteEstimate = (index: number) => {
+		const newEstimateArray = estimateArray.slice(0, index).concat(estimateArray.slice(index + 1))
+		maxEstimateIndex--
 
-		if (newMax !== undefined) {
-			newArray = updateIndexArray(newMax)
-			console.log(newArray)
+		estimateArray = newEstimateArray
+	}
 
-			estimateIndexArray[rightIndex].maxProductIndex = newMax
-			estimateIndexArray[rightIndex].productIndexArray = newArray
-		}
+	const handleAddProduct = (index: number) => {
+		const productArray = estimateArray[index].products
+		productArray.push({
+			productName: '',
+			quantity: ''
+		})
+		estimateArray[index].products = productArray
 	}
 </script>
 
@@ -237,32 +262,43 @@
 				<button class="btn primary" on:click={() => maxEstimateIndex++}>＋見積追加</button>
 			</div>
 			<div class="column">
-				{#each estimateIndexArray as estimate}
+				{#each estimateArray as estimate, index}
 					<div class="container">
 						<div class="form-row">
-							<DateInput label={'発行日'} name={'issue-date'} />
+							<DateInput label={'発行日'} name={'issue-date'} bind:value={estimate.issueDate} />
 						</div>
 						<div class="form-row">
-							<DateInput label={'見積期日'} name={'estimation-due-date'} />
+							<DateInput
+								label={'見積期日'}
+								name={'estimation-due-date'}
+								bind:value={estimate.dueDate}
+							/>
 						</div>
 						<div class="form-row">
-							<Input label={'税抜価格'} name={'price-without-tax'} unit="円" />
-							<Input label={'消費税'} name={'tax'} unit="円" />
+							<Input
+								label={'税抜価格'}
+								name={'price-without-tax'}
+								unit="円"
+								bind:value={estimate.estimateWithoutTax}
+							/>
+							<Input label={'消費税'} name={'tax'} unit="円" bind:value={estimate.tax} />
 						</div>
 
-						{#each estimate.productIndexArray as productIndex}
+						{#each estimate.products as product}
 							<div class="form-row">
-								<Input label={'商品'} name={'product'} />
+								<Input label={'商品'} name={'product'} bind:value={product.productName} />
 								<button class="btn primary">商品選択</button>
-								<Input unit={'台'} name={'quantity'} />
+								<Input unit={'台'} name={'quantity'} bind:value={product.quantity} />
 							</div>
 						{/each}
 
 						<div class="form-row">
-							<button class="btn add primary" on:click={() => handleAddProduct(estimate.index)}
+							<button class="btn add primary" on:click={() => handleAddProduct(index)}
 								>＋商品追加</button
 							>
-							<button class="btn primary delete">削除</button>
+							<button class="btn primary delete" on:click={() => handleDeleteEstimate(index)}
+								>削除</button
+							>
 						</div>
 					</div>
 				{/each}
@@ -335,17 +371,11 @@
 
 		<div class="form-row">
 			<label class="label" for="bottleneck">ボトルネック確認</label>
-			<textarea
-				name="bottleneck"
-				id="bottleneck"
-				cols="30"
-				rows="10"
-				value={initialState2.checkBottleneck}
-			/>
+			<textarea name="bottleneck" id="bottleneck" value={initialState2.checkBottleneck} />
 		</div>
 		<div class="form-row">
 			<label class="label" for="chance">機会（チャンス）</label>
-			<textarea name="chance" id="chance" cols="30" rows="10" value={initialState2.occasion} />
+			<textarea name="chance" id="chance" value={initialState2.occasion} />
 		</div>
 		<div class="form-row">
 			<label class="label" for="risk">脅威（リスク）</label>

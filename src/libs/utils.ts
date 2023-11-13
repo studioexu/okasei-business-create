@@ -11,3 +11,5 @@ export const debounce = <F extends (...args: any[]) => void>(func: F, time: numb
 }
 
 export const toKebab = (str: string) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+
+export const toNumber = (str: string) => parseInt(str, 10)

@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { user, users } from '@/stores/users'
 	import type { Login } from '@/libs/types'
-	import { debounce } from '@/libs/utils'
+	import { debounce, toNumber } from '@/libs/utils'
 	import Icon from '@/components/Icon.svelte'
 
 	const keys: Login[] = ['employeeNumber', 'password']
@@ -35,7 +35,7 @@
 		const content: string = (<HTMLInputElement>event.target).value
 		loginData[key] = key === 'password' ? content : content.replace(/^0+(?=\d)/, '')
 
-		if (key === 'employeeNumber' && parseInt(loginData[key], 10) <= 0) error = key
+		if (key === 'employeeNumber' && toNumber(loginData[key]) <= 0) error = key
 	}, 200)
 
 	const onSubmit = debounce(async (event: Event) => {
@@ -50,7 +50,7 @@
 				if (loginData.password !== 'pass') error = 'password'
 				else {
 					const currentUser = $users.find(
-						localUser => localUser.employeeNumber === parseInt(loginData.employeeNumber),
+						localUser => localUser.employeeNumber === toNumber(loginData.employeeNumber),
 						10
 					)
 
@@ -74,7 +74,7 @@
 		{/if}
 		{#each keys as key}
 			<fieldset class="fieldset">
-				<Icon icon={{ path: key === 'password' ? 'password' : 'user' }} />
+				<Icon icon={{ path: key === 'password' ? 'password' : 'user', color: 'black' }} />
 				<input
 					class:error={(error && key === 'employeeNumber') || error === 'password'}
 					type={key === 'employeeNumber' ? 'number' : isHidden ? 'password' : 'text'}
@@ -87,9 +87,9 @@
 					<!-- svelte-ignore a11y-no-static-element-interactions -->
 					<span on:click={() => (isHidden = !isHidden)}>
 						{#if isHidden}
-							<Icon icon={{ path: 'eye-slash' }} />
+							<Icon icon={{ path: 'eye-slash', color: 'black' }} />
 						{:else}
-							<Icon icon={{ path: 'eye' }} />
+							<Icon icon={{ path: 'eye', color: 'black' }} />
 						{/if}
 					</span>
 				{/if}

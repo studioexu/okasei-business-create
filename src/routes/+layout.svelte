@@ -146,7 +146,7 @@
 		border-color: var(--error);
 	}
 
-	:global(input.readonly) {
+	:global(input[readonly]) {
 		border-color: #fff;
 	}
 

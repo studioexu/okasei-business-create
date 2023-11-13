@@ -2,7 +2,7 @@
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
 	import { user, roles, users, created, updated } from '@/stores/users'
-	import { debounce, toKebab } from '@/libs/utils'
+	import { debounce, toKebab, toNumber } from '@/libs/utils'
 	import type { EditedData, Role, User, UserKey } from '@/libs/types'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
@@ -110,7 +110,7 @@
 
 			switch (id) {
 				case 'employeeNumber':
-					currentUser[id] = parseInt(content.replace(/^0+(?=\d)/, ''), 10)
+					currentUser[id] = toNumber(content.replace(/^0+(?=\d)/, ''))
 
 					if (fieldset) fieldset.isError = currentUser[id] <= 0
 
@@ -188,12 +188,11 @@
 						{/if}
 						<input
 							class:error={fieldset.isError}
-							class:readonly={isConfirming || fieldset.id === 'employeeNumber'}
 							type={fieldset.type}
 							id={toKebab(fieldset.id)}
 							value={currentUser[fieldset.id]}
 							list={fieldset.list ?? ''}
-							readonly={isConfirming}
+							readonly={isConfirming || fieldset.id === 'employeeNumber'}
 							on:input={event => onInput(event, fieldset.id)}
 						/>
 					</div>

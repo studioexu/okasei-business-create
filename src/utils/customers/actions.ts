@@ -16,24 +16,6 @@ export const loadData = async (url: string) => {
 }
 
 /**
- * delete the corresponding customer from the active customers, and put it in the deleted customers
- * Customersからカスタマーを削除して、Deleted Customersに追加する。
- * @param url : string, corresponding to URL of the server
- * @param customerId : string, corresponding to the customer's id we want to delete
- * @returns the new data
- */
-export const deleteItem = (customerId: string, url: string) => {
-	//We DELETE the customer from the "Customers" database.
-	//DBからCustomersを削除する
-	fetch(url + customerId, {
-		method: 'DELETE',
-		headers: { 'Content-type': 'application/json;charset=UTF-8' }
-	})
-		.then(res => res.json())
-		.then(data => console.log(data))
-}
-
-/**
  * POST the new customer into the server.
  * 新しいカスタマーを登録する。
  * @param customerEntry : Object corresponding to the inputs entered by the user.
@@ -44,6 +26,8 @@ export const create = async (newCustomer: Object, url: string) => {
 		headers: { 'Content-type': 'application/json;charset=UTF-8' },
 		body: JSON.stringify(newCustomer)
 	})
+		.then(res => res.json())
+		.then(data => console.log(data))
 		.then(() => console.log('Customer successfully created'))
 		.catch(err => console.log(err))
 }
@@ -88,6 +72,7 @@ export const deleteCustomer = (customerId: string, url: string) => {
 				.then(res => res.json())
 				.then(data => {
 					console.log('Customer successfully deleted')
+					console.log(data)
 				})
 				.catch(err => console.log(err))
 		})

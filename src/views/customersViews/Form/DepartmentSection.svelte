@@ -1,6 +1,8 @@
 <script lang="ts">
-	import BedConfiguration from './BedConfiguration.svelte'
-	import Button from '@/components/customers/Button.svelte'
+	import Button from '@/components/Button.svelte'
+	import SelectInput from './SelectInput.svelte'
+	import Input from './Input.svelte'
+	import Icon from '@/components/Icon.svelte'
 
 	export let bedding: BedInput[]
 	export const departments: string[] = ['内科', '外科', '診療内科']
@@ -59,6 +61,19 @@
 		]
 	}
 
+	const deleteItem = (e: any) => {
+		const itemToDelete = parseInt(e.target.closest('.bed-configuration').id)
+		bedInputArray = bedInputArray.filter(bed => bed.index !== itemToDelete)
+	}
+
+	const checkBedQuantity = (bedQuantity: string): string => {
+		if (isNaN(parseInt(bedQuantity))) {
+			bedQuantity = '0'
+		}
+
+		return bedQuantity
+	}
+
 	$: totalOfBed = caculateTotalOfBeds(bedInputArray)
 	$: bedding = bedInputArray
 </script>
@@ -68,12 +83,22 @@
 
 	<div class="container container--vertical">
 		{#each bedInputArray as bed, index}
-			<BedConfiguration
-				bind:bed
-				bind:department={bed.department}
-				bind:quantity={bed.quantity}
-				bind:bedInputArray
-			/>
+			<div class="bed-configuration" id={bed.index.toString()} data-index={bed.index}>
+				<SelectInput datas={departments} name={'department'} bind:value={bed.department} />
+				<Input
+					label="病床数"
+					name={'quantity'}
+					inputSize="txt--sm"
+					functionOnBlur={checkBedQuantity}
+					bind:value={bed.quantity}
+				/>
+
+				{#if bedInputArray.length > 1}
+					<button type="button" class="btn btn--delete" on:click={deleteItem}>
+						<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
+					</button>
+				{/if}
+			</div>
 		{/each}
 	</div>
 
@@ -90,18 +115,12 @@
 <style lang="scss">
 	.container {
 		display: flex;
-		column-gap: 2rem;
 		align-items: flex-start;
 		justify-content: flex-start;
 		flex-wrap: wrap;
-
-		&--vertical {
-			flex-direction: column;
-		}
-	}
-	.container {
 		column-gap: 10px;
 		row-gap: 11px;
+
 		.label {
 			display: flex;
 			align-items: center;
@@ -111,19 +130,31 @@
 			font-size: 18px;
 			font-weight: 400;
 		}
+
+		&--vertical {
+			flex-direction: column;
+		}
 	}
 
 	.total {
 		position: relative;
 		display: flex;
-		gap: 2.25rem;
 		align-items: center;
 		align-self: flex-end;
+		margin-bottom: 20px;
+		gap: 2.25rem;
+
 		.label {
+			display: flex;
+			align-items: center;
+			height: 32px;
 			margin: 0;
 		}
 
 		&__display {
+			display: flex;
+			align-items: center;
+			height: 32px;
 			margin: 0;
 		}
 	}
@@ -131,5 +162,22 @@
 	.button-wrapper {
 		margin-left: 140px;
 		margin-top: 14px;
+	}
+
+	.bed-configuration {
+		display: flex;
+		align-items: center;
+		gap: 18px;
+
+		.btn {
+			content: ' ';
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			width: 32px;
+			height: 32px;
+			margin-bottom: 20px;
+			background-color: transparent;
+		}
 	}
 </style>

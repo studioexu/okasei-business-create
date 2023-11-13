@@ -1,5 +1,5 @@
 import { Customer } from '../models/Customer'
-import { CustomerBis } from '../models/CustomerBis'
+import { CustomerAPI } from '../models/CustomerAPI'
 
 export class CustomerFactory {
 	[x: string]: any
@@ -7,8 +7,8 @@ export class CustomerFactory {
 		if (type === 'customer') {
 			return new Customer(data)
 		}
-		if (type === 'jsonServerOnline') {
-			return new CustomerBis(data)
+		if (type === 'newApi') {
+			return new CustomerAPI(data)
 		}
 	}
 }

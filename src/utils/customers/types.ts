@@ -53,6 +53,7 @@ export interface CustomerInfo {
 }
 
 export interface CustomerEntries {
+	custCd?: string
 	id?: string
 	branchNumber: string
 	customerName: string
@@ -76,6 +77,10 @@ export interface CustomerEntries {
 	registrationDate?: string
 	registrationTime?: string
 	isActive: boolean
+	googleReview: boolean
+	reviews: string
+	businessList: string
+	closingMonth: string
 }
 
 export interface CustomerEntriesErrors {

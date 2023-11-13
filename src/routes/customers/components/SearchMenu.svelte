@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { CustomerFactory } from '../utils/Factories/CustomerFactory'
+	import type { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
 	import Input from './Input.svelte'
 
 	export let data: CustomerFactory[]
-	export let newData: CustomerFactory[]
-	export let displayDeleteCusomtersIsChecked: boolean
+	export let customersToDisplay: CustomerFactory[]
+	export let deletedCustomersAreShown: boolean
 	export let filteredCustomers: CustomerFactory[]
 
 	let instId: string = ''
@@ -55,28 +55,26 @@
 	 * @param e
 	 */
 	function handleSearch(e?: any) {
-		console.log('nya')
-
-		let dataBis: CustomerFactory[] = data
+		let filteredData: CustomerFactory[] = data
 
 		if (instId !== '') {
-			dataBis = filterData(dataBis, 'customer-number', instId)
+			filteredData = filterData(filteredData, 'customer-number', instId)
 		}
 
 		if (phoneNumber !== '') {
-			dataBis = filterData(dataBis, 'phone-number', phoneNumber)
+			filteredData = filterData(filteredData, 'phone-number', phoneNumber)
 		}
 
 		if (postalCode !== '') {
-			dataBis = filterData(dataBis, 'postal-code', postalCode)
+			filteredData = filterData(filteredData, 'postal-code', postalCode)
 		}
 
 		if (custName !== '') {
-			dataBis = filterData(dataBis, 'facility-name', custName)
+			filteredData = filterData(filteredData, 'facility-name', custName)
 		}
 
-		filteredCustomers = dataBis
-		newData = displayDeleteCusomtersIsChecked
+		filteredCustomers = filteredData
+		customersToDisplay = deletedCustomersAreShown
 			? filteredCustomers
 			: filteredCustomers.filter(customer => customer.isActive)
 	}
@@ -84,34 +82,33 @@
 
 <form class="search-menu">
 	<Input
-		additionalClass={'txt--lg'}
 		name={'facility-name'}
 		label={'施設名'}
-		bind:value={custName}
+		inputSize={'input--lg'}
 		handleInput={handleSearch}
+		bind:value={custName}
 	/>
 	<Input
-		additionalClass={'txt--sm'}
 		name={'customer-number'}
 		label={'医療機関番号'}
+		inputSize={'input--md'}
+		handleInput={handleSearch}
 		bind:value={instId}
-		handleInput={handleSearch}
 	/>
 	<Input
-		additionalClass={'txt--sm'}
-		name={'postalcode'}
+		name={'postal-code'}
 		label={'郵便番号'}
-		bind:value={postalCode}
+		inputSize={'input--md'}
 		handleInput={handleSearch}
+		bind:value={postalCode}
 	/>
 	<Input
-		additionalClass={'txt--sm'}
 		name={'phone'}
 		label={'電話番号'}
-		bind:value={phoneNumber}
+		inputSize={'input--md'}
 		handleInput={handleSearch}
+		bind:value={phoneNumber}
 	/>
-	<!-- <Button buttonClass={'btn--filled btn--sm btn--right'} handleClick={handleSearch}>検索</Button> -->
 </form>
 
 <style lang="scss">
@@ -119,11 +116,12 @@
 		display: flex;
 		justify-content: flex-start;
 		justify-content: space-between;
-		padding: 0 18px;
-		// padding: 0 2rem;
-		flex-wrap: wrap;
 		margin-bottom: 1.5rem;
-		color: var(--black);
+		padding: 0 18px;
+
 		row-gap: 10px;
+		flex-wrap: wrap;
+
+		color: var(--black);
 	}
 </style>

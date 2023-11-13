@@ -1,5 +1,6 @@
 <script lang="ts" context="module">
 	import { debounce, toNumber } from '@/libs/utils'
+	import Icon from '@/components/Icon.svelte'
 
 	type Item = 'amount' | 'revenue'
 	interface Data {
@@ -27,6 +28,7 @@
 
 	const calculate = (today: number[], past: number[]): string => {
 		const todayData: number = addNumbers(today)
+
 		return (
 			Math.round((100 + ((todayData - addNumbers(past)) / todayData) * 100) * 10) / 10
 		).toFixed(1)
@@ -73,10 +75,15 @@
 
 	const getTotalData = (item: Item): number =>
 		addNumbers([pastTotalData[item], ...todayData[`${item}s`]])
+
+	const getIsAchieved = (item: Item): boolean => getTotalData(item) >= monthlyTargets[item]
+
+	const getRate = (num: number, item: Item, type: 'max' | 'min' = 'max'): number =>
+		Math.round((num / Math[type](monthlyTargets[item], getTotalData(item))) * 100)
 </script>
 
 <div class="sales">
-	<div class="sales-header">
+	<div class="header">
 		<p class="font-large">{`${jpDateStr}（${daysOfWeek[jpDate.getDay() + 1]}）`}</p>
 		<p>
 			{#each items as item}
@@ -84,7 +91,7 @@
 					今月の目標{labels[item]}
 					<input
 						type={isEditables[item] ? 'number' : 'text'}
-						value={isEditables[item] ? monthlyTargets[item] : toJP(monthlyTargets[item]).trim()}
+						value={isEditables[item] ? monthlyTargets[item] : toJP(monthlyTargets[item])}
 						readonly={!isEditables[item]}
 						on:focus={() => (isEditables[item] = true)}
 						on:input={event => onInput(event, item)}
@@ -95,11 +102,16 @@
 			{/each}
 		</p>
 	</div>
+	<div class="description">
+		{#each ['月初から昨日までの累計', '月初から今日までの実績', '今月の目標'] as text}
+			<p><span />{text}</p>
+		{/each}
+	</div>
 	{#each items as item}
 		<div class="graph">
 			<div class="graph-label">
 				<div class="left">
-					<p>{labels[item]}</p>
+					<p>今日の販売{labels[item]}</p>
 					<p>{toJP(addNumbers(todayData[`${item}s`]))}{units[item]}</p>
 					<div>
 						{#each ['法人', '個人'] as individuality, index}
@@ -116,33 +128,30 @@
 							<span>{comparison.label}：</span>
 							<span class="font-large">
 								<span class={addClassName(item, comparison.data[`${item}s`])}>
-									{calculate(todayData[`${item}s`], comparison.data[`${item}s`])}
-								</span>%
+									<Icon icon={{ path: 'up-right', color: 'primary' }} />
+									{`${calculate(todayData[`${item}s`], comparison.data[`${item}s`])}%`}
+								</span>
 							</span>
 						</p>
 					{/each}
 				</div>
 			</div>
 			<div class="graph-container">
-				{#if getTotalData(item) < monthlyTargets[item]}
-					{#each [monthlyTargets[item], getTotalData(item), pastTotalData[item]] as num}
-						<span
-							class="underachievement"
-							style={`width: ${Math.round((num / monthlyTargets[item]) * 100)}%`}
-						>
-							<!-- {toJP(num)}{units[item]} -->
-						</span>
-					{/each}
-				{:else}
-					{#each [monthlyTargets[item], getTotalData(item), pastTotalData[item]] as num}
-						<span
-							class="achieved"
-							style={`width: ${Math.round((num / monthlyTargets[item]) * 100)}%`}
-						>
+				{#each [monthlyTargets[item], getTotalData(item), pastTotalData[item]] as num, index}
+					<span
+						style={`width: ${getRate(num, item)}%;
+							justify-content: ${getRate(num, item) > 8 ? 'end' : 'start'};
+							z-index: ${(index === 0 || index === 2) && getIsAchieved(item) ? 2 : 1};`}
+					>
+						{#if index === 0}
 							{toJP(num)}{units[item]}
-						</span>
-					{/each}
-				{/if}
+						{:else if index === 1}
+							{getRate(num, item, getIsAchieved(item) ? 'min' : 'max').toFixed(1)}%
+						{:else}
+							{getRate(num, item).toFixed(1)}%
+						{/if}
+					</span>
+				{/each}
 			</div>
 		</div>
 	{/each}
@@ -155,18 +164,19 @@
 		padding: 32px;
 		overflow-x: overlay;
 
-		&-header,
+		.header,
+		.description,
 		.graph {
 			max-width: 960px;
 			min-width: 800px;
 			margin: 0 auto;
 		}
 
-		&-header {
+		.header {
 			display: flex;
 			align-items: center;
 			justify-content: space-between;
-			margin-bottom: 32px;
+			margin-bottom: 16px;
 
 			p:last-child span {
 				&:first-child {
@@ -189,6 +199,41 @@
 			}
 		}
 
+		.description {
+			display: flex;
+			justify-content: center;
+			margin-bottom: 32px;
+
+			p {
+				display: flex;
+				align-items: center;
+				margin-right: 32px;
+
+				&:first-child span {
+					background: #ccc;
+				}
+
+				&:nth-child(2) span {
+					background: var(--primary);
+				}
+
+				&:last-child {
+					margin-right: 0px;
+
+					span {
+						background: var(--back);
+					}
+				}
+
+				span {
+					display: inline-block;
+					width: 18px;
+					height: 18px;
+					margin-right: 8px;
+				}
+			}
+		}
+
 		.graph {
 			&:last-child {
 				margin-top: 64px;
@@ -206,6 +251,7 @@
 						background: var(--primary);
 						padding: 16px;
 						margin-right: 32px;
+						border-radius: 16px;
 
 						> p {
 							color: #fff;
@@ -258,10 +304,18 @@
 						}
 
 						.font-large {
+							display: inline-flex;
+							align-items: center;
 							margin-left: 8px;
 
 							> span {
+								display: inline-flex;
+								align-items: center;
 								font-size: 24px;
+
+								> :global(.svg-icon) {
+									margin-right: 8px;
+								}
 
 								&.increasing {
 									color: var(--primary);
@@ -269,6 +323,11 @@
 
 								&.decreasing {
 									color: var(--error);
+
+									> :global(.svg-icon) {
+										transform: rotateX(180deg);
+										fill: var(--error);
+									}
 								}
 							}
 						}
@@ -282,28 +341,26 @@
 
 				span {
 					--height: calc(18px * 1.5 + 32px);
+					position: relative;
 					display: flex;
-					justify-content: end;
 					height: var(--height);
 					padding: 16px;
 					margin: 0;
 					border-radius: 0 16px 16px 0;
 
-					&.underachievement {
-						&:first-child {
-							background: var(--back);
-						}
+					&:first-child {
+						background: var(--back);
+					}
 
-						&:nth-child(2) {
-							background: var(--primary);
-							color: #fff;
-							margin-top: calc(-1 * var(--height));
-						}
+					&:nth-child(2) {
+						background: var(--primary);
+						color: #fff;
+						margin-top: calc(-1 * var(--height));
+					}
 
-						&:last-child {
-							background: #ccc;
-							margin-top: calc(-1 * var(--height));
-						}
+					&:last-child {
+						background: #cdcdcd;
+						margin-top: calc(-1 * var(--height));
 					}
 				}
 			}

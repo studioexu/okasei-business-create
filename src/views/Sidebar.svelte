@@ -7,7 +7,7 @@
 		{ path: 'customers', hasNew: true, text: '顧客一覧' },
 		{ path: 'purchases', hasNew: true, text: '買取一覧' },
 		{ path: 'negotiations', hasNew: true, text: '商談一覧' },
-		{ path: 'sales', text: '売上管理' },
+		{ path: 'sales', text: '営業支援' },
 		{ path: 'history', text: '変更履歴' },
 		{ path: 'settings', text: '設定' }
 	]

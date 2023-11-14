@@ -11,7 +11,6 @@
 	export let label: string = ''
 	export let inputSize: string = ''
 	export let unit: string = ''
-	export let wrapperClass: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
@@ -43,7 +42,7 @@
 	// }
 </script>
 
-<div class="input-wrapper {wrapperClass} {isValid ? '' : 'error'}">
+<div class="input-wrapper {isValid ? '' : 'error'}">
 	{#if label}
 		<label class="label" for={name}>
 			{label}
@@ -78,8 +77,11 @@
 		display: flex;
 		align-items: center;
 		width: fit-content;
-		// margin-bottom: 20px;
 		gap: 12px;
+
+		.label {
+			width: max-content;
+		}
 
 		&:first-child {
 			.label {
@@ -89,10 +91,8 @@
 
 		.input {
 			height: 32px;
-			// padding: 7px 0;
 			padding-left: 10px;
 			font-size: 18px;
-			// width: 100%;
 
 			&::placeholder {
 				color: rgb(206, 205, 205);

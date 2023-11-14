@@ -4,6 +4,8 @@
 	export let label: string = ''
 	export let options: string[] = []
 
+	export let placeholder: string = ''
+
 	export let value: string = ''
 </script>
 
@@ -14,7 +16,8 @@
 		</label>
 	{/if}
 
-	<select {name} id={name} class="select" bind:value>
+	<select {name} id={name} class="select" bind:value required>
+		<option value="" selected disabled class="placeholder">未選択</option>
 		{#each options as option}
 			<option value={option}>{option}</option>
 		{/each}
@@ -40,8 +43,6 @@
 	}
 	.select {
 		height: 32px;
-		// padding: 7px 0;
-
 		width: calc(((106 - 10 - 2) / 1366) * 100vw);
 		padding-left: 10px;
 		font-size: 18px;
@@ -50,6 +51,14 @@
 
 		&:focus {
 			border-color: var(--primary-color);
+		}
+
+		&:required:invalid {
+			color: #969696;
+		}
+
+		option[value=''][disabled] {
+			display: none;
 		}
 	}
 </style>

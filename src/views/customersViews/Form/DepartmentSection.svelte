@@ -1,6 +1,6 @@
 <script lang="ts">
 	import BedConfiguration from './BedConfiguration.svelte'
-	import Button from '@/components/Button.svelte'
+	import Button from '@/components/customers/Button.svelte'
 
 	export let bedding: BedInput[]
 	export const departments: string[] = ['内科', '外科', '診療内科']

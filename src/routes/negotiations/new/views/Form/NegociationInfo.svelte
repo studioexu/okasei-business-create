@@ -5,27 +5,22 @@
 	import Checkbox from '../../Components/Checkbox.svelte'
 
 	export let initialState2: any
-	export let updateIndexArray: Function
 
-	$: console.log(initialState2.estimate)
+	// $: console.log(initialState2.estimate)
 
-	let productIndexArray: string[] = []
-	let maxProductIndex = 1
-	let estimateIndexArray: {
-		index: string
-		productIndexArray: string[]
-		maxProductIndex: number
-	}[] = []
+	// let maxProductIndex = 1
 	let maxEstimateIndex = 1
-
-	let memoIndexArray: string[] = []
 	let maxMemoIndex = 1
+	let maxHistoryIndex = 1
 
-	$: memoIndexArray = updateIndexArray(maxMemoIndex)
-	$: productIndexArray = updateIndexArray(maxProductIndex)
-	$: estimateIndexArray = updateEstimateIndexArray(maxEstimateIndex)
+	let historyMemo = [
+		{
+			date: '',
+			memo: ''
+		}
+	]
 
-	let estimateArray = [
+	let estimateArray: Estimate[] = [
 		{
 			issueDate: '',
 			dueDate: '',
@@ -40,13 +35,38 @@
 		}
 	]
 
-	$: estimateArray = updateEstimateIndexArray(maxEstimateIndex)
+	let memoArray = [
+		{
+			date: '',
+			memo: ''
+		}
+	]
 
+	interface Estimate {
+		issueDate: string
+		dueDate: string
+		estimateWithoutTax: string
+		tax: string
+		products: Product[]
+	}
+
+	interface Product {
+		productName: string
+		quantity: string
+	}
+
+	$: estimateArray = updateArray(maxEstimateIndex, estimateArray)
+	$: historyMemo = updateArray(maxHistoryIndex, historyMemo)
+	$: memoArray = updateArray(maxMemoIndex, memoArray)
+	$: initialState2.importantMemo = memoArray
+	$: initialState2.outcomeHistory = historyMemo
 	$: initialState2.estimate = estimateArray
 
-	$: console.log(estimateArray)
+	$: initialState2.checkboxes = videoCheckbox
 
-	const videoCheckbox = [
+	$: maxHistoryIndex
+
+	const videoCheckbox: any[] = [
 		{ title: '動画視聴　依頼', isChecked: false },
 		{ title: '動画視聴　確認', isChecked: false },
 		{ title: '新品　購入経験', isChecked: false },
@@ -62,36 +82,6 @@
 		{ title: '中古　購入経験', isChecked: false }
 	]
 
-	const updateEstimateIndexArray = (maxIndex: number) => {
-		let array = []
-		for (let i = 0; i < maxIndex; i++) {
-			if (estimateArray[i]) {
-				array.push(estimateArray[i])
-			} else {
-				array.push({
-					issueDate: '',
-					dueDate: '',
-					estimateWithoutTax: '',
-					tax: '',
-					products: [
-						{
-							productName: '',
-							quantity: ''
-						}
-					]
-				})
-			}
-		}
-		return array
-	}
-
-	const handleDeleteEstimate = (index: number) => {
-		const newEstimateArray = estimateArray.slice(0, index).concat(estimateArray.slice(index + 1))
-		maxEstimateIndex--
-
-		estimateArray = newEstimateArray
-	}
-
 	const handleAddProduct = (index: number) => {
 		const productArray = estimateArray[index].products
 		productArray.push({
@@ -100,11 +90,65 @@
 		})
 		estimateArray[index].products = productArray
 	}
+
+	const handleDeleteItemFromArray = (index: number, maxIndex: number, arrayToUpdate: any[]) => {
+		const newArray = arrayToUpdate.slice(0, index).concat(arrayToUpdate.slice(index + 1))
+
+		for (let i = 0; i < newArray.length; i++) {
+			arrayToUpdate[i] = newArray[i]
+		}
+
+		maxIndex--
+	}
+
+	const updateArray = (maxIndex: number, arrayToUpdate: any[]) => {
+		let newArray: any[] = []
+		for (let i = 0; i < maxIndex; i++) {
+			if (arrayToUpdate[i]) {
+				newArray.push(arrayToUpdate[i])
+			} else {
+				switch (arrayToUpdate) {
+					case memoArray:
+						newArray.push({
+							date: '',
+							memo: ''
+						})
+						break
+					case historyMemo:
+						newArray.push({
+							date: '',
+							memo: ''
+						})
+						break
+					case estimateArray:
+						newArray.push({
+							issueDate: '',
+							dueDate: '',
+							estimateWithoutTax: '',
+							tax: '',
+							products: [
+								{
+									productName: '',
+									quantity: ''
+								}
+							]
+						})
+
+					default:
+						break
+				}
+			}
+		}
+
+		return newArray
+	}
 </script>
 
-<fieldset class="fieldset">
-	<legend class="fieldset__header">商談情報</legend>
-	<div class="fieldset__main">
+<form class="form" action="">
+	<h3 class="form__header">商談情報</h3>
+
+	<fieldset class="fieldset">
+		<legend class="legend">商談ステータス</legend>
 		<div class="form-row">
 			<Select
 				label={'ステータス'}
@@ -211,7 +255,10 @@
 
 			<Select name={'time'} type={'time'} label={'時'} />
 		</div>
+	</fieldset>
 
+	<fieldset class="fieldset">
+		<legend class="legend">納期先</legend>
 		<div class="form-row">
 			<Input
 				name={'postal-code'}
@@ -254,12 +301,17 @@
 			<Input label={'距離'} name={'distance'} unit={'km'} bind:value={initialState2.distanceKm} />
 			<Input name={'duration'} unit={'時間'} bind:value={initialState2.distanceTime} />
 		</div>
+	</fieldset>
 
-		<!-- estimation section -->
+	<fieldset class="fieldset">
+		<legend class="estimate">見積もり</legend>
+
 		<div class="form-row">
 			<div>
 				<h3 class="label">見積もり金額</h3>
-				<button class="btn primary" on:click={() => maxEstimateIndex++}>＋見積追加</button>
+				<button type="button" class="btn primary" on:click={() => maxEstimateIndex++}
+					>＋見積追加</button
+				>
 			</div>
 			<div class="column">
 				{#each estimateArray as estimate, index}
@@ -287,16 +339,19 @@
 						{#each estimate.products as product}
 							<div class="form-row">
 								<Input label={'商品'} name={'product'} bind:value={product.productName} />
-								<button class="btn primary">商品選択</button>
+								<button type="button" class="btn primary">商品選択</button>
 								<Input unit={'台'} name={'quantity'} bind:value={product.quantity} />
 							</div>
 						{/each}
 
 						<div class="form-row">
-							<button class="btn add primary" on:click={() => handleAddProduct(index)}
+							<button type="button" class="btn add primary" on:click={() => handleAddProduct(index)}
 								>＋商品追加</button
 							>
-							<button class="btn primary delete" on:click={() => handleDeleteEstimate(index)}
+							<button
+								type="button"
+								class="btn primary delete"
+								on:click={() => handleDeleteItemFromArray(index, maxEstimateIndex--, estimateArray)}
 								>削除</button
 							>
 						</div>
@@ -304,30 +359,40 @@
 				{/each}
 			</div>
 		</div>
+	</fieldset>
 
-		<!-- important memo seciton  -->
-
+	<fieldset class="fieldset">
+		<legend class="legend">重要メモ</legend>
 		<div class="form-row">
 			<h3 class="label">重要メモ</h3>
 			<div class="column">
-				{#each memoIndexArray as index}
+				{#each memoArray as memo, index}
 					<div class="container">
 						<div class="form-row">
-							<DateInput name={'memo-date'} />
+							<DateInput name={'memo-date'} bind:value={memo.date} />
 						</div>
 						<div class="form-row">
-							<textarea name={'important-memo'} id="important-memo" />
+							<textarea name={'important-memo'} id="important-memo" bind:value={memo.memo} />
 						</div>
 						<div class="form-row">
-							<button class="btn primary delete">削除</button>
+							<button
+								type="button"
+								class="btn primary delete"
+								on:click={() => handleDeleteItemFromArray(index, maxMemoIndex--, memoArray)}
+								>削除</button
+							>
 						</div>
 					</div>
 				{/each}
 
-				<button class="btn primary" on:click={() => maxMemoIndex++}>＋新規追加</button>
+				<button type="button" class="btn primary" on:click={() => maxMemoIndex++}>＋新規追加</button
+				>
 			</div>
 		</div>
+	</fieldset>
 
+	<fieldset class="fieldset">
+		<legend class="legend">コミュニケーション</legend>
 		<div class="form-row">
 			<Input
 				name={'representative'}
@@ -362,27 +427,71 @@
 
 			<Input name={'presentation-video'} label={'PR動画'} bind:value={initialState2.videoUrl} />
 		</div>
+	</fieldset>
 
-		<div class="checkboxes-container">
-			{#each videoCheckbox as element}
-				<Checkbox value={element.title} bind:isChecked={element.isChecked} />
-			{/each}
-		</div>
+	<fieldset class=" fieldset checkboxes-container">
+		<legend class="legend">チェックボックス</legend>
+		{#each videoCheckbox as element}
+			<Checkbox value={element.title} bind:isChecked={element.isChecked} />
+		{/each}
+	</fieldset>
 
+	<fieldset class="fieldset">
+		<legend class="legend">コメント</legend>
 		<div class="form-row">
-			<label class="label" for="bottleneck">ボトルネック確認</label>
-			<textarea name="bottleneck" id="bottleneck" value={initialState2.checkBottleneck} />
+			<div class="textarea-wrapper">
+				<label class="label" for="bottleneck">ボトルネック確認</label>
+				<textarea name="bottleneck" id="bottleneck" bind:value={initialState2.checkBottleneck} />
+			</div>
 		</div>
 		<div class="form-row">
-			<label class="label" for="chance">機会（チャンス）</label>
-			<textarea name="chance" id="chance" value={initialState2.occasion} />
+			<div class="textarea-wrapper">
+				<label class="label" for="chance">機会（チャンス）</label>
+				<textarea name="chance" id="chance" bind:value={initialState2.occasion} />
+			</div>
 		</div>
 		<div class="form-row">
-			<label class="label" for="risk">脅威（リスク）</label>
-			<textarea name="risk" id="risk" value={initialState2.risk} />
+			<div class="textarea-wrapper">
+				<label class="label" for="risk">脅威（リスク）</label>
+				<textarea name="risk" id="risk" bind:value={initialState2.risk} />
+			</div>
 		</div>
-	</div>
-</fieldset>
+	</fieldset>
+	<!-- </fieldset> -->
+
+	<fieldset class="fieldset">
+		<legend class="legend">商談経緯</legend>
+		<div class="fieldset__main">
+			<div class="form-row">
+				<div class="column">
+					{#each historyMemo as memo, index}
+						<div class="wrapper">
+							<DateInput name={'history-day'} bind:value={memo.date} />
+							<Input
+								name={'history-memo'}
+								placeholder={'未入力'}
+								inputSize={'input--xl'}
+								bind:value={memo.memo}
+							/>
+							<button
+								type="button"
+								class="primary btn delete"
+								on:click={() => handleDeleteItemFromArray(index, maxHistoryIndex--, historyMemo)}
+								>削除</button
+							>
+						</div>
+					{/each}
+				</div>
+			</div>
+
+			<div class="form-row">
+				<button type="button" class="btn primary" on:click={() => maxHistoryIndex++}
+					>＋新規追加</button
+				>
+			</div>
+		</div>
+	</fieldset>
+</form>
 
 <style lang="scss">
 	.form-row {
@@ -393,7 +502,7 @@
 		gap: 12px;
 	}
 
-	.fieldset {
+	.form {
 		&__header {
 			color: var(--primary);
 			font-weight: 700;
@@ -419,10 +528,14 @@
 		background-color: #f4f4f4;
 		padding: 10px 21px;
 		border-radius: 8px;
-		width: 100%;
+		// width: 100%;
+		// width: calc((900 / 1366) * 100vw);
+		width: fit-content;
+		// flex-wrap: wrap;
 
 		.form-row {
 			justify-content: space-between;
+			// flex-wrap: wrap;
 		}
 	}
 
@@ -436,7 +549,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 18px;
-		// width: 100%;
+		width: 100%;
 	}
 
 	.checkbox-container {
@@ -524,4 +637,37 @@
 			margin-left: auto;
 		}
 	}
+
+	.legend {
+		color: var(--primary);
+	}
+
+	.fieldset {
+		margin-bottom: 20px;
+	}
+
+	.textarea-wrapper {
+		display: flex;
+		width: 100%;
+
+		.label {
+			width: 190px;
+		}
+	}
+
+	.wrapper {
+		padding: 16px 26px;
+		border-radius: 8px;
+		// width: calc(100% - 52px);
+		display: flex;
+		justify-content: space-between;
+		gap: 18px;
+		flex-wrap: wrap;
+		background-color: #f4f4f4;
+		// margin-bottom: 20px;
+	}
+
+	// .container--vertical {
+	// 	gap: 20px;
+	// }
 </style>

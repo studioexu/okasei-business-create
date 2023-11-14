@@ -3,7 +3,7 @@
 
 <script lang="ts">
 	import type { AddressAutoInfo } from '@/routes/customers/utils/types'
-	import Button from '@/components/Button.svelte'
+	import Button from '@/components/customers/Button.svelte'
 	import { inputIsValid } from '@/routes/customers/utils/validations'
 
 	export let placeholder: string = ''

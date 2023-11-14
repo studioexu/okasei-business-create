@@ -284,7 +284,6 @@
 								inputSize={'input--lg'}
 								bind:value={image.memo}
 							/>
-							<!-- <input type="text" placeholder="メモ" class="image-description" /> -->
 							<button class="btn primary delete" on:click={handleDeleteImage}>削除</button>
 						</div>
 					{/each}
@@ -397,6 +396,7 @@
 			width: 70px;
 			min-width: 0;
 			margin-left: auto;
+			margin-bottom: 20px;
 		}
 	}
 </style>

@@ -240,6 +240,7 @@
 				display: flex;
 				justify-content: center;
 				flex-wrap: wrap;
+				margin: 0 auto;
 
 				tr {
 					display: flex;

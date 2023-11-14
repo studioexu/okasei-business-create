@@ -40,17 +40,17 @@
 	let monthlyTargets: Record<Item, number> = { amount: 50, revenue: 10000000 }
 
 	const todayData: Data = {
-		amounts: [17, 5],
-		revenues: [3600000, 400000]
+		amounts: [8, 3],
+		revenues: [2300000, 400000]
 	}
 
 	const yesterdayData: Data = {
-		amounts: [18, 2],
-		revenues: [1700000, 100000]
+		amounts: [7, 2],
+		revenues: [2100000, 30000]
 	}
 	const lastWeekDayData: Data = {
-		amounts: [16, 9],
-		revenues: [1600000, 700000]
+		amounts: [11, 4],
+		revenues: [2700000, 700000]
 	}
 
 	const comparisons: { label: string; data: Data }[] = [
@@ -58,7 +58,7 @@
 		{ label: '前週同日比', data: lastWeekDayData }
 	]
 
-	const pastTotalData: Record<Item, number> = { amount: 2, revenue: 30000 }
+	const pastTotalData: Record<Item, number> = { amount: 10, revenue: 3000000 }
 
 	const onInput = debounce((event: Event, item: Item) => {
 		const value = (<HTMLInputElement>event.target).value
@@ -103,7 +103,7 @@
 		</p>
 	</div>
 	<div class="description">
-		{#each ['月初から昨日までの累計', '月初から今日までの実績', '今月の目標'] as text}
+		{#each ['月初から昨日までの実績', '月初から今日までの実績', '今月の目標'] as text}
 			<p><span />{text}</p>
 		{/each}
 	</div>

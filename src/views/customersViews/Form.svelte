@@ -1,22 +1,18 @@
 <script lang="ts">
 	import type { Picture } from '@/utils/customers/types'
-	import { enhance } from '$app/forms'
-	import { prefectures, months, years } from '@/data/data'
-	import Icon from '@/components/Icon.svelte'
-
-	import UploadModal from '@/views/modals/UploadModal.svelte'
-
 	import type {
 		CustomerEntries,
 		CustomerEntriesErrors,
 		AddressAutoInfo
 	} from '@/utils/customers/types'
 
+	import { enhance } from '$app/forms'
+	import { prefectures, months, years } from '@/data/data'
+	import Icon from '@/components/Icon.svelte'
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
 	import SelectWithInput from '@/components/SelectWithInput.svelte'
-
-	let businessContent = ''
+	import UploadModal from '@/views/modals/UploadModal.svelte'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -26,6 +22,7 @@
 	export let isSucceeded: boolean = false
 
 	let uploadModalIsShown = false
+	let businessContent = ''
 
 	// ADDRESS AUTO FILL
 
@@ -459,7 +456,7 @@
 
 		<div class="form-row bed">
 			<h3 class="label">診療科目</h3>
-			<div class="column">
+			<div class="container">
 				{#each departments as department}
 					<div class="department-wrapper" id={department.index.toString()}>
 						<Select
@@ -661,7 +658,9 @@
 									inputSize={'input--lg'}
 									bind:value={image.memo}
 								/>
-								<button type="button" class="btn primary" on:click={handleDeleteImage}>削除</button>
+								<button type="button" class="btn primary inline" on:click={handleDeleteImage}
+									>削除</button
+								>
 							</div>
 						{/each}
 					{/if}
@@ -700,10 +699,8 @@
 		display: flex;
 		align-items: flex-start;
 		justify-content: flex-start;
-		column-gap: 2rem;
-		column-gap: 12px;
+		gap: 12px;
 		flex-wrap: wrap;
-		row-gap: 1rem;
 		margin-bottom: 20px;
 	}
 
@@ -718,9 +715,6 @@
 	.required-legend {
 		float: right;
 		font-size: 14px;
-		.required-mark {
-			color: var(--error);
-		}
 	}
 
 	.input-wrapper {
@@ -778,7 +772,6 @@
 		justify-content: flex-start;
 		align-items: flex-end;
 		width: 100%;
-		margin-bottom: 12px;
 		padding: 10px 21px;
 		gap: 12px;
 		background-color: #f4f4f4;
@@ -821,20 +814,10 @@
 		}
 	}
 
-	.deletebed {
-		content: ' ';
-		display: flex;
-		align-items: center;
-		justify-content: center;
-		width: 32px;
-		height: 32px;
-		margin-bottom: 20px;
-		background-color: transparent;
-	}
-
 	.container {
-		display: block;
-		width: fit-content;
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
 	}
 
 	.bed-total {
@@ -847,16 +830,6 @@
 	.department-wrapper {
 		display: flex;
 		align-items: center;
-		gap: 18px;
-	}
-
-	.form-row.bed {
-		justify-content: flex-start;
-	}
-
-	.column {
-		display: flex;
-		flex-direction: column;
 		gap: 18px;
 	}
 </style>

@@ -2,8 +2,8 @@
 	import { goto } from '$app/navigation'
 	import type { CustomerEntries, CustomerEntriesErrors } from '@/utils/customers/types'
 
-	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
-	import Form from '@/views/customersViews/Form/Form.svelte'
+	import Confirmation from '@/views/customersViews/Confirmation.svelte'
+	import Form from '@/views/customersViews/Form.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
 	import { inputIsValid } from '@/utils/customers/validations'
@@ -15,6 +15,14 @@
 
 	const goBack = () => {
 		goto('/customers')
+	}
+
+	const handleEditClicked = () => {
+		confirmationPageIsShown = false
+	}
+
+	const handleCheckForm = () => {
+		confirmationPageIsShown = checkIfFormIsValid(initialState)
 	}
 
 	let initialState: CustomerEntries = {
@@ -90,10 +98,6 @@
 		miscellaneous: true
 	}
 
-	const handleEditClicked = () => {
-		confirmationPageIsShown = false
-	}
-
 	/**
 	 * Take the form and check if all the entries are valid.
 	 * If there is one error, the function will return false.
@@ -121,10 +125,6 @@
 		})
 
 		return isValid
-	}
-
-	const handleCheckForm = () => {
-		confirmationPageIsShown = checkIfFormIsValid(initialState)
 	}
 </script>
 

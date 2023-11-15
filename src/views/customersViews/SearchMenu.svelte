@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
+	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 
 	export let data: CustomerFactory[]
 	export let customersToDisplay: CustomerFactory[]

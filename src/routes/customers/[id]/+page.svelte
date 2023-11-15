@@ -4,8 +4,8 @@
 <script lang="ts">
 	import type { CustomerEntries } from '@/utils/customers/types'
 
-	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
-	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
+	import { CustomerFactory } from '@/Factories/CustomerFactory'
+	import Confirmation from '@/views/customersViews/Confirmation.svelte'
 
 	export let data
 

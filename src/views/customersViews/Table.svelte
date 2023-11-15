@@ -1,7 +1,6 @@
 <script lang="ts">
-	import type { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
+	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 
-	import TableRow from './TableRow.svelte'
 	import { crossfade } from 'svelte/transition'
 	import { flip } from 'svelte/animate'
 	import { quintOut } from 'svelte/easing'
@@ -30,32 +29,13 @@
 		window.location.href = '/customers/' + rowId
 	}
 
-	// const datasToDisplay = [
-	// 	{
-	// 		id: 'customer-number',
-	// 		content: id
-	// 	},
-	// 	{
-	// 		id: 'facility-name',
-	// 		content: customerName
-	// 	},
-	// 	{
-	// 		id: 'address',
-	// 		content: address.prefecture + address.city
-	// 	},
-	// 	{
-	// 		id: 'update-date',
-	// 		content: status + '日 ' + updateDate
-	// 	}
-	// ]
-
-	const handleDeleteItem = async (e: any) => {
+	const handleDeleteItem = (e: any) => {
 		isShown = true
 		currentUser = e.target.closest('.row').id
 		console.log(currentUser)
 	}
 
-	const handleEditItem = async (e: any) => {
+	const handleEditItem = (e: any) => {
 		const id = e.target.closest('.row').id
 		window.location.href = '/customers/' + id + '/edit'
 	}
@@ -77,7 +57,7 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each customersToDisplayOnPage as customer (customer._id)}
+				{#each customersToDisplayOnPage as customer (customer.custCD)}
 					<tr
 						class="row {customer.isActive ? '' : 'deleted'}"
 						data-id={customer.custCD}
@@ -87,29 +67,12 @@
 						animate:flip={{ duration: 1000, easing: quintOut }}
 						on:click={handleRowClick}
 					>
-						<!-- <TableRow
-							customerName={customer.custName}
-							address={customer.address}
-							id={customer.custCD}
-							status={!customer.isActive
-								? '削除'
-								: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
-								? '更新'
-								: '登録'}
-							updateDate={customer.delete.deleteDate !== '' &&
-							customer.delete.deleteDate !== undefined
-								? customer.deleteDateTime.date
-								: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
-								? customer.updateDateTime.date
-								: customer.registDateTime.date}
-							bind:currentUser
-							bind:isShown
-							bind:isActive={customer.isActive}
-						/> -->
-
 						<td class="data customer-number">{customer.custCD}</td>
+
 						<td class="data facility-name">{customer.custName}</td>
+
 						<td class="data address">{customer.address.prefecture}{customer.address.city}</td>
+
 						{#if !customer.isActive}
 							<td class="data update-date">{'削除'}日 {customer.deleteDateTime.date}</td>
 						{:else if customer.update.updateDate !== '' && customer.update.updateDate !== undefined}

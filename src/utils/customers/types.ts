@@ -9,49 +9,6 @@ export interface Department {
 	bedQuantity: string
 }
 
-export interface CustomerInfo {
-	id?: string
-	custCD?: string | undefined
-	custBranchCD: string
-	custName: string
-	custKana: string
-	instId: string
-	custType: string
-	address: {
-		postalCode: string
-		prefecture: string
-		city: string
-		address1: string
-		address2: string
-		phoneNumber: string
-		fax: string
-	}
-	numEmployees: string
-	url: string
-	numBranch: string
-	foundation: {
-		establishDate: string
-		establishedBy: string
-	}
-	isActive: boolean
-	departments: {
-		detail: Department[]
-		bedTotal: number
-	}
-	registration: {
-		registDate: string
-		registBy: string
-	}
-	update: {
-		updateDate: string
-		updateBy: string
-	}
-	delete: {
-		deleteDate: string
-		deleteBy: string
-	}
-}
-
 export interface CustomerEntries {
 	custCd?: string
 	id?: string

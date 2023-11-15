@@ -1,31 +1,30 @@
 <script lang="ts">
-	import Button from '@/components/Button.svelte'
-	import SelectInput from './SelectInput.svelte'
-	import Input from './Input.svelte'
+	import type { Department } from '@/utils/customers/types'
+	import SelectWithInput from '@/components/SelectWithInput.svelte'
+	import Input from '@/components/Input.svelte'
 	import Icon from '@/components/Icon.svelte'
 
-	export let bedding: BedInput[]
-	export const departments: string[] = ['内科', '外科', '診療内科']
+	export let departments: Department[]
+	export const departmentLabels: string[] = ['内科', '外科', '診療内科']
 
-	interface BedInput {
+	interface departmentInput {
 		index: number
 		department: string
-		quantity: string
+		bedQuantity: string
 	}
-
 	let totalOfBed: number = 0
-	let bedInputArray: BedInput[] = []
+	let departmentInputArray: departmentInput[] = []
 
-	if (bedding.length === 0) {
-		bedInputArray = [{ index: 0, department: '内科', quantity: '0' }]
+	if (departments.length === 0) {
+		departmentInputArray = [{ index: 0, department: '内科', bedQuantity: '0' }]
 	} else {
-		bedding.map((bed, index) => {
-			bedInputArray = [
-				...bedInputArray,
+		departments.map((department, index) => {
+			departmentInputArray = [
+				...departmentInputArray,
 				{
 					index: index,
-					department: bed.department,
-					quantity: bed.quantity
+					department: department.department,
+					bedQuantity: department.bedQuantity
 				}
 			]
 			index++
@@ -36,10 +35,12 @@
 	 * We go through the array of bed input and calculate the number total of beds.
 	 * @param beds: array of bedInput
 	 */
-	const caculateTotalOfBeds = (beds: BedInput[]): number => {
+	const caculateTotalOfBeds = (departments: departmentInput[]): number => {
 		let sum: number = 0
-		beds.map((bed: BedInput) => {
-			const numberOfBed = isNaN(parseInt(bed.quantity)) ? 0 : parseInt(bed.quantity)
+		departments.map((department: departmentInput) => {
+			const numberOfBed = isNaN(parseInt(department.bedQuantity))
+				? 0
+				: parseInt(department.bedQuantity)
 			sum += numberOfBed
 		})
 
@@ -51,19 +52,21 @@
 	 */
 	const handleAddBed = (e: any) => {
 		e.preventDefault()
-		bedInputArray = [
-			...bedInputArray,
+		departmentInputArray = [
+			...departmentInputArray,
 			{
-				index: bedInputArray[bedInputArray.length - 1].index + 1,
+				index: departmentInputArray[departmentInputArray.length - 1].index + 1,
 				department: '内科',
-				quantity: '0'
+				bedQuantity: '0'
 			}
 		]
 	}
 
 	const deleteItem = (e: any) => {
 		const itemToDelete = parseInt(e.target.closest('.bed-configuration').id)
-		bedInputArray = bedInputArray.filter(bed => bed.index !== itemToDelete)
+		departmentInputArray = departmentInputArray.filter(
+			department => department.index !== itemToDelete
+		)
 	}
 
 	const checkBedQuantity = (bedQuantity: string): string => {
@@ -74,27 +77,31 @@
 		return bedQuantity
 	}
 
-	$: totalOfBed = caculateTotalOfBeds(bedInputArray)
-	$: bedding = bedInputArray
+	$: totalOfBed = caculateTotalOfBeds(departmentInputArray)
+	$: departments = departmentInputArray
 </script>
 
 <div class="container">
 	<h3 class="label">診療科目</h3>
 
 	<div class="container container--vertical">
-		{#each bedInputArray as bed, index}
-			<div class="bed-configuration" id={bed.index.toString()} data-index={bed.index}>
-				<SelectInput datas={departments} name={'department'} bind:value={bed.department} />
+		{#each departmentInputArray as department, index}
+			<div class="bed-configuration" id={department.index.toString()} data-index={department.index}>
+				<SelectWithInput
+					datas={departmentLabels}
+					name={'department'}
+					bind:value={department.department}
+				/>
 				<Input
 					label="病床数"
 					name={'quantity'}
 					inputSize="txt--sm"
 					functionOnBlur={checkBedQuantity}
-					bind:value={bed.quantity}
+					bind:value={department.bedQuantity}
 				/>
 
-				{#if bedInputArray.length > 1}
-					<button type="button" class="btn btn--delete" on:click={deleteItem}>
+				{#if departmentInputArray.length > 1}
+					<button type="button" class="btn" on:click={deleteItem}>
 						<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
 					</button>
 				{/if}
@@ -109,7 +116,7 @@
 </div>
 
 <div class="button-wrapper">
-	<Button buttonClass={'btn--sm btn--filled'} handleClick={handleAddBed}>＋ 新規追加</Button>
+	<button type="button" class="primary" on:click={handleAddBed}>＋ 新規追加</button>
 </div>
 
 <style lang="scss">
@@ -160,6 +167,7 @@
 	}
 
 	.button-wrapper {
+		width: fit-content;
 		margin-left: 140px;
 		margin-top: 14px;
 	}

@@ -38,7 +38,7 @@ export const actions = {
 
 			const registration = {
 				registDate: initialState.registrationDate,
-				registBy: initialState.registrationTime
+				registBy: initialState.registeredBy
 			}
 			const updatedcustomer = parseBeforeUpdate(initialState, registration)
 

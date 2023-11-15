@@ -1,12 +1,12 @@
-export interface Detail {
-	department: string
-	numBed: string
+export interface Picture {
+	file: File
+	memo: string
 }
 
-export interface BedInput {
+export interface Department {
 	index: number
 	department: string
-	quantity: string
+	bedQuantity: string
 }
 
 export interface CustomerInfo {
@@ -35,7 +35,7 @@ export interface CustomerInfo {
 	}
 	isActive: boolean
 	departments: {
-		detail: Detail[]
+		detail: Department[]
 		bedTotal: number
 	}
 	registration: {
@@ -67,20 +67,29 @@ export interface CustomerEntries {
 	address2: string
 	phoneNumber: string
 	fax: string
+	email: string
+	mobile: string
 	year: string
 	month: string
 	founder: string
-	bedding: BedInput[]
+	departments: Department[]
 	numberOfEmployees: string
 	homepage: string
 	numberOfFacilities: string
-	registrationDate?: string
-	registrationTime?: string
-	isActive: boolean
-	googleReview: boolean
+	isActive: true
+	googleReview: false
 	reviews: string
 	businessList: string
 	closingMonth: string
+	personInCharge: string
+	personInChargeRole: string
+	personInChargeMemo: string
+	approver: string
+	contactTime: string
+	pictures: Picture[]
+	miscellaneous: string
+	registrationDate?: string
+	registeredBy?: string
 }
 
 export interface CustomerEntriesErrors {
@@ -96,13 +105,27 @@ export interface CustomerEntriesErrors {
 	address2: boolean
 	phoneNumber: boolean
 	fax: boolean
+	email: boolean
+	mobile: boolean
 	year: boolean
 	month: boolean
 	founder: boolean
-	bedding: boolean
+	departments: boolean
 	numberOfEmployees: boolean
 	homepage: boolean
 	numberOfFacilities: boolean
+	isActive: boolean
+	googleReview: boolean
+	reviews: boolean
+	businessContent: boolean
+	closingMonth: boolean
+	personInCharge: boolean
+	personInChargeRole: boolean
+	personInChargeMemo: boolean
+	approver: boolean
+	contactTime: boolean
+	pictures: boolean
+	miscellaneous: boolean
 }
 
 export interface AddressAutoInfo {

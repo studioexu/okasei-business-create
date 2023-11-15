@@ -27,7 +27,7 @@
 <td class="data address">{address.prefecture}{address.city}</td>
 <td class="data update-date">{status}日 {updateDate}</td>
 <td class="data update">
-	<button class="btn btn--update {isActive ? '' : 'disabled'}" on:click={handleEditItem}>
+	<button class="btn {isActive ? '' : 'disabled'}" on:click={handleEditItem}>
 		{#if isActive}
 			<Icon icon={{ path: 'edit', color: 'primary' }} />
 		{:else}
@@ -36,7 +36,7 @@
 	</button>
 </td>
 <td class="data erase">
-	<button class="btn btn--delete {isActive ? '' : 'disabled'}" {id} on:click={handleDeleteItem}>
+	<button class="btn {isActive ? '' : 'disabled'}" {id} on:click={handleDeleteItem}>
 		{#if isActive}
 			<Icon icon={{ path: 'delete', color: 'primary' }} />
 		{:else}

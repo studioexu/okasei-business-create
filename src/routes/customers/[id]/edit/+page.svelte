@@ -5,7 +5,6 @@
 	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 	import { goto } from '$app/navigation'
-	import Button from '@/components/Button.svelte'
 	import { inputIsValid } from '@/utils/customers/validations.js'
 	import { fade } from 'svelte/transition'
 	export let data
@@ -27,20 +26,29 @@
 		address2: customer.address.address2,
 		phoneNumber: customer.address.phoneNumber,
 		fax: customer.address.fax,
+		email: '',
+		mobile: '',
 		year: customer.foundation.establishDate,
 		month: customer.foundation.establishDate,
 		founder: customer.foundation.establishedBy,
-		bedding: customer.departmentDetail,
+		departments: customer.departmentDetail,
 		numberOfEmployees: customer.numEmployees,
 		homepage: customer.url,
 		numberOfFacilities: customer.numBranch,
-		registrationDate: customer.registration.registDate,
-		registrationTime: customer.registration.registBy,
 		isActive: customer.isActive,
 		googleReview: customer.googleReview,
 		reviews: customer.reviews,
 		businessList: customer.businessList,
-		closingMonth: customer.closingMonth
+		closingMonth: customer.closingMonth,
+		personInCharge: '',
+		personInChargeRole: '',
+		personInChargeMemo: '',
+		approver: '',
+		contactTime: '',
+		pictures: [],
+		miscellaneous: '',
+		registrationDate: customer.registration.registDate,
+		registeredBy: customer.registration.registBy
 	}
 
 	let formIsValid: CustomerEntriesErrors = {
@@ -56,13 +64,27 @@
 		address2: true,
 		phoneNumber: true,
 		fax: true,
+		email: true,
+		mobile: true,
 		year: true,
 		month: true,
 		founder: true,
-		bedding: true,
+		departments: true,
 		numberOfEmployees: true,
 		homepage: true,
-		numberOfFacilities: true
+		numberOfFacilities: true,
+		isActive: true,
+		googleReview: true,
+		reviews: true,
+		businessContent: true,
+		closingMonth: true,
+		personInCharge: true,
+		personInChargeRole: true,
+		personInChargeMemo: true,
+		approver: true,
+		contactTime: true,
+		pictures: true,
+		miscellaneous: true
 	}
 
 	let isSucceeded: boolean = false
@@ -140,11 +162,11 @@
 		<footer class="section__footer">
 			{#if confirmationPageIsShown}
 				<div in:fade>
-					<Button buttonClass={'btn--transparent'} handleClick={handleEditClicked}>修正</Button>
+					<button class="btn secondary" on:click={handleEditClicked}>修正</button>
 				</div>
-				<Button buttonClass={'btn--filled'} form="registration-form">登録</Button>
+				<button type="submit" class="btn primary" form="registration-form">登録</button>
 			{:else}
-				<Button buttonClass={'btn--filled'} handleClick={handleCheckForm}>登録</Button>
+				<button type="button" class="btn primary" on:click={handleCheckForm}>登録</button>
 			{/if}
 		</footer>
 	{/if}
@@ -166,5 +188,9 @@
 			margin-top: 1.5rem;
 			padding-bottom: 24px;
 		}
+	}
+
+	.btn {
+		margin: 0;
 	}
 </style>

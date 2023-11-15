@@ -8,7 +8,6 @@
 	import Table from './components/Table.svelte'
 	import SearchMenu from './components/SearchMenu.svelte'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
-	import Button from '@/components/Button.svelte'
 
 	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
 	import { deleteCustomer } from '@/utils/customers/actions'
@@ -159,14 +158,16 @@
 				<h3 class="switch-label">以前削除した施設も含む</h3>
 			</div>
 
-			<Button
-				buttonClass={'btn btn--filled btn--md'}
-				handleClick={() => {
-					window.location.href = '/customers/new'
-				}}
-			>
-				＋新規登録
-			</Button>
+			<div class="button-wrapper">
+				<button
+					class="primary"
+					on:click={() => {
+						window.location.href = '/customers/new'
+					}}
+				>
+					＋新規登録
+				</button>
+			</div>
 		</div>
 	</header>
 

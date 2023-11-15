@@ -9,7 +9,7 @@
 	export let required: boolean = false
 </script>
 
-<div class="input-wrapper {name} {isValid ? '' : 'error'}">
+<div class="input-wrapper {isValid ? '' : 'error'}">
 	{#if label !== ''}
 		<label class="label" for={name}>
 			{label}
@@ -26,15 +26,15 @@
 		<span class="unit">{unit}</span>
 	{/if}
 
-	<span class="error-msg">{errorMsg}</span>
+	<span class="font-error">{errorMsg}</span>
 </div>
 
 <style lang="scss">
 	.input-wrapper {
 		display: flex;
-		gap: 10px;
 		align-items: center;
 		margin-bottom: 20px;
+		gap: 10px;
 
 		&:first-child {
 			.label {
@@ -43,8 +43,8 @@
 		}
 
 		.select {
-			height: 32px;
 			width: calc(((103 - 10 - 2) / 1366) * 100vw);
+			padding: 8px 0;
 			padding-left: 10px;
 			font-size: 18px;
 			color: var(--black);
@@ -63,15 +63,11 @@
 			align-items: center;
 		}
 
-		.error-msg {
+		.font-error {
 			position: absolute;
 			right: 0;
 			bottom: -14px;
-			color: var(--error);
 			font-size: 10px;
-			font-weight: 600;
-			min-width: 250px;
-			text-align: right;
 			opacity: 0;
 		}
 	}
@@ -84,7 +80,7 @@
 			animation-iteration-count: 3;
 		}
 
-		.error-msg {
+		.font-error {
 			opacity: 1;
 			transition: all 300ms;
 		}

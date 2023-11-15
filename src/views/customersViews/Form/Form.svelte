@@ -1,6 +1,9 @@
 <script lang="ts">
+	import type { Picture } from '@/utils/customers/types'
 	import { enhance } from '$app/forms'
 	import { prefectures, months, years } from '@/data/data'
+
+	import UploadModal from '@/views/modals/UploadModal.svelte'
 
 	import type {
 		CustomerEntries,
@@ -8,11 +11,10 @@
 		AddressAutoInfo
 	} from '@/utils/customers/types'
 
-	import Input from './Input.svelte'
-	import Select from './Select.svelte'
-	import SelectInput from './SelectInput.svelte'
+	import Input from '@/components/Input.svelte'
+	import Select from '@/components/Select.svelte'
+	import SelectWithInput from '@/components/SelectWithInput.svelte'
 	import DepartmentSection from './DepartmentSection.svelte'
-	import Button from '@/components/Button.svelte'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -21,6 +23,8 @@
 	export let isShown: boolean = false
 	export let isSucceeded: boolean = false
 
+	let uploadModalIsShown = false
+
 	let address: AddressAutoInfo = {
 		prefecture: '',
 		city: '',
@@ -28,9 +32,6 @@
 	}
 
 	let businessContent = ''
-	let comments = ''
-	let commentType = ''
-
 	/**
 	 * Fetch the address corresponding to the postal code.
 	 * @param e
@@ -83,7 +84,52 @@
 			isSucceeded = true
 		}
 	}
+
+	let phase: 'shown' | 'success' | 'error' = 'shown'
+
+	const onClick = (event: { detail: { key: string; fileToUpload: File } }) => {
+		switch (event.detail.key) {
+			case 'cancel':
+				uploadModalIsShown = false
+				break
+
+			case 'upload':
+				let newArray = initialState.pictures
+				newArray.push({ file: event.detail.fileToUpload, memo: '' })
+				initialState.pictures = newArray
+				phase = 'success'
+				break
+
+			case 'success':
+				uploadModalIsShown = false
+				phase = 'shown'
+				break
+
+			case 'error':
+				phase = 'shown'
+				break
+		}
+	}
+
+	$: {
+		if (uploadModalIsShown && phase === 'success') {
+			uploadModalIsShown = false
+			phase = 'shown'
+		}
+	}
+
+	const handleDeleteImage = (e: any) => {
+		const imageToDelete = e.target.closest('.image-wrapper').id
+
+		initialState.pictures = initialState.pictures.filter(
+			(image: Picture) => image.file.name !== imageToDelete
+		)
+	}
 </script>
+
+{#if uploadModalIsShown}
+	<UploadModal {phase} on:click={onClick} />
+{/if}
 
 <form
 	class="form {confirmationPageIsShown ? 'hidden' : ''}"
@@ -99,7 +145,7 @@
 	<p class="required-legend"><span class="required-mark">*</span> 必須</p>
 
 	<fieldset class="fieldset fieldset--info1">
-		<legend class="hidden">情報１</legend>
+		<legend class="legend">情報１</legend>
 		<div class="form-row">
 			<Input
 				label={'枝番'}
@@ -170,27 +216,25 @@
 	<!-- .fieldset--info1 -->
 
 	<fieldset class="fieldset fieldset--address">
-		<legend class="hidden">住所</legend>
+		<legend class="legend">住所</legend>
 
 		<div class="form-row">
 			<Input
 				label="郵便番号"
 				name="postal-code"
 				placeholder={'0000000'}
-				errorMsg={"正しい郵便番号を入力して下さい（'〒'や'ー'なし）"}
+				errorMsg={"郵便番号を入力して下さい（'〒'や'ー'なし）"}
 				inputSize="input--sm"
 				required={true}
 				bind:value={initialState.postalCode}
 				bind:isValid={formIsValid.postalCode}
 			/>
 
-			<Button buttonClass={'btn--sm btn--filled'} handleClick={handlePostalCodeSearchSubmit}>
-				自動検索
-			</Button>
+			<button class="btn primary inline" on:click={handlePostalCodeSearchSubmit}>自動検索</button>
 		</div>
 
 		<div class="form-row">
-			<SelectInput
+			<SelectWithInput
 				label={'都道府県'}
 				name="prefecture"
 				datas={prefectures}
@@ -253,6 +297,13 @@
 				bind:isValid={formIsValid.phoneNumber}
 			/>
 			<!-- Input -->
+			<Input
+				name={'mobile-phone'}
+				label={'携帯電話'}
+				placeholder={'未入力'}
+				inputSize={'input--md'}
+				bind:value={initialState.mobile}
+			/>
 
 			<Input
 				label="FAX番号"
@@ -265,14 +316,24 @@
 			/>
 			<!-- Input -->
 		</div>
+
+		<div class="form-row">
+			<Input
+				name={'email'}
+				label={'メール'}
+				placeholder={'未入力'}
+				inputSize={'input--lg'}
+				bind:value={initialState.email}
+			/>
+		</div>
 		<!-- .containter -->
 	</fieldset>
 	<!-- .fieldset--address -->
 
 	<fieldset class="fieldset fieldset--foundation">
-		<legend class="hidden">創立</legend>
+		<legend class="legend">創立</legend>
 		<div class="form-row">
-			<SelectInput
+			<SelectWithInput
 				label={'設立年月日'}
 				name={'year'}
 				datas={years}
@@ -305,13 +366,12 @@
 	<!-- .fieldset--foundation -->
 
 	<fieldset class="fieldset fieldset--bed">
-		<legend class="hidden">病床設定</legend>
-		<DepartmentSection bind:bedding={initialState.bedding} />
+		<legend class="legend">病床設定</legend>
+		<DepartmentSection bind:departments={initialState.departments} />
 	</fieldset>
-	<!-- .fieldset--bed -->
 
 	<fieldset class="fieldset fieldset--info2">
-		<legend class="hidden">情報２</legend>
+		<legend class="legend">情報２</legend>
 
 		<div class="form-row">
 			<Input
@@ -357,7 +417,7 @@
 
 				<select class="select" bind:value={initialState.googleReview} id="google-review">
 					<option value={false}>無し</option>
-					<option value={true}>有り</option>
+					<option value={true}>★有り</option>
 				</select>
 			</div>
 
@@ -377,7 +437,7 @@
 			<Input
 				label="関連施設拠点数"
 				name="number-of-facilities"
-				unit="店"
+				unit="軒"
 				errorMsg={'数字で入力して下さい'}
 				inputSize="input--sm"
 				bind:value={initialState.numberOfFacilities}
@@ -385,11 +445,113 @@
 			/>
 			<!-- Input -->
 		</div>
+
+		<div class="form-row">
+			<Input
+				name={'miscellaneous'}
+				label={'その他'}
+				placeholder={'未入力'}
+				inputSize={'input--xl'}
+				bind:value={initialState.miscellaneous}
+			/>
+		</div>
 	</fieldset>
 	<!-- .fieldset--info2 -->
+
+	<fieldset class="fieldset">
+		<legend class="legend">担当者</legend>
+		<div class="form-row">
+			<Input
+				name={'person-in-charge'}
+				label={'ご担当者名'}
+				placeholder={'未入力'}
+				inputSize={'input--md'}
+				bind:value={initialState.personInCharge}
+			/>
+			<Input
+				name={'role'}
+				label={'役職'}
+				placeholder={'未入力'}
+				inputSize={'input--sm'}
+				bind:value={initialState.personInChargeRole}
+			/>
+		</div>
+
+		<div class="form-row">
+			<Input
+				name={'person-in-charge-memo'}
+				label={'ご担当メモ'}
+				placeholder={'未入力'}
+				inputSize={'input--xl'}
+				bind:value={initialState.personInChargeMemo}
+			/>
+		</div>
+		<div class="form-row">
+			<Input
+				name={'approver'}
+				label={'決裁者'}
+				placeholder={'未入力'}
+				inputSize={'input--md'}
+				bind:value={initialState.approver}
+			/>
+		</div>
+		<div class="form-row">
+			<Input
+				name={'prefered-contact-time'}
+				label={'連絡の取りやすい時間'}
+				placeholder={'未入力'}
+				inputSize={'input--xl'}
+				bind:value={initialState.contactTime}
+			/>
+		</div>
+	</fieldset>
+
+	<fieldset class="fieldset">
+		<legend class="legend">画像</legend>
+		<div class="form-row">
+			<div class="input-wrapper">
+				<h3 class="label">参考書類など画像データ</h3>
+
+				<div class="container">
+					{#if initialState.pictures.length === 0}
+						<div class="image-wrapper">
+							<button class="image-empty" on:click={() => (uploadModalIsShown = true)}>
+								<span>+</span>
+							</button>
+							<p class="image-description">画像がアップロードされていません。</p>
+						</div>
+					{:else}
+						{#each initialState.pictures as image, index}
+							<div class="card">
+								<div class="image-wrapper" id={image.file.name}>
+									<img src={URL.createObjectURL(image.file)} alt="" />
+								</div>
+
+								<Input
+									placeholder="メモ"
+									name={'image-description'}
+									inputSize={'input--lg'}
+									bind:value={image.memo}
+								/>
+								<button class="btn primary delete" on:click={handleDeleteImage}>削除</button>
+							</div>
+						{/each}
+					{/if}
+
+					<button class="btn add primary" on:click={() => (uploadModalIsShown = true)}>
+						＋画像追加
+					</button>
+				</div>
+			</div>
+		</div>
+	</fieldset>
 </form>
 
 <style lang="scss">
+	.legend {
+		display: none;
+	}
+
 	.hidden {
 		display: none;
 	}
@@ -409,18 +571,13 @@
 		align-items: flex-start;
 		justify-content: flex-start;
 		column-gap: 2rem;
+		column-gap: 12px;
 		flex-wrap: wrap;
 		row-gap: 1rem;
 	}
 
 	.fieldset {
 		margin-bottom: 2rem;
-
-		&--foundation {
-			.form-row:last-child {
-				margin-left: auto;
-			}
-		}
 	}
 
 	.required-legend {
@@ -457,41 +614,80 @@
 				border-color: var(--primary-color);
 			}
 		}
-
-		.unit {
-			height: 32px;
-			display: flex;
-			align-items: center;
-		}
-
-		.error-msg {
-			position: absolute;
-			right: 0;
-			bottom: -14px;
-			color: var(--error);
-			font-size: 10px;
-			font-weight: 600;
-			min-width: 250px;
-			text-align: right;
-			opacity: 0;
-		}
-	}
-
-	.error {
-		.select {
-			transition: border 300ms;
-			border: 1.5px solid var(--error);
-			animation: buzz 100ms;
-			animation-iteration-count: 3;
-		}
-
-		.error-msg {
-			opacity: 1;
-			transition: all 300ms;
-		}
 	}
 
 	.required-mark {
 		color: var(--error);
+	}
+
+	.image-empty {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+		height: 124px;
+		width: 200px;
+		border: 2px dashed var(--primary);
+		border-radius: 8px;
+		margin: 0;
+
+		span {
+			font-size: 48px;
+			color: var(--primary);
+		}
+	}
+
+	.label {
+		font-size: 18px;
+		font-weight: 400;
+		width: 130px;
+	}
+
+	.image-wrapper {
+		width: 100%;
+		display: flex;
+		justify-content: flex-start;
+		align-items: flex-end;
+		gap: 12px;
+		background-color: #f4f4f4;
+		padding: 10px 21px;
+		border-radius: 8px;
+		margin-bottom: 12px;
+
+		.image-description {
+			height: 32px;
+			width: 100%;
+		}
+
+		.image {
+			height: 124px;
+			width: 200px;
+			object-fit: contain;
+		}
+	}
+
+	.btn {
+		margin: 0;
+
+		&.inline {
+			line-height: 21px;
+		}
+
+		&.delete {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0;
+			height: 32px;
+			width: 70px;
+			min-width: 0;
+			margin-left: auto;
+			// align-self: flex-end;
+			margin-bottom: 20px;
+		}
+	}
+
+	.container {
+		display: block;
+		width: fit-content;
 	}
 </style>

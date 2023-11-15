@@ -5,7 +5,6 @@
 	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form/Form.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
-	import Button from '@/components/Button.svelte'
 
 	import { inputIsValid } from '@/utils/customers/validations'
 	import { fade } from 'svelte/transition'
@@ -32,10 +31,12 @@
 		address2: '',
 		phoneNumber: '',
 		fax: '',
+		email: '',
+		mobile: '',
 		year: '',
 		month: '',
 		founder: '',
-		bedding: [],
+		departments: [],
 		numberOfEmployees: '',
 		homepage: '',
 		numberOfFacilities: '',
@@ -43,7 +44,14 @@
 		googleReview: false,
 		reviews: '',
 		businessList: '',
-		closingMonth: ''
+		closingMonth: '',
+		personInCharge: '',
+		personInChargeRole: '',
+		personInChargeMemo: '',
+		approver: '',
+		contactTime: '',
+		pictures: [],
+		miscellaneous: ''
 	}
 
 	let formIsValid: CustomerEntriesErrors = {
@@ -59,13 +67,27 @@
 		address2: true,
 		phoneNumber: true,
 		fax: true,
+		email: true,
+		mobile: true,
 		year: true,
 		month: true,
 		founder: true,
-		bedding: true,
+		departments: true,
 		numberOfEmployees: true,
 		homepage: true,
-		numberOfFacilities: true
+		numberOfFacilities: true,
+		isActive: true,
+		googleReview: true,
+		reviews: true,
+		businessContent: true,
+		closingMonth: true,
+		personInCharge: true,
+		personInChargeRole: true,
+		personInChargeMemo: true,
+		approver: true,
+		contactTime: true,
+		pictures: true,
+		miscellaneous: true
 	}
 
 	const handleEditClicked = () => {
@@ -137,17 +159,21 @@
 		<footer class="section__footer">
 			{#if confirmationPageIsShown}
 				<div in:fade>
-					<Button buttonClass={'btn--transparent'} handleClick={handleEditClicked}>修正</Button>
+					<button class="btn secondary" on:click={handleEditClicked}>修正</button>
 				</div>
-				<Button buttonClass={'btn--filled'} form="registration-form">登録</Button>
+				<button type="submit" class="btn primary" form="registration-form">登録</button>
 			{:else}
-				<Button buttonClass={'btn--filled'} handleClick={handleCheckForm}>登録</Button>
+				<button type="button" class="btn primary" on:click={handleCheckForm}>登録</button>
 			{/if}
 		</footer>
 	{/if}
 </section>
 
 <style lang="scss">
+	.btn {
+		margin: 0;
+	}
+
 	.section {
 		&__header {
 			margin-bottom: 18px;

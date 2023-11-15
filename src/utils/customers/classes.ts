@@ -78,7 +78,7 @@ export class CustomerBackend {
 		}
 		this.is_active = data.isActive
 		this.departments = {
-			detail: data.bedding,
+			detail: data.departments,
 			bed_total: data.bed_total
 		}
 		this.registration = {
@@ -157,7 +157,7 @@ export class CustomerNewApi {
 		this.establish_by = data.founder
 		this.is_active = data.isActive
 		this.departments = {
-			detail: data.bedding,
+			detail: data.departments,
 			bed_total: data.bed_total
 		}
 		this.register_at = registration?.registDate || data.register_at

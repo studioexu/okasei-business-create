@@ -8,7 +8,6 @@
 	export let name: string = ''
 	export let datas: string[] = []
 	export let value: string = ''
-
 	export let required: boolean = false
 	export let isValid: boolean = true
 
@@ -29,7 +28,7 @@
 	$: checkValueOnChange(value)
 </script>
 
-<div class="input-wrapper {name} {isValid ? '' : 'error'}">
+<div class="input-wrapper {isValid ? '' : 'error'}">
 	{#if label !== ''}
 		<label for={name} class="label">
 			{label}
@@ -59,7 +58,7 @@
 		{/each}
 	</datalist>
 
-	<span class="error-msg">{errorMsg}</span>
+	<span class="font-error">{errorMsg}</span>
 </div>
 
 <style lang="scss">
@@ -84,8 +83,8 @@
 		}
 
 		.input {
-			height: 32px;
 			width: calc(((103 - 10 - 2) / 1366) * 100vw);
+			padding: 8px 0;
 			padding-left: 10px;
 
 			&::placeholder {
@@ -97,14 +96,11 @@
 			}
 		}
 
-		.error-msg {
+		.font-error {
 			position: absolute;
 			right: 0;
 			bottom: -14px;
-			color: var(--error);
 			font-size: 10px;
-			font-weight: 600;
-			min-width: 250px;
 			text-align: right;
 			opacity: 0;
 		}
@@ -123,7 +119,7 @@
 			animation-iteration-count: 3;
 		}
 
-		.error-msg {
+		.font-error {
 			opacity: 1;
 			transition: all 300ms;
 		}

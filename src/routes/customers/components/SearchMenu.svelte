@@ -1,18 +1,40 @@
 <script lang="ts">
 	import type { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
-	import Input from './Input.svelte'
 
 	export let data: CustomerFactory[]
 	export let customersToDisplay: CustomerFactory[]
 	export let deletedCustomersAreShown: boolean
 	export let filteredCustomers: CustomerFactory[]
 
-	let instId: string = ''
-	let custName: string = ''
-	let postalCode: string = ''
-	let phoneNumber: string = ''
-
 	$: filteredCustomers
+
+	$: custName = filterInputs[0].value
+	$: instId = filterInputs[1].value
+	$: postalCode = filterInputs[2].value
+	$: phoneNumber = filterInputs[3].value
+
+	const filterInputs = [
+		{
+			name: 'facility-name',
+			label: '施設名',
+			value: ''
+		},
+		{
+			name: 'customer-number',
+			label: '医療機関番号',
+			value: ''
+		},
+		{
+			name: 'postal-code',
+			label: '郵便番号',
+			value: ''
+		},
+		{
+			name: 'phone',
+			label: '電話番号',
+			value: ''
+		}
+	]
 
 	/**
 	 * FilterData will filter data according the keywords entered by the user and the type of the input.
@@ -81,34 +103,19 @@
 </script>
 
 <form class="search-menu">
-	<Input
-		name={'facility-name'}
-		label={'施設名'}
-		inputSize={'input--lg'}
-		handleInput={handleSearch}
-		bind:value={custName}
-	/>
-	<Input
-		name={'customer-number'}
-		label={'医療機関番号'}
-		inputSize={'input--md'}
-		handleInput={handleSearch}
-		bind:value={instId}
-	/>
-	<Input
-		name={'postal-code'}
-		label={'郵便番号'}
-		inputSize={'input--md'}
-		handleInput={handleSearch}
-		bind:value={postalCode}
-	/>
-	<Input
-		name={'phone'}
-		label={'電話番号'}
-		inputSize={'input--md'}
-		handleInput={handleSearch}
-		bind:value={phoneNumber}
-	/>
+	{#each filterInputs as input}
+		<div class="input-wrapper">
+			<label class="label" for={input.name}>{input.label}</label>
+			<input
+				type="text"
+				class="input {input.name === 'facility-name' ? 'input--lg' : 'input--md'}"
+				id={input.name}
+				name={input.name}
+				bind:value={input.value}
+				on:input={handleSearch}
+			/>
+		</div>
+	{/each}
 </form>
 
 <style lang="scss">
@@ -118,10 +125,62 @@
 		justify-content: space-between;
 		margin-bottom: 1.5rem;
 		padding: 0 18px;
-
+		color: var(--black);
 		row-gap: 10px;
 		flex-wrap: wrap;
+	}
 
-		color: var(--black);
+	@mixin responsiveInputWidth($width) {
+		width: calc((($width - 8 - 2) / 1366) * 100vw);
+	}
+
+	.input-wrapper {
+		display: flex;
+		gap: 10px;
+		align-items: center;
+
+		.label {
+			width: max-content;
+		}
+
+		.input {
+			// height: calc(32px - 2px);
+			padding-left: 8px;
+
+			&:focus {
+				border-color: var(--primary-color);
+			}
+
+			&--md {
+				@include responsiveInputWidth((137));
+			}
+			&--lg {
+				@include responsiveInputWidth((226));
+			}
+		}
+	}
+
+	@media all and (max-width: 1072px) {
+		.input-wrapper {
+			width: auto;
+			.input {
+				&--md {
+					@include responsiveInputWidth((160));
+				}
+			}
+		}
+		.input-wrapper:nth-child(1) {
+			width: 100%;
+			justify-content: center;
+			flex-grow: 3;
+
+			.label {
+				min-width: 60px;
+			}
+
+			.input {
+				width: 100%;
+			}
+		}
 	}
 </style>

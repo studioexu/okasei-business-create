@@ -2,6 +2,7 @@
 	import type { Picture } from '@/utils/customers/types'
 	import { enhance } from '$app/forms'
 	import { prefectures, months, years } from '@/data/data'
+	import Icon from '@/components/Icon.svelte'
 
 	import UploadModal from '@/views/modals/UploadModal.svelte'
 
@@ -14,7 +15,8 @@
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
 	import SelectWithInput from '@/components/SelectWithInput.svelte'
-	import DepartmentSection from './DepartmentSection.svelte'
+
+	let businessContent = ''
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -25,13 +27,14 @@
 
 	let uploadModalIsShown = false
 
+	// ADDRESS AUTO FILL
+
 	let address: AddressAutoInfo = {
 		prefecture: '',
 		city: '',
 		address1: ''
 	}
 
-	let businessContent = ''
 	/**
 	 * Fetch the address corresponding to the postal code.
 	 * @param e
@@ -85,6 +88,8 @@
 		}
 	}
 
+	// UPLOAD PICTURES
+
 	let phase: 'shown' | 'success' | 'error' = 'shown'
 
 	const onClick = (event: { detail: { key: string; fileToUpload: File } }) => {
@@ -118,13 +123,96 @@
 		}
 	}
 
+	/**
+	 * Delete the corresponding image in the image array
+	 * @param e: event to get the id corresponding to the image
+	 */
 	const handleDeleteImage = (e: any) => {
-		const imageToDelete = e.target.closest('.image-wrapper').id
+		const imageToDelete = e.target.closest('.card').id
 
 		initialState.pictures = initialState.pictures.filter(
 			(image: Picture) => image.file.name !== imageToDelete
 		)
 	}
+
+	// MANAGE DEPARTMENTS
+
+	interface DepartmentInput {
+		index: number
+		department: string
+		bedQuantity: string
+	}
+
+	let departments: DepartmentInput[] = []
+
+	// fill the departments array with the data if there is any
+	if (initialState.departments.length === 0) {
+		departments = [{ index: 0, department: '内科', bedQuantity: '0' }]
+	} else {
+		initialState.departments.map((department, index) => {
+			departments = [
+				...departments,
+				{
+					index: index,
+					department: department.department,
+					bedQuantity: department.bedQuantity
+				}
+			]
+			index++
+		})
+	}
+
+	/**
+	 * Update the departments array when add a department
+	 * @param e
+	 */
+	const handleAddDepartment = (e: any): void => {
+		e.preventDefault()
+
+		departments = [
+			...departments,
+			{
+				index: departments[departments.length - 1].index + 1,
+				department: '',
+				bedQuantity: '0'
+			}
+		]
+	}
+
+	/**
+	 * Delete one department form the departments array
+	 * @param e: event to get the right id
+	 */
+	const deleteDepartment = (e: any) => {
+		const itemToDelete = parseInt(e.target.closest('.department-wrapper').id)
+		departments = departments.filter(department => department.index !== itemToDelete)
+	}
+
+	const checkBedQuantity = (bedQuantity: string): string => {
+		if (isNaN(parseInt(bedQuantity))) {
+			bedQuantity = '0'
+		}
+
+		return bedQuantity
+	}
+
+	/**
+	 * We go through the array of bed input and calculate the number total of beds.
+	 * @param beds: array of bedInput
+	 */
+	const caculateTotalOfBeds = (departments: DepartmentInput[]): number => {
+		let sum: number = 0
+		departments.map((department: DepartmentInput) => {
+			const numberOfBed = isNaN(parseInt(department.bedQuantity))
+				? 0
+				: parseInt(department.bedQuantity)
+			sum += numberOfBed
+		})
+
+		return sum
+	}
+	$: bedQuantityTotal = caculateTotalOfBeds(departments)
+	$: initialState.departments = departments
 </script>
 
 {#if uploadModalIsShown}
@@ -367,7 +455,47 @@
 
 	<fieldset class="fieldset fieldset--bed">
 		<legend class="legend">病床設定</legend>
-		<DepartmentSection bind:departments={initialState.departments} />
+		<!-- <DepartmentSection bind:departments={initialState.departments} /> -->
+
+		<div class="form-row bed">
+			<h3 class="label">診療科目</h3>
+			<div class="column">
+				{#each departments as department}
+					<div class="department-wrapper" id={department.index.toString()}>
+						<Select
+							options={['内科', '外科', '診療内科']}
+							name={'departments'}
+							bind:value={department.department}
+						/>
+						<Input
+							name={'bed-quatity'}
+							label={'病床数'}
+							placeholder={'未入力'}
+							inputSize={'input--sm'}
+							functionOnBlur={checkBedQuantity}
+							bind:value={department.bedQuantity}
+						/>
+
+						{#if departments.length > 1}
+							<button type="button" class="btn secondary delete" on:click={deleteDepartment}>
+								<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
+							</button>
+						{/if}
+					</div>
+				{/each}
+			</div>
+			<div class="bed-total">
+				<h3 class="label">'病床数合計'</h3>
+				<span class="content">{bedQuantityTotal}</span>
+			</div>
+			<!-- </div> -->
+		</div>
+
+		<div class="form-row">
+			<!-- svelte-ignore a11y-missing-content -->
+			<h3 class="label" />
+			<button class="btn primary" on:click={handleAddDepartment}>+新規追加</button>
+		</div>
 	</fieldset>
 
 	<fieldset class="fieldset fieldset--info2">
@@ -514,7 +642,7 @@
 
 				<div class="container">
 					{#if initialState.pictures.length === 0}
-						<div class="image-wrapper">
+						<div class="card">
 							<button class="image-empty" on:click={() => (uploadModalIsShown = true)}>
 								<span>+</span>
 							</button>
@@ -522,8 +650,8 @@
 						</div>
 					{:else}
 						{#each initialState.pictures as image, index}
-							<div class="card">
-								<div class="image-wrapper" id={image.file.name}>
+							<div class="card" id={image.file.name}>
+								<div class="image-wrapper">
 									<img src={URL.createObjectURL(image.file)} alt="" />
 								</div>
 
@@ -533,16 +661,18 @@
 									inputSize={'input--lg'}
 									bind:value={image.memo}
 								/>
-								<button class="btn primary delete" on:click={handleDeleteImage}>削除</button>
+								<button type="button" class="btn primary" on:click={handleDeleteImage}>削除</button>
 							</div>
 						{/each}
 					{/if}
-
-					<button class="btn add primary" on:click={() => (uploadModalIsShown = true)}>
-						＋画像追加
-					</button>
 				</div>
 			</div>
+		</div>
+		<div class="form-row">
+			<span class="label" />
+			<button class="btn add primary" on:click={() => (uploadModalIsShown = true)}>
+				＋画像追加
+			</button>
 		</div>
 	</fieldset>
 </form>
@@ -574,6 +704,11 @@
 		column-gap: 12px;
 		flex-wrap: wrap;
 		row-gap: 1rem;
+		margin-bottom: 20px;
+	}
+
+	.required-mark {
+		color: var(--error);
 	}
 
 	.fieldset {
@@ -591,7 +726,7 @@
 	.input-wrapper {
 		display: flex;
 		gap: 10px;
-		align-items: center;
+		align-items: flex-start;
 		margin-bottom: 20px;
 
 		&:first-child {
@@ -616,10 +751,6 @@
 		}
 	}
 
-	.required-mark {
-		color: var(--error);
-	}
-
 	.image-empty {
 		display: flex;
 		justify-content: center;
@@ -642,25 +773,31 @@
 		width: 130px;
 	}
 
-	.image-wrapper {
-		width: 100%;
+	.card {
 		display: flex;
 		justify-content: flex-start;
 		align-items: flex-end;
+		width: 100%;
+		margin-bottom: 12px;
+		padding: 10px 21px;
 		gap: 12px;
 		background-color: #f4f4f4;
-		padding: 10px 21px;
 		border-radius: 8px;
-		margin-bottom: 12px;
+	}
 
-		.image-description {
-			height: 32px;
+	.image-wrapper {
+		position: relative;
+		min-height: 124px;
+		width: 200px;
+		border-radius: 4px;
+		overflow: hidden;
+
+		img {
+			position: absolute;
 			width: 100%;
-		}
-
-		.image {
-			height: 124px;
-			width: 200px;
+			height: 100%;
+			left: 0;
+			top: 0;
 			object-fit: contain;
 		}
 	}
@@ -669,25 +806,57 @@
 		margin: 0;
 
 		&.inline {
-			line-height: 21px;
+			line-height: 23px;
+			padding: 4px 8px;
 		}
 
 		&.delete {
+			min-width: 0 !important;
+			padding: 0;
+			height: 32px;
+			width: 32px;
 			display: flex;
 			align-items: center;
 			justify-content: center;
-			padding: 0;
-			height: 32px;
-			width: 70px;
-			min-width: 0;
-			margin-left: auto;
-			// align-self: flex-end;
-			margin-bottom: 20px;
 		}
+	}
+
+	.deletebed {
+		content: ' ';
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		width: 32px;
+		height: 32px;
+		margin-bottom: 20px;
+		background-color: transparent;
 	}
 
 	.container {
 		display: block;
 		width: fit-content;
+	}
+
+	.bed-total {
+		display: flex;
+		align-items: center;
+		height: 32px;
+		align-self: flex-end;
+	}
+
+	.department-wrapper {
+		display: flex;
+		align-items: center;
+		gap: 18px;
+	}
+
+	.form-row.bed {
+		justify-content: flex-start;
+	}
+
+	.column {
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
 	}
 </style>

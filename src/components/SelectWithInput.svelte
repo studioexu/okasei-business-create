@@ -67,7 +67,7 @@
 		gap: 10px;
 		position: relative;
 		align-self: center;
-		margin-bottom: 20px;
+		// margin-bottom: 20px;
 
 		&:first-child {
 			.label {
@@ -84,7 +84,7 @@
 
 		.input {
 			width: calc(((103 - 10 - 2) / 1366) * 100vw);
-			padding: 8px 0;
+			padding: 4px 8px;
 			padding-left: 10px;
 
 			&::placeholder {

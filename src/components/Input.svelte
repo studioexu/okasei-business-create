@@ -70,7 +70,7 @@
 		display: flex;
 		align-items: center;
 		width: fit-content;
-		margin-bottom: 20px;
+		// margin-bottom: 20px;
 		gap: 10px;
 
 		&:first-child {
@@ -80,7 +80,7 @@
 		}
 
 		.input {
-			padding: 8px 0;
+			padding: 4px 8px;
 
 			padding-left: 10px;
 			border-radius: 8px;

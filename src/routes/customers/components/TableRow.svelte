@@ -20,12 +20,34 @@
 	const handleEditItem = async (e: any) => {
 		window.location.href = '/customers/' + id + '/edit'
 	}
+
+	const datasToDisplay = [
+		{
+			id: 'customer-number',
+			content: id
+		},
+		{
+			id: 'facility-name',
+			content: customerName
+		},
+		{
+			id: 'address',
+			content: address.prefecture + address.city
+		},
+		{
+			id: 'update-date',
+			content: status + '日 ' + updateDate
+		}
+	]
 </script>
 
-<td class="data customer-number">{id}</td>
+<!-- <td class="data customer-number">{id}</td>
 <td class="data facility-name">{customerName}</td>
 <td class="data address">{address.prefecture}{address.city}</td>
-<td class="data update-date">{status}日 {updateDate}</td>
+<td class="data update-date">{status}日 {updateDate}</td> -->
+{#each datasToDisplay as data}
+	<td class="data {data.id}">{data.content}</td>
+{/each}
 <td class="data update">
 	<button class="btn {isActive ? '' : 'disabled'}" on:click={handleEditItem}>
 		{#if isActive}

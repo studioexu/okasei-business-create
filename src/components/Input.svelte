@@ -9,9 +9,8 @@
 	export let value: string = ''
 	export let name: string
 	export let label: string = ''
-	export let inputSize: string = ''
 	export let unit: string = ''
-	export let wrapperClass: string = ''
+	export let inputSize: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
@@ -33,19 +32,9 @@
 			value = functionOnBlur(input)
 		}
 	}
-
-	/**
-	 * Check if the input is valid, when the input is updated.
-	 * @param value: input's value
-	 */
-	const checkValueOnChange = (value: string) => {
-		if (!isValid) {
-			isValid = inputIsValid(name, value)
-		}
-	}
 </script>
 
-<div class="input-wrapper {wrapperClass} {isValid ? '' : 'error'}">
+<div class="input-wrapper {isValid ? '' : 'error'}">
 	{#if label}
 		<label class="label" for={name}>
 			{label}
@@ -64,7 +53,7 @@
 		on:focus={() => (isValid = true)}
 		{disabled}
 	/>
-	<span class="error-msg">{errorMsg}</span>
+	<span class="font-error">{errorMsg}</span>
 
 	{#if unit !== ''}
 		<span class="unit">{unit}</span>
@@ -91,8 +80,10 @@
 		}
 
 		.input {
-			height: 32px;
+			padding: 8px 0;
+
 			padding-left: 10px;
+			border-radius: 8px;
 
 			&::placeholder {
 				color: rgb(206, 205, 205);
@@ -116,15 +107,11 @@
 			}
 		}
 
-		.error-msg {
+		.font-error {
 			position: absolute;
 			right: 0;
 			bottom: -14px;
-			color: var(--error);
 			font-size: 10px;
-			font-weight: 600;
-			min-width: 250px;
-			text-align: right;
 			opacity: 0;
 		}
 	}
@@ -137,7 +124,7 @@
 			animation-iteration-count: 3;
 		}
 
-		.error-msg {
+		.font-error {
 			opacity: 1;
 			transition: all 300ms;
 		}

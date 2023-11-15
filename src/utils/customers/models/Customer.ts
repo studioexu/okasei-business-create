@@ -201,7 +201,7 @@ export class Customer {
 		const detail = this._departments.detail.map((dept: any) => {
 			return {
 				department: dept.department || dept.dept_ID,
-				quantity: dept.quantity || dept.num_beds
+				bedQuantity: dept.bedQuantity || dept.num_beds
 			}
 		})
 

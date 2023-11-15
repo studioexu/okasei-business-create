@@ -2,7 +2,6 @@
 </script>
 
 <script lang="ts">
-	import Button from '@/components/Button.svelte'
 	import type { CustomerEntries } from '@/utils/customers/types'
 
 	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
@@ -13,7 +12,7 @@
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'customer')
 	let bedQuantity: number = 0
 
-	customer.departments.detail.forEach((bed: any) => (bedQuantity += parseInt(bed.quantity)))
+	$: console.log(customer)
 
 	/**
 	 * On click, we redirect the user to the edit page
@@ -36,21 +35,30 @@
 		address2: customer.address.address2,
 		phoneNumber: customer.address.phoneNumber,
 		fax: customer.address.fax,
+		email: '',
+		mobile: '',
 		year: customer.foundation.establishDate,
 		month: customer.foundation.establishDate,
 		founder: customer.foundation.establishedBy,
-		bedding: customer.departmentDetail,
+		departments: customer.departmentDetail,
 		numberOfEmployees: customer.numEmployees,
 		homepage: customer.url,
 		numberOfFacilities: customer.numBranch,
-		registrationDate: customer.registration.registDate,
-		registrationTime: customer.registration.registBy,
 		isActive: customer.isActive,
 		googleReview: customer.googleReview,
 		reviews: customer.reviews,
 		businessList: customer.businessList,
-		closingMonth: customer.closingMonth
+		closingMonth: customer.closingMonth,
+		personInCharge: '',
+		personInChargeRole: '',
+		personInChargeMemo: '',
+		approver: '',
+		contactTime: '',
+		pictures: [],
+		miscellaneous: ''
 	}
+
+	customer.departmentDetail.forEach((bed: any) => (bedQuantity += parseInt(bed.bedQuantity)))
 </script>
 
 <section class="section section--confirmation">
@@ -95,7 +103,7 @@
 
 		<div class="button-container">
 			{#if customer.isActive}
-				<Button buttonClass={'btn--filled'} handleClick={handleLinkClicked}>編集</Button>
+				<button class="primary" on:click={handleLinkClicked}> 編集 </button>
 			{/if}
 		</div>
 	</footer>

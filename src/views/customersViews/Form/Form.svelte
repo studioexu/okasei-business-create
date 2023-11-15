@@ -11,11 +11,10 @@
 		AddressAutoInfo
 	} from '@/utils/customers/types'
 
-	import Input from './Input.svelte'
-	import Select from './Select.svelte'
-	import SelectInput from './SelectInput.svelte'
+	import Input from '@/components/Input.svelte'
+	import Select from '@/components/Select.svelte'
+	import SelectWithInput from '@/components/SelectWithInput.svelte'
 	import DepartmentSection from './DepartmentSection.svelte'
-	import Button from '@/components/Button.svelte'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -23,6 +22,8 @@
 	export let formIsValid: CustomerEntriesErrors
 	export let isShown: boolean = false
 	export let isSucceeded: boolean = false
+
+	let uploadModalIsShown = false
 
 	let address: AddressAutoInfo = {
 		prefecture: '',
@@ -89,7 +90,7 @@
 	const onClick = (event: { detail: { key: string; fileToUpload: File } }) => {
 		switch (event.detail.key) {
 			case 'cancel':
-				isShown = false
+				uploadModalIsShown = false
 				break
 
 			case 'upload':
@@ -100,7 +101,7 @@
 				break
 
 			case 'success':
-				isShown = false
+				uploadModalIsShown = false
 				phase = 'shown'
 				break
 
@@ -111,11 +112,10 @@
 	}
 
 	$: {
-		if (isShown && phase === 'success')
-			// setTimeout(() => {
-			isShown = false
-		phase = 'shown'
-		// }, 2000)
+		if (uploadModalIsShown && phase === 'success') {
+			uploadModalIsShown = false
+			phase = 'shown'
+		}
 	}
 
 	const handleDeleteImage = (e: any) => {
@@ -127,7 +127,7 @@
 	}
 </script>
 
-{#if isShown}
+{#if uploadModalIsShown}
 	<UploadModal {phase} on:click={onClick} />
 {/if}
 
@@ -223,20 +223,18 @@
 				label="郵便番号"
 				name="postal-code"
 				placeholder={'0000000'}
-				errorMsg={"正しい郵便番号を入力して下さい（'〒'や'ー'なし）"}
+				errorMsg={"郵便番号を入力して下さい（'〒'や'ー'なし）"}
 				inputSize="input--sm"
 				required={true}
 				bind:value={initialState.postalCode}
 				bind:isValid={formIsValid.postalCode}
 			/>
 
-			<Button buttonClass={'btn--sm btn--filled'} handleClick={handlePostalCodeSearchSubmit}>
-				自動検索
-			</Button>
+			<button class="btn primary inline" on:click={handlePostalCodeSearchSubmit}>自動検索</button>
 		</div>
 
 		<div class="form-row">
-			<SelectInput
+			<SelectWithInput
 				label={'都道府県'}
 				name="prefecture"
 				datas={prefectures}
@@ -335,7 +333,7 @@
 	<fieldset class="fieldset fieldset--foundation">
 		<legend class="legend">創立</legend>
 		<div class="form-row">
-			<SelectInput
+			<SelectWithInput
 				label={'設立年月日'}
 				name={'year'}
 				datas={years}
@@ -371,7 +369,6 @@
 		<legend class="legend">病床設定</legend>
 		<DepartmentSection bind:departments={initialState.departments} />
 	</fieldset>
-	<!-- .fieldset--bed -->
 
 	<fieldset class="fieldset fieldset--info2">
 		<legend class="legend">情報２</legend>
@@ -458,37 +455,6 @@
 				bind:value={initialState.miscellaneous}
 			/>
 		</div>
-
-		<!-- <div class="form-row bed">
-			<h3 class="label">診療科目</h3>
-			<div class="column">
-				{#each initialState1.departments as department}
-					<div class="department-wrapper">
-						<Select
-							options={['内科', '外科', '診療内科']}
-							name={'departments'}
-							bind:value={department.department}
-						/>
-						<Input
-							name={'bed-quatity'}
-							label={'病床数'}
-							placeholder={'未入力'}
-							inputSize={'input--sm'}
-							bind:value={department.bedQuantity}
-						/>
-					</div>
-				{/each}
-			</div>
-			<div class="bed-total">
-				<h3 class="label">'病床数合計'</h3>
-				<span class="content">{total}</span>
-			</div> -->
-
-		<!-- </div> -->
-		<!-- <div class="form-row">
-			<h3 class="label" />
-			<button class="btn primary" on:click={handleAddDepartment}>+新規追加</button>
-		</div> -->
 	</fieldset>
 	<!-- .fieldset--info2 -->
 
@@ -543,30 +509,39 @@
 	<fieldset class="fieldset">
 		<legend class="legend">画像</legend>
 		<div class="form-row">
-			<h3 class="label">参考書類など 画像データ</h3>
-			<div class="container">
-				{#if initialState.pictures.length === 0}
-					<div class="image-wrapper">
-						<button class="image-empty" on:click={() => (isShown = true)}>
-							<span>+</span>
-						</button>
-						<p class="image-description">画像がアップロードされていません。</p>
-					</div>
-				{:else}
-					{#each initialState.pictures as image, index}
-						<div class="image-wrapper" id={image.file.name}>
-							<img class="image" src={URL.createObjectURL(image.file)} alt="" />
-							<Input
-								placeholder="メモ"
-								name={'image-description'}
-								inputSize={'input--lg'}
-								bind:value={image.memo}
-							/>
-							<button class="btn primary delete" on:click={handleDeleteImage}>削除</button>
+			<div class="input-wrapper">
+				<h3 class="label">参考書類など画像データ</h3>
+
+				<div class="container">
+					{#if initialState.pictures.length === 0}
+						<div class="image-wrapper">
+							<button class="image-empty" on:click={() => (uploadModalIsShown = true)}>
+								<span>+</span>
+							</button>
+							<p class="image-description">画像がアップロードされていません。</p>
 						</div>
-					{/each}
-				{/if}
-				<button class="btn add primary" on:click={() => (isShown = true)}>＋画像追加</button>
+					{:else}
+						{#each initialState.pictures as image, index}
+							<div class="card">
+								<div class="image-wrapper" id={image.file.name}>
+									<img src={URL.createObjectURL(image.file)} alt="" />
+								</div>
+
+								<Input
+									placeholder="メモ"
+									name={'image-description'}
+									inputSize={'input--lg'}
+									bind:value={image.memo}
+								/>
+								<button class="btn primary delete" on:click={handleDeleteImage}>削除</button>
+							</div>
+						{/each}
+					{/if}
+
+					<button class="btn add primary" on:click={() => (uploadModalIsShown = true)}>
+						＋画像追加
+					</button>
+				</div>
 			</div>
 		</div>
 	</fieldset>
@@ -596,18 +571,13 @@
 		align-items: flex-start;
 		justify-content: flex-start;
 		column-gap: 2rem;
+		column-gap: 12px;
 		flex-wrap: wrap;
 		row-gap: 1rem;
 	}
 
 	.fieldset {
 		margin-bottom: 2rem;
-
-		&--foundation {
-			.form-row:last-child {
-				margin-left: auto;
-			}
-		}
 	}
 
 	.required-legend {
@@ -644,38 +614,6 @@
 				border-color: var(--primary-color);
 			}
 		}
-
-		.unit {
-			height: 32px;
-			display: flex;
-			align-items: center;
-		}
-
-		.error-msg {
-			position: absolute;
-			right: 0;
-			bottom: -14px;
-			color: var(--error);
-			font-size: 10px;
-			font-weight: 600;
-			min-width: 250px;
-			text-align: right;
-			opacity: 0;
-		}
-	}
-
-	.error {
-		.select {
-			transition: border 300ms;
-			border: 1.5px solid var(--error);
-			animation: buzz 100ms;
-			animation-iteration-count: 3;
-		}
-
-		.error-msg {
-			opacity: 1;
-			transition: all 300ms;
-		}
 	}
 
 	.required-mark {
@@ -698,28 +636,10 @@
 		}
 	}
 
-	.image-description {
-		height: 32px;
-		width: 100%;
-	}
-
-	.bed-total {
-		display: flex;
-		align-items: center;
-		height: 32px;
-		align-self: flex-end;
-	}
-
 	.label {
 		font-size: 18px;
 		font-weight: 400;
 		width: 130px;
-	}
-
-	.image {
-		height: 124px;
-		width: 200px;
-		object-fit: contain;
 	}
 
 	.image-wrapper {
@@ -727,15 +647,30 @@
 		display: flex;
 		justify-content: flex-start;
 		align-items: flex-end;
-		gap: 18px;
+		gap: 12px;
 		background-color: #f4f4f4;
 		padding: 10px 21px;
 		border-radius: 8px;
 		margin-bottom: 12px;
+
+		.image-description {
+			height: 32px;
+			width: 100%;
+		}
+
+		.image {
+			height: 124px;
+			width: 200px;
+			object-fit: contain;
+		}
 	}
 
 	.btn {
 		margin: 0;
+
+		&.inline {
+			line-height: 21px;
+		}
 
 		&.delete {
 			display: flex;

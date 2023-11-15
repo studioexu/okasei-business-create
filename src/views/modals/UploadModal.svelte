@@ -108,12 +108,6 @@
 		margin-top: 26px;
 	}
 
-	// #file {
-	// 	width: 0;
-	// 	height: 0;
-	// 	opacity: 0;
-	// }
-
 	.modal-btn {
 		display: inline-block;
 		background-color: #fff;
@@ -121,8 +115,6 @@
 		min-width: 112px;
 		border-radius: 8px;
 		padding: 8px 16px;
-		// margin-top: 20px;
-		// margin-bottom: 20px;
 	}
 
 	.secondary {

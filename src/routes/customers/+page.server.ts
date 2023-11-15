@@ -9,6 +9,8 @@ export const load = async () => {
 
 	if (!data) throw error(404)
 
+	console.log(data)
+
 	return { data }
 }
 

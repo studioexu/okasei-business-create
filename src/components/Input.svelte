@@ -74,11 +74,6 @@
 		}
 
 		.input {
-			padding: 4px 8px;
-
-			padding-left: 10px;
-			border-radius: 8px;
-
 			&::placeholder {
 				color: rgb(206, 205, 205);
 			}
@@ -113,7 +108,7 @@
 	.error {
 		.input {
 			transition: border 300ms;
-			border: 1.5px solid var(--error);
+			border-color: var(--error);
 			animation: buzz 100ms;
 			animation-iteration-count: 3;
 		}

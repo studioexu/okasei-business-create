@@ -3,6 +3,11 @@ interface Detail {
 	numBeds: number
 }
 
+export interface Picture {
+	file: File
+	memo: string
+}
+
 export class Customer {
 	private _id?: string
 	private _custCD?: string | undefined
@@ -50,6 +55,7 @@ export class Customer {
 	private _reviews: string
 	private _businessList: string
 	private _closingMonth: string
+	private _pictures: Picture[]
 
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.Cust_CD) {
@@ -98,6 +104,7 @@ export class Customer {
 		this._reviews = data.reviews
 		this._businessList = data.businessList
 		this._closingMonth = data.closingMonth
+		this._pictures = data.pictures
 	}
 
 	public get custCD() {
@@ -226,5 +233,9 @@ export class Customer {
 
 	public get closingMonth() {
 		return this._closingMonth
+	}
+
+	public get pictures() {
+		return this._pictures
 	}
 }

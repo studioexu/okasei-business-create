@@ -67,7 +67,6 @@
 		gap: 10px;
 		position: relative;
 		align-self: center;
-		// margin-bottom: 20px;
 
 		&:first-child {
 			.label {
@@ -84,8 +83,6 @@
 
 		.input {
 			width: calc(((103 - 10 - 2) / 1366) * 100vw);
-			padding: 4px 8px;
-			padding-left: 10px;
 
 			&::placeholder {
 				color: rgb(206, 205, 205);

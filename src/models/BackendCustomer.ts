@@ -3,6 +3,11 @@ interface Detail {
 	num_beds: number
 }
 
+export interface Picture {
+	file: File
+	memo: string
+}
+
 export class CustomerBackend {
 	id?: string
 	Cust_CD?: string | undefined
@@ -49,6 +54,7 @@ export class CustomerBackend {
 	reviews: string
 	closingMonth: string
 	business: string
+	pictures: Picture[]
 
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.id) {
@@ -98,6 +104,7 @@ export class CustomerBackend {
 		this.googleReview = data.googleReview
 		this.reviews = data.reviews
 		this.closingMonth = data.closingMonth
+		this.pictures = data.pictures
 	}
 }
 

@@ -658,9 +658,9 @@
 									inputSize={'input--lg'}
 									bind:value={image.memo}
 								/>
-								<button type="button" class="btn primary inline" on:click={handleDeleteImage}
-									>削除</button
-								>
+								<button type="button" class="btn primary inline" on:click={handleDeleteImage}>
+									削除
+								</button>
 							</div>
 						{/each}
 					{/if}
@@ -669,7 +669,7 @@
 		</div>
 		<div class="form-row">
 			<span class="label" />
-			<button class="btn add primary" on:click={() => (uploadModalIsShown = true)}>
+			<button type="button" class="btn add primary" on:click={() => (uploadModalIsShown = true)}>
 				＋画像追加
 			</button>
 		</div>
@@ -774,6 +774,7 @@
 		width: 100%;
 		padding: 10px 21px;
 		gap: 12px;
+		flex-wrap: wrap;
 		background-color: #f4f4f4;
 		border-radius: 8px;
 	}
@@ -797,11 +798,6 @@
 
 	.btn {
 		margin: 0;
-
-		&.inline {
-			line-height: 23px;
-			padding: 4px 8px;
-		}
 
 		&.delete {
 			min-width: 0 !important;

@@ -2,8 +2,6 @@
 </script>
 
 <script lang="ts">
-	// import type { CustomerInfo } from '@/utils/customers/types'
-
 	//import views
 	import Pagination from '@/views/Pagination.svelte'
 	import Table from '@/views/customersViews/Table.svelte'
@@ -11,9 +9,10 @@
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
-	import { deleteCustomer } from '@/utils/customers/actions'
+	import { deleteCustomer } from '@/libs/actions'
 	import { currentApi } from '../../data/api'
 	import { goto } from '$app/navigation'
+	import { getDateTime } from '@/libs/formatters'
 
 	export let data
 
@@ -97,6 +96,8 @@
 						allCustomers = allCustomers.filter(customer => {
 							if (customer.custCD.toString() === currentUser) {
 								customer.isActive = false
+								customer.deleteDateTime.date = getDateTime().split(' ')[0]
+								customer.deleteDateTime.time = getDateTime().split(' ')[1]
 							}
 
 							return customer

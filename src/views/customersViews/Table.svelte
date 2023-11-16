@@ -109,7 +109,6 @@
 
 <style lang="scss">
 	.table-wrapper {
-		padding: 0 18px;
 		color: var(--black);
 		background-color: #fff;
 		border-radius: 16px;
@@ -153,6 +152,7 @@
 	.data {
 		text-align: left;
 		padding: 18px calc((27 / 1366) * 100vw);
+		border-bottom: var(--primary-color) 1px solid;
 	}
 
 	.btn {

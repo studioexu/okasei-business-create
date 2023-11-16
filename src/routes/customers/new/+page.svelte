@@ -1,12 +1,12 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
-	import type { CustomerEntries, CustomerEntriesErrors } from '@/utils/customers/types'
+	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes'
 
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
-	import { inputIsValid } from '@/utils/customers/validations'
+	import { inputIsValid } from '@/libs/customerValidations'
 	import { fade } from 'svelte/transition'
 
 	let confirmationPageIsShown = false

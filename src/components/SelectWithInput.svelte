@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { toCamelCase } from '@/utils/customers/formatter'
+	import { toCamelCase } from '@/libs/formatters'
 
 	export let label: string = ''
 	export let placeholder: string = ''
@@ -11,7 +11,7 @@
 	export let required: boolean = false
 	export let isValid: boolean = true
 
-	import { inputIsValid } from '@/utils/customers/validations'
+	import { inputIsValid } from '@/libs/customerValidations'
 
 	const handleChange = (e: any) => {
 		const input = e.target.value

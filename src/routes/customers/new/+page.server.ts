@@ -1,7 +1,8 @@
-import type { CustomerEntries } from '@/utils/customers/types'
-import { parseBeforePost } from '@/utils/customers/parsers'
-import { create } from '@/utils/customers/actions'
+import type { CustomerEntries } from '@/libs/customerTypes'
+import { formatCustomer } from '@/libs/formatters.js'
+import { createCustomer } from '@/libs/actions'
 import { currentApi } from '@/data/api'
+import type { CustomerBackend } from '@/models/BackendCustomer.js'
 
 export const actions = {
 	create: async ({ request }) => {
@@ -12,8 +13,11 @@ export const actions = {
 		if (typeof initialStateString === 'string') {
 			initialState = JSON.parse(initialStateString)
 
-			let newCustomer = parseBeforePost(initialState)
-			create(newCustomer, currentApi)
+			let newCustomer: CustomerBackend = formatCustomer('create', initialState)
+
+			console.log(newCustomer)
+
+			createCustomer(newCustomer, currentApi)
 		}
 	}
 }

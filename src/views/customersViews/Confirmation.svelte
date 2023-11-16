@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
-	import type { CustomerEntries, Department } from '@/utils/customers/types'
+	import type { CustomerEntries, Department } from '@/libs/customerTypes'
 
 	export let initialState: CustomerEntries
 

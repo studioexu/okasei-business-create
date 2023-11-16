@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { CustomerEntries, CustomerEntriesErrors } from '@/utils/customers/types'
+	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes.js'
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form.svelte'
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 	import { goto } from '$app/navigation'
-	import { inputIsValid } from '@/utils/customers/validations.js'
+	import { inputIsValid } from '@/libs/customerValidations.js'
 	import { fade } from 'svelte/transition'
 	export let data
 

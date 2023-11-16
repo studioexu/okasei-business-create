@@ -2,8 +2,8 @@
 </script>
 
 <script lang="ts">
-	import { inputIsValid } from '@/utils/customers/validations'
-	import { toCamelCase } from '@/utils/customers/formatter'
+	import { inputIsValid } from '@/libs/customerValidations'
+	import { toCamelCase } from '@/libs/formatters'
 
 	export let placeholder: string = ''
 	export let value: string = ''
@@ -15,10 +15,6 @@
 	export let required: boolean = false
 	export let errorMsg: string = ''
 	export let functionOnBlur: Function | null = null
-
-	let disabled: boolean
-
-	name === 'customer-number' ? (disabled = true) : (disabled = false)
 
 	/**
 	 * Check if the value of the input is valid, when the focus is not on the input.
@@ -51,7 +47,6 @@
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
-		{disabled}
 	/>
 	<span class="font-error">{errorMsg}</span>
 
@@ -70,7 +65,6 @@
 		display: flex;
 		align-items: center;
 		width: fit-content;
-		// margin-bottom: 20px;
 		gap: 10px;
 
 		&:first-child {

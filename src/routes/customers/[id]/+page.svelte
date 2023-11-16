@@ -2,7 +2,7 @@
 </script>
 
 <script lang="ts">
-	import type { CustomerEntries } from '@/utils/customers/types'
+	import type { CustomerEntries } from '@/libs/customerTypes.js'
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
@@ -11,8 +11,6 @@
 
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'customer')
 	let bedQuantity: number = 0
-
-	$: console.log(customer)
 
 	/**
 	 * On click, we redirect the user to the edit page

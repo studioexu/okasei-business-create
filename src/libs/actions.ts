@@ -1,4 +1,4 @@
-import { parseBeforeDelete } from './parsers'
+import { formatCustomer } from './formatters'
 
 /**
  * Load the data from the server.
@@ -20,15 +20,17 @@ export const loadData = async (url: string) => {
  * 新しいカスタマーを登録する。
  * @param customerEntry : Object corresponding to the inputs entered by the user.
  */
-export const create = async (newCustomer: Object, url: string) => {
+export const createCustomer = async (newCustomer: Object, url: string) => {
 	await fetch(url, {
 		method: 'POST',
 		headers: { 'Content-type': 'application/json;charset=UTF-8' },
 		body: JSON.stringify(newCustomer)
 	})
 		.then(res => res.json())
-		.then(data => console.log(data))
-		.then(() => console.log('Customer successfully created'))
+		.then(data => {
+			console.log(data)
+			console.log('Customer successfully created')
+		})
 		.catch(err => console.log(err))
 }
 
@@ -39,7 +41,7 @@ export const create = async (newCustomer: Object, url: string) => {
  * @param url : string, corresponding to url of the database
  * @param customerId : string, corresponding to the id of the customer we want to update.
  */
-export const update = (updatedCustomer: Object, url: string, customerId: string) => {
+export const updateCustomer = (updatedCustomer: Object, url: string, customerId: string) => {
 	fetch(url + customerId, {
 		method: 'PUT',
 		headers: { 'Content-type': 'application/json;charset=UTF-8' },
@@ -63,11 +65,12 @@ export const deleteCustomer = (customerId: string, url: string) => {
 	})
 		.then(res => res.json())
 		.then(customer => {
-			const deletedCustomer = parseBeforeDelete(customer)
+			const customerToDelete = formatCustomer('delete', customer)
+
 			fetch(url + customerId, {
 				method: 'PUT',
 				headers: { 'Content-type': 'application/json;charset=UTF-8' },
-				body: JSON.stringify(deletedCustomer)
+				body: JSON.stringify(customerToDelete)
 			})
 				.then(res => res.json())
 				.then(data => {

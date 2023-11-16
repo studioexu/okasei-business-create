@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { Picture } from '@/utils/customers/types'
+	import type { Picture } from '@/libs/customerTypes'
 	import type {
 		CustomerEntries,
 		CustomerEntriesErrors,
 		AddressAutoInfo
-	} from '@/utils/customers/types'
+	} from '@/libs/customerTypes'
 
 	import { enhance } from '$app/forms'
 	import { prefectures, months, years } from '@/data/data'

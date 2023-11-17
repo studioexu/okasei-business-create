@@ -9,9 +9,6 @@
 
 	$: filteredCustomers
 	$: currentPage
-
-	$: console.log(currentPage)
-
 	$: custName = filterInputs[0].value
 	$: instId = filterInputs[1].value
 	$: postalCode = filterInputs[2].value
@@ -98,9 +95,6 @@
 		if (custName !== '') {
 			filteredData = filterData(filteredData, 'facility-name', custName)
 		}
-
-		console.log('set CurrentPage')
-
 		currentPage = 0
 		filteredCustomers = filteredData
 		customersToDisplay = deletedCustomersAreShown

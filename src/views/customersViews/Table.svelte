@@ -15,6 +15,8 @@
 	$: customersToDisplayOnPage
 	$: currentUser
 
+	$: console.log(customersToDisplayOnPage)
+
 	/**
 	 * When clicked on the row, the user is redirected to the profile of the customer.
 	 * @param e: event to get the right the class of the parent element to be sure it isn't the erase button or update button.

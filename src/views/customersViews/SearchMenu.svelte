@@ -5,9 +5,10 @@
 	export let customersToDisplay: CustomerFactory[]
 	export let deletedCustomersAreShown: boolean
 	export let filteredCustomers: CustomerFactory[]
+	export let currentPage: number
 
 	$: filteredCustomers
-
+	$: currentPage
 	$: custName = filterInputs[0].value
 	$: instId = filterInputs[1].value
 	$: postalCode = filterInputs[2].value
@@ -94,7 +95,7 @@
 		if (custName !== '') {
 			filteredData = filterData(filteredData, 'facility-name', custName)
 		}
-
+		currentPage = 0
 		filteredCustomers = filteredData
 		customersToDisplay = deletedCustomersAreShown
 			? filteredCustomers

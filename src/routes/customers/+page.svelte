@@ -22,44 +22,13 @@
 
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let filteredCustomers: CustomerFactory[]
-	let customersToDisplayOnPage: CustomerFactory[] = []
-
 	let currentPage: number = 0
 	let deletedCustomersAreShown = false
 
+	$: currentPage
+	$: customersToDisplay
 	$: filteredCustomers
-	$: lastDataIndex =
-		(currentPage + 1) * 6 - 1 >= customersToDisplay.length - 1
-			? customersToDisplay.length - 1
-			: (currentPage + 1) * 6 - 1
-	$: firstDataIndex = currentPage * 6
-
-	$: updatecustomersToDisplayOnPage(customersToDisplay, firstDataIndex, lastDataIndex)
-
-	$: dividedUsers =
-		customersToDisplay.length > 0
-			? customersToDisplay.flatMap((_, i, self) => (i % 6 ? [] : [self.slice(i, i + 6)]))
-			: []
-
-	/**
-	 * Update the data display according the current page.
-	 * @param data: array of customer's information
-	 * @param firstDataIndex: number, is the first customer we want to display from the data array
-	 * @param lastDataIndex: number, is the last customer we want to display from the data array
-	 */
-	const updatecustomersToDisplayOnPage = (
-		data: CustomerFactory[],
-		firstCustomerIndex: number,
-		lastCustomerIndex: number
-	) => {
-		customersToDisplayOnPage = []
-		for (let i = firstCustomerIndex; i <= lastCustomerIndex; i++) {
-			customersToDisplayOnPage = [...customersToDisplayOnPage, data[i]]
-		}
-	}
-
-	$: console.log(currentPage)
-	$: console.log(dividedUsers)
+	$: allCustomers
 
 	/**
 	 * The toggle is ON, we display all the customers (deleted and active).
@@ -78,6 +47,8 @@
 					? allCustomers.filter(customer => customer.isActive)
 					: filteredCustomers.filter(customer => customer.isActive)
 		}
+
+		currentPage = 0
 	}
 
 	// DELETE MODAL
@@ -99,8 +70,7 @@
 						allCustomers = allCustomers.filter(customer => {
 							if (customer.custCD.toString() === currentUser) {
 								customer.isActive = false
-								customer.deleteDateTime.date = getDateTime().split(' ')[0]
-								customer.deleteDateTime.time = getDateTime().split(' ')[1]
+								customer.delete.deleteDate = getDateTime()
 							}
 
 							return customer
@@ -117,6 +87,7 @@
 						phase = 'success'
 					}
 				} catch (error) {
+					console.log(error)
 					phase = 'error'
 				}
 				break
@@ -139,10 +110,13 @@
 	 * @param event: get the current number of the page
 	 */
 	const movePage = (event: { detail: { page: number } }): void => {
-		console.log(event.detail.page)
-
 		currentPage = event.detail.page
 	}
+
+	$: dividedUsers =
+		customersToDisplay.length > 0
+			? customersToDisplay.flatMap((_, i, self) => (i % 6 ? [] : [self.slice(i, i + 6)]))
+			: []
 </script>
 
 <section class="section section--customers-management" id="customers-management">
@@ -156,6 +130,7 @@
 			bind:customersToDisplay
 			bind:filteredCustomers
 			{deletedCustomersAreShown}
+			bind:currentPage
 		/>
 
 		<div class="container">
@@ -187,12 +162,15 @@
 	</header>
 
 	<div class="section__main">
-		<Table {customersToDisplayOnPage} bind:currentUser bind:isShown />
+		<Table
+			bind:customersToDisplayOnPage={dividedUsers[currentPage]}
+			bind:currentUser
+			bind:isShown
+		/>
 	</div>
 
 	<footer class="section__footer">
-		<Pagination bind:current={currentPage} pages={dividedUsers} on:click={movePage} />
-		<!-- <Pagination pages={dividedUsers} {current} on:click={movePage} /> -->
+		<Pagination bind:current={currentPage} bind:pages={dividedUsers} on:click={movePage} />
 	</footer>
 </section>
 

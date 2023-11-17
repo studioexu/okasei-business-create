@@ -15,8 +15,6 @@
 	$: customersToDisplayOnPage
 	$: currentUser
 
-	$: console.log(customersToDisplayOnPage)
-
 	/**
 	 * When clicked on the row, the user is redirected to the profile of the customer.
 	 * @param e: event to get the right the class of the parent element to be sure it isn't the erase button or update button.
@@ -34,7 +32,6 @@
 	const handleDeleteItem = (e: any) => {
 		isShown = true
 		currentUser = e.target.closest('.row').id
-		console.log(currentUser)
 	}
 
 	const handleEditItem = (e: any) => {
@@ -43,7 +40,7 @@
 	}
 </script>
 
-{#if customersToDisplayOnPage.length === 0}
+{#if customersToDisplayOnPage === undefined}
 	<p class="no-data">データがございません。</p>
 {:else}
 	<div class="table-wrapper">

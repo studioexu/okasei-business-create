@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit'
-import { loadData, update } from '@/utils/customers/actions.js'
-import type { CustomerEntries } from '@/utils/customers/types.js'
-import { parseBeforeUpdate } from '@/utils/customers/parsers.js'
-import type { CustomerBackend } from '@/utils/customers/classes.js'
+import { loadData, updateCustomer } from '@/libs/actions.js'
+import type { CustomerEntries } from '@/libs/customerTypes.js'
+import { formatCustomer } from '@/libs/formatters.js'
+import type { CustomerBackend } from '@/models/BackendCustomer.js'
 import { currentApi } from '@/data/api.js'
 
 /**
@@ -40,10 +40,11 @@ export const actions = {
 				registDate: initialState.registrationDate,
 				registBy: initialState.registeredBy
 			}
-			const updatedcustomer = parseBeforeUpdate(initialState, registration)
+
+			const updatedCustomer = formatCustomer('update', initialState, registration)
 
 			if (initialState.id) {
-				update(updatedcustomer, currentApi, initialState.id)
+				updateCustomer(updatedCustomer, currentApi, initialState.id)
 			}
 		}
 	}

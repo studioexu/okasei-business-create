@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition'
-	import DetailWrapper from './DetailWrapper.svelte'
-	import type { CustomerEntries, Department } from '@/utils/customers/types'
+	import DetailWrapper from '@/components/DetailWrapper.svelte'
+	import type { CustomerEntries, Department } from '@/libs/customerTypes'
 
 	export let initialState: CustomerEntries
 
@@ -68,7 +68,11 @@
 	</div>
 	<div class="form-row">
 		<DetailWrapper areaClass="phone-number" content={initialState.phoneNumber} label={'電話番号'} />
+		<DetailWrapper areaClass="phone-number" content={initialState.mobile} label={'携帯電話'} />
 		<DetailWrapper areaClass="fax" content={initialState.fax} label={'FAX番号'} />
+	</div>
+	<div class="form-row">
+		<DetailWrapper areaClass="email" content={initialState.email} label={'メール'} />
 	</div>
 	<div class="form-row">
 		<DetailWrapper areaClass="homepage" content={initialState.homepage} label={'ホームページ'} />
@@ -101,7 +105,7 @@
 	<div class="form-row">
 		<DetailWrapper
 			areaClass="business-list"
-			content={initialState.businessList !== undefined ? initialState.businessList : ''}
+			content={initialState.business !== undefined ? initialState.business : ''}
 			label={'事業一覧'}
 		/>
 	</div>
@@ -148,6 +152,10 @@
 
 	<div class="form-row">
 		<DetailWrapper content={initialState.approver} label={'決裁者'} />
+	</div>
+
+	<div class="form-row">
+		<DetailWrapper content={initialState.miscellaneous} label={'その他'} />
 	</div>
 
 	<div class="form-row">

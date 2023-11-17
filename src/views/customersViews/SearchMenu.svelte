@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
+	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 
 	export let data: CustomerFactory[]
 	export let customersToDisplay: CustomerFactory[]
@@ -141,11 +141,11 @@
 
 		.label {
 			width: max-content;
+			font-size: 18px;
 		}
 
 		.input {
-			// height: calc(32px - 2px);
-			padding-left: 8px;
+			padding: 4px 8px;
 
 			&:focus {
 				border-color: var(--primary-color);

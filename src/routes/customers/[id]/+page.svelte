@@ -2,17 +2,15 @@
 </script>
 
 <script lang="ts">
-	import type { CustomerEntries } from '@/utils/customers/types'
+	import type { CustomerEntries } from '@/libs/customerTypes.js'
 
-	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
-	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
+	import { CustomerFactory } from '@/Factories/CustomerFactory'
+	import Confirmation from '@/views/customersViews/Confirmation.svelte'
 
 	export let data
 
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'customer')
 	let bedQuantity: number = 0
-
-	$: console.log(customer)
 
 	/**
 	 * On click, we redirect the user to the edit page
@@ -35,27 +33,27 @@
 		address2: customer.address.address2,
 		phoneNumber: customer.address.phoneNumber,
 		fax: customer.address.fax,
-		email: '',
-		mobile: '',
-		year: customer.foundation.establishDate,
-		month: customer.foundation.establishDate,
+		email: customer.address.email,
+		mobile: customer.address.mobile,
+		year: customer.foundationDate.year,
+		month: customer.foundationDate.month,
 		founder: customer.foundation.establishedBy,
 		departments: customer.departmentDetail,
-		numberOfEmployees: customer.numEmployees,
+		numberOfEmployees: customer.numberOfEmployees,
 		homepage: customer.url,
 		numberOfFacilities: customer.numBranch,
 		isActive: customer.isActive,
 		googleReview: customer.googleReview,
 		reviews: customer.reviews,
-		businessList: customer.businessList,
+		business: customer.business,
 		closingMonth: customer.closingMonth,
-		personInCharge: '',
-		personInChargeRole: '',
-		personInChargeMemo: '',
-		approver: '',
-		contactTime: '',
-		pictures: [],
-		miscellaneous: ''
+		personInCharge: customer.personInCharge,
+		personInChargeRole: customer.personInChargeRole,
+		personInChargeMemo: customer.personInChargeMemo,
+		approver: customer.approver,
+		contactTime: customer.contactTime,
+		pictures: customer.pictures,
+		miscellaneous: customer.miscellaneous
 	}
 
 	customer.departmentDetail.forEach((bed: any) => (bedQuantity += parseInt(bed.bedQuantity)))

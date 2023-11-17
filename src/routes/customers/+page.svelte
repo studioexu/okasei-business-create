@@ -2,22 +2,22 @@
 </script>
 
 <script lang="ts">
-	import type { CustomerInfo } from '@/utils/customers/types'
-
+	//import views
 	import Pagination from '@/views/Pagination.svelte'
-	import Table from './components/Table.svelte'
-	import SearchMenu from './components/SearchMenu.svelte'
+	import Table from '@/views/customersViews/Table.svelte'
+	import SearchMenu from '@/views/customersViews/SearchMenu.svelte'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 
-	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
-	import { deleteCustomer } from '@/utils/customers/actions'
+	import { CustomerFactory } from '@/Factories/CustomerFactory'
+	import { deleteCustomer } from '@/libs/actions'
 	import { currentApi } from '../../data/api'
 	import { goto } from '$app/navigation'
+	import { getDateTime } from '@/libs/formatters'
 
 	export let data
 
 	let allCustomers: CustomerFactory[] = data.data.map(
-		(customer: CustomerInfo) => new CustomerFactory(customer, 'customer')
+		customer => new CustomerFactory(customer, 'customer')
 	)
 
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
@@ -77,6 +77,8 @@
 		}
 	}
 
+	// DELETE MODAL
+
 	let isShown: boolean = false
 	let currentUser: string | undefined = undefined
 	let phase: 'shown' | 'success' | 'error' = 'shown'
@@ -92,8 +94,10 @@
 						deleteCustomer(currentUser, currentApi)
 
 						allCustomers = allCustomers.filter(customer => {
-							if (customer.custCD === currentUser) {
+							if (customer.custCD.toString() === currentUser) {
 								customer.isActive = false
+								customer.deleteDateTime.date = getDateTime().split(' ')[0]
+								customer.deleteDateTime.time = getDateTime().split(' ')[1]
 							}
 
 							return customer
@@ -125,6 +129,12 @@
 		}
 	}
 
+	// PAGINATION
+
+	/**
+	 * update the current page number
+	 * @param event: get the current number of the page
+	 */
 	const movePage = (event: { detail: { current: number } }): void => {
 		currentPage = event.detail.current
 	}

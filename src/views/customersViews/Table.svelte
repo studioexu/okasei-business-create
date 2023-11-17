@@ -1,10 +1,10 @@
 <script lang="ts">
-	import type { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
+	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 
-	import TableRow from './TableRow.svelte'
 	import { crossfade } from 'svelte/transition'
 	import { flip } from 'svelte/animate'
 	import { quintOut } from 'svelte/easing'
+	import Icon from '@/components/Icon.svelte'
 
 	export let currentUser: string = ''
 	export let customersToDisplayOnPage: CustomerFactory[]
@@ -28,6 +28,17 @@
 		}
 		window.location.href = '/customers/' + rowId
 	}
+
+	const handleDeleteItem = (e: any) => {
+		isShown = true
+		currentUser = e.target.closest('.row').id
+		console.log(currentUser)
+	}
+
+	const handleEditItem = (e: any) => {
+		const id = e.target.closest('.row').id
+		window.location.href = '/customers/' + id + '/edit'
+	}
 </script>
 
 {#if customersToDisplayOnPage.length === 0}
@@ -46,34 +57,49 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each customersToDisplayOnPage as customer (customer._id)}
+				{#each customersToDisplayOnPage as customer (customer.custCD)}
 					<tr
 						class="row {customer.isActive ? '' : 'deleted'}"
 						data-id={customer.custCD}
+						id={customer.custCD}
 						in:receive={{ key: customer.custCD }}
 						out:send={{ key: customer.custCD }}
 						animate:flip={{ duration: 1000, easing: quintOut }}
 						on:click={handleRowClick}
 					>
-						<TableRow
-							customerName={customer.custName}
-							address={customer.address}
-							id={customer.custCD}
-							status={!customer.isActive
-								? '削除'
-								: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
-								? '更新'
-								: '登録'}
-							updateDate={customer.delete.deleteDate !== '' &&
-							customer.delete.deleteDate !== undefined
-								? customer.deleteDateTime.date
-								: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
-								? customer.updateDateTime.date
-								: customer.registDateTime.date}
-							bind:currentUser
-							bind:isShown
-							bind:isActive={customer.isActive}
-						/>
+						<td class="data customer-number">{customer.custCD}</td>
+
+						<td class="data facility-name">{customer.custName}</td>
+
+						<td class="data address">{customer.address.prefecture}{customer.address.city}</td>
+
+						{#if !customer.isActive}
+							<td class="data update-date">{'削除'}日 {customer.deleteDateTime.date}</td>
+						{:else if customer.update.updateDate !== '' && customer.update.updateDate !== undefined}
+							<td class="data update-date">{'更新'}日 {customer.updateDateTime.date}</td>
+						{:else}
+							<td class="data update-date">{'登録'}日 {customer.registDateTime.date}</td>
+						{/if}
+
+						<td class="data update">
+							<button class="btn {customer.isActive ? '' : 'disabled'}" on:click={handleEditItem}>
+								{#if customer.isActive}
+									<Icon icon={{ path: 'edit', color: '#0093d0' }} />
+								{:else}
+									<Icon icon={{ path: 'edit', color: 'rgb(200, 200, 200)' }} />
+								{/if}
+							</button>
+						</td>
+
+						<td class="data erase">
+							<button class="btn {customer.isActive ? '' : 'disabled'}" on:click={handleDeleteItem}>
+								{#if customer.isActive}
+									<Icon icon={{ path: 'delete', color: '#0093d0' }} />
+								{:else}
+									<Icon icon={{ path: 'delete', color: 'rgb(200, 200, 200)' }} />
+								{/if}
+							</button>
+						</td>
 					</tr>
 				{/each}
 			</tbody>
@@ -83,7 +109,6 @@
 
 <style lang="scss">
 	.table-wrapper {
-		padding: 0 18px;
 		color: var(--black);
 		background-color: #fff;
 		border-radius: 16px;
@@ -122,5 +147,34 @@
 				border-bottom: none;
 			}
 		}
+	}
+
+	.data {
+		text-align: left;
+		padding: 18px calc((27 / 1366) * 100vw);
+		border-bottom: var(--primary-color) 1px solid;
+	}
+
+	.btn {
+		background-color: transparent;
+		transition: transform 300ms;
+		z-index: 99;
+
+		&:hover {
+			cursor: pointer;
+			transform: scale(1.2);
+		}
+
+		&.disabled {
+			pointer-events: none;
+		}
+
+		> :global(.svg-icon) {
+			height: 18px * 1.2;
+		}
+	}
+
+	.disabled {
+		pointer-events: none;
 	}
 </style>

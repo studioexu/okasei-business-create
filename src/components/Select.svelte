@@ -33,7 +33,6 @@
 	.input-wrapper {
 		display: flex;
 		align-items: center;
-		margin-bottom: 20px;
 		gap: 10px;
 
 		&:first-child {
@@ -44,13 +43,9 @@
 
 		.select {
 			width: calc(((103 - 10 - 2) / 1366) * 100vw);
-			padding: 8px 0;
-			padding-left: 10px;
+			height: 31px;
 			font-size: 18px;
 			color: var(--black);
-			border: 1px solid var(--gray);
-			border-radius: 8px;
-			outline: none;
 
 			&:focus {
 				border-color: var(--primary-color);

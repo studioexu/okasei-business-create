@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { toCamelCase } from '@/utils/customers/formatter'
+	import { toCamelCase } from '@/libs/formatters'
 
 	export let label: string = ''
 	export let placeholder: string = ''
@@ -11,7 +11,7 @@
 	export let required: boolean = false
 	export let isValid: boolean = true
 
-	import { inputIsValid } from '@/utils/customers/validations'
+	import { inputIsValid } from '@/libs/customerValidations'
 
 	const handleChange = (e: any) => {
 		const input = e.target.value
@@ -67,7 +67,6 @@
 		gap: 10px;
 		position: relative;
 		align-self: center;
-		margin-bottom: 20px;
 
 		&:first-child {
 			.label {
@@ -84,8 +83,6 @@
 
 		.input {
 			width: calc(((103 - 10 - 2) / 1366) * 100vw);
-			padding: 8px 0;
-			padding-left: 10px;
 
 			&::placeholder {
 				color: rgb(206, 205, 205);

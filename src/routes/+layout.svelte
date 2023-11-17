@@ -90,7 +90,9 @@
 		}
 	}
 
-	:global(input) {
+	:global(input),
+	:global(select) {
+		padding: 4px 8px;
 		outline: none;
 		border: 1px solid var(--gray);
 		border-radius: 8px;
@@ -140,6 +142,11 @@
 		&:hover {
 			opacity: 1;
 		}
+	}
+
+	:global(button.inline) {
+		padding: 4px 8px;
+		max-height: 31px;
 	}
 
 	:global(input.error) {

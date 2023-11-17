@@ -1,11 +1,11 @@
 <script lang="ts">
-	import type { CustomerEntries, CustomerEntriesErrors } from '@/utils/customers/types'
-	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
-	import Form from '@/views/customersViews/Form/Form.svelte'
-	import { CustomerFactory } from '@/utils/customers/Factories/CustomerFactory'
+	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes.js'
+	import Confirmation from '@/views/customersViews/Confirmation.svelte'
+	import Form from '@/views/customersViews/Form.svelte'
+	import { CustomerFactory } from '@/Factories/CustomerFactory'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 	import { goto } from '$app/navigation'
-	import { inputIsValid } from '@/utils/customers/validations.js'
+	import { inputIsValid } from '@/libs/customerValidations.js'
 	import { fade } from 'svelte/transition'
 	export let data
 
@@ -26,27 +26,27 @@
 		address2: customer.address.address2,
 		phoneNumber: customer.address.phoneNumber,
 		fax: customer.address.fax,
-		email: '',
-		mobile: '',
-		year: customer.foundation.establishDate,
-		month: customer.foundation.establishDate,
+		email: customer.address.email,
+		mobile: customer.address.mobile,
+		year: customer.foundationDate.year,
+		month: customer.foundationDate.month,
 		founder: customer.foundation.establishedBy,
 		departments: customer.departmentDetail,
-		numberOfEmployees: customer.numEmployees,
+		numberOfEmployees: customer.numberOfEmployees,
 		homepage: customer.url,
 		numberOfFacilities: customer.numBranch,
 		isActive: customer.isActive,
 		googleReview: customer.googleReview,
 		reviews: customer.reviews,
-		businessList: customer.businessList,
+		business: customer.business,
 		closingMonth: customer.closingMonth,
-		personInCharge: '',
-		personInChargeRole: '',
-		personInChargeMemo: '',
-		approver: '',
-		contactTime: '',
-		pictures: [],
-		miscellaneous: '',
+		personInCharge: customer.personInCharge,
+		personInChargeRole: customer.personInChargeRole,
+		personInChargeMemo: customer.personInChargeMemo,
+		approver: customer.approver,
+		contactTime: customer.contactTime,
+		pictures: customer.pictures,
+		miscellaneous: customer.miscellaneous,
 		registrationDate: customer.registration.registDate,
 		registeredBy: customer.registration.registBy
 	}

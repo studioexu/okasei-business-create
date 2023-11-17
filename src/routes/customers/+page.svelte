@@ -58,6 +58,9 @@
 		}
 	}
 
+	$: console.log(currentPage)
+	$: console.log(dividedUsers)
+
 	/**
 	 * The toggle is ON, we display all the customers (deleted and active).
 	 * The toggle is OFF, We only display the active customers.
@@ -135,8 +138,10 @@
 	 * update the current page number
 	 * @param event: get the current number of the page
 	 */
-	const movePage = (event: { detail: { current: number } }): void => {
-		currentPage = event.detail.current
+	const movePage = (event: { detail: { page: number } }): void => {
+		console.log(event.detail.page)
+
+		currentPage = event.detail.page
 	}
 </script>
 
@@ -186,7 +191,8 @@
 	</div>
 
 	<footer class="section__footer">
-		<Pagination bind:current={currentPage} bind:pages={dividedUsers} on:click={movePage} />
+		<Pagination bind:current={currentPage} pages={dividedUsers} on:click={movePage} />
+		<!-- <Pagination pages={dividedUsers} {current} on:click={movePage} /> -->
 	</footer>
 </section>
 

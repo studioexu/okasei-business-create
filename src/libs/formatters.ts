@@ -19,8 +19,10 @@ export const postalCodeFormatter = (postalCode: string) => {
  * @param phoneNumber :phone number without "-"/ 「ー」なしの電話番号
  * @returns phone number with "-" at the right position　/ 「ー」つきの電話番号
  */
-export const phoneNumberFormatter = (phoneNumber: string) => {
-	return parsePhoneNumber(phoneNumber, 'JP').formatNational()
+export const phoneNumberFormatter = (phoneNumber: string): string => {
+	if (phoneNumber.length !== 0) {
+		return parsePhoneNumber(phoneNumber, 'JP').formatNational()
+	} else return ''
 }
 
 /**

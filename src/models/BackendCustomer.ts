@@ -24,6 +24,8 @@ export class CustomerBackend {
 		Cust_Addr2: string
 		Cust_Phone: string
 		Cust_Fax: string
+		Cust_Email: string
+		Cust_Mobile: string
 	}
 	Num_Employees: string
 	URL: string
@@ -55,6 +57,12 @@ export class CustomerBackend {
 	closingMonth: string
 	business: string
 	pictures: Picture[]
+	personInCharge: string
+	personInChargeRole: string
+	personInChargeMemo: string
+	approver: string
+	contactTime: string
+	miscellaneous: string
 
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.id) {
@@ -65,7 +73,7 @@ export class CustomerBackend {
 		this.Cust_Name = data.customerName
 		this.Cust_Kana = data.kana
 		this.Inst_ID = data.facilityNumber
-		this.Cust_Type = data.businessType
+		this.Cust_Type = data.businessType === '法人' ? 'C' : 'I'
 		this.Address = {
 			Cust_Postal: data.postalCode,
 			Cust_Ken: data.prefecture,
@@ -73,13 +81,15 @@ export class CustomerBackend {
 			Cust_Addr1: data.address1,
 			Cust_Addr2: data.address2,
 			Cust_Phone: data.phoneNumber,
-			Cust_Fax: data.fax
+			Cust_Fax: data.fax,
+			Cust_Email: data.email,
+			Cust_Mobile: data.mobile
 		}
 		this.Num_Employees = data.numberOfEmployees
 		this.URL = data.homepage
 		this.Num_Branch = data.numberOfFacilities
 		this.foundation = {
-			Establish_Date: data.year,
+			Establish_Date: data.year + '-' + data.month,
 			Established_By: data.founder
 		}
 		this.is_active = data.isActive
@@ -105,6 +115,12 @@ export class CustomerBackend {
 		this.reviews = data.reviews
 		this.closingMonth = data.closingMonth
 		this.pictures = data.pictures
+		this.personInCharge = data.personInCharge
+		this.personInChargeMemo = data.personInChargeMemo
+		this.personInChargeRole = data.personInChargeRole
+		this.approver = data.approver
+		this.contactTime = data.contactTime
+		this.miscellaneous = data.miscellaneous
 	}
 }
 

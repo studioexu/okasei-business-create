@@ -13,6 +13,7 @@
 	import Select from '@/components/Select.svelte'
 	import SelectWithInput from '@/components/SelectWithInput.svelte'
 	import UploadModal from '@/views/modals/UploadModal.svelte'
+	import ResultModal from '../modals/ResultModal.svelte'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -22,7 +23,6 @@
 	export let isSucceeded: boolean = false
 
 	let uploadModalIsShown = false
-	let businessContent = ''
 
 	// ADDRESS AUTO FILL
 
@@ -96,10 +96,18 @@
 				break
 
 			case 'upload':
-				let newArray = initialState.pictures
-				newArray.push({ file: event.detail.fileToUpload, memo: '' })
-				initialState.pictures = newArray
-				phase = 'success'
+				try {
+					if (event.detail.fileToUpload !== undefined) {
+						let newArray = initialState.pictures
+						newArray.push({ file: event.detail.fileToUpload, memo: '' })
+						initialState.pictures = newArray
+						phase = 'success'
+					} else {
+						phase = 'error'
+					}
+				} catch (error) {
+					phase = 'error'
+				}
 				break
 
 			case 'success':
@@ -214,6 +222,10 @@
 
 {#if uploadModalIsShown}
 	<UploadModal {phase} on:click={onClick} />
+
+	{#if phase === 'error'}
+		<ResultModal isSucceeded={false} on:click={() => (phase = 'shown')} />
+	{/if}
 {/if}
 
 <form
@@ -518,7 +530,7 @@
 				placeholder={'未入力'}
 				errorMsg={'200文字以内で入力してください'}
 				inputSize="input--lg"
-				bind:value={businessContent}
+				bind:value={initialState.business}
 			/>
 			<!-- Input -->
 		</div>

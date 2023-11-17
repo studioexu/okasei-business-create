@@ -24,8 +24,10 @@ export class Customer {
 		address2: string
 		phoneNumber: string
 		fax: string
+		mobile: string
+		email: string
 	}
-	private _numEmployees: string
+	private _numberOfEmployees: string
 	private _url: string
 	private _numBranch: string
 	private _foundation: {
@@ -53,9 +55,15 @@ export class Customer {
 
 	private _googleReview: boolean
 	private _reviews: string
-	private _businessList: string
+	private _business: string
 	private _closingMonth: string
 	private _pictures: Picture[]
+	private _personInCharge: string
+	private _personInChargeMemo: string
+	private _personInChargeRole: string
+	private _approver: string
+	private _contactTime: string
+	private _miscellaneous: string
 
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.Cust_CD) {
@@ -66,7 +74,7 @@ export class Customer {
 		this._custName = data.Cust_Name
 		this._custKana = data.Cust_Kana
 		this._instId = data.Inst_ID
-		this._custType = data.Cust_Type
+		this._custType = data.Cust_Type === 'C' ? '法人' : '個人'
 		this._address = {
 			postalCode: data.Address.Cust_Postal,
 			prefecture: data.Address.Cust_Ken,
@@ -74,10 +82,12 @@ export class Customer {
 			address1: data.Address.Cust_Addr1,
 			address2: data.Address.Cust_Addr2,
 			phoneNumber: data.Address.Cust_Phone,
-			fax: data.Address.Cust_Fax
+			fax: data.Address.Cust_Fax,
+			email: data.Address.Cust_Email,
+			mobile: data.Address.Cust_Mobile
 		}
-		this._numEmployees = data.Num_Employees
-		this._url = data.Cust_URL
+		this._numberOfEmployees = data.Num_Employees
+		this._url = data.URL
 		this._numBranch = data.Num_Branch
 		this._foundation = {
 			establishDate: data.foundation.Establish_Date,
@@ -102,9 +112,15 @@ export class Customer {
 		}
 		this._googleReview = data.googleReview
 		this._reviews = data.reviews
-		this._businessList = data.businessList
+		this._business = data.business
 		this._closingMonth = data.closingMonth
 		this._pictures = data.pictures
+		this._personInCharge = data.personInCharge
+		this._personInChargeMemo = data.personInChargeMemo
+		this._personInChargeRole = data.personInChargeRole
+		this._approver = data.approver
+		this._contactTime = data.contactTime
+		this._miscellaneous = data.miscellaneous
 	}
 
 	public get custCD() {
@@ -131,8 +147,8 @@ export class Customer {
 		return this._instId
 	}
 
-	public get numEmployess() {
-		return this._numEmployees
+	public get numberOfEmployees() {
+		return this._numberOfEmployees
 	}
 
 	public get departments() {
@@ -149,6 +165,16 @@ export class Customer {
 
 	public get foundation() {
 		return this._foundation
+	}
+
+	public get foundationDate() {
+		const year = this._foundation.establishDate.split('-')[0]
+		const month = this._foundation.establishDate.split('-')[1]
+
+		return {
+			year: year,
+			month: month
+		}
 	}
 
 	public get numBranch() {
@@ -227,8 +253,8 @@ export class Customer {
 		return this._reviews
 	}
 
-	public get businessList() {
-		return this._businessList
+	public get business() {
+		return this._business
 	}
 
 	public get closingMonth() {
@@ -237,5 +263,26 @@ export class Customer {
 
 	public get pictures() {
 		return this._pictures
+	}
+
+	public get personInCharge() {
+		return this._personInCharge
+	}
+
+	public get personInChargeMemo() {
+		return this._personInChargeMemo
+	}
+	public get personInChargeRole() {
+		return this._personInChargeRole
+	}
+	public get approver() {
+		return this._approver
+	}
+	public get miscellaneous() {
+		return this._miscellaneous
+	}
+
+	public get contactTime() {
+		return this._contactTime
 	}
 }

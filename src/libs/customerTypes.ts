@@ -36,7 +36,7 @@ export interface CustomerEntries {
 	isActive: true
 	googleReview: false
 	reviews: string
-	businessList: string
+	business: string
 	closingMonth: string
 	personInCharge: string
 	personInChargeRole: string

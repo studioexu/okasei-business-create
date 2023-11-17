@@ -13,6 +13,7 @@ export const actions = {
 
 		if (typeof initialStateString === 'string') {
 			initialState = JSON.parse(initialStateString)
+			console.log(initialState)
 
 			let newCustomer: CustomerBackend = formatCustomer('create', initialState)
 			createCustomer(newCustomer, currentApi)

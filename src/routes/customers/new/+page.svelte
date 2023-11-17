@@ -51,7 +51,7 @@
 		isActive: true,
 		googleReview: false,
 		reviews: '',
-		businessList: '',
+		business: '',
 		closingMonth: '',
 		personInCharge: '',
 		personInChargeRole: '',

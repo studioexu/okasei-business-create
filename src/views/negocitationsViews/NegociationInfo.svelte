@@ -1,14 +1,19 @@
 <script lang="ts">
-	import Select from '../../Components/Select.svelte'
-	import Input from '../../Components/Input.svelte'
-	import DateInput from '../../Components/DateInput.svelte'
-	import Checkbox from '../../Components/Checkbox.svelte'
+	import Input from '@/components/Input.svelte'
+	import Select from '@/components/Select.svelte'
+	import SelectDate from '@/components/SelectDate.svelte'
+	import DateInput from '@/components/DateInput.svelte'
+	import CustomCheckbox from '@/components/CustomCheckbox.svelte'
+	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 
-	export let initialState2: any
+	export let initialState: any
+	export let customers: CustomerFactory[]
+	export let isSucceeded: boolean
+	export let isShown: boolean
+	export let confirmationPageIsShown: boolean
 
-	// $: console.log(initialState2.estimate)
+	let currentCustomerId: number | undefined
 
-	// let maxProductIndex = 1
 	let maxEstimateIndex = 1
 	let maxMemoIndex = 1
 	let maxHistoryIndex = 1
@@ -58,11 +63,11 @@
 	$: estimateArray = updateArray(maxEstimateIndex, estimateArray)
 	$: historyMemo = updateArray(maxHistoryIndex, historyMemo)
 	$: memoArray = updateArray(maxMemoIndex, memoArray)
-	$: initialState2.importantMemo = memoArray
-	$: initialState2.outcomeHistory = historyMemo
-	$: initialState2.estimate = estimateArray
+	$: initialState.importantMemo = memoArray
+	$: initialState.outcomeHistory = historyMemo
+	$: initialState.estimate = estimateArray
 
-	$: initialState2.checkboxes = videoCheckbox
+	$: initialState.checkboxes = videoCheckbox
 
 	$: maxHistoryIndex
 
@@ -142,26 +147,76 @@
 
 		return newArray
 	}
+
+	/**
+	 * Triggered when the form is submit.
+	 * If the form is still on the entry page, then, it will preventDefault, and displayed the entry verification page.
+	 * If the user is in the entry verification page, then, we submit the form.
+	 * @param e
+	 */
+	const handleSubmit = (e: any): void => {
+		console.log(confirmationPageIsShown)
+
+		if (confirmationPageIsShown) {
+			isShown = true
+			isSucceeded = true
+		}
+	}
 </script>
 
-<form class="form" action="">
+<form class="form" action="POST" id="negociation" on:submit={handleSubmit}>
 	<h3 class="form__header">商談情報</h3>
 
 	<fieldset class="fieldset">
-		<legend class="legend">商談ステータス</legend>
+		<legend class="legend hidden">顧客選択</legend>
+
+		<div class="form-row">
+			<div class="input-wrapper">
+				<label class="label" for="select-customer">顧客選択</label>
+				<select
+					class="select"
+					name="select-customer"
+					id="select-customer"
+					bind:value={currentCustomerId}
+				>
+					<option value=" " selected disabled class="placeholder">未選択</option>
+					{#each customers as customer}
+						<option value={customer.custCD}>{customer.custName}</option>
+					{/each}
+				</select>
+			</div>
+
+			<button
+				type="button"
+				class="primary inline btn"
+				on:click={() => window.open('/customers/new', '_blank')}>＋顧客追加</button
+			>
+			{#if currentCustomerId !== undefined}
+				<button
+					type="button"
+					class="secondary inline btn"
+					on:click={() => window.open('/customers/' + currentCustomerId, '_blank')}
+					>顧客情報を確認</button
+				>
+			{/if}
+		</div>
+	</fieldset>
+
+	<fieldset class="fieldset">
+		<legend class="legend hidden">商談ステータス</legend>
 		<div class="form-row">
 			<Select
 				label={'ステータス'}
 				name={'status'}
 				options={['注文', '新規受注', '再問合せ', '見送り', '失注', '在庫無し']}
-				bind:value={initialState2.status}
+				bind:value={initialState.status}
 			/>
 		</div>
 		<div class="form-row">
 			<DateInput
 				name={'negociation-start'}
 				label={'商談開始日'}
-				bind:value={initialState2.startingDate}
+				bind:value={initialState.startingDate}
 			/>
 		</div>
 
@@ -170,7 +225,7 @@
 				label={'可能性'}
 				name={'condition'}
 				options={['A', 'B', 'C', 'M', 'MM']}
-				bind:value={initialState2.condition}
+				bind:value={initialState.condition}
 			/>
 
 			<Select
@@ -189,7 +244,7 @@
 					'新規紹介',
 					'失注顧客'
 				]}
-				bind:value={initialState2.inflow}
+				bind:value={initialState.inflow}
 			/>
 		</div>
 
@@ -198,17 +253,14 @@
 				label={'相見積もり'}
 				name={'preference'}
 				options={['新品・中古', '新品', '中古', '不明', '確認前', '無し']}
-				bind:value={initialState2.preference}
+				bind:value={initialState.preference}
 			/>
 		</div>
 
 		<div class="form-row">
-			<DateInput name={'billing'} label={'納期'} bind:value={initialState2.billingDate} />
+			<DateInput name={'billing'} label={'納期'} bind:value={initialState.billingDate} />
 
-			<label for="not-confirmed">
-				<input type="checkbox" name="not-confirmed" id="not-confirmed" />
-				未確定
-			</label>
+			<CustomCheckbox value={'未確定'} />
 		</div>
 
 		<div class="form-row">
@@ -216,7 +268,7 @@
 				label={'入金予定'}
 				placeholder={'未入力'}
 				name={'scheduled-deposit'}
-				bind:value={initialState2.scheduledDeposit}
+				bind:value={initialState.scheduledDeposit}
 			/>
 		</div>
 
@@ -233,38 +285,35 @@
 					'前金＋後払い',
 					'全額後払い'
 				]}
-				bind:value={initialState2.paymentMethod}
+				bind:value={initialState.paymentMethod}
 			/>
 		</div>
 
 		<div class="form-row">
-			<DateInput label={'成否日'} name={'outcome'} bind:value={initialState2.outcome} />
+			<DateInput label={'成否日'} name={'outcome'} bind:value={initialState.outcome} />
 
-			<label for="not-confirmed">
-				<input type="checkbox" name="not-confirmed" id="not-confirmed" />
-				未定
-			</label>
+			<CustomCheckbox value={'未定'} />
 		</div>
 
 		<div class="form-row">
 			<DateInput
 				label={'次回連絡日時'}
 				name={'next-contact'}
-				bind:value={initialState2.nextContact}
+				bind:value={initialState.nextContact}
 			/>
 
-			<Select name={'time'} type={'time'} label={'時'} />
+			<SelectDate name={'time'} label={'時'} />
 		</div>
 	</fieldset>
 
 	<fieldset class="fieldset">
-		<legend class="legend">納期先</legend>
+		<legend class="legend hidden">納期先</legend>
 		<div class="form-row">
 			<Input
 				name={'postal-code'}
 				inputSize={'input--sm'}
 				label={'納期先'}
-				bind:value={initialState2.postalCode}
+				bind:value={initialState.postalCode}
 			/>
 		</div>
 		<div class="form-row">
@@ -272,13 +321,13 @@
 				name={'prefecture'}
 				inputSize={'input--sm'}
 				label={'都道府県'}
-				bind:value={initialState2.prefecture}
+				bind:value={initialState.prefecture}
 			/>
 			<Input
 				name={'city'}
 				inputSize={'input--sm'}
 				label={'市区町村'}
-				bind:value={initialState2.city}
+				bind:value={initialState.city}
 			/>
 		</div>
 		<div class="form-row">
@@ -286,7 +335,7 @@
 				name={'address1'}
 				inputSize={'input--sm'}
 				label={'住所１'}
-				bind:value={initialState2.address1}
+				bind:value={initialState.address1}
 			/>
 		</div>
 		<div class="form-row">
@@ -294,17 +343,17 @@
 				name={'address2'}
 				inputSize={'input--sm'}
 				label={'住所２'}
-				bind:value={initialState2.address2}
+				bind:value={initialState.address2}
 			/>
 		</div>
 		<div class="form-row">
-			<Input label={'距離'} name={'distance'} unit={'km'} bind:value={initialState2.distanceKm} />
-			<Input name={'duration'} unit={'時間'} bind:value={initialState2.distanceTime} />
+			<Input label={'距離'} name={'distance'} unit={'km'} bind:value={initialState.distanceKm} />
+			<Input name={'duration'} unit={'時間'} bind:value={initialState.distanceTime} />
 		</div>
 	</fieldset>
 
 	<fieldset class="fieldset">
-		<legend class="estimate">見積もり</legend>
+		<legend class="legend hidden estimate">見積もり</legend>
 
 		<div class="form-row">
 			<div>
@@ -362,7 +411,7 @@
 	</fieldset>
 
 	<fieldset class="fieldset">
-		<legend class="legend">重要メモ</legend>
+		<legend class="legend hidden">重要メモ</legend>
 		<div class="form-row">
 			<h3 class="label">重要メモ</h3>
 			<div class="column">
@@ -392,13 +441,13 @@
 	</fieldset>
 
 	<fieldset class="fieldset">
-		<legend class="legend">コミュニケーション</legend>
+		<legend class="legend hidden">コミュニケーション</legend>
 		<div class="form-row">
 			<Input
 				name={'representative'}
 				placeholder={'未入力'}
 				label={'自社担当者'}
-				bind:value={initialState2.employeeInCharge}
+				bind:value={initialState.employeeInCharge}
 			/>
 		</div>
 		<div class="form-row">
@@ -406,7 +455,7 @@
 				name={'person-in-charge'}
 				placeholder={'未入力'}
 				label={'責任者'}
-				bind:value={initialState2.responsiblePerson}
+				bind:value={initialState.responsiblePerson}
 			/>
 		</div>
 
@@ -415,52 +464,52 @@
 				label={'オカセイ便り'}
 				name={'communication'}
 				options={['新規依頼', '新規送付済み', '顧客登録済み']}
-				bind:value={initialState2.communication}
+				bind:value={initialState.communication}
 			/>
 
 			<Select
 				label={'DM発送'}
 				name={'dm'}
 				options={['不要', '要(未手配)', '郵送済み', '持参']}
-				bind:value={initialState2.directMessage}
+				bind:value={initialState.directMessage}
 			/>
 
-			<Input name={'presentation-video'} label={'PR動画'} bind:value={initialState2.videoUrl} />
+			<Input name={'presentation-video'} label={'PR動画'} bind:value={initialState.videoUrl} />
 		</div>
 	</fieldset>
 
 	<fieldset class=" fieldset checkboxes-container">
-		<legend class="legend">チェックボックス</legend>
+		<legend class="legend hidden">チェックボックス</legend>
 		{#each videoCheckbox as element}
-			<Checkbox value={element.title} bind:isChecked={element.isChecked} />
+			<CustomCheckbox value={element.title} bind:isChecked={element.isChecked} />
 		{/each}
 	</fieldset>
 
 	<fieldset class="fieldset">
-		<legend class="legend">コメント</legend>
+		<legend class="legend hidden">コメント</legend>
 		<div class="form-row">
 			<div class="textarea-wrapper">
 				<label class="label" for="bottleneck">ボトルネック確認</label>
-				<textarea name="bottleneck" id="bottleneck" bind:value={initialState2.checkBottleneck} />
+				<textarea name="bottleneck" id="bottleneck" bind:value={initialState.checkBottleneck} />
 			</div>
 		</div>
 		<div class="form-row">
 			<div class="textarea-wrapper">
 				<label class="label" for="chance">機会（チャンス）</label>
-				<textarea name="chance" id="chance" bind:value={initialState2.occasion} />
+				<textarea name="chance" id="chance" bind:value={initialState.occasion} />
 			</div>
 		</div>
 		<div class="form-row">
 			<div class="textarea-wrapper">
 				<label class="label" for="risk">脅威（リスク）</label>
-				<textarea name="risk" id="risk" bind:value={initialState2.risk} />
+				<textarea name="risk" id="risk" bind:value={initialState.risk} />
 			</div>
 		</div>
 	</fieldset>
 	<!-- </fieldset> -->
 
 	<fieldset class="fieldset">
-		<legend class="legend">商談経緯</legend>
+		<legend class="legend hidden">商談経緯</legend>
 		<div class="fieldset__main">
 			<div class="form-row">
 				<div class="column">
@@ -494,6 +543,9 @@
 </form>
 
 <style lang="scss">
+	.hidden {
+		display: none;
+	}
 	.form-row {
 		display: flex;
 		justify-content: flex-start;
@@ -528,10 +580,7 @@
 		background-color: #f4f4f4;
 		padding: 10px 21px;
 		border-radius: 8px;
-		// width: 100%;
-		// width: calc((900 / 1366) * 100vw);
 		width: fit-content;
-		// flex-wrap: wrap;
 
 		.form-row {
 			justify-content: space-between;
@@ -549,7 +598,6 @@
 		display: flex;
 		flex-direction: column;
 		gap: 18px;
-		width: 100%;
 	}
 
 	.checkbox-container {
@@ -670,4 +718,34 @@
 	// .container--vertical {
 	// 	gap: 20px;
 	// }
+
+	.input-wrapper {
+		display: flex;
+		gap: 12px;
+
+		&:first-child {
+			.label {
+				width: 130px;
+			}
+		}
+	}
+	.select {
+		height: 31px;
+
+		&:focus {
+			border-color: var(--primary-color);
+		}
+
+		&:required:invalid {
+			color: #969696;
+		}
+
+		option[value=''][disabled] {
+			display: none;
+		}
+	}
+
+	.btn {
+		margin: 0;
+	}
 </style>

@@ -1,8 +1,7 @@
 <script lang="ts">
-	import Select from './Select.svelte'
+	import SelectDate from './SelectDate.svelte'
 
 	export let name: string
-	export let withTime: boolean = false
 	export let label: string = ''
 
 	export let value: string = ''
@@ -26,7 +25,6 @@
 	let month: string = value.length > 0 ? value.split('-')[0] : ''
 	let year: string = value.length > 0 ? value.split('-')[1] : ''
 	let day: string = value.length > 0 ? value.split('-')[2] : ''
-	// let hour: string
 
 	$: value =
 		month !== '' && year !== '' && day !== ''
@@ -80,8 +78,6 @@
 
 	$: days = updateNumberOfDaysInAMonth(maxDaysInMonth)
 
-	// $: console.log(days)
-
 	for (let i = 0; i <= 23; i++) {
 		hours.push(i.toString())
 	}
@@ -91,20 +87,16 @@
 	{#if label}
 		<h3 class="label">{label}</h3>
 	{/if}
-	<Select type="date" name={name + '-year'} label={'年'} options={years} bind:value={year} />
-	<Select type="date" name={name + '-month'} label={'月'} options={months} bind:value={month} />
-	<Select type="date" name={name + '-day'} label={'日'} options={days} bind:value={day} />
-
-	<!-- {#if withTime}
-		<Select type="date" name={name + '-time'} label={'時'} options={hours} bind:value={hour} />
-	{/if} -->
+	<SelectDate name={name + '-year'} label={'年'} options={years} bind:value={year} />
+	<SelectDate name={name + '-month'} label={'月'} options={months} bind:value={month} />
+	<SelectDate name={name + '-day'} label={'日'} options={days} bind:value={day} />
 </div>
 
 <style class="scss">
 	.date-input {
 		display: flex;
 		flex-direction: row;
-		gap: 12px;
+		gap: 10px;
 		align-items: center;
 		&:first-child {
 			& > .label {

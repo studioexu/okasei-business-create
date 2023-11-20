@@ -2,8 +2,11 @@
 
 <script lang="ts">
 	import { user } from '@/stores/users'
-	import Input from './Components/Input.svelte'
+	import Input from '@/components/Input.svelte'
 	import Icon from '@/components/Icon.svelte'
+	import Select from '@/components/Select.svelte'
+	import SelectWithInput from '@/components/SelectWithInput.svelte'
+	import CustomCheckbox from '@/components/CustomCheckbox.svelte'
 
 	let searchIsShown = false
 	let displayMenuIsShown = false
@@ -19,6 +22,12 @@
 
 	for (let i = 1; i <= 12; i++) {
 		months.push(i.toString())
+	}
+
+	let searchInput = {
+		text: '',
+		year: '',
+		month: ''
 	}
 
 	const tableHeaders: { label: string; id: keyof DataIsShown | keyof Users }[] = [
@@ -337,64 +346,60 @@
 
 		dataIsShown[id] = e.target.checked
 	}
-
-	// const openModal = (index: number) => {
-	// 	isShown = true
-	// 	currentUser = dividedUsers[current][<number>index].employeeNumber
-	// }
 </script>
 
 <section class="section">
 	<header class="section__header">
 		<div class="container">
-			<button class="primary">＋新規追加</button>
-			<button class="primary" on:click={() => (displayMenuIsShown = !displayMenuIsShown)}
-				>data to display</button
+			<button
+				type="button"
+				class="primary"
+				on:click={() => (window.location.href = '/negotiations/new')}>＋新規追加</button
 			>
-			<button class="primary" on:click={() => (searchIsShown = !searchIsShown)}>縛り込み検索</button
+			<button
+				type="button"
+				class="primary"
+				on:click={() => (displayMenuIsShown = !displayMenuIsShown)}
 			>
+				表示・非表示
+			</button>
+			<button type="button" class="primary" on:click={() => (searchIsShown = !searchIsShown)}>
+				縛り込み検索
+			</button>
 		</div>
 
 		{#if displayMenuIsShown}
 			<div class="container data-to-display">
 				{#each tableHeaders as header}
-					<label class="label-checkbox" for={header.id}>
-						<input
-							class="checkbox"
-							type="checkbox"
-							name={header.id}
-							id={header.id}
-							checked
-							on:change={handleChange}
-						/>{header.label}
-					</label>
+					{#if header.id !== 'customerName'}
+						<label class="checkbox-container" for={header.id}>
+							<input
+								class="checkbox"
+								type="checkbox"
+								name={header.id}
+								id={header.id}
+								checked
+								on:change={handleChange}
+							/>{header.label}
+							<span class="checkmark" />
+						</label>
+					{/if}
 				{/each}
 			</div>
 		{/if}
 
 		{#if searchIsShown}
 			<div class="search-menu">
-				<Input label={'施設名'} inputSize={'input--lg'} name={'name-search'} />
+				<Input
+					label={'施設名'}
+					inputSize={'input--lg'}
+					name={'name-search'}
+					bind:value={searchInput.text}
+				/>
 
 				<div class="container">
-					<h2 class="label">商談開始月</h2>
-					<label for="year">
-						<select name="year" id="year">
-							{#each years as year}
-								<option value={year}>{year}</option>
-							{/each}
-						</select>
-						年
-					</label>
-
-					<label for="month">
-						<select name="month" id="month">
-							{#each months as month}
-								<option value={month}>{month}</option>
-							{/each}
-						</select>
-						月
-					</label>
+					<Select label={'商談開始月'} options={years} unit={'年'} bind:value={searchInput.year} />
+					<Select options={months} unit={'月'} bind:value={searchInput.month} />
 				</div>
 			</div>
 		{/if}
@@ -464,7 +469,7 @@
 		&.data-to-display {
 			margin-top: 20px;
 			flex-wrap: wrap;
-			justify-content: space-between;
+			justify-content: flex-start;
 			background-color: #fff;
 			padding: 18px;
 			border-radius: 18px;
@@ -547,13 +552,14 @@
 	}
 
 	.search-menu {
-		margin-top: 20px;
-		padding: 16px 12px;
 		display: flex;
 		justify-content: flex-start;
 		align-items: center;
+		margin-top: 20px;
+		padding: 16px 12px;
 		gap: 24px;
 		background-color: rgb(196, 227, 247);
+		background-color: #fff;
 		border-radius: 16px;
 
 		.container {
@@ -582,6 +588,72 @@
 
 		> :global(.svg-icon) {
 			height: 18px * 1.2;
+		}
+	}
+
+	.checkbox-container {
+		position: relative;
+		display: flex;
+		justify-content: flex-end;
+		flex-direction: row-reverse;
+		align-items: center;
+		width: 160px;
+		margin-bottom: 12px;
+		gap: 18px;
+		font-size: 18px;
+		cursor: pointer;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+
+		& :hover {
+			.checkbox ~ .checkmark {
+				background-color: #ccc;
+			}
+		}
+
+		& :after {
+			content: '';
+			display: none;
+		}
+
+		.checkmark {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			top: 0;
+			left: 0;
+			height: 20px;
+			width: 20px;
+			border: 1px solid var(--black);
+			border-radius: 3px;
+
+			&:after {
+				width: 3px;
+				height: 8px;
+				border: solid white;
+				border-width: 0 3px 3px 0;
+				-webkit-transform: rotate(45deg);
+				-ms-transform: rotate(45deg);
+				transform: rotate(45deg);
+			}
+		}
+
+		.checkbox {
+			position: absolute;
+			height: 0;
+			width: 0;
+			opacity: 0;
+			cursor: pointer;
+
+			&:checked ~ .checkmark {
+				background-color: var(--primary);
+
+				&:after {
+					display: block;
+				}
+			}
 		}
 	}
 </style>

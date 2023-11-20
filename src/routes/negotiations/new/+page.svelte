@@ -1,11 +1,27 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
-	import NegociationInfo from './views/Form/NegociationInfo.svelte'
-	import NegociationInfoConfirmation from './views/Confirmation/NegociationInfoConfirmation.svelte'
-	let isShown = false
+	import { goto } from '$app/navigation'
+
+	import NegociationInfo from '@/views/negocitationsViews/NegociationInfo.svelte'
+	import NegociationInfoConfirmation from '@/views/negocitationsViews/NegociationInfoConfirmation.svelte'
+	import ResultModal from '@/views/modals/ResultModal.svelte'
+
+	import { CustomerFactory } from '@/Factories/CustomerFactory'
+
+	export let data
+
+	let allCustomers: CustomerFactory[] = data.data.map(
+		customer => new CustomerFactory(customer, 'customer')
+	)
 
 	let confirmationPageIsShown = false
+	let isSucceeded: boolean = false
+	let isShown = false
+
+	const goBack = () => {
+		goto('/negotiations')
+	}
 
 	const updateIndexArray = (maxIndex: number) => {
 		const array: string[] = []
@@ -16,7 +32,7 @@
 		return array
 	}
 
-	let initialState2 = {
+	let initialState = {
 		status: '',
 		startingDate: '',
 		condition: '',
@@ -97,34 +113,48 @@
 </script>
 
 <section class="section">
-	<header class="section__header">
-		{#if confirmationPageIsShown}
-			<h2>下記の内容で登録しますか？</h2>
-		{/if}
-	</header>
+	{#if isShown}
+		<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
+	{/if}
+
+	{#if !isShown}
+		<header class="section__header">
+			{#if confirmationPageIsShown}
+				<h2>下記の内容で登録しますか？</h2>
+			{/if}
+		</header>
+	{/if}
 
 	<div class="section__main">
 		{#if !confirmationPageIsShown}
-			<NegociationInfo bind:initialState2 />
-		{:else}
-			<NegociationInfoConfirmation {initialState2} />
+			<NegociationInfo
+				bind:initialState
+				customers={allCustomers}
+				bind:isSucceeded
+				bind:isShown
+				bind:confirmationPageIsShown
+			/>
+		{:else if !isShown}
+			<NegociationInfoConfirmation {initialState} />
 		{/if}
 	</div>
 
-	<footer class="section__footer">
-		<div class="container">
-			{#if confirmationPageIsShown}
-				<button
-					type="button"
-					class="btn secondary"
-					on:click={() => (confirmationPageIsShown = false)}>編集</button
+	{#if !isShown}
+		<footer class="section__footer">
+			<div class="container">
+				{#if confirmationPageIsShown}
+					<button
+						type="button"
+						class="btn secondary"
+						on:click={() => (confirmationPageIsShown = false)}>編集</button
+					>
+				{/if}
+				<button type="button" class="btn primary" on:click={() => (confirmationPageIsShown = true)}
+					>登録</button
 				>
-			{/if}
-			<button type="button" class="btn primary" on:click={() => (confirmationPageIsShown = true)}
-				>登録</button
-			>
-		</div>
-	</footer>
+			</div>
+		</footer>
+	{/if}
 </section>
 
 <style lang="scss">

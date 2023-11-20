@@ -44,7 +44,6 @@
 		.select {
 			width: calc(((103 - 10 - 2) / 1366) * 100vw);
 			height: 31px;
-			font-size: 18px;
 			color: var(--black);
 
 			&:focus {

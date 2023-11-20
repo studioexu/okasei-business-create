@@ -10,12 +10,6 @@
 </script>
 
 <div class="input-wrapper">
-	{#if type !== 'date' && label.length !== 0}
-		<label class="label" for={name}>
-			{label}
-		</label>
-	{/if}
-
 	<select {name} id={name} class="select" bind:value required>
 		<option value="" selected disabled class="placeholder">未選択</option>
 		{#each options as option}
@@ -23,11 +17,9 @@
 		{/each}
 	</select>
 
-	{#if type === 'date' && label.length !== 0}
-		<label for={name}>
-			{label}
-		</label>
-	{/if}
+	<label for={name}>
+		{label}
+	</label>
 </div>
 
 <style lang="scss">
@@ -42,12 +34,9 @@
 		}
 	}
 	.select {
-		height: 32px;
-		width: calc(((106 - 10 - 2) / 1366) * 100vw);
-		padding-left: 10px;
-		font-size: 18px;
-		border: 1px solid var(--gray);
-		border-radius: 8px;
+		width: calc(((103 - 10 - 2) / 1366) * 100vw);
+
+		height: 31px;
 
 		&:focus {
 			border-color: var(--primary-color);

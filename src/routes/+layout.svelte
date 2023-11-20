@@ -96,6 +96,7 @@
 		outline: none;
 		border: 1px solid var(--gray);
 		border-radius: 8px;
+		font-size: 18px;
 	}
 
 	:global(th) {

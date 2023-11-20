@@ -1,15 +1,16 @@
 <script lang="ts">
-	import type { CustomerEntries, CustomerEntriesErrors } from '../../utils/types'
-	import Confirmation from '@/views/customersViews/Confirmation/Confirmation.svelte'
-	import Form from '@/views/customersViews/Form/Form.svelte'
-	import RegisteredModal from '@/views/customersViews/modals/RegisteredModal.svelte'
-	import RegistrationFooter from '@/views/customersViews/RegistrationFooter/RegistrationFooter.svelte'
-	import { CustomerFactory } from '../../utils/Factories/CustomerFactory'
+	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes.js'
+	import Confirmation from '@/views/customersViews/Confirmation.svelte'
+	import Form from '@/views/customersViews/Form.svelte'
+	import { CustomerFactory } from '@/Factories/CustomerFactory'
+	import ResultModal from '@/views/modals/ResultModal.svelte'
+	import { goto } from '$app/navigation'
+	import { inputIsValid } from '@/libs/customerValidations.js'
+	import { fade } from 'svelte/transition'
 	export let data
 
 	let customer = new CustomerFactory(data.customer, 'customer')
-	let verificationPageDisplayed = false
-	let modalIsOpened: boolean = false
+	let confirmationPageIsShown = false
 
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
@@ -25,19 +26,32 @@
 		address2: customer.address.address2,
 		phoneNumber: customer.address.phoneNumber,
 		fax: customer.address.fax,
-		year: customer.foundation.establishDate,
-		month: customer.foundation.establishDate,
+		email: customer.address.email,
+		mobile: customer.address.mobile,
+		year: customer.foundationDate.year,
+		month: customer.foundationDate.month,
 		founder: customer.foundation.establishedBy,
-		bedding: customer.departmentDetail,
-		numberOfEmployees: customer.numEmployees,
+		departments: customer.departmentDetail,
+		numberOfEmployees: customer.numberOfEmployees,
 		homepage: customer.url,
 		numberOfFacilities: customer.numBranch,
+		isActive: customer.isActive,
+		googleReview: customer.googleReview,
+		reviews: customer.reviews,
+		business: customer.business,
+		closingMonth: customer.closingMonth,
+		personInCharge: customer.personInCharge,
+		personInChargeRole: customer.personInChargeRole,
+		personInChargeMemo: customer.personInChargeMemo,
+		approver: customer.approver,
+		contactTime: customer.contactTime,
+		pictures: customer.pictures,
+		miscellaneous: customer.miscellaneous,
 		registrationDate: customer.registration.registDate,
-		registrationTime: customer.registration.registBy,
-		isActive: customer.isActive
+		registeredBy: customer.registration.registBy
 	}
 
-	let noErrors: CustomerEntriesErrors = {
+	let formIsValid: CustomerEntriesErrors = {
 		branchNumber: true,
 		customerName: true,
 		kana: true,
@@ -50,40 +64,111 @@
 		address2: true,
 		phoneNumber: true,
 		fax: true,
+		email: true,
+		mobile: true,
 		year: true,
 		month: true,
 		founder: true,
-		bedding: true,
+		departments: true,
 		numberOfEmployees: true,
 		homepage: true,
-		numberOfFacilities: true
+		numberOfFacilities: true,
+		isActive: true,
+		googleReview: true,
+		reviews: true,
+		businessContent: true,
+		closingMonth: true,
+		personInCharge: true,
+		personInChargeRole: true,
+		personInChargeMemo: true,
+		approver: true,
+		contactTime: true,
+		pictures: true,
+		miscellaneous: true
+	}
+
+	let isSucceeded: boolean = false
+	let isShown: boolean = false
+	let isNavigating: boolean = false
+
+	const goBack = () => {
+		goto('/customers')
+	}
+
+	const handleEditClicked = () => {
+		confirmationPageIsShown = false
+	}
+
+	/**
+	 * Take the form and check if all the entries are valid.
+	 * If there is one error, the function will return false.
+	 * @param formEntries: Object of entries
+	 * @returns boolean
+	 */
+	const checkIfFormIsValid = (formEntries: Object): boolean => {
+		let errorArray: boolean[] = []
+		let isValid = true
+		const customerKeys = Object.keys(formEntries)
+		const customerValues = Object.values(formEntries)
+
+		for (let i = 0; i < customerKeys.length; i++) {
+			const name: string = customerKeys[i]
+			const input: string = customerValues[i]
+
+			formIsValid[name as keyof CustomerEntriesErrors] = inputIsValid(name, input)
+			errorArray.push(!inputIsValid(name, input))
+		}
+
+		errorArray.forEach(error => {
+			if (error) {
+				isValid = false
+			}
+		})
+
+		return isValid
+	}
+
+	const handleCheckForm = () => {
+		confirmationPageIsShown = checkIfFormIsValid(initialState)
 	}
 </script>
 
 <section class="section section--form">
-	<RegisteredModal bind:isOpened={modalIsOpened} />
+	{#if isShown}
+		<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
+	{/if}
 
 	<header class="section__header">
-		{#if verificationPageDisplayed && !modalIsOpened}
+		{#if confirmationPageIsShown && !isShown}
 			<h2 class="section__header__title">下記の内容で登録しますか？</h2>
 		{/if}
 	</header>
 
 	<div class="section__main">
-		{#if !modalIsOpened}
-			<Confirmation bind:verificationPageDisplayed bind:initialState />
+		{#if !isShown && confirmationPageIsShown}
+			<Confirmation bind:initialState />
 		{/if}
 		<Form
-			bind:verificationPageDisplayed
+			bind:confirmationPageIsShown
 			bind:initialState
 			formType={'update'}
-			bind:modalIsOpened
-			bind:noErrors
+			bind:formIsValid
+			bind:isShown
+			bind:isSucceeded
 		/>
 	</div>
 
-	{#if !modalIsOpened}
-		<RegistrationFooter bind:initialState bind:noErrors bind:verificationPageDisplayed />
+	{#if !isShown}
+		<footer class="section__footer">
+			{#if confirmationPageIsShown}
+				<div in:fade>
+					<button class="btn secondary" on:click={handleEditClicked}>修正</button>
+				</div>
+				<button type="submit" class="btn primary" form="registration-form">登録</button>
+			{:else}
+				<button type="button" class="btn primary" on:click={handleCheckForm}>登録</button>
+			{/if}
+		</footer>
 	{/if}
 </section>
 
@@ -95,5 +180,17 @@
 				font-size: 24px;
 			}
 		}
+
+		&__footer {
+			display: flex;
+			justify-content: flex-end;
+			gap: 1rem;
+			margin-top: 1.5rem;
+			padding-bottom: 24px;
+		}
+	}
+
+	.btn {
+		margin: 0;
 	}
 </style>

@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
 	import { goto } from '$app/navigation'
 	import { user, roles, users } from '@/stores/users'
-	import { debounce, toKebab } from '@/libs/utils'
+	import { debounce, toKebab, toNumber } from '@/libs/utils'
 	import type { Role, User, UserKey } from '@/libs/types'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 </script>
@@ -90,7 +90,7 @@
 				case 'employeeNumber':
 					currentUser[id] = content.replace(/^0+(?=\d)/, '')
 
-					if (fieldset) fieldset.isError = parseInt(currentUser[id], 10) <= 0
+					if (fieldset) fieldset.isError = toNumber(currentUser[id]) <= 0
 					break
 
 				case 'name':
@@ -148,7 +148,7 @@
 					if (localUser.hasOwnProperty(key)) {
 						switch (key) {
 							case 'employeeNumber':
-								localUser[key] = parseInt(currentUser[key], 10)
+								localUser[key] = toNumber(currentUser[key])
 								break
 
 							case 'role':

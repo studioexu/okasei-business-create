@@ -2,96 +2,135 @@
 </script>
 
 <script lang="ts">
-	import type { CustomerInfo } from './utils/types'
+	//import views
+	import Pagination from '@/views/Pagination.svelte'
+	import Table from '@/views/customersViews/Table.svelte'
+	import SearchMenu from '@/views/customersViews/SearchMenu.svelte'
+	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 
-	import Table from './components/Table.svelte'
-	import TableNavigation from './components/TableNavigation.svelte'
-	import SearchMenu from './components/SearchMenu.svelte'
-	import DeleteModal from '@/views/customersViews/modals/DeleteModal.svelte'
-	import { CustomerFactory } from './utils/Factories/CustomerFactory'
-	import Button from '@/components/customers/Button.svelte'
+	import { CustomerFactory } from '@/Factories/CustomerFactory'
+	import { deleteCustomer } from '@/libs/actions'
+	import { currentApi } from '../../data/api'
+	import { goto } from '$app/navigation'
+	import { getDateTime } from '@/libs/formatters'
 
 	export let data
 
 	let allCustomers: CustomerFactory[] = data.data.map(
-		(customer: CustomerInfo) => new CustomerFactory(customer, 'customer')
+		customer => new CustomerFactory(customer, 'customer')
 	)
 
-	let filteredCustomers: CustomerFactory[]
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
-	let newData: CustomerFactory[] = customersToDisplay
-	let dataToDisplay: CustomerFactory[] = []
-	let currentPage: number = 1
-	let itemId: string = ''
-	let displayDeleteCustomersIsChecked = false
+	let filteredCustomers: CustomerFactory[]
+	let currentPage: number = 0
+	let deletedCustomersAreShown = false
 
+	$: currentPage
+	$: customersToDisplay
 	$: filteredCustomers
-	$: itemId
-	$: newData
-	$: lastDataIndex =
-		currentPage * 6 - 1 >= newData.length - 1 ? newData.length - 1 : currentPage * 6 - 1
-	$: firstDataIndex = currentPage === 1 ? 0 : (currentPage - 1) * 6
-
-	$: updateDataToDisplay(newData, firstDataIndex, lastDataIndex)
-
-	/**
-	 * Update the data display according the current page.
-	 * @param data: array of customer's information
-	 * @param firstDataIndex: number, is the first customer we want to display from the data array
-	 * @param lastDataIndex: number, is the last customer we want to display from the data array
-	 */
-	const updateDataToDisplay = (
-		data: CustomerFactory[],
-		firstDataIndex: number,
-		lastDataIndex: number
-	) => {
-		dataToDisplay = []
-		for (let i = firstDataIndex; i <= lastDataIndex; i++) {
-			dataToDisplay = [...dataToDisplay, data[i]]
-		}
-	}
+	$: allCustomers
 
 	/**
 	 * The toggle is ON, we display all the customers (deleted and active).
 	 * The toggle is OFF, We only display the active customers.
-	 * We change the state of displayDeleteCusomtersIsChecked.
+	 * We change the state of deletedCustomersAreShown.
 	 * @param e
 	 */
 	const handleCheck = (e: any) => {
-		displayDeleteCustomersIsChecked = e.target.checked
-		if (displayDeleteCustomersIsChecked) {
+		deletedCustomersAreShown = e.target.checked
+
+		if (deletedCustomersAreShown) {
 			customersToDisplay = filteredCustomers === undefined ? allCustomers : filteredCustomers
-			newData = customersToDisplay
 		} else {
 			customersToDisplay =
 				filteredCustomers === undefined
 					? allCustomers.filter(customer => customer.isActive)
 					: filteredCustomers.filter(customer => customer.isActive)
-			newData = customersToDisplay
+		}
+
+		currentPage = 0
+	}
+
+	// DELETE MODAL
+
+	let isShown: boolean = false
+	let currentUser: string | undefined = undefined
+	let phase: 'shown' | 'success' | 'error' = 'shown'
+
+	const onClick = (event: { detail: { key: string } }) => {
+		switch (event.detail.key) {
+			case 'cancel':
+				isShown = false
+				break
+			case 'delete':
+				try {
+					if (currentUser !== undefined) {
+						deleteCustomer(currentUser, currentApi)
+
+						allCustomers = allCustomers.filter(customer => {
+							if (customer.custCD.toString() === currentUser) {
+								customer.isActive = false
+								customer.delete.deleteDate = getDateTime()
+							}
+
+							return customer
+						})
+
+						//update the displayed data depending if we want to display the deleted customers or not.
+						if (deletedCustomersAreShown) {
+							customersToDisplay = allCustomers
+						} else {
+							customersToDisplay = allCustomers.filter(customer => customer.isActive)
+						}
+
+						goto('/customers')
+						phase = 'success'
+					}
+				} catch (error) {
+					console.log(error)
+					phase = 'error'
+				}
+				break
+
+			case 'success':
+				isShown = false
+				phase = 'shown'
+				break
+
+			case 'error':
+				phase = 'shown'
+				break
 		}
 	}
 
-	const handleAddNewCustomer = () => {
-		window.location.href = '/customers/new'
+	// PAGINATION
+
+	/**
+	 * update the current page number
+	 * @param event: get the current number of the page
+	 */
+	const movePage = (event: { detail: { page: number } }): void => {
+		currentPage = event.detail.page
 	}
+
+	$: dividedUsers =
+		customersToDisplay.length > 0
+			? customersToDisplay.flatMap((_, i, self) => (i % 6 ? [] : [self.slice(i, i + 6)]))
+			: []
 </script>
 
 <section class="section section--customers-management" id="customers-management">
-	<DeleteModal
-		bind:itemId
-		bind:customersToDisplay
-		{displayDeleteCustomersIsChecked}
-		bind:newData
-		bind:allCustomers
-	/>
+	{#if isShown}
+		<DeleteModal {phase} on:click={onClick} />
+	{/if}
 
 	<header class="section__header">
-		<!-- <h2 class="title">下記のいずれかを入力し、編集する施設を選択してください。</h2> -->
 		<SearchMenu
 			bind:data={allCustomers}
-			bind:newData
+			bind:customersToDisplay
 			bind:filteredCustomers
-			displayDeleteCusomtersIsChecked={displayDeleteCustomersIsChecked}
+			{deletedCustomersAreShown}
+			bind:currentPage
 		/>
 
 		<div class="container">
@@ -109,18 +148,29 @@
 				<h3 class="switch-label">以前削除した施設も含む</h3>
 			</div>
 
-			<Button buttonClass={'btn btn--filled btn--md'} handleClick={handleAddNewCustomer}>
-				＋新規登録
-			</Button>
+			<div class="button-wrapper">
+				<button
+					class="primary"
+					on:click={() => {
+						window.location.href = '/customers/new'
+					}}
+				>
+					＋新規登録
+				</button>
+			</div>
 		</div>
 	</header>
 
 	<div class="section__main">
-		<Table {dataToDisplay} bind:itemId />
+		<Table
+			bind:customersToDisplayOnPage={dividedUsers[currentPage]}
+			bind:currentUser
+			bind:isShown
+		/>
 	</div>
 
 	<footer class="section__footer">
-		<TableNavigation bind:currentPage bind:newData />
+		<Pagination bind:current={currentPage} bind:pages={dividedUsers} on:click={movePage} />
 	</footer>
 </section>
 
@@ -128,73 +178,73 @@
 	.section {
 		padding-bottom: 24px;
 		color: var(--black);
-	}
-	.section__header {
-		margin-bottom: 2rem;
 
-		.title {
-			margin-bottom: 1.5rem;
-			font-size: 18px;
+		&__header {
+			margin-bottom: 2rem;
 		}
-	}
 
-	.checkbox {
-		margin-right: 11px;
+		&__footer {
+			margin-top: 18px;
+		}
 	}
 
 	.toggle-wrapper {
 		display: flex;
 		gap: 10px;
 		align-items: center;
-	}
-
-	.switch-label {
-		font-weight: 400;
-		font-size: 18px;
-	}
-
-	.switch {
-		position: relative;
-		height: 24px;
-		width: 40px;
-		cursor: pointer;
 
 		.checkbox {
-			opacity: 0;
-			width: 0;
-			height: 0;
+			margin-right: 11px;
 		}
 
-		.slider {
-			position: absolute;
-			width: 100%;
-			height: 100%;
-			left: 0;
-			top: 0;
-			border-radius: 50px;
-			background-color: rgb(200, 200, 200);
-			transition: background-color 300ms ease-out;
+		.switch-label {
+			font-weight: 400;
+			font-size: 18px;
 		}
 
-		.slider::before {
-			position: absolute;
-			content: ' ';
-			width: 16px;
-			height: 16px;
-			background-color: #fff;
-			left: 4px;
-			top: 4px;
-			border-radius: 100%;
-			transition: transform 300ms ease-out;
-		}
+		.switch {
+			position: relative;
+			height: 24px;
+			width: 40px;
+			cursor: pointer;
 
-		.checkbox:checked {
-			& + .slider {
-				background-color: var(--primary-color);
+			.checkbox {
+				opacity: 0;
+				width: 0;
+				height: 0;
+			}
+
+			.slider {
+				position: absolute;
+				width: 100%;
+				height: 100%;
+				left: 0;
+				top: 0;
+				border-radius: 50px;
+				background-color: rgb(200, 200, 200);
 				transition: background-color 300ms ease-out;
-				&::before {
-					transform: translateX(16px);
-					transition: transform 300ms ease-out;
+			}
+
+			.slider::before {
+				position: absolute;
+				content: ' ';
+				width: 16px;
+				height: 16px;
+				background-color: #fff;
+				left: 4px;
+				top: 4px;
+				border-radius: 100%;
+				transition: transform 300ms ease-out;
+			}
+
+			.checkbox:checked {
+				& + .slider {
+					background-color: var(--primary);
+					transition: background-color 300ms ease-out;
+					&::before {
+						transform: translateX(16px);
+						transition: transform 300ms ease-out;
+					}
 				}
 			}
 		}

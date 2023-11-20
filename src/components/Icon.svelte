@@ -1,14 +1,26 @@
 <script lang="ts" context="module">
 	import { onMount } from 'svelte'
 
-	const loadSvg = ({ path, color }: { path: string; color?: string }): Promise<HTMLElement> => {
+	const loadSvg = ({ path, color }: { path: string; color: string }): Promise<HTMLElement> => {
 		try {
 			return fetch(`icons/${path}.svg`)
 				.then(res => res.text())
 				.then(text => {
 					const svg = new DOMParser().parseFromString(text, 'image/svg+xml').documentElement
 					svg.classList.add('svg-icon')
-					svg.setAttribute('fill', color ?? '#595857')
+
+					switch (color) {
+						case 'black':
+							svg.setAttribute('fill', '#595857')
+							break
+
+						case 'primary':
+							svg.setAttribute('fill', '#0093d0')
+							break
+
+						default:
+							svg.setAttribute('fill', color)
+					}
 
 					return svg
 				})
@@ -19,7 +31,7 @@
 </script>
 
 <script lang="ts">
-	export let icon: { path: string; color?: string }
+	export let icon: { path: string; color: string }
 
 	let svg: HTMLElement
 

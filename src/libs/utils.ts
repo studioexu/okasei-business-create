@@ -1,4 +1,7 @@
-export const debounce = <F extends (...args: any[]) => void>(func: F, time: number) => {
+export const debounce = <F extends (...args: any[]) => void>(
+	func: F,
+	time: number
+): ((...args: Parameters<F>) => void) => {
 	let timer: ReturnType<typeof setTimeout>
 
 	return (...args: Parameters<F>) => {
@@ -10,4 +13,7 @@ export const debounce = <F extends (...args: any[]) => void>(func: F, time: numb
 	}
 }
 
-export const toKebab = (str: string) => str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+export const toKebab = (str: string): string =>
+	str.replace(/([a-z])([A-Z])/g, '$1-$2').toLowerCase()
+
+export const toNumber = (str: string): number => parseInt(str, 10)

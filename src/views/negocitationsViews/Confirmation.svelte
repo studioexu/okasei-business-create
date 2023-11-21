@@ -35,7 +35,10 @@
 		<Wrapper label={'成否日'} content={initialState.outcome} />
 	</div>
 	<div class="form-row">
-		<Wrapper label={'次回連絡日時'} content={initialState.nextContact} />
+		<Wrapper
+			label={'次回連絡日時'}
+			content={initialState.nextContactDate + ' ' + initialState.nextContactTime}
+		/>
 	</div>
 	<div class="form-row">
 		<Wrapper label={'最終連絡'} content={initialState.lastContact} />

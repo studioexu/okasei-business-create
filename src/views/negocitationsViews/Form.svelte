@@ -324,6 +324,10 @@
 				bind:value={initialState.nextContactTime}
 			/>
 		</div>
+
+		<div class="form-row">
+			<DateInput label={'最終連絡'} name={'last-contact'} bind:value={initialState.lastContact} />
+		</div>
 	</fieldset>
 
 	<fieldset class="fieldset">

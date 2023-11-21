@@ -479,15 +479,15 @@
 		<legend class="legend hidden">コミュニケーション</legend>
 		<div class="form-row">
 			<Input
-				name={'representative'}
+				name={'person-in-charge'}
 				placeholder={'未入力'}
 				label={'自社担当者'}
-				bind:value={initialState.employeeInCharge}
+				bind:value={initialState.personInCharge}
 			/>
 		</div>
 		<div class="form-row">
 			<Input
-				name={'person-in-charge'}
+				name={'responsible-person'}
 				placeholder={'未入力'}
 				label={'責任者'}
 				bind:value={initialState.responsiblePerson}
@@ -506,7 +506,7 @@
 				label={'DM発送'}
 				name={'dm'}
 				options={['不要', '要(未手配)', '郵送済み', '持参']}
-				bind:value={initialState.directMessage}
+				bind:value={initialState.dm}
 			/>
 
 			<Input name={'presentation-video'} label={'PR動画'} bind:value={initialState.videoUrl} />

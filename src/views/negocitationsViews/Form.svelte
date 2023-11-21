@@ -16,6 +16,16 @@
 	export let formType: string
 	export let currentCustomerId: number
 
+	let currentCustomer: CustomerFactory | undefined
+
+	$: currentCustomer = customers.filter(customer => {
+		console.log(customer.custCD)
+
+		if (customer.custCD === currentCustomerId) {
+			return customer
+		}
+	})
+
 	let maxEstimateIndex = initialState.estimate.length > 1 ? initialState.estimate.length : 1
 	let maxMemoIndex = initialState.memo.length > 1 ? initialState.memo.length : 1
 	let maxHistoryIndex =
@@ -41,12 +51,12 @@
 	$: maxHistoryIndex
 
 	const handleAddProduct = (index: number) => {
-		const productArray = initialState.estimate[index].products
+		const productArray = initialState.estimate[index].items
 		productArray.push({
 			productName: '',
 			quantity: ''
 		})
-		initialState.estimate[index].products = productArray
+		initialState.estimate[index].items = productArray
 	}
 
 	const handleDeleteItemFromArray = (index: number, maxIndex: number, arrayToUpdate: any[]) => {
@@ -152,6 +162,16 @@
 
 	for (let i = 1; i <= 24; i++) {
 		hours.push(i.toString() + ':00')
+	}
+
+	const handleAutoFill = () => {
+		if (currentCustomer !== undefined) {
+			initialState.postalCode = currentCustomer[0].address.postalCode
+			initialState.prefecture = currentCustomer[0].address.prefecture
+			initialState.city = currentCustomer[0].address.city
+			initialState.address1 = currentCustomer[0].address.address1
+			initialState.address2 = currentCustomer[0].address.address2
+		}
 	}
 </script>
 
@@ -315,6 +335,10 @@
 				label={'納期先'}
 				bind:value={initialState.postalCode}
 			/>
+
+			<button type="button" class="btn primary inline" on:click={handleAutoFill}
+				>顧客情報同情</button
+			>
 		</div>
 		<div class="form-row">
 			<Input
@@ -611,72 +635,6 @@
 		flex-direction: column;
 		gap: 18px;
 	}
-
-	// .checkbox-container {
-	// 	position: relative;
-	// 	display: flex;
-	// 	justify-content: flex-end;
-	// 	flex-direction: row-reverse;
-	// 	align-items: center;
-	// 	width: 100%;
-	// 	margin-bottom: 12px;
-	// 	gap: 18px;
-	// 	font-size: 18px;
-	// 	cursor: pointer;
-	// 	-webkit-user-select: none;
-	// 	-moz-user-select: none;
-	// 	-ms-user-select: none;
-	// 	user-select: none;
-
-	// 	& :hover {
-	// 		.checkbox ~ .checkmark {
-	// 			background-color: #ccc;
-	// 		}
-	// 	}
-
-	// 	& :after {
-	// 		content: '';
-	// 		display: none;
-	// 	}
-
-	// 	.checkmark {
-	// 		display: flex;
-	// 		align-items: center;
-	// 		justify-content: center;
-	// 		top: 0;
-	// 		left: 0;
-	// 		height: 20px;
-	// 		width: 20px;
-	// 		border: 1px solid var(--black);
-	// 		border-radius: 3px;
-
-	// 		&:after {
-	// 			width: 3px;
-	// 			height: 8px;
-	// 			border: solid white;
-	// 			border-width: 0 3px 3px 0;
-	// 			-webkit-transform: rotate(45deg);
-	// 			-ms-transform: rotate(45deg);
-	// 			transform: rotate(45deg);
-	// 		}
-	// 	}
-
-	// 	.checkbox {
-	// 		position: absolute;
-	// 		height: 0;
-	// 		width: 0;
-	// 		opacity: 0;
-	// 		cursor: pointer;
-
-	// 		&:checked ~ .checkmark {
-	// 			background-color: var(--primary);
-
-	// 			&:after {
-	// 				display: block;
-	// 			}
-	// 		}
-	// 	}
-	// }
 
 	.btn {
 		margin: 0;

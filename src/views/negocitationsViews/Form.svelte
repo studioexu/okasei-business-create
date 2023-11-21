@@ -5,95 +5,48 @@
 	import DateInput from '@/components/DateInput.svelte'
 	import CustomCheckbox from '@/components/CustomCheckbox.svelte'
 	import type { CustomerFactory } from '@/Factories/CustomerFactory'
+	import { negociations } from '@/stores/negociations'
+	import { NegociationBackend, type Estimate } from '@/libs/negociationTypes'
 
 	export let initialState: any
 	export let customers: CustomerFactory[]
 	export let isSucceeded: boolean
 	export let isShown: boolean
 	export let confirmationPageIsShown: boolean
+	export let formType: string
+	export let currentCustomerId: number
 
-	let currentCustomerId: number | undefined
+	let maxEstimateIndex = initialState.estimate.length > 1 ? initialState.estimate.length : 1
+	let maxMemoIndex = initialState.memo.length > 1 ? initialState.memo.length : 1
+	let maxHistoryIndex =
+		initialState.outcomeHistory.length > 1 ? initialState.outcomeHistory.length : 1
 
-	let maxEstimateIndex = 1
-	let maxMemoIndex = 1
-	let maxHistoryIndex = 1
+	const calculateEstimateTotal = () => {
+		let estimateTotal = 0
+		initialState.estimate.map((estimate: Estimate) => {
+			estimateTotal += parseInt(estimate.estimateWithoutTax)
+		})
 
-	let historyMemo = [
-		{
-			date: '',
-			memo: ''
-		}
-	]
-
-	let estimateArray: Estimate[] = [
-		{
-			issueDate: '',
-			dueDate: '',
-			estimateWithoutTax: '',
-			tax: '',
-			products: [
-				{
-					productName: '',
-					quantity: ''
-				}
-			]
-		}
-	]
-
-	let memoArray = [
-		{
-			date: '',
-			memo: ''
-		}
-	]
-
-	interface Estimate {
-		issueDate: string
-		dueDate: string
-		estimateWithoutTax: string
-		tax: string
-		products: Product[]
+		return estimateTotal.toString()
 	}
 
-	interface Product {
-		productName: string
-		quantity: string
-	}
-
-	$: estimateArray = updateArray(maxEstimateIndex, estimateArray)
-	$: historyMemo = updateArray(maxHistoryIndex, historyMemo)
-	$: memoArray = updateArray(maxMemoIndex, memoArray)
-	$: initialState.importantMemo = memoArray
-	$: initialState.outcomeHistory = historyMemo
-	$: initialState.estimate = estimateArray
-
-	$: initialState.checkboxes = videoCheckbox
-
+	$: initialState.billingEstimation = calculateEstimateTotal().toString()
+	$: initialState.estimate = updateArray(maxEstimateIndex, initialState.estimate, 'estimate')
+	$: initialState.outcomeHistory = updateArray(
+		maxHistoryIndex,
+		initialState.outcomeHistory,
+		'historyMemo'
+	)
+	$: initialState.memo = updateArray(maxMemoIndex, initialState.memo, 'memo')
 	$: maxHistoryIndex
 
-	const videoCheckbox: any[] = [
-		{ title: '動画視聴　依頼', isChecked: false },
-		{ title: '動画視聴　確認', isChecked: false },
-		{ title: '新品　購入経験', isChecked: false },
-		{ title: '増台提案', isChecked: false },
-		{ title: '値上げ：全世界の値上げ傾向。物流・保管・電気等の徹底', isChecked: false },
-		{
-			title: '傷、色あせ：中古商材の為、多少の傷や色あせ有り。洗浄・メンテの徹底',
-			isChecked: false
-		},
-		{ title: '商品確保：中古商材の為、購入契約者優先の商品確保', isChecked: false },
-		{ title: '締め支払い：契約書締結による締め支払い', isChecked: false },
-		{ title: '前払い（特別値引き）の説明', isChecked: false },
-		{ title: '中古　購入経験', isChecked: false }
-	]
-
 	const handleAddProduct = (index: number) => {
-		const productArray = estimateArray[index].products
+		const productArray = initialState.estimate[index].products
 		productArray.push({
 			productName: '',
 			quantity: ''
 		})
-		estimateArray[index].products = productArray
+		initialState.estimate[index].products = productArray
 	}
 
 	const handleDeleteItemFromArray = (index: number, maxIndex: number, arrayToUpdate: any[]) => {
@@ -106,34 +59,34 @@
 		maxIndex--
 	}
 
-	const updateArray = (maxIndex: number, arrayToUpdate: any[]) => {
+	const updateArray = (maxIndex: number, arrayToUpdate: any[], arrayType: string) => {
 		let newArray: any[] = []
 		for (let i = 0; i < maxIndex; i++) {
 			if (arrayToUpdate[i]) {
 				newArray.push(arrayToUpdate[i])
 			} else {
-				switch (arrayToUpdate) {
-					case memoArray:
+				switch (arrayType) {
+					case 'memo':
 						newArray.push({
 							date: '',
 							memo: ''
 						})
 						break
-					case historyMemo:
+					case 'historyMemo':
 						newArray.push({
 							date: '',
 							memo: ''
 						})
 						break
-					case estimateArray:
+					case 'estimate':
 						newArray.push({
 							issueDate: '',
 							dueDate: '',
 							estimateWithoutTax: '',
 							tax: '',
-							products: [
+							items: [
 								{
-									productName: '',
+									name: '',
 									quantity: ''
 								}
 							]
@@ -148,6 +101,18 @@
 		return newArray
 	}
 
+	const getTotalBeds = () => {
+		let total = 0
+
+		initialState.estimate.map((estimate: Estimate) => {
+			estimate.items.map(item => {
+				total += parseInt(item.quantity)
+			})
+		})
+
+		return total.toString() + '台'
+	}
+
 	/**
 	 * Triggered when the form is submit.
 	 * If the form is still on the entry page, then, it will preventDefault, and displayed the entry verification page.
@@ -155,16 +120,47 @@
 	 * @param e
 	 */
 	const handleSubmit = (e: any): void => {
-		console.log(confirmationPageIsShown)
+		e.preventDefault()
 
 		if (confirmationPageIsShown) {
 			isShown = true
 			isSucceeded = true
+
+			initialState.numberOfBeds = getTotalBeds()
+			initialState.billingEstimation = calculateEstimateTotal()
+
+			if (formType === 'create') {
+				let customer = customers.find(customer => customer.custCD === currentCustomerId)
+				initialState.customerName = customer?.custName
+				negociations.set([...$negociations, new NegociationBackend(initialState)])
+			}
+
+			if (formType === 'update') {
+				let newArray = $negociations.map(negociation => {
+					if (negociation.negociationId === initialState.negociationId) {
+						return new NegociationBackend(initialState)
+					} else {
+						return negociation
+					}
+				})
+				negociations.set(newArray)
+			}
 		}
+	}
+
+	const hours: string[] = ['']
+
+	for (let i = 1; i <= 24; i++) {
+		hours.push(i.toString() + ':00')
 	}
 </script>
 
-<form class="form" action="POST" id="negociation" on:submit={handleSubmit}>
+<form
+	class="form {confirmationPageIsShown && 'hidden'}"
+	action="/negotiations"
+	id="negociation-form"
+	on:submit={handleSubmit}
+>
 	<h3 class="form__header">商談情報</h3>
 
 	<fieldset class="fieldset">
@@ -191,7 +187,7 @@
 				class="primary inline btn"
 				on:click={() => window.open('/customers/new', '_blank')}>＋顧客追加</button
 			>
-			{#if currentCustomerId !== undefined}
+			{#if currentCustomerId !== undefined && currentCustomerId !== 0}
 				<button
 					type="button"
 					class="secondary inline btn"
@@ -208,7 +204,7 @@
 			<Select
 				label={'ステータス'}
 				name={'status'}
-				options={['注文', '新規受注', '再問合せ', '見送り', '失注', '在庫無し']}
+				options={['受注', '新規受注', '再問合せ', '見送り', '失注', '在庫無し']}
 				bind:value={initialState.status}
 			/>
 		</div>
@@ -259,7 +255,6 @@
 
 		<div class="form-row">
 			<DateInput name={'billing'} label={'納期'} bind:value={initialState.billingDate} />
-
 			<CustomCheckbox value={'未確定'} />
 		</div>
 
@@ -299,10 +294,15 @@
 			<DateInput
 				label={'次回連絡日時'}
 				name={'next-contact'}
-				bind:value={initialState.nextContact}
+				bind:value={initialState.nextContactDate}
 			/>
 
-			<SelectDate name={'time'} label={'時'} />
+			<SelectDate
+				name={'time'}
+				label={'時'}
+				options={hours}
+				bind:value={initialState.nextContactTime}
+			/>
 		</div>
 	</fieldset>
 
@@ -333,7 +333,7 @@
 		<div class="form-row">
 			<Input
 				name={'address1'}
-				inputSize={'input--sm'}
+				inputSize={'input--lg'}
 				label={'住所１'}
 				bind:value={initialState.address1}
 			/>
@@ -341,7 +341,7 @@
 		<div class="form-row">
 			<Input
 				name={'address2'}
-				inputSize={'input--sm'}
+				inputSize={'input--lg'}
 				label={'住所２'}
 				bind:value={initialState.address2}
 			/>
@@ -363,7 +363,7 @@
 				>
 			</div>
 			<div class="column">
-				{#each estimateArray as estimate, index}
+				{#each initialState.estimate as estimate, index}
 					<div class="container">
 						<div class="form-row">
 							<DateInput label={'発行日'} name={'issue-date'} bind:value={estimate.issueDate} />
@@ -380,16 +380,17 @@
 								label={'税抜価格'}
 								name={'price-without-tax'}
 								unit="円"
+								on:input={calculateEstimateTotal}
 								bind:value={estimate.estimateWithoutTax}
 							/>
 							<Input label={'消費税'} name={'tax'} unit="円" bind:value={estimate.tax} />
 						</div>
 
-						{#each estimate.products as product}
+						{#each estimate.items as item}
 							<div class="form-row">
-								<Input label={'商品'} name={'product'} bind:value={product.productName} />
+								<Input label={'商品'} name={'product'} bind:value={item.name} />
 								<button type="button" class="btn primary">商品選択</button>
-								<Input unit={'台'} name={'quantity'} bind:value={product.quantity} />
+								<Input unit={'台'} name={'quantity'} bind:value={item.quantity} />
 							</div>
 						{/each}
 
@@ -397,12 +398,15 @@
 							<button type="button" class="btn add primary" on:click={() => handleAddProduct(index)}
 								>＋商品追加</button
 							>
-							<button
-								type="button"
-								class="btn primary delete"
-								on:click={() => handleDeleteItemFromArray(index, maxEstimateIndex--, estimateArray)}
-								>削除</button
-							>
+							{#if maxEstimateIndex > 1}
+								<button
+									type="button"
+									class="btn primary delete"
+									on:click={() =>
+										handleDeleteItemFromArray(index, maxEstimateIndex--, initialState.estimate)}
+									>削除</button
+								>
+							{/if}
 						</div>
 					</div>
 				{/each}
@@ -415,7 +419,7 @@
 		<div class="form-row">
 			<h3 class="label">重要メモ</h3>
 			<div class="column">
-				{#each memoArray as memo, index}
+				{#each initialState.memo as memo, index}
 					<div class="container">
 						<div class="form-row">
 							<DateInput name={'memo-date'} bind:value={memo.date} />
@@ -424,12 +428,15 @@
 							<textarea name={'important-memo'} id="important-memo" bind:value={memo.memo} />
 						</div>
 						<div class="form-row">
-							<button
-								type="button"
-								class="btn primary delete"
-								on:click={() => handleDeleteItemFromArray(index, maxMemoIndex--, memoArray)}
-								>削除</button
-							>
+							{#if maxMemoIndex > 1}
+								<button
+									type="button"
+									class="btn primary delete"
+									on:click={() =>
+										handleDeleteItemFromArray(index, maxMemoIndex--, initialState.memo)}
+									>削除</button
+								>
+							{/if}
 						</div>
 					</div>
 				{/each}
@@ -480,7 +487,7 @@
 
 	<fieldset class=" fieldset checkboxes-container">
 		<legend class="legend hidden">チェックボックス</legend>
-		{#each videoCheckbox as element}
+		{#each initialState.checkboxes as element}
 			<CustomCheckbox value={element.title} bind:isChecked={element.isChecked} />
 		{/each}
 	</fieldset>
@@ -506,14 +513,13 @@
 			</div>
 		</div>
 	</fieldset>
-	<!-- </fieldset> -->
 
 	<fieldset class="fieldset">
-		<legend class="legend hidden">商談経緯</legend>
+		<legend class="legend">商談経緯</legend>
 		<div class="fieldset__main">
 			<div class="form-row">
 				<div class="column">
-					{#each historyMemo as memo, index}
+					{#each initialState.outcomeHistory as memo, index}
 						<div class="wrapper">
 							<DateInput name={'history-day'} bind:value={memo.date} />
 							<Input
@@ -522,12 +528,18 @@
 								inputSize={'input--xl'}
 								bind:value={memo.memo}
 							/>
-							<button
-								type="button"
-								class="primary btn delete"
-								on:click={() => handleDeleteItemFromArray(index, maxHistoryIndex--, historyMemo)}
-								>削除</button
-							>
+							{#if maxHistoryIndex > 1}
+								<button
+									type="button"
+									class="primary btn delete"
+									on:click={() =>
+										handleDeleteItemFromArray(
+											index,
+											maxHistoryIndex--,
+											initialState.outcomeHistory
+										)}>削除</button
+								>
+							{/if}
 						</div>
 					{/each}
 				</div>
@@ -600,71 +612,71 @@
 		gap: 18px;
 	}
 
-	.checkbox-container {
-		position: relative;
-		display: flex;
-		justify-content: flex-end;
-		flex-direction: row-reverse;
-		align-items: center;
-		width: 100%;
-		margin-bottom: 12px;
-		gap: 18px;
-		font-size: 18px;
-		cursor: pointer;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
+	// .checkbox-container {
+	// 	position: relative;
+	// 	display: flex;
+	// 	justify-content: flex-end;
+	// 	flex-direction: row-reverse;
+	// 	align-items: center;
+	// 	width: 100%;
+	// 	margin-bottom: 12px;
+	// 	gap: 18px;
+	// 	font-size: 18px;
+	// 	cursor: pointer;
+	// 	-webkit-user-select: none;
+	// 	-moz-user-select: none;
+	// 	-ms-user-select: none;
+	// 	user-select: none;
 
-		& :hover {
-			.checkbox ~ .checkmark {
-				background-color: #ccc;
-			}
-		}
+	// 	& :hover {
+	// 		.checkbox ~ .checkmark {
+	// 			background-color: #ccc;
+	// 		}
+	// 	}
 
-		& :after {
-			content: '';
-			display: none;
-		}
+	// 	& :after {
+	// 		content: '';
+	// 		display: none;
+	// 	}
 
-		.checkmark {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			top: 0;
-			left: 0;
-			height: 20px;
-			width: 20px;
-			border: 1px solid var(--black);
-			border-radius: 3px;
+	// 	.checkmark {
+	// 		display: flex;
+	// 		align-items: center;
+	// 		justify-content: center;
+	// 		top: 0;
+	// 		left: 0;
+	// 		height: 20px;
+	// 		width: 20px;
+	// 		border: 1px solid var(--black);
+	// 		border-radius: 3px;
 
-			&:after {
-				width: 3px;
-				height: 8px;
-				border: solid white;
-				border-width: 0 3px 3px 0;
-				-webkit-transform: rotate(45deg);
-				-ms-transform: rotate(45deg);
-				transform: rotate(45deg);
-			}
-		}
+	// 		&:after {
+	// 			width: 3px;
+	// 			height: 8px;
+	// 			border: solid white;
+	// 			border-width: 0 3px 3px 0;
+	// 			-webkit-transform: rotate(45deg);
+	// 			-ms-transform: rotate(45deg);
+	// 			transform: rotate(45deg);
+	// 		}
+	// 	}
 
-		.checkbox {
-			position: absolute;
-			height: 0;
-			width: 0;
-			opacity: 0;
-			cursor: pointer;
+	// 	.checkbox {
+	// 		position: absolute;
+	// 		height: 0;
+	// 		width: 0;
+	// 		opacity: 0;
+	// 		cursor: pointer;
 
-			&:checked ~ .checkmark {
-				background-color: var(--primary);
+	// 		&:checked ~ .checkmark {
+	// 			background-color: var(--primary);
 
-				&:after {
-					display: block;
-				}
-			}
-		}
-	}
+	// 			&:after {
+	// 				display: block;
+	// 			}
+	// 		}
+	// 	}
+	// }
 
 	.btn {
 		margin: 0;
@@ -686,10 +698,6 @@
 		}
 	}
 
-	.legend {
-		color: var(--primary);
-	}
-
 	.fieldset {
 		margin-bottom: 20px;
 	}
@@ -706,18 +714,12 @@
 	.wrapper {
 		padding: 16px 26px;
 		border-radius: 8px;
-		// width: calc(100% - 52px);
 		display: flex;
 		justify-content: space-between;
 		gap: 18px;
 		flex-wrap: wrap;
 		background-color: #f4f4f4;
-		// margin-bottom: 20px;
 	}
-
-	// .container--vertical {
-	// 	gap: 20px;
-	// }
 
 	.input-wrapper {
 		display: flex;
@@ -737,7 +739,7 @@
 		}
 
 		&:required:invalid {
-			color: #969696;
+			color: #c4c4c4;
 		}
 
 		option[value=''][disabled] {

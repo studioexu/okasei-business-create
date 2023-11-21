@@ -1,15 +1,22 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
-	import { user } from '@/stores/users'
 	import Input from '@/components/Input.svelte'
 	import Icon from '@/components/Icon.svelte'
 	import Select from '@/components/Select.svelte'
-	import SelectWithInput from '@/components/SelectWithInput.svelte'
-	import CustomCheckbox from '@/components/CustomCheckbox.svelte'
+	import { negociation, negociations } from '@/stores/negociations'
+
+	import DeleteModal from '@/views/modals/DeleteModal.svelte'
+	import { goto } from '$app/navigation'
+	import type { Negociation } from '@/libs/negociationTypes'
 
 	let searchIsShown = false
 	let displayMenuIsShown = false
+	let deleteModalIsShown = false
+
+	let filteredNegociations: Negociation[] = $negociations
+
+	$: console.log(filteredNegociations)
 
 	const years: string[] = ['']
 	const months: string[] = ['']
@@ -30,15 +37,15 @@
 		month: ''
 	}
 
-	const tableHeaders: { label: string; id: keyof DataIsShown | keyof Users }[] = [
+	const tableHeaders: { label: string; id: keyof DataIsShown }[] = [
 		{ label: '施設名', id: 'customerName' },
 		{ label: 'ステータス', id: 'status' },
 		{ label: '商談開始日', id: 'firstTransaction' },
 		{ label: '可能性', id: 'condition' },
-		{ label: '流入', id: 'contact' },
+		{ label: '流入', id: 'inflow' },
 		{ label: '納期', id: 'billingDate' },
 		{ label: '入金予定', id: 'scheduledDeposit' },
-		{ label: '成否日', id: 'successFailureDay' },
+		{ label: '成否日', id: 'outcome' },
 		{ label: '次回連絡日時', id: 'nextContact' },
 		{ label: '最終連絡', id: 'lastContact' },
 		{ label: '納品先', id: 'billingAddress' },
@@ -46,19 +53,21 @@
 		{ label: '見積金額(税抜)', id: 'billingEstimation' },
 		{ label: '担当者名', id: 'personInCharge' },
 		{ label: 'メモ', id: 'memo' },
-		{ label: 'DM発送', id: 'shippingStatus' },
+		{ label: 'DM発送', id: 'dm' },
 		{ label: 'PR動画', id: 'video' }
 	]
 
 	interface DataIsShown {
+		negociationId: boolean
+		custCd: boolean
 		customerName: boolean
 		status: boolean
 		firstTransaction: boolean
 		condition: boolean
-		contact: boolean
+		inflow: boolean
 		billingDate: boolean
 		scheduledDeposit: boolean
-		successFailureDay: boolean
+		outcome: boolean
 		nextContact: boolean
 		lastContact: boolean
 		billingAddress: boolean
@@ -66,28 +75,8 @@
 		billingEstimation: boolean
 		personInCharge: boolean
 		memo: boolean
-		shippingStatus: boolean
+		dm: boolean
 		video: boolean
-	}
-
-	interface Users {
-		customerName: string
-		status: string
-		firstTransaction: string
-		condition: string
-		contact: string
-		billingDate: string
-		scheduledDeposit: string
-		successFailureDay: string
-		nextContact: string
-		lastContact: string
-		billingAddress: string
-		numberOfBeds: string
-		billingEstimation: string
-		personInCharge: string
-		memo: string
-		shippingStatus: string
-		video: string
 	}
 
 	const dataIsShown: DataIsShown = {
@@ -95,10 +84,10 @@
 		status: true,
 		firstTransaction: true,
 		condition: true,
-		contact: true,
+		inflow: true,
 		billingDate: true,
 		scheduledDeposit: true,
-		successFailureDay: true,
+		outcome: true,
 		nextContact: true,
 		lastContact: true,
 		billingAddress: true,
@@ -106,249 +95,108 @@
 		billingEstimation: true,
 		personInCharge: true,
 		memo: true,
-		shippingStatus: true,
-		video: true
+		dm: true,
+		video: true,
+		negociationId: false,
+		custCd: false
 	}
-
-	const users: Users[] = [
-		{
-			customerName: 'hello world',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'A',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		},
-		{
-			customerName: 'hello world yeah yeah lod hakka lodo',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'B',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		},
-		{
-			customerName: 'hello world',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'A',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		},
-		{
-			customerName: 'hello world yeah yeah lod hakka lodo',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'B',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		},
-		{
-			customerName: 'hello world',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'A',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		},
-		{
-			customerName: 'hello world yeah yeah lod hakka lodo',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'B',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		},
-		{
-			customerName: 'hello world',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'A',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		},
-		{
-			customerName: 'hello world yeah yeah lod hakka lodo',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'B',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		},
-		{
-			customerName: 'hello world',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'A',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		},
-		{
-			customerName: 'hello world yeah yeah lod hakka lodo',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'B',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		},
-		{
-			customerName: 'hello world',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'A',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		},
-		{
-			customerName: 'hello world yeah yeah lod hakka lodo',
-			status: '受注',
-			firstTransaction: '2023.00.00',
-			condition: 'B',
-			contact: '新規FAX',
-			billingDate: '6月',
-			scheduledDeposit: '前払い',
-			successFailureDay: '2023.05.30',
-			nextContact: '2023.05.30 13:00',
-			lastContact: '2023.05.30',
-			billingAddress: '〒989-0276 宮城県白石市大手町2-1',
-			numberOfBeds: '1台',
-			billingEstimation: '13万',
-			personInCharge: '山田太郎',
-			memo: 'KA-9800　83Ｒセンターロック',
-			shippingStatus: '郵送済み',
-			video: '2023.05.30'
-		}
-	]
 
 	const handleChange = (e: any) => {
 		const id: keyof DataIsShown = e.target.id
-
 		dataIsShown[id] = e.target.checked
+	}
+
+	const openModal = (index: number) => {
+		currentUser = index
+		deleteModalIsShown = true
+	}
+
+	let phase: 'shown' | 'success' | 'error' = 'shown'
+	let currentUser: number
+
+	const onClick = (event: { detail: { key: string } }) => {
+		switch (event.detail.key) {
+			case 'cancel':
+				deleteModalIsShown = false
+				break
+
+			case 'delete':
+				try {
+					negociations.set(
+						$negociations.filter(negociation => negociation.negociationId !== currentUser)
+					)
+
+					if ($negociation.negociationId === currentUser) {
+						negociation.set({
+							customerName: '',
+							status: '',
+							firstTransaction: '',
+							condition: '',
+							inflow: '',
+							billingDate: '',
+							scheduledDeposit: '',
+							outcome: '',
+							nextContact: '',
+							lastContact: '',
+							postalCode: '',
+							prefecture: '',
+							city: '',
+							address1: '',
+							address2: '',
+							numberOfBeds: '',
+							estimate: [],
+							personInCharge: '',
+							responsiblePerson: '',
+							memo: [],
+							dm: '',
+							video: '',
+							negociationId: 0,
+							custCd: 0,
+							checkboxes: [],
+							checkBottleneck: '',
+							occasion: '',
+							risk: '',
+							outcomeHistory: [],
+							paymentMethod: '',
+							communication: '',
+							distanceKm: '',
+							distanceTime: '',
+							preference: '',
+							contact: '',
+							billingEstimation: ''
+						})
+						goto('/negotiations')
+						phase = 'shown'
+					} else phase = 'success'
+				} catch (error) {
+					phase = 'error'
+				}
+				break
+
+			case 'success':
+				deleteModalIsShown = false
+				phase = 'shown'
+				break
+
+			case 'error':
+				phase = 'shown'
+				break
+		}
+	}
+
+	$: {
+		if (deleteModalIsShown && phase === 'success')
+			setTimeout(() => {
+				deleteModalIsShown = false
+				phase = 'shown'
+			}, 2000)
 	}
 </script>
 
 <section class="section">
+	{#if deleteModalIsShown}
+		<DeleteModal {phase} on:click={onClick} />
+	{/if}
 	<header class="section__header">
 		<div class="container">
 			<button
@@ -364,7 +212,7 @@
 				表示・非表示
 			</button>
 			<button type="button" class="primary" on:click={() => (searchIsShown = !searchIsShown)}>
-				縛り込み検索
+				絞り込み検索
 			</button>
 		</div>
 
@@ -415,25 +263,46 @@
 								<th class="theader">{header.label}</th>
 							{/if}
 						{/each}
+						<th class="theader" />
 					</tr>
 				</thead>
 
 				<tbody class="tbody">
-					{#each users as customer}
+					{#each filteredNegociations as negociation, index}
 						<tr class="trow">
 							{#each tableHeaders as header}
 								{#if dataIsShown[header.id]}
 									<td
 										class="tdata {header.id} {header.id === 'condition'
-											? header.id + '--' + customer[header.id]
-											: ''}">{customer[header.id]}</td
+											? header.id + '--' + negociation[header.id]
+											: ''}"
 									>
+										{#if header.id === 'customerName'}
+											<a href={'/negotiations/' + negociation.negociationId}>
+												{negociation[header.id]}
+											</a>
+										{:else if header.id === 'billingAddress'}
+											{'〒' +
+												negociation.postalCode +
+												negociation.prefecture +
+												negociation.city +
+												negociation.address1 +
+												negociation.address2}
+										{:else if header.id === 'memo'}
+											{negociation.memo[negociation.memo.length - 1].memo}
+										{:else}
+											{negociation[header.id]}
+										{/if}
+									</td>
 								{/if}
 							{/each}
 							<td class="tdata icon">
-								<!-- <span on:click={() => openModal(index)}> -->
-								<Icon icon={{ path: 'delete', color: '#0093d0' }} />
-								<!-- </span> -->
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<!-- svelte-ignore missing-declaration -->
+								<!-- svelte-ignore a11y-no-static-element-interactions -->
+								<span on:click={() => openModal(negociation.negociationId)}>
+									<Icon icon={{ path: 'delete', color: '#0093d0' }} />
+								</span>
 							</td>
 						</tr>
 					{/each}
@@ -525,9 +394,8 @@
 			padding: 11px 22px;
 			width: fit-content;
 			text-align: center;
-
 			&.customerName {
-				max-width: 160px;
+				max-width: 200px;
 			}
 
 			&.condition {
@@ -575,7 +443,29 @@
 		}
 	}
 
+	.btn {
+		height: fit-content;
+		width: fit-content;
+	}
+
+	// .btn ~ .icon {
+	// 	span {
+	// 		cursor: pointer;
+
+	// 		&:hover {
+	// 			opacity: 0.5;
+	// 		}
+	// 	}
+
+	// 	> :global(.svg-icon) {
+	// 		height: 18px * 1.2;
+	// 	}
+	// }
+
 	.icon {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
 		width: 64px;
 
 		span {
@@ -584,12 +474,13 @@
 			&:hover {
 				opacity: 0.5;
 			}
-		}
 
-		> :global(.svg-icon) {
-			height: 18px * 1.2;
+			> :global(.svg-icon) {
+				height: 18px * 1.2;
+			}
 		}
 	}
+	// }
 
 	.checkbox-container {
 		position: relative;

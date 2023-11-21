@@ -9,7 +9,6 @@
 	const years: string[] = ['']
 	const months: string[] = ['']
 	let days: string[] = ['']
-	const hours: string[] = ['']
 	const currentYear = new Date().getFullYear()
 	const minYear = 2000
 
@@ -22,9 +21,9 @@
 		}
 	}
 
-	let month: string = value.length > 0 ? value.split('-')[0] : ''
-	let year: string = value.length > 0 ? value.split('-')[1] : ''
-	let day: string = value.length > 0 ? value.split('-')[2] : ''
+	let month: string = value.length > 0 ? (new Date(value).getMonth() + 1).toString() : ''
+	let year: string = value.length > 0 ? new Date(value).getFullYear().toString() : ''
+	let day: string = value.length > 0 ? new Date(value).getDate().toString() : ''
 
 	$: value =
 		month !== '' && year !== '' && day !== ''
@@ -58,9 +57,8 @@
 	}
 
 	$: maxDaysInMonth = adjustNumberOfDays(monthInt)
-	// $: console.log(maxDaysInMonth)
 
-	for (let i = minYear; i < currentYear; i++) {
+	for (let i = minYear; i <= currentYear + 1; i++) {
 		years.push(i.toString())
 	}
 
@@ -77,10 +75,6 @@
 	}
 
 	$: days = updateNumberOfDaysInAMonth(maxDaysInMonth)
-
-	for (let i = 0; i <= 23; i++) {
-		hours.push(i.toString())
-	}
 </script>
 
 <div class="date-input">

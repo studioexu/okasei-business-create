@@ -400,6 +400,14 @@
 			text-align: center;
 			&.customerName {
 				max-width: 200px;
+
+				a {
+					color: var(--primary);
+
+					&:hover {
+						opacity: 0.5;
+					}
+				}
 			}
 
 			&.condition {

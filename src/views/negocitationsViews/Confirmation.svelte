@@ -96,7 +96,9 @@
 			<h3 class="label">{'重要メモ'}</h3>
 			<div class="container">
 				{#each initialState.memo as memo}
-					<Wrapper label={memo.date} content={memo.memo} />
+					<div class="form-row">
+						<Wrapper label={memo.date} content={memo.memo} />
+					</div>
 				{/each}
 			</div>
 		</div>
@@ -148,7 +150,9 @@
 			<h3 class="label">商談経緯</h3>
 			<div class="container">
 				{#each initialState.outcomeHistory as outcome}
-					<Wrapper label={outcome.date} content={outcome.memo} />
+					<div class="form-row">
+						<Wrapper label={outcome.date} content={outcome.memo} />
+					</div>
 				{/each}
 			</div>
 		</div>

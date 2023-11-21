@@ -41,7 +41,7 @@
 					: '',
 			nextContactTime:
 				negociation?.nextContact?.length !== undefined
-					? negociation?.nextContact.split(' ')[1].split(':')[0]
+					? negociation?.nextContact.split(' ')[1]
 					: '',
 			lastContact: negociation?.lastContact,
 			postalCode: negociation?.postalCode,

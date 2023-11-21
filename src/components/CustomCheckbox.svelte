@@ -16,6 +16,7 @@
 		id={value}
 		{value}
 		on:change={handleChange}
+		checked={isChecked}
 	/>
 	<span class="checkmark" />
 </label>

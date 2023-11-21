@@ -5,7 +5,7 @@
 	export let initialState: any
 </script>
 
-<div class="negociation-info-confirmation">
+<div class="negociation-confirmation">
 	<div class="form-row">
 		<Wrapper label={'ステータス'} content={initialState.status} />
 	</div>
@@ -43,6 +43,14 @@
 	<div class="form-row">
 		<Wrapper label={'納品先'} content={initialState.postalCode} />
 	</div>
+	<div class="form-row">
+		<Wrapper label={'都道府県'} content={initialState.prefecture} />
+		<Wrapper label={'市区町村'} content={initialState.city} />
+	</div>
+	<div class="form-row">
+		<Wrapper label={'住所1'} content={initialState.address1} />
+		<Wrapper label={'住所2'} content={initialState.address2} />
+	</div>
 
 	<div class="form-row">
 		<div class="wrapper">
@@ -69,10 +77,10 @@
 							<Wrapper label={'消費税'} content={estimate.tax} />
 						</div>
 
-						{#each estimate.products as product}
+						{#each estimate.items as item}
 							<div class="form-row">
-								<Wrapper label={'商品'} content={product.productName} />
-								<Wrapper content={product.quantity} />
+								<Wrapper label={'商品'} content={item.name} />
+								<Wrapper content={item.quantity} />
 							</div>
 						{/each}
 					</div>
@@ -84,7 +92,7 @@
 		<div class="wrapper">
 			<h3 class="label">{'重要メモ'}</h3>
 			<div class="container">
-				{#each initialState.importantMemo as memo}
+				{#each initialState.memo as memo}
 					<Wrapper label={memo.date} content={memo.memo} />
 				{/each}
 			</div>

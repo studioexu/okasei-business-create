@@ -3,11 +3,14 @@
 <script lang="ts">
 	import { goto } from '$app/navigation'
 
-	import NegociationInfo from '@/views/negocitationsViews/NegociationInfo.svelte'
-	import NegociationInfoConfirmation from '@/views/negocitationsViews/NegociationInfoConfirmation.svelte'
+	import Form from '@/views/negocitationsViews/Form.svelte'
+	import Confirmation from '@/views/negocitationsViews/Confirmation.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
+	import type { CustomerEntries } from '@/libs/customerTypes.js'
+	import type { NegociationEntries } from '@/libs/negociationTypes.js'
+	import { negociation, negociations } from '@/stores/negociations.js'
 
 	export let data
 
@@ -32,7 +35,8 @@
 		return array
 	}
 
-	let initialState = {
+	let initialState: NegociationEntries = {
+		negociationId: 0,
 		status: '',
 		startingDate: '',
 		condition: '',
@@ -42,7 +46,8 @@
 		scheduledDeposit: '',
 		paymentMethod: '',
 		outcome: '',
-		nextContact: '',
+		nextContactDate: '',
+		nextContactTime: '',
 		lastContact: '',
 		postalCode: '',
 		prefecture: '',
@@ -52,17 +57,35 @@
 		distanceKm: '',
 		distanceTime: '',
 		estimate: [],
-		importantMemo: [],
-		employeeInCharge: '',
+		memo: [],
+		personInCharge: '',
 		responsiblePerson: '',
 		communication: '',
-		directMessage: '',
-		videoUrl: '',
-		checkboxes: [],
+		dm: '',
+		video: '',
+		checkboxes: [
+			{ title: '動画視聴　依頼', isChecked: false },
+			{ title: '動画視聴　確認', isChecked: false },
+			{ title: '新品　購入経験', isChecked: false },
+			{ title: '増台提案', isChecked: false },
+			{ title: '値上げ：全世界の値上げ傾向。物流・保管・電気等の徹底', isChecked: false },
+			{
+				title: '傷、色あせ：中古商材の為、多少の傷や色あせ有り。洗浄・メンテの徹底',
+				isChecked: false
+			},
+			{ title: '商品確保：中古商材の為、購入契約者優先の商品確保', isChecked: false },
+			{ title: '締め支払い：契約書締結による締め支払い', isChecked: false },
+			{ title: '前払い（特別値引き）の説明', isChecked: false },
+			{ title: '中古　購入経験', isChecked: false }
+		],
 		checkBottleneck: '',
 		occasion: '',
 		risk: '',
-		outcomeHistory: []
+		outcomeHistory: [],
+		custCd: 0,
+		customerName: '',
+		numberOfBeds: '',
+		billingEstimation: ''
 	}
 
 	let initialState2Errors = {
@@ -84,7 +107,7 @@
 		distanceKm: false,
 		distanceTime: false,
 		estimate: false,
-		importantMemo: false,
+		memo: false,
 		employeeInCharge: false,
 		responsiblePerson: false,
 		communication: false,
@@ -95,6 +118,10 @@
 		occasion: false,
 		risk: false
 	}
+
+	let negociationIds: number[] = $negociations.map(negociation => negociation.negociationId)
+
+	$: initialState.negociationId = Math.max(...negociationIds) + 1
 
 	let displayClass: string = ''
 	$: displayClass
@@ -126,16 +153,17 @@
 	{/if}
 
 	<div class="section__main">
-		{#if !confirmationPageIsShown}
-			<NegociationInfo
-				bind:initialState
-				customers={allCustomers}
-				bind:isSucceeded
-				bind:isShown
-				bind:confirmationPageIsShown
-			/>
-		{:else if !isShown}
-			<NegociationInfoConfirmation {initialState} />
+		<Form
+			bind:initialState
+			customers={allCustomers}
+			bind:isSucceeded
+			bind:isShown
+			bind:confirmationPageIsShown
+			bind:currentCustomerId={initialState.custCd}
+			formType="create"
+		/>
+		{#if confirmationPageIsShown && !isShown}
+			<Confirmation {initialState} />
 		{/if}
 	</div>
 
@@ -143,15 +171,19 @@
 		<footer class="section__footer">
 			<div class="container">
 				{#if confirmationPageIsShown}
+					<div>
+						<button class="btn secondary" on:click={() => (confirmationPageIsShown = false)}
+							>修正</button
+						>
+					</div>
+					<button type="submit" class="btn primary" form="negociation-form">登録</button>
+				{:else}
 					<button
 						type="button"
-						class="btn secondary"
-						on:click={() => (confirmationPageIsShown = false)}>編集</button
+						class="btn primary"
+						on:click={() => (confirmationPageIsShown = true)}>登録</button
 					>
 				{/if}
-				<button type="button" class="btn primary" on:click={() => (confirmationPageIsShown = true)}
-					>登録</button
-				>
 			</div>
 		</footer>
 	{/if}

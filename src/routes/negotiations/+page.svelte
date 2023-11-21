@@ -16,7 +16,11 @@
 
 	let filteredNegociations: Negociation[] = $negociations
 
-	$: console.log(filteredNegociations)
+	let research = {
+		name: '',
+		year: '',
+		month: ''
+	}
 
 	const years: string[] = ['']
 	const months: string[] = ['']

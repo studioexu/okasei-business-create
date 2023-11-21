@@ -27,7 +27,10 @@
 		scheduledDeposit: negociation?.scheduledDeposit,
 		paymentMethod: negociation?.paymentMethod,
 		outcome: negociation?.outcome,
-		nextContact: negociation?.nextContact,
+		nextContactDate:
+			negociation?.nextContact?.length !== undefined ? negociation?.nextContact.split(' ')[0] : '',
+		nextContactTime:
+			negociation?.nextContact?.length !== undefined ? negociation?.nextContact.split(' ')[1] : '',
 		lastContact: negociation?.lastContact,
 		postalCode: negociation?.postalCode,
 		prefecture: negociation?.prefecture,

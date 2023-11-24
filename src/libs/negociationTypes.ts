@@ -7,16 +7,17 @@ export interface Estimate {
 	issueDate: string
 	dueDate: string
 	estimateWithoutTax: string
-	tax: string
+	withTax: boolean
+	estimateTax: string
 	items: Item[]
 }
 
-interface Memo {
+export interface Memo {
 	date: string
 	memo: string
 }
 
-interface OutcomeHistory {
+export interface OutcomeHistory {
 	date: string
 	memo: string
 }

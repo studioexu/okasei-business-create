@@ -2,8 +2,11 @@
 	export let name: string
 	export let label: string = ''
 	export let options: string[] = []
-
 	export let value: string = ''
+
+	$: console.log('selectDate value')
+
+	$: console.log(value)
 </script>
 
 <div class="input-wrapper">

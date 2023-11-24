@@ -121,9 +121,9 @@
 				<div class="wrapper">
 					<div class="checkbox-wrapper">
 						{#if !checkbox.isChecked}
-							<Icon icon={{ path: 'checkbox-empty', color: 'rgb(200, 200, 200)' }} />
+							<Icon icon={{ path: 'checkbox-empty', color: 'var(--gray)' }} />
 						{:else}
-							<Icon icon={{ path: 'checkbox-checked', color: 'rgb(200, 200, 200)' }} />
+							<Icon icon={{ path: 'checkbox-checked', color: 'var(--gray)' }} />
 						{/if}
 					</div>
 

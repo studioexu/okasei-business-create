@@ -59,7 +59,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社ガスト',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		firstTransaction: '2002-01-01',
 		condition: 'A',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',
@@ -110,15 +110,17 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 				issueDate: '2023-02-14',
 				dueDate: '2023-10-23',
 				estimateWithoutTax: '130000',
-				tax: '1300',
-				items: [{ name: 'item', quantity: '20' }]
+				estimateTax: '1300',
+				items: [{ name: 'item', quantity: '20' }],
+				withTax: true
 			},
 			{
 				issueDate: '2023-02-14',
 				dueDate: '2023-10-23',
 				estimateWithoutTax: '130000',
-				tax: '1300',
-				items: [{ name: 'item', quantity: '20' }]
+				estimateTax: '1300',
+				items: [{ name: 'item', quantity: '20' }],
+				withTax: true
 			}
 		],
 		responsiblePerson: '中田'

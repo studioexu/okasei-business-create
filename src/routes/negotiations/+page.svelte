@@ -4,11 +4,12 @@
 	import Input from '@/components/Input.svelte'
 	import Icon from '@/components/Icon.svelte'
 	import Select from '@/components/Select.svelte'
+	import SelectDate from '@/components/SelectDate.svelte'
 	import { negociation, negociations } from '@/stores/negociations'
 
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import { goto } from '$app/navigation'
-	import type { Negociation } from '@/libs/negociationTypes'
+	import type { Negociation, NegociationBackend } from '@/libs/negociationTypes'
 
 	let searchIsShown = false
 	let displayMenuIsShown = false
@@ -16,18 +17,12 @@
 
 	let filteredNegociations: Negociation[] = $negociations
 
-	let research = {
-		name: '',
-		year: '',
-		month: ''
-	}
-
 	const years: string[] = ['']
 	const months: string[] = ['']
-	const currentYear = new Date().getFullYear()
+	const currentYear = new Date().getFullYear() + 1
 	const minYear = 2000
 
-	for (let i = minYear; i < currentYear; i++) {
+	for (let i = minYear; i <= currentYear; i++) {
 		years.push(i.toString())
 	}
 
@@ -36,10 +31,44 @@
 	}
 
 	let searchInput = {
-		text: '',
+		name: '',
 		year: '',
 		month: ''
 	}
+
+	$: searchInput
+
+	const handleSearch = (searchInput: { name: string; year: string; month: string }) => {
+		let filtered = $negociations
+
+		if (searchInput.name !== '') {
+			filtered = filtered.filter(negociation => {
+				if (negociation.customerName.includes(searchInput.name)) {
+					return negociation
+				}
+			})
+		}
+
+		if (searchInput.year !== '') {
+			filtered = filtered.filter(negociation => {
+				if (new Date(negociation.firstTransaction).getFullYear() === parseInt(searchInput.year)) {
+					return negociation
+				}
+			})
+		}
+
+		if (searchInput.month !== '') {
+			filtered = filtered.filter(negociation => {
+				if (new Date(negociation.firstTransaction).getMonth() + 1 === parseInt(searchInput.month)) {
+					return negociation
+				}
+			})
+		}
+
+		return filtered
+	}
+
+	$: filteredNegociations = handleSearch(searchInput)
 
 	const tableHeaders: { label: string; id: keyof DataIsShown }[] = [
 		{ label: '施設名', id: 'customerName' },
@@ -241,17 +270,27 @@
 		{/if}
 
 		{#if searchIsShown}
-			<div class="search-menu">
+			<div class="search-menu" on:input={() => handleSearch(searchInput)}>
 				<Input
 					label={'施設名'}
 					inputSize={'input--lg'}
 					name={'name-search'}
-					bind:value={searchInput.text}
+					bind:value={searchInput.name}
 				/>
 
 				<div class="container">
-					<Select label={'商談開始月'} options={years} unit={'年'} bind:value={searchInput.year} />
-					<Select options={months} unit={'月'} bind:value={searchInput.month} />
+					<SelectDate
+						name={'search-year'}
+						label={'年'}
+						options={years}
+						bind:value={searchInput.year}
+					/>
+					<SelectDate
+						name={'search-month'}
+						label={'月'}
+						options={months}
+						bind:value={searchInput.month}
+					/>
 				</div>
 			</div>
 		{/if}

@@ -7,6 +7,8 @@
 	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 	import { negociations } from '@/stores/negociations'
 	import { NegociationBackend, type Estimate } from '@/libs/negociationTypes'
+	import Icon from '@/components/Icon.svelte'
+	import type { Item, Memo, OutcomeHistory } from '@/libs/negociationTypes'
 
 	export let initialState: any
 	export let customers: CustomerFactory[]
@@ -18,9 +20,9 @@
 
 	let currentCustomer: CustomerFactory | undefined
 
-	$: currentCustomer = customers.filter(customer => {
-		console.log(customer.custCD)
+	const tax = 0.1
 
+	$: currentCustomer = customers.filter(customer => {
 		if (customer.custCD === currentCustomerId) {
 			return customer
 		}
@@ -31,7 +33,10 @@
 	let maxHistoryIndex =
 		initialState.outcomeHistory.length > 1 ? initialState.outcomeHistory.length : 1
 
-	const calculateEstimateTotal = () => {
+	/**
+	 * calculate the total of the estimates
+	 */
+	const calculateEstimateTotal = (): string => {
 		let estimateTotal = 0
 		initialState.estimate.map((estimate: Estimate) => {
 			estimateTotal += parseInt(estimate.estimateWithoutTax)
@@ -50,7 +55,11 @@
 	$: initialState.memo = updateArray(maxMemoIndex, initialState.memo, 'memo')
 	$: maxHistoryIndex
 
-	const handleAddProduct = (index: number) => {
+	/**
+	 * Add an item to the items array in a specific estimate object
+	 * @param index: corresponding to the index of the right estimate object.
+	 */
+	const addItem = (index: number): void => {
 		const productArray = initialState.estimate[index].items
 		productArray.push({
 			productName: '',
@@ -59,7 +68,29 @@
 		initialState.estimate[index].items = productArray
 	}
 
-	const handleDeleteItemFromArray = (index: number, maxIndex: number, arrayToUpdate: any[]) => {
+	/**
+	 * Remove an item in the items array of one estimate array.
+	 * @param index:corresponding to the index of the right estimate object we want to remove an item.
+	 * @param itemIndex: index of the item we want to remove.
+	 */
+	const removeItem = (index: number, itemIndex: number): void => {
+		const newItemArray = initialState.estimate[index].items.filter(
+			(item: Item) => initialState.estimate[index].items[itemIndex] !== item && item
+		)
+		initialState.estimate[index].items = newItemArray
+	}
+
+	/**
+	 * Remove one object from the corresponding array.
+	 * @param index: index of the object in the array
+	 * @param maxIndex: number of items in the array
+	 * @param arrayToUpdate: the array we want to update
+	 */
+	const handleDeleteItemFromArray = (
+		index: number,
+		maxIndex: number,
+		arrayToUpdate: Memo[] | OutcomeHistory[] | Estimate[]
+	): void => {
 		const newArray = arrayToUpdate.slice(0, index).concat(arrayToUpdate.slice(index + 1))
 
 		for (let i = 0; i < newArray.length; i++) {
@@ -69,7 +100,17 @@
 		maxIndex--
 	}
 
-	const updateArray = (maxIndex: number, arrayToUpdate: any[], arrayType: string) => {
+	/**
+	 * We add an item in the array.
+	 * @param maxIndex: number of items in the array
+	 * @param arrayToUpdate: the array where we want to add an item
+	 * @param arrayType: the type of the array.
+	 */
+	const updateArray = (
+		maxIndex: number,
+		arrayToUpdate: Memo[] | OutcomeHistory[] | Estimate[],
+		arrayType: string
+	): Memo[] | OutcomeHistory[] | Estimate[] => {
 		let newArray: any[] = []
 		for (let i = 0; i < maxIndex; i++) {
 			if (arrayToUpdate[i]) {
@@ -164,7 +205,11 @@
 		hours.push(i.toString() + ':00')
 	}
 
-	const handleAutoFill = () => {
+	/**
+	 * When the user click on the button, it will auto fill the billing address with the customer's address.
+	 *
+	 */
+	const handleAutoFill = (): void => {
 		if (currentCustomer !== undefined) {
 			initialState.postalCode = currentCustomer[0].address.postalCode
 			initialState.prefecture = currentCustomer[0].address.prefecture
@@ -172,6 +217,31 @@
 			initialState.address1 = currentCustomer[0].address.address1
 			initialState.address2 = currentCustomer[0].address.address2
 		}
+	}
+
+	/**
+	 *
+	 * @param isTaxIsAdded: boolean, check if the tax has to be added or not. 税金を追加するかどうかと確認する。
+	 * @param estimateWithoutTax: number, corresponding to the amout of the estimate without the tax. 税抜の見積もりの金額である。
+	 * @returns number: if we add the tax, we will return the round result of the multiplication between the estimate amount and the current tax amount.
+	 */
+	const getTaxAmount = (isTaxAdded: boolean, estimateWithoutTax: number): number => {
+		if (isTaxAdded) {
+			return Math.round(estimateWithoutTax * tax)
+		} else {
+			return 0
+		}
+	}
+
+	/**
+	 * update the estimate tax amount in the initialState when there are changes.
+	 * @param index: corresponding to the index in the array of estimate.
+	 */
+	const handleInputInEstimate = (index: number): void => {
+		initialState.estimate[index].estimateTax = getTaxAmount(
+			initialState.estimate[index].withTax,
+			parseInt(initialState.estimate[index].estimateWithoutTax)
+		).toString()
 	}
 </script>
 
@@ -281,26 +351,9 @@
 		<div class="form-row">
 			<Input
 				label={'入金予定'}
-				placeholder={'未入力'}
+				placeholder={'前払い'}
 				name={'scheduled-deposit'}
 				bind:value={initialState.scheduledDeposit}
-			/>
-		</div>
-
-		<div class="form-row">
-			<Select
-				name={'payment-method'}
-				label={'支払い方法'}
-				options={[
-					'確認前',
-					'確認中',
-					'前払い（振込）',
-					'前払い（代引き）',
-					'クレジットカード',
-					'前金＋後払い',
-					'全額後払い'
-				]}
-				bind:value={initialState.paymentMethod}
 			/>
 		</div>
 
@@ -340,9 +393,9 @@
 				bind:value={initialState.postalCode}
 			/>
 
-			<button type="button" class="btn primary inline" on:click={handleAutoFill}
-				>顧客情報同情</button
-			>
+			<button type="button" class="btn primary inline" on:click={handleAutoFill}>
+				顧客情報コピー
+			</button>
 		</div>
 		<div class="form-row">
 			<Input
@@ -386,13 +439,10 @@
 		<div class="form-row">
 			<div>
 				<h3 class="label">見積もり金額</h3>
-				<button type="button" class="btn primary" on:click={() => maxEstimateIndex++}
-					>＋見積追加</button
-				>
 			</div>
 			<div class="column">
 				{#each initialState.estimate as estimate, index}
-					<div class="container">
+					<div class="container" on:change={() => handleInputInEstimate(index)}>
 						<div class="form-row">
 							<DateInput label={'発行日'} name={'issue-date'} bind:value={estimate.issueDate} />
 						</div>
@@ -406,24 +456,43 @@
 						<div class="form-row">
 							<Input
 								label={'税抜価格'}
-								name={'price-without-tax'}
+								name={'estimate-without-tax'}
 								unit="円"
 								on:input={calculateEstimateTotal}
 								bind:value={estimate.estimateWithoutTax}
 							/>
-							<Input label={'消費税'} name={'tax'} unit="円" bind:value={estimate.tax} />
+
+							<label for="with-tax">
+								<input
+									type="checkbox"
+									id="with-tax"
+									name="with-tax"
+									bind:checked={estimate.withTax}
+								/>
+								消費税付き
+							</label>
+							<Input label={'消費税'} name={'tax'} unit="円" bind:value={estimate.estimateTax} />
 						</div>
 
-						{#each estimate.items as item}
+						{#each estimate.items as item, indexItem}
 							<div class="form-row">
 								<Input label={'商品'} name={'product'} bind:value={item.name} />
 								<button type="button" class="btn primary">商品選択</button>
 								<Input unit={'台'} name={'quantity'} bind:value={item.quantity} />
+								{#if estimate.items.length > 1}
+									<button
+										type="button"
+										class="btn secondary delete"
+										on:click={() => removeItem(index, indexItem)}
+									>
+										<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
+									</button>
+								{/if}
 							</div>
 						{/each}
 
 						<div class="form-row">
-							<button type="button" class="btn add primary" on:click={() => handleAddProduct(index)}
+							<button type="button" class="btn add primary" on:click={() => addItem(index)}
 								>＋商品追加</button
 							>
 							{#if maxEstimateIndex > 1}
@@ -438,6 +507,10 @@
 						</div>
 					</div>
 				{/each}
+
+				<button type="button" class="btn primary" on:click={() => maxEstimateIndex++}>
+					＋見積追加
+				</button>
 			</div>
 		</div>
 	</fieldset>
@@ -565,8 +638,10 @@
 											index,
 											maxHistoryIndex--,
 											initialState.outcomeHistory
-										)}>削除</button
+										)}
 								>
+									削除
+								</button>
 							{/if}
 						</div>
 					{/each}
@@ -574,9 +649,9 @@
 			</div>
 
 			<div class="form-row">
-				<button type="button" class="btn primary" on:click={() => maxHistoryIndex++}
-					>＋新規追加</button
-				>
+				<button type="button" class="btn primary" on:click={() => maxHistoryIndex++}>
+					＋新規追加
+				</button>
 			</div>
 		</div>
 	</fieldset>

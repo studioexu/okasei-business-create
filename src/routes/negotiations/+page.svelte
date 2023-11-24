@@ -10,6 +10,7 @@
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import { goto } from '$app/navigation'
 	import type { Negociation, NegociationBackend } from '@/libs/negociationTypes'
+	import { onMount } from 'svelte'
 
 	let searchIsShown = false
 	let displayMenuIsShown = false
@@ -37,6 +38,20 @@
 	}
 
 	$: searchInput
+
+	const setColumnToDisplay = () => {
+		const setColumnToDisplay = localStorage.getItem('negotiation-table-column-to-show')
+
+		if (setColumnToDisplay) {
+			console.log(setColumnToDisplay)
+
+			const columns: NegotiationDataIsShown = JSON.parse(setColumnToDisplay)
+			for (const key in columns) {
+				negotiationDataIsShown[key as keyof NegotiationDataIsShown] =
+					columns[key as keyof NegotiationDataIsShown]
+			}
+		}
+	}
 
 	const handleSearch = (searchInput: { name: string; year: string; month: string }) => {
 		let filtered = $negociations
@@ -70,7 +85,7 @@
 
 	$: filteredNegociations = handleSearch(searchInput)
 
-	const tableHeaders: { label: string; id: keyof DataIsShown }[] = [
+	const tableHeaders: { label: string; id: keyof NegotiationDataIsShown }[] = [
 		{ label: '施設名', id: 'customerName' },
 		{ label: 'ステータス', id: 'status' },
 		{ label: '商談開始日', id: 'firstTransaction' },
@@ -90,7 +105,7 @@
 		{ label: 'PR動画', id: 'video' }
 	]
 
-	interface DataIsShown {
+	interface NegotiationDataIsShown {
 		negociationId: boolean
 		custCd: boolean
 		customerName: boolean
@@ -112,7 +127,7 @@
 		video: boolean
 	}
 
-	const dataIsShown: DataIsShown = {
+	const negotiationDataIsShown: NegotiationDataIsShown = {
 		customerName: true,
 		status: true,
 		firstTransaction: true,
@@ -135,8 +150,10 @@
 	}
 
 	const handleChange = (e: any) => {
-		const id: keyof DataIsShown = e.target.id
-		dataIsShown[id] = e.target.checked
+		const id: keyof NegotiationDataIsShown = e.target.id
+		negotiationDataIsShown[id] = e.target.checked
+		localStorage.setItem('negotiation-table-column-to-show', JSON.stringify(negotiationDataIsShown))
+		console.log(localStorage.getItem('negotiation-table-column-to-show'))
 	}
 
 	const openModal = (index: number) => {
@@ -224,6 +241,10 @@
 				phase = 'shown'
 			}, 2000)
 	}
+
+	onMount(() => {
+		setColumnToDisplay()
+	})
 </script>
 
 <section class="section">
@@ -259,7 +280,7 @@
 								type="checkbox"
 								name={header.id}
 								id={header.id}
-								checked
+								bind:checked={negotiationDataIsShown[header.id]}
 								on:change={handleChange}
 							/>{header.label}
 							<span class="checkmark" />
@@ -302,7 +323,7 @@
 				<thead>
 					<tr>
 						{#each tableHeaders as header}
-							{#if dataIsShown[header.id]}
+							{#if negotiationDataIsShown[header.id]}
 								<th class="theader">{header.label}</th>
 							{/if}
 						{/each}
@@ -314,7 +335,7 @@
 					{#each filteredNegociations as negociation, index}
 						<tr class="trow">
 							{#each tableHeaders as header}
-								{#if dataIsShown[header.id]}
+								{#if negotiationDataIsShown[header.id]}
 									<td
 										class="tdata {header.id} {header.id === 'condition'
 											? header.id + '--' + negociation[header.id]

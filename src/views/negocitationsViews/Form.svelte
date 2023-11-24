@@ -22,6 +22,24 @@
 
 	const tax = 0.1
 
+	const products = [
+		{
+			id: 1,
+			name: 'item A',
+			price: '10000'
+		},
+		{
+			id: 2,
+			name: 'item B',
+			price: '15000'
+		},
+		{
+			id: 3,
+			name: 'item C',
+			price: '20000'
+		}
+	]
+
 	$: currentCustomer = customers.filter(customer => {
 		if (customer.custCD === currentCustomerId) {
 			return customer
@@ -238,9 +256,13 @@
 	 * @param index: corresponding to the index in the array of estimate.
 	 */
 	const handleInputInEstimate = (index: number): void => {
+		let estimateAmount = isNaN(parseInt(initialState.estimate[index].estimateWithoutTax))
+			? 0
+			: parseInt(initialState.estimate[index].estimateWithoutTax)
+
 		initialState.estimate[index].estimateTax = getTaxAmount(
 			initialState.estimate[index].withTax,
-			parseInt(initialState.estimate[index].estimateWithoutTax)
+			estimateAmount
 		).toString()
 	}
 </script>
@@ -458,27 +480,47 @@
 								label={'税抜価格'}
 								name={'estimate-without-tax'}
 								unit="円"
+								inputSize={'input--md'}
 								on:input={calculateEstimateTotal}
 								bind:value={estimate.estimateWithoutTax}
 							/>
 
-							<label for="with-tax">
+							<Input
+								label={'消費税'}
+								name={'tax'}
+								unit="円"
+								inputSize={'input--md'}
+								bind:value={estimate.estimateTax}
+							/>
+
+							<label class="checkbox-container" for="with-tax">
 								<input
+									class="checkbox"
 									type="checkbox"
 									id="with-tax"
 									name="with-tax"
 									bind:checked={estimate.withTax}
 								/>
-								消費税付き
+								税付き
+								<span class="checkmark" />
 							</label>
-							<Input label={'消費税'} name={'tax'} unit="円" bind:value={estimate.estimateTax} />
 						</div>
 
 						{#each estimate.items as item, indexItem}
 							<div class="form-row">
-								<Input label={'商品'} name={'product'} bind:value={item.name} />
+								<Input
+									label={'商品'}
+									name={'product'}
+									inputSize={'input--md'}
+									bind:value={item.name}
+								/>
 								<button type="button" class="btn primary">商品選択</button>
-								<Input unit={'台'} name={'quantity'} bind:value={item.quantity} />
+								<Input
+									unit={'台'}
+									name={'quantity'}
+									inputSize={'input--md'}
+									bind:value={item.quantity}
+								/>
 								{#if estimate.items.length > 1}
 									<button
 										type="button"
@@ -688,6 +730,7 @@
 		height: calc(100px - 24px);
 		border-radius: 8px;
 		padding: 12px;
+		outline: none;
 	}
 
 	.container {
@@ -699,7 +742,7 @@
 
 		.form-row {
 			justify-content: space-between;
-			// flex-wrap: wrap;
+			flex-wrap: wrap;
 		}
 	}
 
@@ -718,7 +761,6 @@
 	.btn {
 		margin: 0;
 		align-self: flex-start;
-		padding: 0;
 		padding-top: 0;
 		padding-bottom: 0;
 		height: 32px;
@@ -786,5 +828,70 @@
 
 	.btn {
 		margin: 0;
+	}
+
+	.checkbox-container {
+		position: relative;
+		display: flex;
+		justify-content: flex-end;
+		flex-direction: row-reverse;
+		align-items: center;
+		height: 31px;
+		gap: 12px;
+		font-size: 18px;
+		cursor: pointer;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+
+		& :hover {
+			.checkbox ~ .checkmark {
+				background-color: #fff;
+			}
+		}
+
+		& :after {
+			content: '';
+			display: none;
+		}
+
+		.checkmark {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			top: 0;
+			left: 0;
+			height: 20px;
+			width: 20px;
+			border: 1px solid var(--black);
+			border-radius: 3px;
+
+			&:after {
+				width: 3px;
+				height: 8px;
+				border: solid white;
+				border-width: 0 3px 3px 0;
+				-webkit-transform: rotate(45deg);
+				-ms-transform: rotate(45deg);
+				transform: rotate(45deg);
+			}
+		}
+
+		.checkbox {
+			position: absolute;
+			height: 0;
+			width: 0;
+			opacity: 0;
+			cursor: pointer;
+
+			&:checked ~ .checkmark {
+				background-color: var(--primary);
+
+				&:after {
+					display: block;
+				}
+			}
+		}
 	}
 </style>

@@ -8,9 +8,8 @@
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
-	import type { CustomerEntries } from '@/libs/customerTypes.js'
 	import type { NegociationEntries } from '@/libs/negociationTypes.js'
-	import { negociation, negociations } from '@/stores/negociations.js'
+	import { negociations } from '@/stores/negociations.js'
 
 	export let data
 

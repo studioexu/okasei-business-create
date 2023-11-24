@@ -206,7 +206,6 @@
 		width: calc((600 / 1366) * 100vw);
 		min-width: 520px;
 		padding: 18px 20px;
-		// max-width: 531px;
 		margin-bottom: 18px;
 		background-color: #f4f4f4;
 		border-radius: 8px;
@@ -216,11 +215,9 @@
 			padding: 0;
 			border-bottom: none;
 			.wrapper {
-				// &:first-child {
 				.label {
 					width: 90px;
 				}
-				// }
 			}
 		}
 	}

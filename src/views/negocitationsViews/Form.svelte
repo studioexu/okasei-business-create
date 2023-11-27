@@ -9,6 +9,8 @@
 	import { NegociationBackend, type Estimate } from '@/libs/negociationTypes'
 	import Icon from '@/components/Icon.svelte'
 	import type { Item, Memo, OutcomeHistory } from '@/libs/negociationTypes'
+	import SelectWithInput from '@/components/SelectWithInput.svelte'
+	import DatePicker from '@/components/DatePicker.svelte'
 
 	export let initialState: any
 	export let customers: CustomerFactory[]
@@ -19,6 +21,8 @@
 	export let currentCustomerId: number
 
 	let currentCustomer: CustomerFactory | undefined
+
+	$: console.log(initialState)
 
 	const tax = 0.1
 
@@ -265,6 +269,27 @@
 			estimateAmount
 		).toString()
 	}
+
+	const handleChooseItem = (estimateIndex: number, itemIndex: number) => {
+		const item = initialState.estimate[estimateIndex].items[itemIndex]
+
+		const correspondingItemInProducts = products.find(product => product.name === item.name)
+		item.price = correspondingItemInProducts?.price
+	}
+
+	const getEstimate = (estimateIndex: number) => {
+		console.log('hello')
+		let estimate = 0
+		// initialState.estimate[estimateIndex].estimateWithoutTax
+		const items = initialState.estimate[estimateIndex].items
+
+		items.map((item: any) => {
+			estimate +=
+				(isNaN(parseInt(item.price)) ? 0 : parseInt(item.price)) *
+				(isNaN(parseInt(item.quantity)) ? 0 : parseInt(item.quantity))
+		})
+		initialState.estimate[estimateIndex].estimateWithoutTax = estimate
+	}
 </script>
 
 <form
@@ -321,9 +346,20 @@
 			/>
 		</div>
 		<div class="form-row">
-			<DateInput
+			<!-- <DateInput
 				name={'negociation-start'}
 				label={'商談開始日'}
+				bind:value={initialState.startingDate}
+			/> -->
+
+			<!-- <div class="input-wrapper">
+				<label class="label" for=>商談開始日</label>
+				<input type="date" id="negotiation-start" bind:value={initialState.startingDate} />
+			</div> -->
+
+			<DatePicker
+				label={'商談開始日'}
+				name={'negotiation-start'}
 				bind:value={initialState.startingDate}
 			/>
 		</div>
@@ -366,7 +402,10 @@
 		</div>
 
 		<div class="form-row">
-			<DateInput name={'billing'} label={'納期'} bind:value={initialState.billingDate} />
+			<!-- <DateInput name={'billing'} label={'納期'} bind:value={initialState.billingDate} /> -->
+
+			<DatePicker label={'納期'} name={'billing-date'} bind:value={initialState.billingDate} />
+
 			<CustomCheckbox value={'未確定'} />
 		</div>
 
@@ -380,13 +419,15 @@
 		</div>
 
 		<div class="form-row">
-			<DateInput label={'成否日'} name={'outcome'} bind:value={initialState.outcome} />
+			<!-- <DateInput label={'成否日'} name={'outcome'} bind:value={initialState.outcome} /> -->
+
+			<DatePicker label={'成否日'} name={'outcome'} bind:value={initialState.outcome} />
 
 			<CustomCheckbox value={'未定'} />
 		</div>
 
 		<div class="form-row">
-			<DateInput
+			<!-- <DateInput
 				label={'次回連絡日時'}
 				name={'next-contact'}
 				bind:value={initialState.nextContactDate}
@@ -397,11 +438,20 @@
 				label={'時'}
 				options={hours}
 				bind:value={initialState.nextContactTime}
-			/>
+			/> -->
+
+			<!-- <DatePicker label={'次回連絡日時'} name={'next-contact'} bind:value={initialState.nextContactDate} /> -->
+
+			<div class="input-wrapper">
+				<label class="label" for="next-contact">次回連絡日時</label>
+				<input type="datetime-local" id="next-contact" bind:value={initialState.nextContactDate} />
+			</div>
 		</div>
 
 		<div class="form-row">
-			<DateInput label={'最終連絡'} name={'last-contact'} bind:value={initialState.lastContact} />
+			<!-- <DateInput label={'最終連絡'} name={'last-contact'} bind:value={initialState.lastContact} /> -->
+
+			<DatePicker label={'最終連絡'} name={'last-contact'} bind:value={initialState.lastContact} />
 		</div>
 	</fieldset>
 
@@ -466,13 +516,25 @@
 				{#each initialState.estimate as estimate, index}
 					<div class="container" on:change={() => handleInputInEstimate(index)}>
 						<div class="form-row">
-							<DateInput label={'発行日'} name={'issue-date'} bind:value={estimate.issueDate} />
+							<!-- <DateInput label={'発行日'} name={'issue-date'} bind:value={estimate.issueDate} /> -->
+
+							<DatePicker
+								label={'発行日'}
+								name={'issue-date'}
+								bind:value={initialState.issueDate}
+							/>
 						</div>
 						<div class="form-row">
-							<DateInput
+							<!-- <DateInput
 								label={'見積期日'}
 								name={'estimation-due-date'}
 								bind:value={estimate.dueDate}
+							/> -->
+
+							<DatePicker
+								label={'見積期日'}
+								name={'estimation-due-date'}
+								bind:value={initialState.dueDate}
 							/>
 						</div>
 						<div class="form-row">
@@ -507,18 +569,41 @@
 						</div>
 
 						{#each estimate.items as item, indexItem}
-							<div class="form-row">
-								<Input
+							<div class="form-row" on:change={() => getEstimate(index)}>
+								<!-- <Input
 									label={'商品'}
 									name={'product'}
 									inputSize={'input--md'}
 									bind:value={item.name}
+								/> -->
+								<!-- <SelectWithInput
+									label={'商品'}
+									name={'product'}
+									options={products}
+									bind:value={item.name}
+								/> -->
+								<label for="product-list">商品</label>
+								<input
+									placeholder="商品を選択"
+									list="product-list"
+									bind:value={item.name}
+									on:change={() => handleChooseItem(index, indexItem)}
 								/>
-								<button type="button" class="btn primary">商品選択</button>
+								<datalist id="product-list" class="datalist">
+									{#each products as product}
+										<option class="option" value={product.name}>{product.name}</option>
+									{/each}
+								</datalist>
+								<!-- <div class="input-wrapper">
+									<label for="price">単位値段</label>
+									<input id="price" value={item.price} />
+								</div> -->
+								<Input unit={'円'} name={'price'} inputSize={'input--sm'} bind:value={item.price} />
+								<!-- <button type="button" class="btn primary">商品選択</button> -->
 								<Input
 									unit={'台'}
 									name={'quantity'}
-									inputSize={'input--md'}
+									inputSize={'input--sm'}
 									bind:value={item.quantity}
 								/>
 								{#if estimate.items.length > 1}
@@ -565,7 +650,9 @@
 				{#each initialState.memo as memo, index}
 					<div class="container">
 						<div class="form-row">
-							<DateInput name={'memo-date'} bind:value={memo.date} />
+							<!-- <DateInput name={'memo-date'} bind:value={memo.date} /> -->
+
+							<DatePicker name={'memo-date'} bind:value={memo.date} />
 						</div>
 						<div class="form-row">
 							<textarea name={'important-memo'} id="important-memo" bind:value={memo.memo} />
@@ -664,7 +751,10 @@
 				<div class="column">
 					{#each initialState.outcomeHistory as memo, index}
 						<div class="wrapper">
-							<DateInput name={'history-day'} bind:value={memo.date} />
+							<!-- <DateInput name={'history-day'} bind:value={memo.date} /> -->
+
+							<DatePicker name={'history-date'} bind:value={memo.date} />
+
 							<Input
 								name={'history-memo'}
 								placeholder={'未入力'}

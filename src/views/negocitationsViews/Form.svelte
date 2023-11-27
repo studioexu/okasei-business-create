@@ -352,11 +352,6 @@
 				bind:value={initialState.startingDate}
 			/> -->
 
-			<!-- <div class="input-wrapper">
-				<label class="label" for=>商談開始日</label>
-				<input type="date" id="negotiation-start" bind:value={initialState.startingDate} />
-			</div> -->
-
 			<DatePicker
 				label={'商談開始日'}
 				name={'negotiation-start'}
@@ -402,8 +397,6 @@
 		</div>
 
 		<div class="form-row">
-			<!-- <DateInput name={'billing'} label={'納期'} bind:value={initialState.billingDate} /> -->
-
 			<DatePicker label={'納期'} name={'billing-date'} bind:value={initialState.billingDate} />
 
 			<CustomCheckbox value={'未確定'} />
@@ -419,8 +412,6 @@
 		</div>
 
 		<div class="form-row">
-			<!-- <DateInput label={'成否日'} name={'outcome'} bind:value={initialState.outcome} /> -->
-
 			<DatePicker label={'成否日'} name={'outcome'} bind:value={initialState.outcome} />
 
 			<CustomCheckbox value={'未定'} />
@@ -449,8 +440,6 @@
 		</div>
 
 		<div class="form-row">
-			<!-- <DateInput label={'最終連絡'} name={'last-contact'} bind:value={initialState.lastContact} /> -->
-
 			<DatePicker label={'最終連絡'} name={'last-contact'} bind:value={initialState.lastContact} />
 		</div>
 	</fieldset>
@@ -516,8 +505,6 @@
 				{#each initialState.estimate as estimate, index}
 					<div class="container" on:change={() => handleInputInEstimate(index)}>
 						<div class="form-row">
-							<!-- <DateInput label={'発行日'} name={'issue-date'} bind:value={estimate.issueDate} /> -->
-
 							<DatePicker
 								label={'発行日'}
 								name={'issue-date'}
@@ -525,12 +512,6 @@
 							/>
 						</div>
 						<div class="form-row">
-							<!-- <DateInput
-								label={'見積期日'}
-								name={'estimation-due-date'}
-								bind:value={estimate.dueDate}
-							/> -->
-
 							<DatePicker
 								label={'見積期日'}
 								name={'estimation-due-date'}
@@ -570,34 +551,21 @@
 
 						{#each estimate.items as item, indexItem}
 							<div class="form-row" on:change={() => getEstimate(index)}>
-								<!-- <Input
-									label={'商品'}
-									name={'product'}
-									inputSize={'input--md'}
-									bind:value={item.name}
-								/> -->
-								<!-- <SelectWithInput
-									label={'商品'}
-									name={'product'}
-									options={products}
-									bind:value={item.name}
-								/> -->
-								<label for="product-list">商品</label>
-								<input
-									placeholder="商品を選択"
-									list="product-list"
-									bind:value={item.name}
-									on:change={() => handleChooseItem(index, indexItem)}
-								/>
-								<datalist id="product-list" class="datalist">
-									{#each products as product}
-										<option class="option" value={product.name}>{product.name}</option>
-									{/each}
-								</datalist>
-								<!-- <div class="input-wrapper">
-									<label for="price">単位値段</label>
-									<input id="price" value={item.price} />
-								</div> -->
+								<div class="input-wrapper">
+									<label class="label" for="product-list">商品</label>
+									<input
+										placeholder="商品を選択"
+										list="product-list"
+										bind:value={item.name}
+										on:change={() => handleChooseItem(index, indexItem)}
+									/>
+									<datalist id="product-list" class="datalist">
+										{#each products as product}
+											<option class="option" value={product.name}>{product.name}</option>
+										{/each}
+									</datalist>
+								</div>
+
 								<Input unit={'円'} name={'price'} inputSize={'input--sm'} bind:value={item.price} />
 								<!-- <button type="button" class="btn primary">商品選択</button> -->
 								<Input
@@ -650,8 +618,6 @@
 				{#each initialState.memo as memo, index}
 					<div class="container">
 						<div class="form-row">
-							<!-- <DateInput name={'memo-date'} bind:value={memo.date} /> -->
-
 							<DatePicker name={'memo-date'} bind:value={memo.date} />
 						</div>
 						<div class="form-row">
@@ -751,8 +717,6 @@
 				<div class="column">
 					{#each initialState.outcomeHistory as memo, index}
 						<div class="wrapper">
-							<!-- <DateInput name={'history-day'} bind:value={memo.date} /> -->
-
 							<DatePicker name={'history-date'} bind:value={memo.date} />
 
 							<Input
@@ -816,6 +780,7 @@
 
 	textarea {
 		resize: none;
+		min-width: 30vw;
 		width: calc(100% - 24px);
 		height: calc(100px - 24px);
 		border-radius: 8px;
@@ -826,7 +791,7 @@
 	.container {
 		position: relative;
 		background-color: #f4f4f4;
-		padding: 10px 21px;
+		padding: 18px 21px;
 		border-radius: 8px;
 		width: fit-content;
 

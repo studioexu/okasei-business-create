@@ -224,11 +224,10 @@
 	const handleAutoFill = (): void => {
 		if (currentCustomer !== undefined) {
 			const address = currentCustomer[0].address
-			initialState.postalCode = currentCustomer[0].address.postalCode
-			initialState.prefecture = currentCustomer[0].address.prefecture
-			initialState.city = currentCustomer[0].address.city
-			initialState.address1 = currentCustomer[0].address.address1
-			initialState.address2 = currentCustomer[0].address.address2
+
+			Object.keys(address).map(key => {
+				initialState[key] = address[key]
+			})
 		}
 	}
 

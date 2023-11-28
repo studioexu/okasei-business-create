@@ -12,10 +12,6 @@
 </div>
 
 <style lang="scss">
-	@mixin responsiveInputWidth($width) {
-		width: calc((($width - 10 - 2) / 1366) * 100vw);
-	}
-
 	.input-wrapper {
 		position: relative;
 		display: flex;
@@ -40,19 +36,6 @@
 
 			&:focus {
 				border-color: var(--primary-color);
-			}
-
-			&--sm {
-				@include responsiveInputWidth((103));
-			}
-			&--md {
-				@include responsiveInputWidth((152));
-			}
-			&--lg {
-				@include responsiveInputWidth((359));
-			}
-			&--xl {
-				@include responsiveInputWidth((534));
 			}
 		}
 

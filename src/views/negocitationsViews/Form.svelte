@@ -1,15 +1,12 @@
 <script lang="ts">
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
-	import SelectDate from '@/components/SelectDate.svelte'
-	import DateInput from '@/components/DateInput.svelte'
 	import CustomCheckbox from '@/components/CustomCheckbox.svelte'
 	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 	import { negociations } from '@/stores/negociations'
 	import { NegociationBackend, type Estimate } from '@/libs/negociationTypes'
 	import Icon from '@/components/Icon.svelte'
 	import type { Item, Memo, OutcomeHistory } from '@/libs/negociationTypes'
-	import SelectWithInput from '@/components/SelectWithInput.svelte'
 	import DatePicker from '@/components/DatePicker.svelte'
 
 	export let initialState: any
@@ -21,8 +18,6 @@
 	export let currentCustomerId: number
 
 	let currentCustomer: CustomerFactory | undefined
-
-	$: console.log(initialState)
 
 	const tax = 0.1
 
@@ -174,12 +169,13 @@
 		return newArray
 	}
 
-	const getTotalBeds = () => {
+	const getTotalBeds = (): string => {
 		let total = 0
 
 		initialState.estimate.map((estimate: Estimate) => {
 			estimate.items.map(item => {
-				total += parseInt(item.quantity)
+				const itemQuantity = isNaN(parseInt(item.quantity)) ? 0 : parseInt(item.quantity)
+				total += itemQuantity
 			})
 		})
 
@@ -221,18 +217,13 @@
 		}
 	}
 
-	const hours: string[] = ['']
-
-	for (let i = 1; i <= 24; i++) {
-		hours.push(i.toString() + ':00')
-	}
-
 	/**
 	 * When the user click on the button, it will auto fill the billing address with the customer's address.
 	 *
 	 */
 	const handleAutoFill = (): void => {
 		if (currentCustomer !== undefined) {
+			const address = currentCustomer[0].address
 			initialState.postalCode = currentCustomer[0].address.postalCode
 			initialState.prefecture = currentCustomer[0].address.prefecture
 			initialState.city = currentCustomer[0].address.city
@@ -259,7 +250,7 @@
 	 * update the estimate tax amount in the initialState when there are changes.
 	 * @param index: corresponding to the index in the array of estimate.
 	 */
-	const handleInputInEstimate = (index: number): void => {
+	const handleEstimateChange = (index: number): void => {
 		let estimateAmount = isNaN(parseInt(initialState.estimate[index].estimateWithoutTax))
 			? 0
 			: parseInt(initialState.estimate[index].estimateWithoutTax)
@@ -270,17 +261,24 @@
 		).toString()
 	}
 
-	const handleChooseItem = (estimateIndex: number, itemIndex: number) => {
+	/**
+	 * When the user chooses an item, it will display the right price.
+	 * @param estimateIndex
+	 * @param itemIndex
+	 */
+	const handleChooseItem = (estimateIndex: number, itemIndex: number): void => {
 		const item = initialState.estimate[estimateIndex].items[itemIndex]
 
 		const correspondingItemInProducts = products.find(product => product.name === item.name)
 		item.price = correspondingItemInProducts?.price
 	}
 
-	const getEstimate = (estimateIndex: number) => {
-		console.log('hello')
+	/**
+	 * Calculate the estimate when add items.
+	 * @param estimateIndex
+	 */
+	const getEstimate = (estimateIndex: number): void => {
 		let estimate = 0
-		// initialState.estimate[estimateIndex].estimateWithoutTax
 		const items = initialState.estimate[estimateIndex].items
 
 		items.map((item: any) => {
@@ -346,12 +344,6 @@
 			/>
 		</div>
 		<div class="form-row">
-			<!-- <DateInput
-				name={'negociation-start'}
-				label={'商談開始日'}
-				bind:value={initialState.startingDate}
-			/> -->
-
 			<DatePicker
 				label={'商談開始日'}
 				name={'negotiation-start'}
@@ -418,24 +410,14 @@
 		</div>
 
 		<div class="form-row">
-			<!-- <DateInput
+			<DatePicker
 				label={'次回連絡日時'}
 				name={'next-contact'}
 				bind:value={initialState.nextContactDate}
 			/>
 
-			<SelectDate
-				name={'time'}
-				label={'時'}
-				options={hours}
-				bind:value={initialState.nextContactTime}
-			/> -->
-
-			<!-- <DatePicker label={'次回連絡日時'} name={'next-contact'} bind:value={initialState.nextContactDate} /> -->
-
 			<div class="input-wrapper">
-				<label class="label" for="next-contact">次回連絡日時</label>
-				<input type="datetime-local" id="next-contact" bind:value={initialState.nextContactDate} />
+				<input type="time" id="next-contact-time" bind:value={initialState.nextContactTime} />
 			</div>
 		</div>
 
@@ -489,8 +471,19 @@
 			/>
 		</div>
 		<div class="form-row">
-			<Input label={'距離'} name={'distance'} unit={'km'} bind:value={initialState.distanceKm} />
-			<Input name={'duration'} unit={'時間'} bind:value={initialState.distanceTime} />
+			<Input
+				inputSize={'input--sm'}
+				label={'距離'}
+				name={'distance'}
+				unit={'km'}
+				bind:value={initialState.distanceKm}
+			/>
+			<Input
+				inputSize={'input--sm'}
+				name={'duration'}
+				unit={'時間'}
+				bind:value={initialState.distanceTime}
+			/>
 		</div>
 	</fieldset>
 
@@ -501,9 +494,9 @@
 			<div>
 				<h3 class="label">見積もり金額</h3>
 			</div>
-			<div class="column">
+			<div class="container container--column">
 				{#each initialState.estimate as estimate, index}
-					<div class="container" on:change={() => handleInputInEstimate(index)}>
+					<div class="wrapper" on:change={() => handleEstimateChange(index)}>
 						<div class="form-row">
 							<DatePicker
 								label={'発行日'}
@@ -544,7 +537,7 @@
 									name="with-tax"
 									bind:checked={estimate.withTax}
 								/>
-								税付き
+								税有り
 								<span class="checkmark" />
 							</label>
 						</div>
@@ -567,7 +560,6 @@
 								</div>
 
 								<Input unit={'円'} name={'price'} inputSize={'input--sm'} bind:value={item.price} />
-								<!-- <button type="button" class="btn primary">商品選択</button> -->
 								<Input
 									unit={'台'}
 									name={'quantity'}
@@ -614,9 +606,9 @@
 		<legend class="legend hidden">重要メモ</legend>
 		<div class="form-row">
 			<h3 class="label">重要メモ</h3>
-			<div class="column">
+			<div class="container container--column">
 				{#each initialState.memo as memo, index}
-					<div class="container">
+					<div class="wrapper">
 						<div class="form-row">
 							<DatePicker name={'memo-date'} bind:value={memo.date} />
 						</div>
@@ -681,11 +673,13 @@
 		</div>
 	</fieldset>
 
-	<fieldset class=" fieldset checkboxes-container">
+	<fieldset class=" fieldset">
 		<legend class="legend hidden">チェックボックス</legend>
-		{#each initialState.checkboxes as element}
-			<CustomCheckbox value={element.title} bind:isChecked={element.isChecked} />
-		{/each}
+		<div class="container container--column">
+			{#each initialState.checkboxes as element}
+				<CustomCheckbox value={element.title} bind:isChecked={element.isChecked} />
+			{/each}
+		</div>
 	</fieldset>
 
 	<fieldset class="fieldset">
@@ -714,31 +708,33 @@
 		<legend class="legend">商談経緯</legend>
 		<div class="fieldset__main">
 			<div class="form-row">
-				<div class="column">
+				<div class="container container--column">
 					{#each initialState.outcomeHistory as memo, index}
 						<div class="wrapper">
-							<DatePicker name={'history-date'} bind:value={memo.date} />
+							<div class="form-row">
+								<DatePicker name={'history-date'} bind:value={memo.date} />
 
-							<Input
-								name={'history-memo'}
-								placeholder={'未入力'}
-								inputSize={'input--xl'}
-								bind:value={memo.memo}
-							/>
-							{#if maxHistoryIndex > 1}
-								<button
-									type="button"
-									class="primary btn delete"
-									on:click={() =>
-										handleDeleteItemFromArray(
-											index,
-											maxHistoryIndex--,
-											initialState.outcomeHistory
-										)}
-								>
-									削除
-								</button>
-							{/if}
+								<Input
+									name={'history-memo'}
+									placeholder={'未入力'}
+									inputSize={'input--xl'}
+									bind:value={memo.memo}
+								/>
+								{#if maxHistoryIndex > 1}
+									<button
+										type="button"
+										class="primary btn delete"
+										on:click={() =>
+											handleDeleteItemFromArray(
+												index,
+												maxHistoryIndex--,
+												initialState.outcomeHistory
+											)}
+									>
+										削除
+									</button>
+								{/if}
+							</div>
 						</div>
 					{/each}
 				</div>
@@ -754,6 +750,14 @@
 </form>
 
 <style lang="scss">
+	.form {
+		&__header {
+			color: var(--primary);
+			font-weight: 700;
+			margin-bottom: 18px;
+		}
+	}
+
 	.hidden {
 		display: none;
 	}
@@ -763,54 +767,7 @@
 		align-items: flex-start;
 		margin-bottom: 20px;
 		gap: 12px;
-	}
-
-	.form {
-		&__header {
-			color: var(--primary);
-			font-weight: 700;
-			margin-bottom: 18px;
-		}
-	}
-
-	.checkboxes-container {
-		display: flex;
-		flex-direction: column;
-	}
-
-	textarea {
-		resize: none;
-		min-width: 30vw;
-		width: calc(100% - 24px);
-		height: calc(100px - 24px);
-		border-radius: 8px;
-		padding: 12px;
-		outline: none;
-	}
-
-	.container {
-		position: relative;
-		background-color: #f4f4f4;
-		padding: 18px 21px;
-		border-radius: 8px;
-		width: fit-content;
-
-		.form-row {
-			justify-content: space-between;
-			flex-wrap: wrap;
-		}
-	}
-
-	.label {
-		font-size: 18px;
-		font-weight: 400;
-		width: 130px;
-	}
-
-	.column {
-		display: flex;
-		flex-direction: column;
-		gap: 18px;
+		flex-wrap: wrap;
 	}
 
 	.btn {
@@ -834,51 +791,6 @@
 
 	.fieldset {
 		margin-bottom: 20px;
-	}
-
-	.textarea-wrapper {
-		display: flex;
-		width: 100%;
-
-		.label {
-			width: 190px;
-		}
-	}
-
-	.wrapper {
-		padding: 16px 26px;
-		border-radius: 8px;
-		display: flex;
-		justify-content: space-between;
-		gap: 18px;
-		flex-wrap: wrap;
-		background-color: #f4f4f4;
-	}
-
-	.input-wrapper {
-		display: flex;
-		gap: 12px;
-
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
-	}
-	.select {
-		height: 31px;
-
-		&:focus {
-			border-color: var(--primary-color);
-		}
-
-		&:required:invalid {
-			color: #c4c4c4;
-		}
-
-		option[value=''][disabled] {
-			display: none;
-		}
 	}
 
 	.btn {
@@ -947,6 +859,93 @@
 					display: block;
 				}
 			}
+		}
+	}
+
+	.textarea-wrapper {
+		display: flex;
+		width: 100%;
+
+		.label {
+			width: 190px;
+		}
+
+		textarea {
+			resize: none;
+			min-width: 30vw;
+			width: calc(100% - 24px);
+			height: calc(100px - 24px);
+			border-radius: 8px;
+			padding: 12px;
+			outline: none;
+		}
+	}
+
+	.label {
+		font-size: 18px;
+		font-weight: 400;
+		width: 130px;
+	}
+
+	.wrapper {
+		padding: 18px 21px;
+		border-radius: 8px;
+		gap: 18px;
+		background-color: #f4f4f4;
+
+		textarea {
+			resize: none;
+			min-width: 30vw;
+			width: calc(100% - 24px);
+			height: calc(100px - 24px);
+			border-radius: 8px;
+			padding: 12px;
+			outline: none;
+		}
+	}
+
+	.container {
+		display: flex;
+		gap: 18px;
+
+		&--column {
+			flex-direction: column;
+		}
+	}
+
+	.input-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
+		width: fit-content;
+		gap: 10px;
+
+		input {
+			height: 31px;
+		}
+
+		&:first-child {
+			.label {
+				width: 130px;
+			}
+		}
+	}
+
+	.required-mark {
+		color: var(--error);
+	}
+
+	@keyframes buzz {
+		0% {
+			transform: translateX(0px);
+		}
+
+		50% {
+			transform: translateX(-10px);
+		}
+
+		100% {
+			transform: translateX(10px);
 		}
 	}
 </style>

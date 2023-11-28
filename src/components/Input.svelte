@@ -84,6 +84,7 @@
 
 			&--sm {
 				@include responsiveInputWidth((103));
+				width: 103px;
 			}
 			&--md {
 				@include responsiveInputWidth((152));

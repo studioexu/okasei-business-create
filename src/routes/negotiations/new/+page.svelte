@@ -36,6 +36,8 @@
 
 	let initialState: NegociationEntries = {
 		negociationId: 0,
+		custCd: 0,
+		customerName: '',
 		status: '',
 		startingDate: '',
 		condition: '',
@@ -43,7 +45,6 @@
 		preference: '',
 		billingDate: '',
 		scheduledDeposit: '',
-		paymentMethod: '',
 		outcome: '',
 		nextContactDate: '',
 		nextContactTime: '',
@@ -81,8 +82,6 @@
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
-		custCd: 0,
-		customerName: '',
 		numberOfBeds: '',
 		billingEstimation: ''
 	}
@@ -95,7 +94,6 @@
 		preference: false,
 		billingDate: false,
 		scheduledDeposit: false,
-		paymentMethod: false,
 		outcome: false,
 		nextContact: false,
 		postalCode: false,
@@ -154,11 +152,11 @@
 	<div class="section__main">
 		<Form
 			bind:initialState
-			customers={allCustomers}
 			bind:isSucceeded
 			bind:isShown
 			bind:confirmationPageIsShown
 			bind:currentCustomerId={initialState.custCd}
+			customers={allCustomers}
 			formType="create"
 		/>
 		{#if confirmationPageIsShown && !isShown}

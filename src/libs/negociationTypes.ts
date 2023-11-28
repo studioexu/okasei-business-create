@@ -29,6 +29,7 @@ interface Checkbox {
 
 export interface Negociation {
 	negociationId: number
+	custCd: number
 	customerName: string
 	status: string
 	firstTransaction: string
@@ -51,7 +52,6 @@ export interface Negociation {
 	memo: Memo[]
 	dm: string
 	video: string
-	custCd: number
 	inflow: string
 	preference: string
 	checkboxes: Checkbox[]
@@ -61,7 +61,6 @@ export interface Negociation {
 	outcomeHistory: OutcomeHistory[]
 	responsiblePerson: string
 	communication: string
-	paymentMethod: string
 	numberOfBeds: string
 	billingEstimation: string
 }
@@ -74,7 +73,6 @@ export interface NegociationEntries {
 	preference: string
 	billingDate: string
 	scheduledDeposit: string
-	paymentMethod: string
 	outcome: string
 	nextContactDate: string
 	nextContactTime: string
@@ -113,7 +111,6 @@ export class NegociationBackend {
 	condition: string
 	contact: string
 	billingDate: string
-	scheduledDeposit: string
 	outcome: string
 	nextContact: string
 	lastContact: string
@@ -140,7 +137,7 @@ export class NegociationBackend {
 	outcomeHistory: OutcomeHistory[]
 	responsiblePerson: string
 	communication: string
-	paymentMethod: string
+	scheduledDeposit: string
 	billingEstimation: string
 
 	constructor(data: NegociationEntries) {
@@ -151,7 +148,6 @@ export class NegociationBackend {
 		this.condition = data.condition
 		this.contact = data.inflow
 		this.billingDate = data.billingDate
-		this.scheduledDeposit = data.scheduledDeposit
 		this.outcome = data.outcome
 		this.nextContact = data.nextContactDate + ' ' + data.nextContactTime
 		this.lastContact = data.lastContact
@@ -178,7 +174,7 @@ export class NegociationBackend {
 		this.outcomeHistory = data.outcomeHistory
 		this.responsiblePerson = data.responsiblePerson
 		this.communication = data.communication
-		this.paymentMethod = data.paymentMethod
+		this.scheduledDeposit = data.scheduledDeposit
 		this.billingEstimation = data.billingEstimation
 	}
 }

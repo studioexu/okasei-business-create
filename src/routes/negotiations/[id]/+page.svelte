@@ -18,6 +18,8 @@
 	}
 
 	let initialState = {
+		custCd: negociation?.custCd,
+		negociationId: negociation?.negociationId,
 		status: negociation?.status,
 		startingDate: negociation?.firstTransaction,
 		condition: negociation?.condition,
@@ -25,7 +27,6 @@
 		preference: negociation?.preference,
 		billingDate: negociation?.billingDate,
 		scheduledDeposit: negociation?.scheduledDeposit,
-		paymentMethod: negociation?.paymentMethod,
 		outcome: negociation?.outcome,
 		nextContactDate:
 			negociation?.nextContact?.length !== undefined ? negociation?.nextContact.split(' ')[0] : '',
@@ -50,8 +51,7 @@
 		checkBottleneck: negociation?.checkBottleneck,
 		occasion: negociation?.occasion,
 		risk: negociation?.risk,
-		outcomeHistory: negociation?.outcomeHistory,
-		custCd: negociation?.custCd
+		outcomeHistory: negociation?.outcomeHistory
 	}
 </script>
 
@@ -79,27 +79,28 @@
 			padding-bottom: 48px;
 			margin-top: 20px;
 		}
-	}
-	.section__footer {
-		display: flex;
-		justify-content: space-between;
-		align-items: flex-end;
-		margin-top: 1rem;
-		padding-bottom: 2rem;
-		.registration {
-			display: flex;
-			gap: 2rem;
-			align-items: center;
-			&__data {
-				display: flex;
-				align-items: center;
-				gap: 1rem;
 
-				&__title {
-					font-size: 14px;
-				}
-				&__content {
-					font-size: 14px;
+		&__footer {
+			display: flex;
+			justify-content: space-between;
+			align-items: flex-end;
+			margin-top: 1rem;
+			padding-bottom: 2rem;
+			.registration {
+				display: flex;
+				gap: 2rem;
+				align-items: center;
+				&__data {
+					display: flex;
+					align-items: center;
+					gap: 1rem;
+
+					&__title {
+						font-size: 14px;
+					}
+					&__content {
+						font-size: 14px;
+					}
 				}
 			}
 		}

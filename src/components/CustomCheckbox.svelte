@@ -28,7 +28,7 @@
 		justify-content: flex-end;
 		flex-direction: row-reverse;
 		align-items: center;
-		width: 100%;
+		// width: 100%;
 		margin-bottom: 12px;
 		gap: 18px;
 		font-size: 18px;

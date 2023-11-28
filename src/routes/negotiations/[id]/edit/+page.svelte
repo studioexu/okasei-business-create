@@ -25,6 +25,7 @@
 	if (negociation !== undefined) {
 		initialState = {
 			negociationId: negociation?.negociationId,
+			custCd: negociation?.custCd,
 			customerName: negociation?.customerName,
 			status: negociation?.status,
 			startingDate: negociation?.firstTransaction,
@@ -33,7 +34,6 @@
 			preference: negociation?.preference,
 			billingDate: negociation?.billingDate,
 			scheduledDeposit: negociation?.scheduledDeposit,
-			paymentMethod: negociation?.paymentMethod,
 			outcome: negociation?.outcome,
 			nextContactDate:
 				negociation?.nextContact?.length !== undefined
@@ -63,13 +63,10 @@
 			occasion: negociation?.occasion,
 			risk: negociation?.risk,
 			outcomeHistory: negociation?.outcomeHistory,
-			custCd: negociation?.custCd,
 			numberOfBeds: negociation?.numberOfBeds,
 			billingEstimation: negociation.billingEstimation
 		}
 	}
-
-	$: console.log(negociation)
 
 	let isSucceeded: boolean = false
 	let isShown: boolean = false
@@ -108,9 +105,9 @@
 			bind:initialState
 			bind:isShown
 			bind:isSucceeded
-			{customers}
 			bind:currentCustomerId={initialState.custCd}
 			formType={'update'}
+			{customers}
 		/>
 	</div>
 

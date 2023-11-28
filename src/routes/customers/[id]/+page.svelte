@@ -9,8 +9,11 @@
 
 	export let data
 
-	let customer: CustomerFactory = new CustomerFactory(data.customer, 'customer')
+	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
 	let bedQuantity: number = 0
+
+	$: console.log(customer)
+	$: console.log(data)
 
 	/**
 	 * On click, we redirect the user to the edit page
@@ -55,6 +58,8 @@
 		pictures: customer.pictures,
 		miscellaneous: customer.miscellaneous
 	}
+
+	$: console.log(initialState)
 
 	customer.departmentDetail.forEach((bed: any) => (bedQuantity += parseInt(bed.bedQuantity)))
 </script>

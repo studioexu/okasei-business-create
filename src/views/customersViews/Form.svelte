@@ -57,15 +57,11 @@
 	}
 
 	const assignAddressInfo = (address: AddressAutoInfo) => {
-		if (address.prefecture.length !== 0) {
-			initialState.prefecture = address.prefecture
-		}
-		if (address.city.length !== 0) {
-			initialState.city = address.city
-		}
-		if (address.address1.length !== 0) {
-			initialState.address1 = address.address1
-		}
+		Object.keys(address).map(key => {
+			if (address[key as keyof AddressAutoInfo].length !== 0) {
+				initialState[key as keyof AddressAutoInfo] = address[key as keyof AddressAutoInfo]
+			}
+		})
 
 		initialState.address2 = ''
 	}
@@ -497,7 +493,6 @@
 				<h3 class="label">'病床数合計'</h3>
 				<span class="content">{bedQuantityTotal}</span>
 			</div>
-			<!-- </div> -->
 		</div>
 
 		<div class="form-row">
@@ -580,7 +575,6 @@
 				bind:value={initialState.numberOfFacilities}
 				bind:isValid={formIsValid.numberOfFacilities}
 			/>
-			<!-- Input -->
 		</div>
 
 		<div class="form-row">
@@ -593,7 +587,6 @@
 			/>
 		</div>
 	</fieldset>
-	<!-- .fieldset--info2 -->
 
 	<fieldset class="fieldset">
 		<legend class="legend">担当者</legend>

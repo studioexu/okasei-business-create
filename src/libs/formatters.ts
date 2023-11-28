@@ -1,5 +1,5 @@
 import { parsePhoneNumber } from 'libphonenumber-js'
-import { CustomerBackend } from '@/models/BackendCustomer'
+import { CustomerBackend, CustomerNewApi } from '@/models/BackendCustomer'
 import type { CustomerEntries } from './customerTypes'
 
 /**
@@ -65,6 +65,10 @@ export const getDateTime = (): string => {
 		second: 'numeric'
 	}
 
+	const currentTime = new Date()
+
+	console.log(currentTime)
+
 	const formatter = new Intl.DateTimeFormat([], options)
 
 	return formatter.format(new Date())
@@ -78,11 +82,55 @@ export const getDateTime = (): string => {
  * @param registration: registration information (date and the person)
  * @returns Object with the right format for the backend
  */
+// export const formatCustomer = (
+// 	action: 'update' | 'create' | 'delete',
+// 	customer: CustomerEntries | CustomerBackend,
+// 	registration?: any
+// ): CustomerBackend => {
+// 	const timeArray = getDateTime()
+
+// 	switch (action) {
+// 		case 'create':
+// 			const create = {
+// 				registDate: timeArray,
+// 				registBy: 1
+// 			}
+
+// 			return new CustomerBackend(customer, create)
+
+// 		case 'update':
+// 			const updated = {
+// 				updateBy: 1,
+// 				updateDate: timeArray
+// 			}
+// 			return new CustomerBackend(customer, registration, updated)
+
+// 		case 'delete':
+// 			const deleted = {
+// 				Delete_Date: timeArray,
+// 				Delete_By: 1
+// 			}
+
+// 			let customerToUpdate = customer as CustomerBackend
+// 			customerToUpdate.delete = deleted
+// 			customerToUpdate.is_active = false
+
+// 			return customerToUpdate
+
+// 		default:
+// 			if (customer instanceof CustomerBackend) {
+// 				return customer
+// 			} else {
+// 				return new CustomerBackend(customer, registration)
+// 			}
+// 	}
+// }
+
 export const formatCustomer = (
 	action: 'update' | 'create' | 'delete',
-	customer: CustomerEntries | CustomerBackend,
+	customer: CustomerEntries | CustomerNewApi,
 	registration?: any
-): CustomerBackend => {
+): CustomerNewApi => {
 	const timeArray = getDateTime()
 
 	switch (action) {
@@ -92,14 +140,14 @@ export const formatCustomer = (
 				registBy: 1
 			}
 
-			return new CustomerBackend(customer, create)
+			return new CustomerNewApi(customer, create)
 
 		case 'update':
 			const updated = {
 				updateBy: 1,
 				updateDate: timeArray
 			}
-			return new CustomerBackend(customer, registration, updated)
+			return new CustomerNewApi(customer, registration, updated)
 
 		case 'delete':
 			const deleted = {
@@ -107,17 +155,18 @@ export const formatCustomer = (
 				Delete_By: 1
 			}
 
-			let customerToUpdate = customer as CustomerBackend
-			customerToUpdate.delete = deleted
+			let customerToUpdate = customer as CustomerNewApi
+			customerToUpdate.delete_at = deleted.Delete_Date
+			customerToUpdate.delete_by = deleted.Delete_By
 			customerToUpdate.is_active = false
 
 			return customerToUpdate
 
 		default:
-			if (customer instanceof CustomerBackend) {
+			if (customer instanceof CustomerNewApi) {
 				return customer
 			} else {
-				return new CustomerBackend(customer, registration)
+				return new CustomerNewApi(customer, registration)
 			}
 	}
 }

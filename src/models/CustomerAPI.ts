@@ -3,6 +3,11 @@ interface Detail {
 	numBeds: number
 }
 
+export interface Picture {
+	file: File
+	memo: string
+}
+
 export class CustomerAPI {
 	private _id?: string
 	private _custCD?: string | undefined
@@ -19,6 +24,8 @@ export class CustomerAPI {
 		address2: string
 		phoneNumber: string
 		fax: string
+		mobile: string
+		email: string
 	}
 	private _numEmployees: string
 	private _url: string
@@ -46,6 +53,18 @@ export class CustomerAPI {
 		deleteBy: string
 	}
 
+	private _googleReview: boolean
+	private _reviews: string
+	private _business: string
+	private _closingMonth: string
+	private _pictures: Picture[]
+	private _personInCharge: string
+	private _personInChargeMemo: string
+	private _personInChargeRole: string
+	private _approver: string
+	private _contactTime: string
+	private _miscellaneous: string
+
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.id) {
 			this._id = data.id
@@ -65,7 +84,9 @@ export class CustomerAPI {
 			address1: data.address1,
 			address2: data.address2,
 			phoneNumber: data.phone,
-			fax: data.fax
+			fax: data.fax,
+			mobile: data.mobile,
+			email: data.email
 		}
 		this._numEmployees = data.number_of_employees
 		this._url = data.url
@@ -75,7 +96,7 @@ export class CustomerAPI {
 			establishedBy: data.establish_by
 		}
 
-		this._isActive = data.is_active ? data.is_active : true
+		this._isActive = data?.is_active
 
 		this._departments = {
 			detail: data.departments.detail,
@@ -86,13 +107,24 @@ export class CustomerAPI {
 			registBy: registration?.registBy || data.register_by
 		}
 		this._update = {
-			updateDate: update?.updateDate || data.update?.Update_Date,
-			updateBy: update?.updateBy || data.update?.Update_By
+			updateDate: update?.updateDate || data.update_at,
+			updateBy: update?.updateBy || data.update_by
 		}
-		this._delete = {
-			deleteDate: deleted?.deleteDate || data.delete?.Delete_Date,
-			deleteBy: deleted?.deleteBy || data.delete?.Delete_By
-		}
+		;(this._delete = {
+			deleteDate: deleted?.deleteDate || data.delete_at,
+			deleteBy: deleted?.deleteBy || data.delete_by
+		}),
+			(this._googleReview = data.googleReview),
+			(this._reviews = data.reviews),
+			(this._business = data.business),
+			(this._closingMonth = data.closingMonth),
+			(this._pictures = data.pictures),
+			(this._personInCharge = data.personInCharge),
+			(this._personInChargeMemo = data.personInChargeMemo),
+			(this._personInChargeRole = data.personInChargeRole),
+			(this._approver = data.approver),
+			(this._contactTime = data.contactTime),
+			(this._miscellaneous = data.miscellaneous)
 	}
 
 	public get id() {
@@ -148,7 +180,7 @@ export class CustomerAPI {
 	}
 
 	public get registDateTime() {
-		const dateTime = this._registration.registDate.split('T')
+		const dateTime = this._registration.registDate.split(' ')
 		const date = dateTime[0]
 		const time = dateTime[1]
 
@@ -177,6 +209,17 @@ export class CustomerAPI {
 		return {
 			date: date,
 			time: time
+		}
+	}
+
+	public get foundationDate() {
+		const foundationDate = this._foundation.establishDate.split('-')
+		const year = foundationDate[0]
+		const month = foundationDate[1]
+
+		return {
+			year: year,
+			month: month
 		}
 	}
 
@@ -209,5 +252,42 @@ export class CustomerAPI {
 
 	public set isActive(active: boolean) {
 		this._isActive = active
+	}
+
+	public get googleReview() {
+		return this._googleReview
+	}
+	public get reviews() {
+		return this._reviews
+	}
+	public get business() {
+		return this._business
+	}
+	public get closingMonth() {
+		return this._closingMonth
+	}
+	public get pictures() {
+		return this._pictures
+	}
+	public get personInCharge() {
+		return this._personInCharge
+	}
+	public get personInChargeMemo() {
+		return this._personInChargeMemo
+	}
+	public get personInChargeRole() {
+		return this._personInChargeRole
+	}
+
+	public get approver() {
+		return this._approver
+	}
+
+	public get contactTime() {
+		return this._contactTime
+	}
+
+	public get miscellaneous() {
+		return this._miscellaneous
 	}
 }

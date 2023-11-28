@@ -2,23 +2,26 @@
 </script>
 
 <script lang="ts">
-	//import views
 	import Pagination from '@/views/Pagination.svelte'
 	import Table from '@/views/customersViews/Table.svelte'
 	import SearchMenu from '@/views/customersViews/SearchMenu.svelte'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
-	import { deleteCustomer } from '@/libs/actions'
+	import { deleteCustomer, loadData } from '@/libs/actions'
 	import { currentApi } from '../../data/api'
 	import { goto } from '$app/navigation'
 	import { getDateTime } from '@/libs/formatters'
 
 	export let data
 
+	$: console.log(data)
+
 	let allCustomers: CustomerFactory[] = data.data.map(
-		customer => new CustomerFactory(customer, 'customer')
+		customer => new CustomerFactory(customer, 'newApi')
 	)
+
+	$: console.log(allCustomers)
 
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let filteredCustomers: CustomerFactory[]

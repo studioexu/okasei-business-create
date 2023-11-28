@@ -9,7 +9,7 @@
 	import { fade } from 'svelte/transition'
 	export let data
 
-	let customer = new CustomerFactory(data.customer, 'customer')
+	let customer = new CustomerFactory(data.customer, 'newApi')
 	let confirmationPageIsShown = false
 
 	let initialState: CustomerEntries = {

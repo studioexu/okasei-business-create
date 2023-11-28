@@ -139,6 +139,8 @@ export class CustomerNewApi {
 	address2: string
 	phone: string
 	fax: string
+	email: string
+	mobile: string
 	number_of_employee: string
 	url: string
 	number_of_branch: string
@@ -155,6 +157,17 @@ export class CustomerNewApi {
 	update_by: number
 	delete_at: string
 	delete_by: number
+	googleReview: boolean
+	reviews: string
+	closingMonth: string
+	business: string
+	pictures: Picture[]
+	personInCharge: string
+	personInChargeRole: string
+	personInChargeMemo: string
+	approver: string
+	contactTime: string
+	miscellaneous: string
 
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.id) {
@@ -173,6 +186,8 @@ export class CustomerNewApi {
 		this.address2 = data.address2
 		this.phone = data.phoneNumber
 		this.fax = data.fax
+		this.email = data.email
+		this.mobile = data.mobile
 		this.number_of_employee = data.numberOfEmployees
 		this.url = data.homepage
 		this.number_of_branch = data.numberOfFacilities
@@ -189,5 +204,16 @@ export class CustomerNewApi {
 		this.update_by = update?.updateBy || data.update_by
 		this.delete_at = deleted?.deleteDate || data.delete_at
 		this.delete_by = deleted?.deleteBy || data.delete_by
+		this.business = data.business
+		this.googleReview = data.googleReview
+		this.reviews = data.reviews
+		this.closingMonth = data.closingMonth
+		this.pictures = data.pictures
+		this.personInCharge = data.personInCharge
+		this.personInChargeMemo = data.personInChargeMemo
+		this.personInChargeRole = data.personInChargeRole
+		this.approver = data.approver
+		this.contactTime = data.contactTime
+		this.miscellaneous = data.miscellaneous
 	}
 }

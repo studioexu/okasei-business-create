@@ -1,13 +1,15 @@
+import type { Department } from '@/models/CustomerAPI'
+
 export interface Picture {
 	file: File
 	memo: string
 }
 
-export interface Department {
-	index: number
-	department: string
-	bedQuantity: string
-}
+// export interface Department {
+// 	index: number
+// 	department: string
+// 	bedQuantity: string
+// }
 
 export interface CustomerEntries {
 	custCd?: string

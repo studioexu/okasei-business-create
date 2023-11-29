@@ -3,6 +3,16 @@ interface Detail {
 	numBeds: number
 }
 
+export interface Department {
+	department: {
+		id: number
+		cd1: string
+		cd2: string
+		name: string
+	}
+	numberOfBeds: number
+}
+
 export interface Picture {
 	file: File
 	memo: string
@@ -37,9 +47,14 @@ export class CustomerAPI {
 	private _isActive: boolean
 
 	private _departments: {
-		detail: Detail[]
-		bedTotal: number
-	}
+		department: {
+			id: number
+			cd1: string
+			cd2: string
+			name: string
+		}
+		number_of_beds: number
+	}[]
 	private _registration: {
 		registDate: string
 		registBy: string
@@ -68,15 +83,17 @@ export class CustomerAPI {
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
 		if (data.id) {
 			this._id = data.id
+			this._custCD = data.id
 		}
 		if (data.cd) {
 			this._custCD = data.cd
+			this._id = data.cd
 		}
 		this._custBranchCD = data.branch_cd
 		this._custName = data.name
 		this._custKana = data.kana
 		this._instId = data.institution_cd
-		this._custType = data.type
+		this._custType = data.type === 'C' ? '法人' : '個人'
 		this._address = {
 			postalCode: data.postal_cd,
 			prefecture: data.ken,
@@ -98,10 +115,7 @@ export class CustomerAPI {
 
 		this._isActive = data?.is_active
 
-		this._departments = {
-			detail: data.departments.detail,
-			bedTotal: data.departments.bed_total
-		}
+		this._departments = data.departments
 		this._registration = {
 			registDate: registration?.registDate || data.register_at,
 			registBy: registration?.registBy || data.register_by
@@ -160,7 +174,19 @@ export class CustomerAPI {
 	}
 
 	public get departments() {
-		return this._departments
+		const newDepartments: Department[] = this._departments.map(department => {
+			return {
+				department: {
+					id: department.department.id,
+					cd1: department.department.cd1,
+					cd2: department.department.cd2,
+					name: department.department.name
+				},
+				numberOfBeds: department.number_of_beds
+			}
+		})
+
+		return newDepartments
 	}
 
 	public get isActive() {
@@ -180,9 +206,9 @@ export class CustomerAPI {
 	}
 
 	public get registDateTime() {
-		const dateTime = this._registration.registDate.split(' ')
+		const dateTime = this._registration.registDate.split('T')
 		const date = dateTime[0]
-		const time = dateTime[1]
+		const time = dateTime[1]?.split('Z')[0]
 
 		return {
 			date: date,
@@ -191,9 +217,9 @@ export class CustomerAPI {
 	}
 
 	public get deleteDateTime() {
-		const dateTime = this._delete.deleteDate.split(' ')
+		const dateTime = this._delete.deleteDate.split('T')
 		const date = dateTime[0]
-		const time = dateTime[1]
+		const time = dateTime[1]?.split('Z')[0]
 
 		return {
 			date: date,
@@ -202,9 +228,9 @@ export class CustomerAPI {
 	}
 
 	public get updateDateTime() {
-		const dateTime = this._update.updateDate.split(' ')
+		const dateTime = this._update.updateDate.split('T')
 		const date = dateTime[0]
-		const time = dateTime[1]
+		const time = dateTime[1]?.split('Z')[0]
 
 		return {
 			date: date,
@@ -239,16 +265,16 @@ export class CustomerAPI {
 		return this._custType
 	}
 
-	public get departmentDetail() {
-		const detail = this._departments.detail.map((dept: any) => {
-			return {
-				department: dept.department || dept.dept_ID,
-				quantity: dept.quantity || dept.num_beds
-			}
-		})
+	// public get departmentDetail() {
+	// 	const detail = this._departments.department.map((dept: any) => {
+	// 		return {
+	// 			department: dept.department || dept.dept_ID,
+	// 			quantity: dept.quantity || dept.num_beds
+	// 		}
+	// 	})
 
-		return detail
-	}
+	// 	return detail
+	// }
 
 	public set isActive(active: boolean) {
 		this._isActive = active

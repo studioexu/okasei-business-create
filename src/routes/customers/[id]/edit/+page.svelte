@@ -12,6 +12,8 @@
 	let customer = new CustomerFactory(data.customer, 'newApi')
 	let confirmationPageIsShown = false
 
+	console.log(customer)
+
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
 		branchNumber: customer.custBranchCD,
@@ -31,7 +33,7 @@
 		year: customer.foundationDate.year,
 		month: customer.foundationDate.month,
 		founder: customer.foundation.establishedBy,
-		departments: customer.departmentDetail,
+		departments: customer.departments,
 		numberOfEmployees: customer.numberOfEmployees,
 		homepage: customer.url,
 		numberOfFacilities: customer.numBranch,
@@ -50,6 +52,8 @@
 		registrationDate: customer.registration.registDate,
 		registeredBy: customer.registration.registBy
 	}
+
+	console.log(initialState)
 
 	let formIsValid: CustomerEntriesErrors = {
 		branchNumber: true,
@@ -105,7 +109,7 @@
 	 * @param formEntries: Object of entries
 	 * @returns boolean
 	 */
-	const checkIfFormIsValid = (formEntries: Object): boolean => {
+	const checkIfFormIsValid = (formEntries: CustomerEntries): boolean => {
 		let errorArray: boolean[] = []
 		let isValid = true
 		const customerKeys = Object.keys(formEntries)
@@ -118,6 +122,14 @@
 			formIsValid[name as keyof CustomerEntriesErrors] = inputIsValid(name, input)
 			errorArray.push(!inputIsValid(name, input))
 		}
+
+		// Object.keys(formEntries).map((key: CustomerEntries | CustomerEntriesErrors) => {
+		// 	formIsValid[key as keyof CustomerEntriesErrors] = inputIsValid(
+		// 		key,
+		// 		formEntries[key as keyof CustomerEntries]
+		// 	)
+		// 	errorArray.push(!inputIsValid(key, formEntries[key]))
+		// })
 
 		errorArray.forEach(error => {
 			if (error) {

@@ -1,3 +1,4 @@
+import { currentKey } from '@/data/api'
 import { formatCustomer } from './formatters'
 
 /**
@@ -7,10 +8,20 @@ import { formatCustomer } from './formatters'
  * @returns the data from the server
  */
 export const loadData = async (url: string) => {
-	return await fetch(url)
+	return await fetch(url, {
+		headers: {
+			Authorization: 'Token ' + currentKey,
+			'Content-Type': 'application/json'
+		},
+		method: 'GET'
+	})
 		.then(res => res.json())
 		.then(data => {
-			return data
+			console.log('log my data')
+
+			console.log(data.results)
+
+			return data.results
 		})
 		.catch(error => console.log(error))
 }
@@ -23,7 +34,10 @@ export const loadData = async (url: string) => {
 export const createCustomer = async (newCustomer: Object, url: string) => {
 	await fetch(url, {
 		method: 'POST',
-		headers: { 'Content-type': 'application/json;charset=UTF-8' },
+		headers: {
+			Authorization: 'Token ' + currentKey,
+			'Content-type': 'application/json;charset=UTF-8'
+		},
 		body: JSON.stringify(newCustomer)
 	})
 		.then(res => res.json())

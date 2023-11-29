@@ -14,6 +14,7 @@
 	import SelectWithInput from '@/components/SelectWithInput.svelte'
 	import UploadModal from '@/views/modals/UploadModal.svelte'
 	import ResultModal from '../modals/ResultModal.svelte'
+	import type { Department } from '@/models/CustomerAPI'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -138,25 +139,39 @@
 
 	// MANAGE DEPARTMENTS
 
-	interface DepartmentInput {
-		index: number
-		department: string
-		bedQuantity: string
-	}
+	// interface DepartmentInput {
+	// 	index: number
+	// 	department: string
+	// 	bedQuantity: string
+	// }
 
-	let departments: DepartmentInput[] = []
+	let departments: Department[] = []
 
 	// fill the departments array with the data if there is any
 	if (initialState.departments.length === 0) {
-		departments = [{ index: 0, department: '内科', bedQuantity: '0' }]
+		departments = [
+			{
+				department: {
+					id: 0,
+					cd1: '000',
+					cd2: '00',
+					name: '内科'
+				},
+				numberOfBeds: 0
+			}
+		]
 	} else {
 		initialState.departments.map((department, index) => {
 			departments = [
 				...departments,
 				{
-					index: index,
-					department: department.department,
-					bedQuantity: department.bedQuantity
+					department: {
+						id: department.department.id,
+						cd1: department.department.cd1,
+						cd2: department.department.cd2,
+						name: department.department.name
+					},
+					numberOfBeds: department.numberOfBeds
 				}
 			]
 			index++
@@ -466,11 +481,11 @@
 			<h3 class="label">診療科目</h3>
 			<div class="container">
 				{#each departments as department}
-					<div class="department-wrapper" id={department.index.toString()}>
-						<Select
+					<div class="department-wrapper" id={department.department.id.toString()}>
+						<SelectWithInput
 							options={['内科', '外科', '診療内科']}
 							name={'departments'}
-							bind:value={department.department}
+							bind:value={department.department.name}
 						/>
 						<Input
 							name={'bed-quatity'}
@@ -478,7 +493,7 @@
 							placeholder={'未入力'}
 							inputSize={'input--sm'}
 							functionOnBlur={checkBedQuantity}
-							bind:value={department.bedQuantity}
+							bind:value={department.numberOfBeds}
 						/>
 
 						{#if departments.length > 1}
@@ -636,7 +651,7 @@
 		</div>
 	</fieldset>
 
-	<fieldset class="fieldset">
+	<!-- <fieldset class="fieldset">
 		<legend class="legend">画像</legend>
 		<div class="form-row">
 			<div class="input-wrapper">
@@ -678,7 +693,7 @@
 				＋画像追加
 			</button>
 		</div>
-	</fieldset>
+	</fieldset> -->
 </form>
 
 <style lang="scss">

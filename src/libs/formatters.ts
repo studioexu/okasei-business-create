@@ -55,23 +55,18 @@ export const toCamelCase = (text: string): string => {
  * @returns string with the right date and time
  */
 export const getDateTime = (): string => {
-	let options: Intl.DateTimeFormatOptions = {
-		timeZone: 'Asia/Tokyo',
-		year: 'numeric',
-		month: 'numeric',
-		day: 'numeric',
-		hour: 'numeric',
-		minute: 'numeric',
-		second: 'numeric'
-	}
-
 	const currentTime = new Date()
+	const day = currentTime.getDate()
+	const month = currentTime.getMonth()
+	const year = currentTime.getFullYear()
+	const hour = currentTime.getHours()
+	const minute = currentTime.getMinutes()
+	const second = currentTime.getSeconds()
 
-	console.log(currentTime)
+	const formattedCurrentTime =
+		year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second + 'Z'
 
-	const formatter = new Intl.DateTimeFormat([], options)
-
-	return formatter.format(new Date())
+	return formattedCurrentTime
 }
 
 /**

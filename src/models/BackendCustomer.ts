@@ -1,3 +1,5 @@
+import type { Department } from './CustomerAPI'
+
 interface Detail {
 	dept_ID: number
 	num_beds: number
@@ -148,8 +150,13 @@ export class CustomerNewApi {
 	establish_by: string
 	is_active: boolean
 	departments: {
-		detail: Detail[]
-		bed_total: number
+		department: {
+			id: number
+			cd1: string
+			cd2: string
+			name: string
+		}
+		number_of_beds: number
 	}
 	register_at: string
 	register_by: number
@@ -194,10 +201,17 @@ export class CustomerNewApi {
 		this.establish_date = data.year
 		this.establish_by = data.founder
 		this.is_active = data.isActive
-		this.departments = {
-			detail: data.departments,
-			bed_total: data.bed_total
-		}
+		this.departments = data.departments.map((department: Department) => {
+			return {
+				department: {
+					id: department.department.id,
+					cd1: department.department.cd1,
+					cd2: department.department.cd2,
+					name: department.department.name
+				},
+				number_of_beds: department.numberOfBeds
+			}
+		})
 		this.register_at = registration?.registDate || data.register_at
 		this.register_by = registration?.registBy || data.register_by
 		this.update_at = update?.updateDate || data.update_at

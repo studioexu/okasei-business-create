@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
-	import type { CustomerEntries, Department } from '@/libs/customerTypes'
+	import type { CustomerEntries } from '@/libs/customerTypes'
+	import type { Department } from '@/models/CustomerAPI'
 
 	export let initialState: CustomerEntries
 
@@ -14,9 +15,7 @@
 	const caculateTotalOfBeds = (departments: Department[]): number => {
 		let sum: number = 0
 		departments.map((department: Department) => {
-			const numberOfBed = isNaN(parseInt(department.bedQuantity))
-				? 0
-				: parseInt(department.bedQuantity)
+			const numberOfBed = isNaN(department.numberOfBeds) ? 0 : department.numberOfBeds
 			sum += numberOfBed
 		})
 
@@ -122,11 +121,11 @@
 			<div class="container">
 				{#each initialState.departments as department}
 					<div class="bed-wrapper">
-						<h3 class="label">{department.department}</h3>
+						<h3 class="label">{department.department.name}</h3>
 						<div class="quantity">
 							<h3 class="quantity__label">病床数</h3>
 							<p class="quantity__content">
-								{department.bedQuantity ? department.bedQuantity : 0}
+								{department.numberOfBeds ? department.numberOfBeds : 0}
 							</p>
 						</div>
 					</div>
@@ -162,14 +161,14 @@
 		<div class="detail-wrapper">
 			<h3 class="label">{'参考書類など 画像データ'}</h3>
 			<div class="container container--horizontal">
-				{#each initialState.pictures as image}
+				<!-- {#each initialState.pictures as image}
 					<div class="card">
 						<div class="image-wrapper">
 							<img src={URL.createObjectURL(image.file)} alt="" />
 						</div>
 						<p class="label">{image.memo}</p>
 					</div>
-				{/each}
+				{/each} -->
 			</div>
 		</div>
 	</div>

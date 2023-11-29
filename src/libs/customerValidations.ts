@@ -122,16 +122,15 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return numberOFCharacterValidation(input, 20) || input === ''
 
 		case 'address1':
-			return numberOFCharacterValidation(input, 200) || input === ''
-
 		case 'address2':
-			return numberOFCharacterValidation(input, 200) || input === ''
+		case 'founder':
+		case 'homepage':
+			return numberOFCharacterValidation(input, 128) || input === ''
 
 		case 'phoneNumber':
-			return phoneNumberValidation(input)
-
 		case 'fax':
-			return input === '' || phoneNumberValidation(input)
+		case 'mobile':
+			return phoneNumberValidation(input)
 
 		case 'year':
 			return input === '' || checkIfYearIsValid(input)
@@ -139,20 +138,12 @@ export const inputIsValid = (name: string, input: string): boolean => {
 		case 'month':
 			return input === '' || checkIfMonthIsValid(input)
 
-		case 'founder':
-			return input === '' || numberOFCharacterValidation(input, 100)
-
 		case 'quantity':
 			return checkIfInputIsNumber(input)
 
 		case 'numberOfEmployees':
-			return input === '' || checkIfInputIsNumber(input)
-
 		case 'numberOfFacilities':
 			return input === '' || checkIfInputIsNumber(input)
-
-		case 'homepage':
-			return input === '' || numberOFCharacterValidation(input, 200)
 
 		default:
 			return true

@@ -41,7 +41,7 @@
 		year: customer.foundationDate.year,
 		month: customer.foundationDate.month,
 		founder: customer.foundation.establishedBy,
-		departments: customer.departmentDetail,
+		departments: customer.departments,
 		numberOfEmployees: customer.numberOfEmployees,
 		homepage: customer.url,
 		numberOfFacilities: customer.numBranch,
@@ -61,7 +61,9 @@
 
 	$: console.log(initialState)
 
-	customer.departmentDetail.forEach((bed: any) => (bedQuantity += parseInt(bed.bedQuantity)))
+	customer.departments.forEach(
+		(department: any) => (bedQuantity += parseInt(department.number_of_beds))
+	)
 </script>
 
 <section class="section section--confirmation">

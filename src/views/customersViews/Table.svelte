@@ -45,7 +45,7 @@
 {:else}
 	<div class="table-wrapper">
 		<table class="customer-list">
-			<thead class="table-header">
+			<!-- <thead class="table-header">
 				<tr class="row">
 					<th>顧客番号</th>
 					<th>施設名</th>
@@ -54,7 +54,7 @@
 					<th>編集</th>
 					<th>削除</th>
 				</tr>
-			</thead>
+			</thead> -->
 			<tbody>
 				{#each customersToDisplayOnPage as customer (customer.custCD)}
 					<tr

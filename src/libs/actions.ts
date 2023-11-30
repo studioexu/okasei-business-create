@@ -8,7 +8,7 @@ import { formatCustomer } from './formatters'
  * @returns the data from the server
  */
 export const loadData = async (url: string) => {
-	return await fetch(url, {
+	return await fetch(url + '/customer/list/customer', {
 		headers: {
 			Authorization: 'Token ' + currentKey,
 			'Content-Type': 'application/json'
@@ -17,9 +17,9 @@ export const loadData = async (url: string) => {
 	})
 		.then(res => res.json())
 		.then(data => {
-			console.log('log my data')
+			// console.log('log my data')
 
-			console.log(data.results)
+			// console.log(data)
 
 			return data.results
 		})
@@ -32,7 +32,9 @@ export const loadData = async (url: string) => {
  * @param customerEntry : Object corresponding to the inputs entered by the user.
  */
 export const createCustomer = async (newCustomer: Object, url: string) => {
-	await fetch(url, {
+	// console.log('new customer')
+	// console.log(newCustomer)
+	await fetch(url + '/customer/register', {
 		method: 'POST',
 		headers: {
 			Authorization: 'Token ' + currentKey,
@@ -93,4 +95,23 @@ export const deleteCustomer = (customerId: string, url: string) => {
 				})
 				.catch(err => console.log(err))
 		})
+}
+
+export const loadDepartments = async (url: string) => {
+	return await fetch(url + '/customer/list/department', {
+		headers: {
+			Authorization: 'Token ' + currentKey,
+			'Content-Type': 'application/json'
+		},
+		method: 'GET'
+	})
+		.then(res => res.json())
+		.then(data => {
+			console.log('log my departments')
+
+			console.log(data)
+
+			return data
+		})
+		.catch(error => console.log(error))
 }

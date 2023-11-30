@@ -12,9 +12,6 @@
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
 	let bedQuantity: number = 0
 
-	$: console.log(customer)
-	$: console.log(data)
-
 	/**
 	 * On click, we redirect the user to the edit page
 	 */
@@ -40,7 +37,8 @@
 		mobile: customer.address.mobile,
 		year: customer.foundationDate.year,
 		month: customer.foundationDate.month,
-		founder: customer.foundation.establishedBy,
+		foundationDate: customer.foundation.establishDate,
+		founder: customer.foundation.establishBy,
 		departments: customer.departments,
 		numberOfEmployees: customer.numberOfEmployees,
 		homepage: customer.url,

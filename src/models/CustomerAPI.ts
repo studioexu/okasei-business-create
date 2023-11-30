@@ -42,7 +42,7 @@ export class CustomerAPI {
 	private _numBranch: string
 	private _foundation: {
 		establishDate: string
-		establishedBy: string
+		establishBy: string
 	}
 	private _isActive: boolean
 
@@ -110,7 +110,7 @@ export class CustomerAPI {
 		this._numBranch = data.number_of_branch
 		this._foundation = {
 			establishDate: data.establish_date,
-			establishedBy: data.establish_by
+			establishBy: data.establish_by
 		}
 
 		this._isActive = data?.is_active

@@ -7,12 +7,19 @@
 	import { goto } from '$app/navigation'
 	import { inputIsValid } from '@/libs/customerValidations.js'
 	import { fade } from 'svelte/transition'
+	import { loadDepartments } from '@/libs/actions.js'
+	import { currentApi } from '@/data/api.js'
 	export let data
 
 	let customer = new CustomerFactory(data.customer, 'newApi')
 	let confirmationPageIsShown = false
 
 	console.log(customer)
+	let departmentsList = data.departmentsList
+
+	// const departmentsList = loadDepartments(currentApi)
+
+	console.log(departmentsList)
 
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
@@ -32,7 +39,8 @@
 		mobile: customer.address.mobile,
 		year: customer.foundationDate.year,
 		month: customer.foundationDate.month,
-		founder: customer.foundation.establishedBy,
+		foundationDate: customer.foundation.establishDate,
+		founder: customer.foundation.establishBy,
 		departments: customer.departments,
 		numberOfEmployees: customer.numberOfEmployees,
 		homepage: customer.url,
@@ -162,6 +170,7 @@
 		{/if}
 		<Form
 			bind:confirmationPageIsShown
+			bind:departmentsList
 			bind:initialState
 			formType={'update'}
 			bind:formIsValid

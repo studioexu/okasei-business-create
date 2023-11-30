@@ -30,6 +30,7 @@ export interface CustomerEntries {
 	mobile: string
 	year: string
 	month: string
+	foundationDate: string
 	founder: string
 	departments: Department[]
 	numberOfEmployees: string

@@ -15,6 +15,8 @@
 	import UploadModal from '@/views/modals/UploadModal.svelte'
 	import ResultModal from '../modals/ResultModal.svelte'
 	import type { Department } from '@/models/CustomerAPI'
+	import { loadDepartments } from '@/libs/actions'
+	import { currentApi } from '@/data/api'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -22,8 +24,11 @@
 	export let formIsValid: CustomerEntriesErrors
 	export let isShown: boolean = false
 	export let isSucceeded: boolean = false
+	export let departmentsList: { id: number; cd1: string; cd2: string; name: string }[]
 
 	let uploadModalIsShown = false
+
+	$: console.log(initialState)
 
 	// ADDRESS AUTO FILL
 
@@ -139,13 +144,18 @@
 
 	// MANAGE DEPARTMENTS
 
-	// interface DepartmentInput {
-	// 	index: number
-	// 	department: string
-	// 	bedQuantity: string
-	// }
+	interface DepartmentInput {
+		index: number
+		department: {
+			id: number
+			cd1: string
+			cd2: string
+			name: string
+		}
+		numberOfBeds: number
+	}
 
-	let departments: Department[] = []
+	let departments: DepartmentInput[] = []
 
 	// fill the departments array with the data if there is any
 	if (initialState.departments.length === 0) {
@@ -157,7 +167,8 @@
 					cd2: '00',
 					name: '内科'
 				},
-				numberOfBeds: 0
+				numberOfBeds: 0,
+				index: 0
 			}
 		]
 	} else {
@@ -171,7 +182,8 @@
 						cd2: department.department.cd2,
 						name: department.department.name
 					},
-					numberOfBeds: department.numberOfBeds
+					numberOfBeds: department.numberOfBeds,
+					index: index
 				}
 			]
 			index++
@@ -188,9 +200,14 @@
 		departments = [
 			...departments,
 			{
-				index: departments[departments.length - 1].index + 1,
-				department: '',
-				bedQuantity: '0'
+				department: {
+					id: 1,
+					cd1: '010',
+					cd2: '010',
+					name: '内科'
+				},
+				numberOfBeds: 0,
+				index: departments[departments.length - 1].index + 1
 			}
 		]
 	}
@@ -199,14 +216,13 @@
 	 * Delete one department form the departments array
 	 * @param e: event to get the right id
 	 */
-	const deleteDepartment = (e: any) => {
-		const itemToDelete = parseInt(e.target.closest('.department-wrapper').id)
-		departments = departments.filter(department => department.index !== itemToDelete)
+	const deleteDepartment = (index: number) => {
+		departments = departments.filter(department => department.index !== index)
 	}
 
-	const checkBedQuantity = (bedQuantity: string): string => {
-		if (isNaN(parseInt(bedQuantity))) {
-			bedQuantity = '0'
+	const checkBedQuantity = (bedQuantity: number): number => {
+		if (isNaN(bedQuantity) || bedQuantity < 0) {
+			bedQuantity = 0
 		}
 
 		return bedQuantity
@@ -216,19 +232,41 @@
 	 * We go through the array of bed input and calculate the number total of beds.
 	 * @param beds: array of bedInput
 	 */
-	const caculateTotalOfBeds = (departments: DepartmentInput[]): number => {
+	const caculateTotalOfBeds = (departments: Department[]): number => {
 		let sum: number = 0
-		departments.map((department: DepartmentInput) => {
-			const numberOfBed = isNaN(parseInt(department.bedQuantity))
-				? 0
-				: parseInt(department.bedQuantity)
+		departments.map((department: Department) => {
+			const numberOfBed = isNaN(department.numberOfBeds) ? 0 : department.numberOfBeds
 			sum += numberOfBed
 		})
 
 		return sum
 	}
 	$: bedQuantityTotal = caculateTotalOfBeds(departments)
-	$: initialState.departments = departments
+	$: initialState.departments = departments.map(department => {
+		return {
+			department: {
+				id: department.department.id,
+				cd1: department.department.cd1,
+				cd2: department.department.cd2,
+				name: department.department.name
+			},
+			numberOfBeds: department.numberOfBeds
+		}
+	})
+
+	const handleSelectDepartment = (e: any) => {
+		const departmentId = parseInt(e.target.value)
+		const departmentIndex = parseInt(e.target.closest('.department-wrapper').id.split('-')[1])
+
+		const seletedDepartment = departmentsList.find(department => department.id === departmentId)
+
+		if (seletedDepartment) {
+			departments[departmentIndex].department.id = seletedDepartment.id
+			departments[departmentIndex].department.cd1 = seletedDepartment.cd1
+			departments[departmentIndex].department.cd2 = seletedDepartment.cd2
+			departments[departmentIndex].department.name = seletedDepartment.name
+		}
+	}
 </script>
 
 {#if uploadModalIsShown}
@@ -441,7 +479,7 @@
 	<fieldset class="fieldset fieldset--foundation">
 		<legend class="legend">創立</legend>
 		<div class="form-row">
-			<SelectWithInput
+			<!-- <SelectWithInput
 				label={'設立年月日'}
 				name={'year'}
 				datas={years}
@@ -456,7 +494,19 @@
 				unit="月"
 				bind:value={initialState.month}
 				bind:isValid={formIsValid.month}
-			/>
+			/> -->
+
+			<div class="input-wrapper">
+				<label class="label" for="foundation-date">設立年月日</label>
+				<input
+					class="input"
+					type="date"
+					id="foundation-date"
+					name="foundation-date"
+					bind:value={initialState.foundationDate}
+				/>
+			</div>
+
 			<!-- DateSelector -->
 			<Input
 				label="設立者"
@@ -467,6 +517,7 @@
 				bind:value={initialState.founder}
 				bind:isValid={formIsValid.founder}
 			/>
+
 			<!-- Input -->
 		</div>
 		<!-- .form-row -->
@@ -480,24 +531,33 @@
 		<div class="form-row bed">
 			<h3 class="label">診療科目</h3>
 			<div class="container">
-				{#each departments as department}
-					<div class="department-wrapper" id={department.department.id.toString()}>
-						<SelectWithInput
-							options={['内科', '外科', '診療内科']}
-							name={'departments'}
-							bind:value={department.department.name}
-						/>
-						<Input
-							name={'bed-quatity'}
-							label={'病床数'}
-							placeholder={'未入力'}
-							inputSize={'input--sm'}
-							functionOnBlur={checkBedQuantity}
-							bind:value={department.numberOfBeds}
-						/>
+				{#each departments as department, index}
+					<div class="department-wrapper" id={'department-' + department.index.toString()}>
+						<div class="input-wrapper">
+							<input
+								list="departments"
+								bind:value={department.department.name}
+								on:input={handleSelectDepartment}
+							/>
+
+							<datalist id="departments">
+								{#each departmentsList as department}
+									<option value={department.id}>{department.name}</option>
+								{/each}
+							</datalist>
+						</div>
+
+						<div class="input-wrapper">
+							<label for="bed-quantity">病床数</label>
+							<input type="number" min="0" bind:value={department.numberOfBeds} />
+						</div>
 
 						{#if departments.length > 1}
-							<button type="button" class="btn secondary delete" on:click={deleteDepartment}>
+							<button
+								type="button"
+								class="btn secondary delete"
+								on:click={() => deleteDepartment(department.index)}
+							>
 								<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
 							</button>
 						{/if}
@@ -741,7 +801,6 @@
 		display: flex;
 		gap: 10px;
 		align-items: flex-start;
-		margin-bottom: 20px;
 
 		&:first-child {
 			.label {
@@ -847,5 +906,55 @@
 		display: flex;
 		align-items: center;
 		gap: 18px;
+	}
+
+	@mixin responsiveInputWidth($width) {
+		width: calc((($width - 10 - 2) / 1366) * 100vw);
+	}
+
+	.input-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
+		width: fit-content;
+		gap: 10px;
+
+		&:first-child {
+			.label {
+				width: 130px;
+			}
+		}
+
+		.input {
+			max-height: 31px;
+			&::placeholder {
+				color: rgb(206, 205, 205);
+			}
+
+			&:focus {
+				border-color: var(--primary-color);
+			}
+
+			&--sm {
+				@include responsiveInputWidth((103));
+			}
+			&--md {
+				@include responsiveInputWidth((152));
+			}
+			&--lg {
+				@include responsiveInputWidth((359));
+			}
+			&--xl {
+				@include responsiveInputWidth((534));
+			}
+		}
+
+		.font-error {
+			position: absolute;
+			right: 0;
+			bottom: -14px;
+			font-size: 10px;
+			opacity: 0;
+		}
 	}
 </style>

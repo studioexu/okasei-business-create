@@ -15,13 +15,13 @@
 
 	export let data
 
-	$: console.log(data)
+	// $: console.log(data)
 
 	let allCustomers: CustomerFactory[] = data.data.map(
 		customer => new CustomerFactory(customer, 'newApi')
 	)
 
-	$: console.log(allCustomers)
+	// $: console.log(allCustomers)
 
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let filteredCustomers: CustomerFactory[]

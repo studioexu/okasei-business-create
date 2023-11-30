@@ -1,5 +1,5 @@
 import { error } from '@sveltejs/kit'
-import { loadData, updateCustomer } from '@/libs/actions.js'
+import { loadData, updateCustomer, loadDepartments } from '@/libs/actions.js'
 import type { CustomerEntries } from '@/libs/customerTypes.js'
 import { formatCustomer } from '@/libs/formatters.js'
 import type { CustomerBackend, CustomerNewApi } from '@/models/BackendCustomer.js'
@@ -21,6 +21,8 @@ export const load = async ({ params }) => {
 		(customer: CustomerNewApi) => customer.id?.toString() === params.id.toString()
 	)
 
+	const departmentsList = loadDepartments(currentApi)
+
 	console.log('hello')
 
 	console.log(customer)
@@ -28,7 +30,8 @@ export const load = async ({ params }) => {
 	if (!customer) throw error(404)
 
 	return {
-		customer
+		customer,
+		departmentsList
 	}
 }
 

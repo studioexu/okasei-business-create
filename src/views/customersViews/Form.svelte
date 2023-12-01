@@ -28,7 +28,7 @@
 
 	let uploadModalIsShown = false
 
-	// $: console.log(initialState)
+	$: console.log(initialState)
 
 	// ADDRESS AUTO FILL
 
@@ -60,6 +60,8 @@
 				})
 				.catch(err => console.log(err))
 		}
+
+		assignAddressInfo(address)
 	}
 
 	const assignAddressInfo = (address: AddressAutoInfo) => {
@@ -72,7 +74,7 @@
 		initialState.address2 = ''
 	}
 
-	$: assignAddressInfo(address)
+	// $: assignAddressInfo(address)
 
 	/**
 	 * Triggered when the form is submit.
@@ -581,15 +583,21 @@
 		<legend class="legend">情報２</legend>
 
 		<div class="form-row">
-			<Input
+			<!-- <Input
 				label="従業員数"
 				name="number-of-employees"
 				unit="名"
 				errorMsg={'数字で入力して下さい'}
 				inputSize="input--sm"
-				bind:value={initialState.numberOfEmployees}
+				bind:value={initialState.numberOfEmployees.toString()}
 				bind:isValid={formIsValid.numberOfEmployees}
-			/>
+			/> -->
+
+			<div class="input-wrapper">
+				<label class="label" for="number-of-employees">従業員数</label>
+				<input type="number" class="input input--sm" bind:value={initialState.numberOfEmployees} />
+				<span class="unit">名</span>
+			</div>
 			<!-- Input -->
 		</div>
 
@@ -641,7 +649,7 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<!-- <Input
 				label="関連施設拠点数"
 				name="number-of-facilities"
 				unit="軒"
@@ -649,7 +657,13 @@
 				inputSize="input--sm"
 				bind:value={initialState.numberOfFacilities}
 				bind:isValid={formIsValid.numberOfFacilities}
-			/>
+			/> -->
+
+			<div class="input-wrapper">
+				<label class="label" for="number-of-employees">関連施設拠点数</label>
+				<input type="number" class="input input--sm" bind:value={initialState.numberOfFacilities} />
+				<span class="unit">軒</span>
+			</div>
 		</div>
 
 		<div class="form-row">
@@ -711,14 +725,14 @@
 		</div>
 	</fieldset>
 
-	<!-- <fieldset class="fieldset">
+	<fieldset class="fieldset">
 		<legend class="legend">画像</legend>
 		<div class="form-row">
 			<div class="input-wrapper">
 				<h3 class="label">参考書類など画像データ</h3>
 
 				<div class="container">
-					{#if initialState.pictures.length === 0}
+					{#if initialState.pictures === undefined || initialState.pictures.length === 0}
 						<div class="card">
 							<button class="image-empty" on:click={() => (uploadModalIsShown = true)}>
 								<span>+</span>
@@ -753,7 +767,7 @@
 				＋画像追加
 			</button>
 		</div>
-	</fieldset> -->
+	</fieldset>
 </form>
 
 <style lang="scss">

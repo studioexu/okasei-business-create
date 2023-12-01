@@ -14,12 +14,14 @@
 	let customer = new CustomerFactory(data.customer, 'newApi')
 	let confirmationPageIsShown = false
 
-	// console.log(customer)
+	console.log(customer)
 	let departmentsList = data.departmentsList
 
 	// const departmentsList = loadDepartments(currentApi)
 
 	// console.log(departmentsList)
+
+	console.log(customer.address.address2)
 
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
@@ -42,9 +44,9 @@
 		foundationDate: customer.foundation.establishDate,
 		founder: customer.foundation.establishBy,
 		departments: customer.departments,
-		numberOfEmployees: customer.numberOfEmployees,
+		numberOfEmployees: customer.numEmployees === undefined ? 0 : customer.numEmployees,
 		homepage: customer.url,
-		numberOfFacilities: customer.numBranch,
+		numberOfFacilities: customer.numBranch === undefined ? 0 : customer.numBranch,
 		isActive: customer.isActive,
 		googleReview: customer.googleReview,
 		reviews: customer.reviews,
@@ -56,12 +58,11 @@
 		approver: customer.approver,
 		contactTime: customer.contactTime,
 		pictures: customer.pictures,
-		miscellaneous: customer.miscellaneous,
-		registrationDate: customer.registration.registDate,
-		registeredBy: customer.registration.registBy
+		miscellaneous: customer.miscellaneous
 	}
 
-	// console.log(initialState)
+	console.log(customer.address.address2)
+	console.log(initialState)
 
 	let formIsValid: CustomerEntriesErrors = {
 		branchNumber: true,

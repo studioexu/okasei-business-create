@@ -33,9 +33,9 @@ export interface CustomerEntries {
 	foundationDate: string
 	founder: string
 	departments: Department[]
-	numberOfEmployees: string
+	numberOfEmployees: number
 	homepage: string
-	numberOfFacilities: string
+	numberOfFacilities: number
 	isActive: true
 	googleReview: false
 	reviews: string

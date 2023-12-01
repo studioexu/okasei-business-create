@@ -141,9 +141,9 @@ export class CustomerNewApi {
 	fax: string
 	establish_date: string
 	establish_by: string
-	number_of_employee: string
+	number_of_employee: number
 	url: string
-	number_of_branch: string
+	number_of_branch: number
 	departments: {
 		department: {
 			id: number

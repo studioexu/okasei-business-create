@@ -39,9 +39,9 @@ export class CustomerAPI {
 		mobile: string
 		email: string
 	}
-	private _numEmployees: string
+	private _numEmployees: number
 	private _url: string
-	private _numBranch: string
+	private _numBranch: number
 	private _foundation: {
 		establishDate: string
 		establishBy: string
@@ -107,7 +107,7 @@ export class CustomerAPI {
 			mobile: data.mobile,
 			email: data.email
 		}
-		this._numEmployees = data.number_of_employees
+		this._numEmployees = data.number_of_employee
 		this._url = data.url
 		this._numBranch = data.number_of_branch
 		this._foundation = {
@@ -171,7 +171,7 @@ export class CustomerAPI {
 		return this._instId
 	}
 
-	public get numEmployess() {
+	public get numEmployees() {
 		return this._numEmployees
 	}
 

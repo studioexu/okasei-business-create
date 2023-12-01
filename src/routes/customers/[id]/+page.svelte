@@ -6,6 +6,7 @@
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
+	import type { Department } from '@/models/CustomerAPI.js'
 
 	export let data
 
@@ -44,9 +45,9 @@
 		foundationDate: customer.foundation.establishDate,
 		founder: customer.foundation.establishBy,
 		departments: customer.departments,
-		numberOfEmployees: customer.numberOfEmployees,
+		numberOfEmployees: customer.numEmployees === undefined ? 0 : customer.numEmployees,
 		homepage: customer.url,
-		numberOfFacilities: customer.numBranch,
+		numberOfFacilities: customer.numBranch === undefined ? 0 : customer.numBranch,
 		isActive: customer.isActive,
 		googleReview: customer.googleReview,
 		reviews: customer.reviews,
@@ -63,9 +64,7 @@
 
 	$: console.log(initialState)
 
-	customer.departments.forEach(
-		(department: any) => (bedQuantity += parseInt(department.number_of_beds))
-	)
+	customer.departments.forEach((department: Department) => (bedQuantity += department.numberOfBeds))
 </script>
 
 <section class="section section--confirmation">

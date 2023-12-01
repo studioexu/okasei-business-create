@@ -8,6 +8,8 @@
 
 	let bedQuantity: number = 0
 
+	$: console.log(initialState.numberOfEmployees)
+
 	/**
 	 * We go through the array of department input and calculate the number total of beds.
 	 * @param departments: array of Department
@@ -79,7 +81,7 @@
 	<div class="form-row">
 		<DetailWrapper
 			areaClass="number-of-employees"
-			content={initialState.numberOfEmployees}
+			content={initialState.numberOfEmployees.toString()}
 			label={'従業員数'}
 			unit={'名'}
 		/>
@@ -87,7 +89,7 @@
 	<div class="form-row">
 		<DetailWrapper
 			areaClass="number-of-facilities"
-			content={initialState.numberOfFacilities}
+			content={initialState.numberOfFacilities.toString()}
 			label={'関連施設拠点数'}
 			unit={'軒'}
 		/>
@@ -161,14 +163,16 @@
 		<div class="detail-wrapper">
 			<h3 class="label">{'参考書類など 画像データ'}</h3>
 			<div class="container container--horizontal">
-				<!-- {#each initialState.pictures as image}
-					<div class="card">
-						<div class="image-wrapper">
-							<img src={URL.createObjectURL(image.file)} alt="" />
+				{#if initialState.pictures !== undefined}
+					{#each initialState.pictures as image}
+						<div class="card">
+							<div class="image-wrapper">
+								<img src={URL.createObjectURL(image.file)} alt="" />
+							</div>
+							<p class="label">{image.memo}</p>
 						</div>
-						<p class="label">{image.memo}</p>
-					</div>
-				{/each} -->
+					{/each}
+				{/if}
 			</div>
 		</div>
 	</div>

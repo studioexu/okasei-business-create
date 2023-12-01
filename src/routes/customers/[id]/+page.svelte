@@ -9,6 +9,10 @@
 
 	export let data
 
+	console.log('customer raw info')
+
+	console.log(data.customer)
+
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
 	let bedQuantity: number = 0
 

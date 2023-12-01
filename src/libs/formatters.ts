@@ -54,14 +54,22 @@ export const toCamelCase = (text: string): string => {
  * Get the time and date
  * @returns string with the right date and time
  */
-export const getDateTime = (): string => {
-	const currentTime = new Date()
-	const day = currentTime.getDate()
-	const month = currentTime.getMonth()
-	const year = currentTime.getFullYear()
-	const hour = currentTime.getHours()
-	const minute = currentTime.getMinutes()
-	const second = currentTime.getSeconds()
+export const getDateTime = (time?: string): string => {
+	let currentTime: Date
+	if (time) {
+		currentTime = new Date(time)
+	} else {
+		currentTime = new Date()
+	}
+	const day = currentTime.getDate() < 10 ? '0' + currentTime.getDate() : currentTime.getDate()
+	const month = currentTime.getMonth() < 10 ? '0' + currentTime.getMonth() : currentTime.getMonth()
+	const year =
+		currentTime.getFullYear() < 10 ? '0' + currentTime.getFullYear() : currentTime.getFullYear()
+	const hour = currentTime.getHours() < 10 ? '0' + currentTime.getHours() : currentTime.getHours()
+	const minute =
+		currentTime.getMinutes() < 10 ? '0' + currentTime.getMinutes() : currentTime.getMinutes()
+	const second =
+		currentTime.getSeconds() < 10 ? '0' + currentTime.getSeconds() : currentTime.getSeconds()
 
 	const formattedCurrentTime =
 		year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second + 'Z'

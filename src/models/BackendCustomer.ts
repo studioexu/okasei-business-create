@@ -194,14 +194,9 @@ export class CustomerNewApi {
 		this.number_of_employee = data.numberOfEmployees
 		this.url = data.homepage
 		this.number_of_branch = data.numberOfFacilities
-		this.departments = data.departments.forEach((department: Department) => {
+		this.departments = data.departments.map((department: Department) => {
 			return {
-				department: {
-					id: department.department.id,
-					cd1: department.department.cd1,
-					cd2: department.department.cd2,
-					name: department.department.name
-				},
+				department_id: department.department.id,
 				number_of_beds: department.numberOfBeds
 			}
 		})

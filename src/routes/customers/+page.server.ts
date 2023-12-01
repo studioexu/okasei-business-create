@@ -5,8 +5,6 @@ import { currentApi } from '@/data/api.js'
 export const load = async () => {
 	const data: any[] = await loadData(currentApi)
 
-	console.log(data)
-
 	if (!data) throw error(404)
 
 	return { data }

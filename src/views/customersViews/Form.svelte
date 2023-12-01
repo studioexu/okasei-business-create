@@ -28,7 +28,7 @@
 
 	let uploadModalIsShown = false
 
-	$: console.log(initialState)
+	// $: console.log(initialState)
 
 	// ADDRESS AUTO FILL
 
@@ -162,9 +162,9 @@
 		departments = [
 			{
 				department: {
-					id: 0,
-					cd1: '000',
-					cd2: '00',
+					id: 1,
+					cd1: '010',
+					cd2: '01',
 					name: '内科'
 				},
 				numberOfBeds: 0,

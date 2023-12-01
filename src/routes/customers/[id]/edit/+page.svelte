@@ -14,12 +14,12 @@
 	let customer = new CustomerFactory(data.customer, 'newApi')
 	let confirmationPageIsShown = false
 
-	console.log(customer)
+	// console.log(customer)
 	let departmentsList = data.departmentsList
 
 	// const departmentsList = loadDepartments(currentApi)
 
-	console.log(departmentsList)
+	// console.log(departmentsList)
 
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
@@ -61,7 +61,7 @@
 		registeredBy: customer.registration.registBy
 	}
 
-	console.log(initialState)
+	// console.log(initialState)
 
 	let formIsValid: CustomerEntriesErrors = {
 		branchNumber: true,
@@ -98,6 +98,15 @@
 		pictures: true,
 		miscellaneous: true
 	}
+
+	$: dpt = initialState.departments.map(department => {
+		return {
+			department_id: department.department.id,
+			number_of_beds: department.numberOfBeds
+		}
+	})
+
+	$: console.log(dpt)
 
 	let isSucceeded: boolean = false
 	let isShown: boolean = false

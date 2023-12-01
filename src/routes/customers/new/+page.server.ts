@@ -18,20 +18,14 @@ export const load = async ({ params }) => {
 
 export const actions = {
 	create: debounce(async ({ request }) => {
-		console.log('hello')
-
 		const data = await request.formData()
 		const initialStateString = data.get('initialState')
 		let initialState: CustomerEntries
 
 		if (typeof initialStateString === 'string') {
 			initialState = JSON.parse(initialStateString)
-			// console.log(initialState)
 
 			let newCustomer: CustomerNewApi = formatCustomer('create', initialState)
-			console.log('create')
-
-			console.log(newCustomer)
 
 			createCustomer(newCustomer, currentApi)
 		}

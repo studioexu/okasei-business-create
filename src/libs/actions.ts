@@ -58,12 +58,21 @@ export const createCustomer = async (newCustomer: Object, url: string) => {
  * @param customerId : string, corresponding to the id of the customer we want to update.
  */
 export const updateCustomer = (updatedCustomer: Object, url: string, customerId: string) => {
-	fetch(url + customerId, {
+	console.log(updatedCustomer)
+
+	fetch(url + '/customer/update/' + customerId, {
 		method: 'PUT',
-		headers: { 'Content-type': 'application/json;charset=UTF-8' },
+		headers: {
+			Authorization: 'Token ' + currentKey,
+			'Content-type': 'application/json;charset=UTF-8'
+		},
 		body: JSON.stringify(updatedCustomer)
 	})
-		.then(() => console.log('Customer successfully updated'))
+		.then(res => res.json())
+		.then(data => {
+			console.log('Customer successfully updated')
+			console.log(data)
+		})
 		.catch(err => console.log(err))
 }
 
@@ -107,10 +116,6 @@ export const loadDepartments = async (url: string) => {
 	})
 		.then(res => res.json())
 		.then(data => {
-			console.log('log my departments')
-
-			console.log(data)
-
 			return data
 		})
 		.catch(error => console.log(error))

@@ -1,3 +1,5 @@
+import { getDateTime } from '@/libs/formatters'
+
 interface Detail {
 	deptId: number
 	numBeds: number
@@ -121,11 +123,11 @@ export class CustomerAPI {
 			registBy: registration?.registBy || data.register_by
 		}
 		this._update = {
-			updateDate: update?.updateDate || data.update_at,
+			updateDate: update?.updateDate || getDateTime(data.update_at),
 			updateBy: update?.updateBy || data.update_by
 		}
 		;(this._delete = {
-			deleteDate: deleted?.deleteDate || data.delete_at,
+			deleteDate: deleted?.deleteDate || getDateTime(data.delete_at),
 			deleteBy: deleted?.deleteBy || data.delete_by
 		}),
 			(this._googleReview = data.googleReview),

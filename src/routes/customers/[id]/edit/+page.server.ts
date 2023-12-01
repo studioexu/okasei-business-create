@@ -23,10 +23,6 @@ export const load = async ({ params }) => {
 
 	const departmentsList = loadDepartments(currentApi)
 
-	console.log('hello')
-
-	console.log(customer)
-
 	if (!customer) throw error(404)
 
 	return {

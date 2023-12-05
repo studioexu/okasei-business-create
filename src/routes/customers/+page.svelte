@@ -2,6 +2,12 @@
 </script>
 
 <script lang="ts">
+	import { currentKey } from '../../data/api'
+
+	console.log('currentKey')
+
+	console.log(currentKey)
+
 	import Pagination from '@/views/Pagination.svelte'
 	import Table from '@/views/customersViews/Table.svelte'
 	import SearchMenu from '@/views/customersViews/SearchMenu.svelte'

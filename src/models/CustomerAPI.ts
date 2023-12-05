@@ -1,17 +1,16 @@
-import { getDateTime } from '@/libs/formatters'
-
-interface Detail {
-	deptId: number
-	numBeds: number
-}
-
-export interface Department {
+export interface DepartmentBackend {
 	department: {
 		id: number
 		cd1: string
 		cd2: string
 		name: string
 	}
+	number_of_beds: number
+}
+
+export interface Department {
+	departmentId: number
+	departmentName: string
 	numberOfBeds: number
 }
 
@@ -48,15 +47,7 @@ export class CustomerAPI {
 	}
 	private _isActive: boolean
 
-	private _departments: {
-		department: {
-			id: number
-			cd1: string
-			cd2: string
-			name: string
-		}
-		number_of_beds: number
-	}[]
+	private _departments: Department[]
 	private _registration: {
 		registDate: string
 		registBy: string
@@ -117,7 +108,13 @@ export class CustomerAPI {
 
 		this._isActive = data?.is_active
 
-		this._departments = data.departments
+		this._departments = data.departments.map((department: DepartmentBackend) => {
+			return {
+				departmentId: department.department.id,
+				departmentName: department.department.name,
+				numberOfBeds: department.number_of_beds
+			}
+		})
 		this._registration = {
 			registDate: registration?.registDate || data.register_at,
 			registBy: registration?.registBy || data.register_by
@@ -176,19 +173,20 @@ export class CustomerAPI {
 	}
 
 	public get departments() {
-		const newDepartments: Department[] = this._departments.map(department => {
-			return {
-				department: {
-					id: department.department.id,
-					cd1: department.department.cd1,
-					cd2: department.department.cd2,
-					name: department.department.name
-				},
-				numberOfBeds: department.number_of_beds
-			}
-		})
+		// const newDepartments: Department[] = this._departments.map(department => {
+		// 	return {
+		// 		department: {
+		// 			id: department.department.id,
+		// 			cd1: department.department.cd1,
+		// 			cd2: department.department.cd2,
+		// 			name: department.department.name
+		// 		},
+		// 		numberOfBeds: department.number_of_beds
+		// 	}
+		// })
 
-		return newDepartments
+		// return newDepartments
+		return this._departments
 	}
 
 	public get isActive() {

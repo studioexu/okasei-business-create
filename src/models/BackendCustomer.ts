@@ -145,13 +145,8 @@ export class CustomerNewApi {
 	url: string
 	number_of_branch: number
 	departments: {
-		department: {
-			id: number
-			cd1: string
-			cd2: string
-			name: string
-		}
-		number_of_beds: number
+		departmentId: number
+		numberOfBeds: string
 	}[]
 	id?: string
 	register_at: string
@@ -196,7 +191,7 @@ export class CustomerNewApi {
 		this.number_of_branch = data.numberOfFacilities
 		this.departments = data.departments.map((department: Department) => {
 			return {
-				department_id: department.department.id,
+				department_id: department.departmentId,
 				number_of_beds: department.numberOfBeds
 			}
 		})

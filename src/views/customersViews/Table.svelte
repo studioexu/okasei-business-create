@@ -5,8 +5,6 @@
 	import { flip } from 'svelte/animate'
 	import { quintOut } from 'svelte/easing'
 	import Icon from '@/components/Icon.svelte'
-	import { deleteCustomer } from '@/libs/actions'
-	import { currentApi } from '@/data/api'
 
 	export let currentUser: string = ''
 	export let customersToDisplayOnPage: CustomerFactory[]
@@ -16,6 +14,19 @@
 
 	$: customersToDisplayOnPage
 	$: currentUser
+
+	const dataToDisplay = customersToDisplayOnPage.map(customer => {
+		return {
+			customerNumber: customer.custCD,
+			customerName: customer.customerName,
+			address: customer.address.prefecture + customer.address.city,
+			updateDate: !customer.isActive
+				? '削除日' + customer.deleteDateTime.date
+				: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
+				? '更新日' + customer.updateDateTime.date
+				: '登録日' + customer.registDateTime.date
+		}
+	})
 
 	/**
 	 * When clicked on the row, the user is redirected to the profile of the customer.
@@ -34,8 +45,6 @@
 	const handleDeleteItem = (e: any) => {
 		isShown = true
 		currentUser = e.target.closest('.row').id
-
-		// deleteCustomer(parseInt(currentUser), currentApi)
 	}
 
 	const handleEditItem = (e: any) => {
@@ -133,8 +142,8 @@
 		}
 
 		.row {
-			position: relative;
 			cursor: pointer;
+			position: relative;
 			background-color: #fff;
 			border-bottom: var(--primary-color) 1px solid;
 

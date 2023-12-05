@@ -8,21 +8,15 @@
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
-	import { deleteCustomer, loadData } from '@/libs/actions'
-	import { currentApi } from '../../data/api'
 	import { goto } from '$app/navigation'
 	import { getDateTime } from '@/libs/formatters'
 	import { enhance } from '$app/forms'
 
 	export let data
 
-	// $: console.log(data)
-
 	let allCustomers: CustomerFactory[] = data.data.map(
 		customer => new CustomerFactory(customer, 'newApi')
 	)
-
-	// $: console.log(allCustomers)
 
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let filteredCustomers: CustomerFactory[]

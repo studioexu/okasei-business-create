@@ -5,12 +5,6 @@ export interface Picture {
 	memo: string
 }
 
-// export interface Department {
-// 	index: number
-// 	department: string
-// 	bedQuantity: string
-// }
-
 export interface CustomerEntries {
 	custCd?: string
 	id?: string

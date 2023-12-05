@@ -101,7 +101,7 @@ export const checkIfInputIsNumber = (input: string | number): boolean => {
  * @param input : string, is the input entered by the user
  * @returns boolean
  */
-export const inputIsValid = (name: string, input: string): boolean => {
+export const inputIsValid = (name: string, input: any): boolean => {
 	switch (name) {
 		case 'branchNumber':
 			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 4)

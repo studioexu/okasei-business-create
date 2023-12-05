@@ -6,15 +6,13 @@
 
 	export let initialState: CustomerEntries
 
-	let bedQuantity: number = 0
-
-	$: console.log(initialState.numberOfEmployees)
+	let bedTotal: number = 0
 
 	/**
 	 * We go through the array of department input and calculate the number total of beds.
 	 * @param departments: array of Department
 	 */
-	const caculateTotalOfBeds = (departments: Department[]): number => {
+	const getTotalOfBeds = (departments: Department[]): number => {
 		let sum: number = 0
 		departments.map((department: Department) => {
 			const numberOfBed = isNaN(department.numberOfBeds) ? 0 : department.numberOfBeds
@@ -24,7 +22,7 @@
 		return sum
 	}
 
-	$: bedQuantity = caculateTotalOfBeds(initialState.departments)
+	$: bedTotal = getTotalOfBeds(initialState.departments)
 </script>
 
 <div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
@@ -123,7 +121,7 @@
 			<div class="container">
 				{#each initialState.departments as department}
 					<div class="bed-wrapper">
-						<h3 class="label">{department.department.name}</h3>
+						<h3 class="label">{department.departmentName}</h3>
 						<div class="quantity">
 							<h3 class="quantity__label">病床数</h3>
 							<p class="quantity__content">
@@ -135,7 +133,7 @@
 
 				<div class="total">
 					<h3 class="total__label">病床数合計</h3>
-					<p class="total__content">{bedQuantity}</p>
+					<p class="total__content">{bedTotal}</p>
 				</div>
 			</div>
 		</div>

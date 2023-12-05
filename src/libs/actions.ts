@@ -20,7 +20,6 @@ export const loadData = async (url: string) => {
 	})
 		.then(res => res.json())
 		.then(data => {
-			// console.log('log my data')
 			return data.results
 		})
 		.catch(error => console.log(error))
@@ -32,8 +31,6 @@ export const loadData = async (url: string) => {
  * @param customerEntry : Object corresponding to the inputs entered by the user.
  */
 export const createCustomer = async (newCustomer: Object, url: string) => {
-	// console.log('new customer')
-	// console.log(newCustomer)
 	await fetch(url + '/customer/register', {
 		method: 'POST',
 		headers: {
@@ -58,8 +55,6 @@ export const createCustomer = async (newCustomer: Object, url: string) => {
  * @param customerId : string, corresponding to the id of the customer we want to update.
  */
 export const updateCustomer = (updatedCustomer: Object, url: string, customerId: string) => {
-	console.log(updatedCustomer)
-
 	fetch(url + '/customer/update/' + customerId, {
 		method: 'PUT',
 		headers: {
@@ -83,40 +78,6 @@ export const updateCustomer = (updatedCustomer: Object, url: string, customerId:
  * @param customerId : string, corresponding to the customer's id we want to delete
  * @returns the new data
  */
-// export const deleteCustomer = (customerId: string, url: string) => {
-// 	console.log('delete please')
-
-// 	fetch(url + '/customer/list/customer' + customerId, {
-// 		method: 'GET',
-// 		headers: {
-// 			Authorization: 'Token ' + currentKey,
-// 			'Content-type': 'application/json;charset=UTF-8'
-// 		}
-// 	})
-// 		.then(res => res.json())
-// 		.then(customer => {
-// 			console.log('customer to delete')
-
-// 			console.log(customer)
-
-// 			const customerToDelete = formatCustomer('delete', customer)
-
-// 			fetch(url + '/customer/update/' + customerId, {
-// 				method: 'PUT',
-// 				headers: {
-// 					Authorization: 'Token ' + currentKey,
-// 					'Content-type': 'application/json;charset=UTF-8'
-// 				},
-// 				body: JSON.stringify(customerToDelete)
-// 			})
-// 				.then(res => res.json())
-// 				.then(data => {
-// 					console.log('Customer successfully deleted')
-// 					console.log(data)
-// 				})
-// 				.catch(err => console.log(err))
-// 		})
-// }
 export const deleteCustomer = (id: number, url: string) => {
 	fetch(url + '/customer/inactivate/' + id, {
 		method: 'PATCH',

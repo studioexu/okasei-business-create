@@ -7,16 +7,13 @@
 	} from '@/libs/customerTypes'
 
 	import { enhance } from '$app/forms'
-	import { prefectures, months, years } from '@/data/data'
+	import { prefectures, months } from '@/data/data'
 	import Icon from '@/components/Icon.svelte'
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
 	import SelectWithInput from '@/components/SelectWithInput.svelte'
 	import UploadModal from '@/views/modals/UploadModal.svelte'
 	import ResultModal from '../modals/ResultModal.svelte'
-	import type { Department } from '@/models/CustomerAPI'
-	import { loadDepartments } from '@/libs/actions'
-	import { currentApi } from '@/data/api'
 	import NumberInput from '@/components/NumberInput.svelte'
 
 	export let formType: string
@@ -31,17 +28,16 @@
 
 	// ADDRESS AUTO FILL
 
-	let address: AddressAutoInfo = {
-		prefecture: '',
-		city: '',
-		address1: ''
-	}
-
 	/**
 	 * Fetch the address corresponding to the postal code.
 	 * @param e
 	 */
 	const handlePostalCodeSearchSubmit = async (e: any) => {
+		let address: { prefecture: string; city: string; address1: string } = {
+			prefecture: '',
+			city: '',
+			address1: ''
+		}
 		e.preventDefault()
 		if (formIsValid.postalCode) {
 			const api = 'https://zipcloud.ibsnet.co.jp/api/search?zipcode='
@@ -72,9 +68,6 @@
 
 		initialState.address2 = ''
 	}
-
-	// $: assignAddressInfo(address)
-
 	/**
 	 * Triggered when the form is submit.
 	 * If the form is still on the entry page, then, it will preventDefault, and displayed the entry verification page.
@@ -147,12 +140,8 @@
 
 	interface DepartmentInput {
 		index: number
-		department: {
-			id: number
-			cd1: string
-			cd2: string
-			name: string
-		}
+		id: number
+		name: string
 		numberOfBeds: number
 	}
 
@@ -162,12 +151,8 @@
 	if (initialState.departments.length === 0) {
 		departments = [
 			{
-				department: {
-					id: 1,
-					cd1: '010',
-					cd2: '01',
-					name: '内科'
-				},
+				id: 1,
+				name: '内科',
 				numberOfBeds: 0,
 				index: 0
 			}
@@ -177,12 +162,8 @@
 			departments = [
 				...departments,
 				{
-					department: {
-						id: department.department.id,
-						cd1: department.department.cd1,
-						cd2: department.department.cd2,
-						name: department.department.name
-					},
+					id: department.departmentId,
+					name: department.departmentName,
 					numberOfBeds: department.numberOfBeds,
 					index: index
 				}
@@ -201,12 +182,8 @@
 		departments = [
 			...departments,
 			{
-				department: {
-					id: 1,
-					cd1: '010',
-					cd2: '010',
-					name: '内科'
-				},
+				id: 1,
+				name: '内科',
 				numberOfBeds: 0,
 				index: departments[departments.length - 1].index + 1
 			}
@@ -221,51 +198,39 @@
 		departments = departments.filter(department => department.index !== index)
 	}
 
-	const checkBedQuantity = (bedQuantity: number): number => {
-		if (isNaN(bedQuantity) || bedQuantity < 0) {
-			bedQuantity = 0
-		}
-
-		return bedQuantity
-	}
-
 	/**
 	 * We go through the array of bed input and calculate the number total of beds.
 	 * @param beds: array of bedInput
 	 */
-	const caculateTotalOfBeds = (departments: Department[]): number => {
+	const getTotalOfBeds = (departments: DepartmentInput[]): number => {
 		let sum: number = 0
-		departments.map((department: Department) => {
+		departments.map((department: DepartmentInput) => {
 			const numberOfBed = isNaN(department.numberOfBeds) ? 0 : department.numberOfBeds
 			sum += numberOfBed
 		})
 
 		return sum
 	}
-	$: bedQuantityTotal = caculateTotalOfBeds(departments)
+
+	$: bedTotal = getTotalOfBeds(departments)
 	$: initialState.departments = departments.map(department => {
 		return {
-			department: {
-				id: department.department.id,
-				cd1: department.department.cd1,
-				cd2: department.department.cd2,
-				name: department.department.name
-			},
+			departmentId: department.id,
+			departmentName: department.name,
 			numberOfBeds: department.numberOfBeds
 		}
 	})
 
+	////////************** to improve*/
 	const handleSelectDepartment = (e: any) => {
 		const departmentId = parseInt(e.target.value)
 		const departmentIndex = parseInt(e.target.closest('.department-wrapper').id.split('-')[1])
 
-		const seletedDepartment = departmentsList.find(department => department.id === departmentId)
+		const selectedDepartment = departmentsList.find(department => department.id === departmentId)
 
-		if (seletedDepartment) {
-			departments[departmentIndex].department.id = seletedDepartment.id
-			departments[departmentIndex].department.cd1 = seletedDepartment.cd1
-			departments[departmentIndex].department.cd2 = seletedDepartment.cd2
-			departments[departmentIndex].department.name = seletedDepartment.name
+		if (selectedDepartment) {
+			departments[departmentIndex].id = selectedDepartment.id
+			departments[departmentIndex].name = selectedDepartment.name
 		}
 	}
 </script>
@@ -485,23 +450,6 @@
 	<fieldset class="fieldset fieldset--foundation">
 		<legend class="legend">創立</legend>
 		<div class="form-row">
-			<!-- <SelectWithInput
-				label={'設立年月日'}
-				name={'year'}
-				datas={years}
-				unit="年"
-				bind:value={initialState.year}
-				bind:isValid={formIsValid.year}
-			/>
-
-			<Select
-				options={months}
-				name={'months'}
-				unit="月"
-				bind:value={initialState.month}
-				bind:isValid={formIsValid.month}
-			/> -->
-
 			<div class="input-wrapper">
 				<label class="label" for="foundation-date">設立年月日</label>
 				<input
@@ -513,7 +461,6 @@
 				/>
 			</div>
 
-			<!-- DateSelector -->
 			<Input
 				label="設立者"
 				name="founder"
@@ -532,17 +479,16 @@
 
 	<fieldset class="fieldset fieldset--bed">
 		<legend class="legend">病床設定</legend>
-		<!-- <DepartmentSection bind:departments={initialState.departments} /> -->
 
 		<div class="form-row bed">
 			<h3 class="label">診療科目</h3>
 			<div class="container">
-				{#each departments as department, index}
-					<div class="department-wrapper" id={'department-' + department.index.toString()}>
+				{#each departments as selectedDepartment, index}
+					<div class="department-wrapper" id={'department-' + selectedDepartment.index.toString()}>
 						<div class="input-wrapper">
 							<input
 								list="departments"
-								bind:value={department.department.name}
+								bind:value={selectedDepartment.name}
 								on:input={handleSelectDepartment}
 							/>
 
@@ -551,18 +497,24 @@
 									<option value={department.id}>{department.name}</option>
 								{/each}
 							</datalist>
+
+							<select id="departments">
+								{#each departmentsList as department}
+									<option value={department.id}>{department.name}</option>
+								{/each}
+							</select>
 						</div>
 
 						<div class="input-wrapper">
 							<label for="bed-quantity">病床数</label>
-							<input type="number" min="0" bind:value={department.numberOfBeds} />
+							<input type="number" min="0" bind:value={selectedDepartment.numberOfBeds} />
 						</div>
 
 						{#if departments.length > 1}
 							<button
 								type="button"
 								class="btn secondary delete"
-								on:click={() => deleteDepartment(department.index)}
+								on:click={() => deleteDepartment(selectedDepartment.index)}
 							>
 								<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
 							</button>
@@ -572,7 +524,7 @@
 			</div>
 			<div class="bed-total">
 				<h3 class="label">'病床数合計'</h3>
-				<span class="content">{bedQuantityTotal}</span>
+				<span class="content">{bedTotal}</span>
 			</div>
 		</div>
 
@@ -587,28 +539,6 @@
 		<legend class="legend">情報２</legend>
 
 		<div class="form-row">
-			<!-- <Input
-				label="従業員数"
-				name="number-of-employees"
-				unit="名"
-				errorMsg={'数字で入力して下さい'}
-				inputSize="input--sm"
-				bind:value={initialState.numberOfEmployees.toString()}
-				bind:isValid={formIsValid.numberOfEmployees}
-			/> -->
-
-			<!-- <div class="input-wrapper {formIsValid.numberOfEmployees ? '' : 'error'}">
-				<label class="label" for="number-of-employees">従業員数</label>
-				<input
-					required
-					type="number"
-					class="input input--sm"
-					bind:value={initialState.numberOfEmployees}
-				/>
-				<span class="unit">名</span>
-				<span class="font-error">入力してください。</span>
-			</div> -->
-
 			<NumberInput
 				name={'number-of-employees'}
 				label={'従業員数'}
@@ -668,16 +598,6 @@
 		</div>
 
 		<div class="form-row">
-			<!-- <Input
-				label="関連施設拠点数"
-				name="number-of-facilities"
-				unit="軒"
-				errorMsg={'数字で入力して下さい'}
-				inputSize="input--sm"
-				bind:value={initialState.numberOfFacilities}
-				bind:isValid={formIsValid.numberOfFacilities}
-			/> -->
-
 			<NumberInput
 				name={'number-of-branched'}
 				label={'関連施設拠点数'}

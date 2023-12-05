@@ -125,8 +125,8 @@ export const deleteCustomer = (id: number, url: string) => {
 		headers: {
 			Authorization: 'Token ' + currentKey,
 			'Content-Type': 'application/json',
-			'Content-Length': '0'
-			// 'Access-Control-Allow-Origin': 'http://localhost:8000'
+			'Content-Length': '0',
+			'Access-Control-Allow-Origin': 'http://localhost:8000/customers'
 		}
 	})
 	// .then(res => res.json())

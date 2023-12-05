@@ -9,6 +9,10 @@
 
 	$: filteredCustomers
 	$: currentPage
+	$: custName = filterInputs[0].value
+	$: instId = filterInputs[1].value
+	$: postalCode = filterInputs[2].value
+	$: phoneNumber = filterInputs[3].value
 
 	const filterInputs = [
 		{
@@ -76,11 +80,21 @@
 	function handleSearch(e?: any) {
 		let filteredData: CustomerFactory[] = data
 
-		filterInputs.map(filter => {
-			if (filter.value !== '') {
-				filteredData = filterData(filteredData, filter.name, filter.value)
-			}
-		})
+		if (instId !== '') {
+			filteredData = filterData(filteredData, 'customer-number', instId)
+		}
+
+		if (phoneNumber !== '') {
+			filteredData = filterData(filteredData, 'phone-number', phoneNumber)
+		}
+
+		if (postalCode !== '') {
+			filteredData = filterData(filteredData, 'postal-code', postalCode)
+		}
+
+		if (custName !== '') {
+			filteredData = filterData(filteredData, 'facility-name', custName)
+		}
 		currentPage = 0
 		filteredCustomers = filteredData
 		customersToDisplay = deletedCustomersAreShown

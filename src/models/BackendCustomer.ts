@@ -1,5 +1,3 @@
-import type { Department } from './CustomerAPI'
-
 interface Detail {
 	dept_ID: number
 	num_beds: number
@@ -127,6 +125,8 @@ export class CustomerBackend {
 }
 
 export class CustomerNewApi {
+	id?: string
+	cd?: string
 	branch_cd: string
 	name: string
 	kana: string
@@ -139,39 +139,28 @@ export class CustomerNewApi {
 	address2: string
 	phone: string
 	fax: string
+	number_of_employee: string
+	url: string
+	number_of_branch: string
 	establish_date: string
 	establish_by: string
-	number_of_employee: number
-	url: string
-	number_of_branch: number
+	is_active: boolean
 	departments: {
-		departmentId: number
-		numberOfBeds: string
-	}[]
-	id?: string
+		detail: Detail[]
+		bed_total: number
+	}
 	register_at: string
 	register_by: number
 	update_at: string
 	update_by: number
 	delete_at: string
 	delete_by: number
-	is_active: boolean
-
-	// email: string
-	// mobile: string
-	// googleReview: boolean
-	// reviews: string
-	// closingMonth: string
-	// business: string
-	// pictures: Picture[]
-	// personInCharge: string
-	// personInChargeRole: string
-	// personInChargeMemo: string
-	// approver: string
-	// contactTime: string
-	// miscellaneous: string
 
 	constructor(data: any, registration?: any, update?: any, deleted?: any) {
+		if (data.id) {
+			this.id = data.id
+			this.cd = data.custCd === '' || data.custCd === undefined ? '1' : data.custCd
+		}
 		this.branch_cd = data.branchNumber
 		this.name = data.customerName
 		this.kana = data.kana
@@ -184,19 +173,15 @@ export class CustomerNewApi {
 		this.address2 = data.address2
 		this.phone = data.phoneNumber
 		this.fax = data.fax
-		this.establish_date = data.foundationDate
-		this.establish_by = data.founder
 		this.number_of_employee = data.numberOfEmployees
 		this.url = data.homepage
 		this.number_of_branch = data.numberOfFacilities
-		this.departments = data.departments.map((department: Department) => {
-			return {
-				department_id: department.departmentId,
-				number_of_beds: department.numberOfBeds
-			}
-		})
-		if (data.id) {
-			this.id = data.id
+		this.establish_date = data.year
+		this.establish_by = data.founder
+		this.is_active = data.isActive
+		this.departments = {
+			detail: data.departments,
+			bed_total: data.bed_total
 		}
 		this.register_at = registration?.registDate || data.register_at
 		this.register_by = registration?.registBy || data.register_by
@@ -204,20 +189,5 @@ export class CustomerNewApi {
 		this.update_by = update?.updateBy || data.update_by
 		this.delete_at = deleted?.deleteDate || data.delete_at
 		this.delete_by = deleted?.deleteBy || data.delete_by
-		this.is_active = data.isActive
-
-		// this.email = data.email
-		// this.mobile = data.mobile
-		// this.business = data.business
-		// this.googleReview = data.googleReview
-		// this.reviews = data.reviews
-		// this.closingMonth = data.closingMonth
-		// this.pictures = data.pictures
-		// this.personInCharge = data.personInCharge
-		// this.personInChargeMemo = data.personInChargeMemo
-		// this.personInChargeRole = data.personInChargeRole
-		// this.approver = data.approver
-		// this.contactTime = data.contactTime
-		// this.miscellaneous = data.miscellaneous
 	}
 }

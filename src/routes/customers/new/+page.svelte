@@ -9,10 +9,6 @@
 	import { inputIsValid } from '@/libs/customerValidations'
 	import { fade } from 'svelte/transition'
 
-	export let data
-
-	const departmentsList = data.departmentsList
-
 	let confirmationPageIsShown = false
 	let isSucceeded: boolean = false
 	let isShown: boolean = false
@@ -47,12 +43,11 @@
 		mobile: '',
 		year: '',
 		month: '',
-		foundationDate: '',
 		founder: '',
 		departments: [],
-		numberOfEmployees: 0,
+		numberOfEmployees: '',
 		homepage: '',
-		numberOfFacilities: 0,
+		numberOfFacilities: '',
 		isActive: true,
 		googleReview: false,
 		reviews: '',
@@ -157,7 +152,6 @@
 			bind:formIsValid
 			bind:isShown
 			bind:isSucceeded
-			{departmentsList}
 		/>
 	</div>
 

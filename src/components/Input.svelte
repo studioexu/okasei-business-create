@@ -67,6 +67,12 @@
 		width: fit-content;
 		gap: 10px;
 
+		&:first-child {
+			.label {
+				width: 130px;
+			}
+		}
+
 		.input {
 			&::placeholder {
 				color: rgb(206, 205, 205);

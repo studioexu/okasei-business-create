@@ -2,13 +2,13 @@ import { error } from '@sveltejs/kit'
 import { loadData, deleteCustomer } from '@/libs/actions.js'
 import { currentApi } from '@/data/api.js'
 
-export const load = async () => {
-	const data: any[] = await loadData(currentApi)
+// export const load = async () => {
+// 	const data: any[] = await loadData(currentApi)
 
-	if (!data) throw error(404)
+// 	if (!data) throw error(404)
 
-	return { data }
-}
+// 	return { data }
+// }
 
 export const actions = {
 	delete: async ({ request }) => {

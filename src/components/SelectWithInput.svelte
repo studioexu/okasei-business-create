@@ -68,14 +68,7 @@
 		position: relative;
 		align-self: center;
 
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
-
 		.label {
-			width: max-content;
 			height: 32px;
 			display: flex;
 			align-items: center;

@@ -1,20 +1,15 @@
-<script context="module">
-</script>
-
 <script lang="ts">
-	import { inputIsValid } from '@/libs/customerValidations'
+	import { checkIfInputIsNumber, inputIsValid } from '@/libs/customerValidations'
 	import { toCamelCase } from '@/libs/formatters'
 
 	export let placeholder: string = ''
-	export let value: string = ''
+	export let value: number = 0
 	export let name: string
 	export let label: string = ''
 	export let unit: string = ''
-	export let inputSize: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
-	export let functionOnBlur: Function | null = null
 
 	/**
 	 * Check if the value of the input is valid, when the focus is not on the input.
@@ -22,37 +17,30 @@
 	 */
 	const handleBlurInput = (e: any) => {
 		const input = e.target.value
-		isValid = inputIsValid(toCamelCase(name), input)
 
-		if (functionOnBlur) {
-			value = functionOnBlur(input)
+		if (required) {
+			isValid = checkIfInputIsNumber(input)
 		}
 	}
 </script>
 
 <div class="input-wrapper {isValid ? '' : 'error'}">
-	{#if label}
-		<label class="label" for={name}>
-			{label}
-			<span class="required-mark">{required ? '*' : ''}</span>
-		</label>
-	{/if}
-
+	<label class="label" for={name}>
+		{label}
+		<span class="required-mark">{required ? '*' : ''}</span>
+	</label>
 	<input
-		type="text"
-		class="input {inputSize}"
+		required
+		type="number"
+		class="input"
 		id={name}
 		{name}
-		{placeholder}
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
 	/>
+	<span class="unit">{unit}</span>
 	<span class="font-error">{errorMsg}</span>
-
-	{#if unit !== ''}
-		<span class="unit">{unit}</span>
-	{/if}
 </div>
 
 <style lang="scss">
@@ -67,6 +55,12 @@
 		width: fit-content;
 		gap: 10px;
 
+		// &:first-child {
+		// 	.label {
+		// 		width: 140px;
+		// 	}
+		// }
+
 		.input {
 			&::placeholder {
 				color: rgb(206, 205, 205);
@@ -76,18 +70,7 @@
 				border-color: var(--primary-color);
 			}
 
-			&--sm {
-				@include responsiveInputWidth((103));
-			}
-			&--md {
-				@include responsiveInputWidth((152));
-			}
-			&--lg {
-				@include responsiveInputWidth((359));
-			}
-			&--xl {
-				@include responsiveInputWidth((534));
-			}
+			@include responsiveInputWidth((103));
 		}
 
 		.font-error {

@@ -6,10 +6,12 @@
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
+	import type { Department } from '@/models/CustomerAPI.js'
+	import { getDateTime } from '@/libs/formatters.js'
 
 	export let data
 
-	let customer: CustomerFactory = new CustomerFactory(data.customer, 'customer')
+	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
 	let bedQuantity: number = 0
 
 	/**
@@ -37,11 +39,12 @@
 		mobile: customer.address.mobile,
 		year: customer.foundationDate.year,
 		month: customer.foundationDate.month,
-		founder: customer.foundation.establishedBy,
-		departments: customer.departmentDetail,
-		numberOfEmployees: customer.numberOfEmployees,
+		foundationDate: customer.foundation.establishDate,
+		founder: customer.foundation.establishBy,
+		departments: customer.departments,
+		numberOfEmployees: customer.numEmployees === undefined ? 0 : customer.numEmployees,
 		homepage: customer.url,
-		numberOfFacilities: customer.numBranch,
+		numberOfFacilities: customer.numBranch === undefined ? 0 : customer.numBranch,
 		isActive: customer.isActive,
 		googleReview: customer.googleReview,
 		reviews: customer.reviews,
@@ -56,7 +59,7 @@
 		miscellaneous: customer.miscellaneous
 	}
 
-	customer.departmentDetail.forEach((bed: any) => (bedQuantity += parseInt(bed.bedQuantity)))
+	customer.departments.forEach((department: Department) => (bedQuantity += department.numberOfBeds))
 </script>
 
 <section class="section section--confirmation">

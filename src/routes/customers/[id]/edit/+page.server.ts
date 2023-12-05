@@ -1,8 +1,8 @@
 import { error } from '@sveltejs/kit'
-import { loadData, updateCustomer } from '@/libs/actions.js'
+import { loadData, updateCustomer, loadDepartments } from '@/libs/actions.js'
 import type { CustomerEntries } from '@/libs/customerTypes.js'
 import { formatCustomer } from '@/libs/formatters.js'
-import type { CustomerBackend } from '@/models/BackendCustomer.js'
+import type { CustomerBackend, CustomerNewApi } from '@/models/BackendCustomer.js'
 import { currentApi } from '@/data/api.js'
 
 /**
@@ -11,15 +11,23 @@ import { currentApi } from '@/data/api.js'
  * @returns
  */
 export const load = async ({ params }) => {
-	const data: CustomerBackend[] = await loadData(currentApi)
-	const customer: CustomerBackend | undefined = data.find(
-		(customer: CustomerBackend) => customer.Cust_CD?.toString() === params.id.toString()
+	// const data: CustomerBackend[] = await loadData(currentApi)
+	// const customer: CustomerBackend | undefined = data.find(
+	// 	(customer: CustomerBackend) => customer.Cust_CD?.toString() === params.id.toString()
+	// )
+
+	const data: CustomerNewApi[] = await loadData(currentApi)
+	const customer: CustomerNewApi | undefined = data.find(
+		(customer: CustomerNewApi) => customer.id?.toString() === params.id.toString()
 	)
+
+	const departmentsList = loadDepartments(currentApi)
 
 	if (!customer) throw error(404)
 
 	return {
-		customer
+		customer,
+		departmentsList
 	}
 }
 
@@ -40,6 +48,8 @@ export const actions = {
 				registDate: initialState.registrationDate,
 				registBy: initialState.registeredBy
 			}
+
+			console.log(registration)
 
 			const updatedCustomer = formatCustomer('update', initialState, registration)
 

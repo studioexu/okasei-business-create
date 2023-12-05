@@ -15,6 +15,19 @@
 	$: customersToDisplayOnPage
 	$: currentUser
 
+	const dataToDisplay = customersToDisplayOnPage.map(customer => {
+		return {
+			customerNumber: customer.custCD,
+			customerName: customer.customerName,
+			address: customer.address.prefecture + customer.address.city,
+			updateDate: !customer.isActive
+				? '削除日' + customer.deleteDateTime.date
+				: customer.update.updateDate !== '' && customer.update.updateDate !== undefined
+				? '更新日' + customer.updateDateTime.date
+				: '登録日' + customer.registDateTime.date
+		}
+	})
+
 	/**
 	 * When clicked on the row, the user is redirected to the profile of the customer.
 	 * @param e: event to get the right the class of the parent element to be sure it isn't the erase button or update button.
@@ -45,7 +58,7 @@
 {:else}
 	<div class="table-wrapper">
 		<table class="customer-list">
-			<thead class="table-header">
+			<!-- <thead class="table-header">
 				<tr class="row">
 					<th>顧客番号</th>
 					<th>施設名</th>
@@ -54,7 +67,7 @@
 					<th>編集</th>
 					<th>削除</th>
 				</tr>
-			</thead>
+			</thead> -->
 			<tbody>
 				{#each customersToDisplayOnPage as customer (customer.custCD)}
 					<tr
@@ -129,8 +142,8 @@
 		}
 
 		.row {
-			position: relative;
 			cursor: pointer;
+			position: relative;
 			background-color: #fff;
 			border-bottom: var(--primary-color) 1px solid;
 

@@ -1,29 +1,28 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
-	import type { CustomerEntries, Department } from '@/libs/customerTypes'
+	import type { CustomerEntries } from '@/libs/customerTypes'
+	import type { Department } from '@/models/CustomerAPI'
 
 	export let initialState: CustomerEntries
 
-	let bedQuantity: number = 0
+	let bedTotal: number = 0
 
 	/**
 	 * We go through the array of department input and calculate the number total of beds.
 	 * @param departments: array of Department
 	 */
-	const caculateTotalOfBeds = (departments: Department[]): number => {
+	const getTotalOfBeds = (departments: Department[]): number => {
 		let sum: number = 0
 		departments.map((department: Department) => {
-			const numberOfBed = isNaN(parseInt(department.bedQuantity))
-				? 0
-				: parseInt(department.bedQuantity)
+			const numberOfBed = isNaN(department.numberOfBeds) ? 0 : department.numberOfBeds
 			sum += numberOfBed
 		})
 
 		return sum
 	}
 
-	$: bedQuantity = caculateTotalOfBeds(initialState.departments)
+	$: bedTotal = getTotalOfBeds(initialState.departments)
 </script>
 
 <div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
@@ -80,7 +79,7 @@
 	<div class="form-row">
 		<DetailWrapper
 			areaClass="number-of-employees"
-			content={initialState.numberOfEmployees}
+			content={initialState.numberOfEmployees.toString()}
 			label={'従業員数'}
 			unit={'名'}
 		/>
@@ -88,7 +87,7 @@
 	<div class="form-row">
 		<DetailWrapper
 			areaClass="number-of-facilities"
-			content={initialState.numberOfFacilities}
+			content={initialState.numberOfFacilities.toString()}
 			label={'関連施設拠点数'}
 			unit={'軒'}
 		/>
@@ -122,11 +121,11 @@
 			<div class="container">
 				{#each initialState.departments as department}
 					<div class="bed-wrapper">
-						<h3 class="label">{department.department}</h3>
+						<h3 class="label">{department.departmentName}</h3>
 						<div class="quantity">
 							<h3 class="quantity__label">病床数</h3>
 							<p class="quantity__content">
-								{department.bedQuantity ? department.bedQuantity : 0}
+								{department.numberOfBeds ? department.numberOfBeds : 0}
 							</p>
 						</div>
 					</div>
@@ -134,7 +133,7 @@
 
 				<div class="total">
 					<h3 class="total__label">病床数合計</h3>
-					<p class="total__content">{bedQuantity}</p>
+					<p class="total__content">{bedTotal}</p>
 				</div>
 			</div>
 		</div>
@@ -162,14 +161,16 @@
 		<div class="detail-wrapper">
 			<h3 class="label">{'参考書類など 画像データ'}</h3>
 			<div class="container container--horizontal">
-				{#each initialState.pictures as image}
-					<div class="card">
-						<div class="image-wrapper">
-							<img src={URL.createObjectURL(image.file)} alt="" />
+				{#if initialState.pictures !== undefined}
+					{#each initialState.pictures as image}
+						<div class="card">
+							<div class="image-wrapper">
+								<img src={URL.createObjectURL(image.file)} alt="" />
+							</div>
+							<p class="label">{image.memo}</p>
 						</div>
-						<p class="label">{image.memo}</p>
-					</div>
-				{/each}
+					{/each}
+				{/if}
 			</div>
 		</div>
 	</div>

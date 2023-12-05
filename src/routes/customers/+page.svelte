@@ -2,22 +2,20 @@
 </script>
 
 <script lang="ts">
-	//import views
 	import Pagination from '@/views/Pagination.svelte'
 	import Table from '@/views/customersViews/Table.svelte'
 	import SearchMenu from '@/views/customersViews/SearchMenu.svelte'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
-	import { deleteCustomer } from '@/libs/actions'
-	import { currentApi } from '../../data/api'
 	import { goto } from '$app/navigation'
 	import { getDateTime } from '@/libs/formatters'
+	import { enhance } from '$app/forms'
 
 	export let data
 
 	let allCustomers: CustomerFactory[] = data.data.map(
-		customer => new CustomerFactory(customer, 'customer')
+		customer => new CustomerFactory(customer, 'newApi')
 	)
 
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
@@ -65,16 +63,18 @@
 			case 'delete':
 				try {
 					if (currentUser !== undefined) {
-						deleteCustomer(currentUser, currentApi)
+						const customer = allCustomers.find(
+							customer => customer.custCD.toString() === currentUser
+						)
 
-						allCustomers = allCustomers.filter(customer => {
-							if (customer.custCD.toString() === currentUser) {
-								customer.isActive = false
-								customer.delete.deleteDate = getDateTime()
-							}
+						if (customer) {
+							customer.isActive = false
+							customer.delete.deleteDate = getDateTime()
+							customer.delete.deleteBy = 1
 
-							return customer
-						})
+							const submitBtn = document.getElementById('submit-btn')
+							submitBtn?.click()
+						}
 
 						//update the displayed data depending if we want to display the deleted customers or not.
 						if (deletedCustomersAreShown) {
@@ -121,7 +121,20 @@
 
 <section class="section section--customers-management" id="customers-management">
 	{#if isShown}
-		<DeleteModal {phase} on:click={onClick} />
+		<form
+			id="delete-form"
+			method="POST"
+			action="/customers?/delete"
+			use:enhance
+			on:submit|preventDefault
+		>
+			<input type="hidden" name="id" value={currentUser} />
+			<button type="submit" id="submit-btn" form="delete-form" class="del-btn primary"
+				>delete</button
+			>
+
+			<DeleteModal {phase} on:click={onClick} />
+		</form>
 	{/if}
 
 	<header class="section__header">
@@ -255,5 +268,9 @@
 		padding: 0 18px;
 		justify-content: space-between;
 		align-items: center;
+	}
+
+	.del-btn {
+		z-index: 999;
 	}
 </style>

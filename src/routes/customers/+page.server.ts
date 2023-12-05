@@ -12,8 +12,11 @@ export const load = async () => {
 
 export const actions = {
 	delete: async ({ request }) => {
+		console.log('please delete')
+
 		const data = await request.formData()
 		let id: any = data.get('id') === null ? undefined : data.get('id')
+		console.log(data)
 
 		deleteCustomer(id, currentApi)
 	}

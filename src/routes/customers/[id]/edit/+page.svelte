@@ -9,8 +9,9 @@
 	import { fade } from 'svelte/transition'
 	export let data
 
-	let customer = new CustomerFactory(data.customer, 'customer')
+	let customer = new CustomerFactory(data.customer, 'newApi')
 	let confirmationPageIsShown = false
+	let departmentsList = data.departmentsList
 
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
@@ -30,11 +31,12 @@
 		mobile: customer.address.mobile,
 		year: customer.foundationDate.year,
 		month: customer.foundationDate.month,
-		founder: customer.foundation.establishedBy,
-		departments: customer.departmentDetail,
-		numberOfEmployees: customer.numberOfEmployees,
+		foundationDate: customer.foundation.establishDate,
+		founder: customer.foundation.establishBy,
+		departments: customer.departments,
+		numberOfEmployees: customer.numEmployees === undefined ? 0 : customer.numEmployees,
 		homepage: customer.url,
-		numberOfFacilities: customer.numBranch,
+		numberOfFacilities: customer.numBranch === undefined ? 0 : customer.numBranch,
 		isActive: customer.isActive,
 		googleReview: customer.googleReview,
 		reviews: customer.reviews,
@@ -46,9 +48,7 @@
 		approver: customer.approver,
 		contactTime: customer.contactTime,
 		pictures: customer.pictures,
-		miscellaneous: customer.miscellaneous,
-		registrationDate: customer.registration.registDate,
-		registeredBy: customer.registration.registBy
+		miscellaneous: customer.miscellaneous
 	}
 
 	let formIsValid: CustomerEntriesErrors = {
@@ -95,29 +95,22 @@
 		goto('/customers')
 	}
 
-	const handleEditClicked = () => {
-		confirmationPageIsShown = false
-	}
-
 	/**
 	 * Take the form and check if all the entries are valid.
 	 * If there is one error, the function will return false.
 	 * @param formEntries: Object of entries
 	 * @returns boolean
 	 */
-	const checkIfFormIsValid = (formEntries: Object): boolean => {
+	const checkIfFormIsValid = (formEntries: CustomerEntries): boolean => {
 		let errorArray: boolean[] = []
 		let isValid = true
-		const customerKeys = Object.keys(formEntries)
-		const customerValues = Object.values(formEntries)
 
-		for (let i = 0; i < customerKeys.length; i++) {
-			const name: string = customerKeys[i]
-			const input: string = customerValues[i]
+		Object.keys(formEntries).map(key => {
+			const input = formEntries[key as keyof CustomerEntries]
 
-			formIsValid[name as keyof CustomerEntriesErrors] = inputIsValid(name, input)
-			errorArray.push(!inputIsValid(name, input))
-		}
+			formIsValid[key as keyof CustomerEntriesErrors] = inputIsValid(key, input)
+			errorArray.push(!inputIsValid(key, input))
+		})
 
 		errorArray.forEach(error => {
 			if (error) {
@@ -126,10 +119,6 @@
 		})
 
 		return isValid
-	}
-
-	const handleCheckForm = () => {
-		confirmationPageIsShown = checkIfFormIsValid(initialState)
 	}
 </script>
 
@@ -150,6 +139,7 @@
 		{/if}
 		<Form
 			bind:confirmationPageIsShown
+			bind:departmentsList
 			bind:initialState
 			formType={'update'}
 			bind:formIsValid
@@ -162,11 +152,26 @@
 		<footer class="section__footer">
 			{#if confirmationPageIsShown}
 				<div in:fade>
-					<button class="btn secondary" on:click={handleEditClicked}>修正</button>
+					<button
+						class="btn secondary"
+						on:click={() => {
+							confirmationPageIsShown = false
+						}}
+					>
+						修正
+					</button>
 				</div>
 				<button type="submit" class="btn primary" form="registration-form">登録</button>
 			{:else}
-				<button type="button" class="btn primary" on:click={handleCheckForm}>登録</button>
+				<button
+					type="button"
+					class="btn primary"
+					on:click={() => {
+						confirmationPageIsShown = checkIfFormIsValid(initialState)
+					}}
+				>
+					登録
+				</button>
 			{/if}
 		</footer>
 	{/if}

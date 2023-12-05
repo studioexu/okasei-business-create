@@ -7,13 +7,14 @@
 	} from '@/libs/customerTypes'
 
 	import { enhance } from '$app/forms'
-	import { prefectures, months, years } from '@/data/data'
+	import { prefectures, months } from '@/data/data'
 	import Icon from '@/components/Icon.svelte'
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
 	import SelectWithInput from '@/components/SelectWithInput.svelte'
 	import UploadModal from '@/views/modals/UploadModal.svelte'
 	import ResultModal from '../modals/ResultModal.svelte'
+	import NumberInput from '@/components/NumberInput.svelte'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -21,22 +22,22 @@
 	export let formIsValid: CustomerEntriesErrors
 	export let isShown: boolean = false
 	export let isSucceeded: boolean = false
+	export let departmentsList: { id: number; cd1: string; cd2: string; name: string }[]
 
 	let uploadModalIsShown = false
 
 	// ADDRESS AUTO FILL
-
-	let address: AddressAutoInfo = {
-		prefecture: '',
-		city: '',
-		address1: ''
-	}
 
 	/**
 	 * Fetch the address corresponding to the postal code.
 	 * @param e
 	 */
 	const handlePostalCodeSearchSubmit = async (e: any) => {
+		let address: { prefecture: string; city: string; address1: string } = {
+			prefecture: '',
+			city: '',
+			address1: ''
+		}
 		e.preventDefault()
 		if (formIsValid.postalCode) {
 			const api = 'https://zipcloud.ibsnet.co.jp/api/search?zipcode='
@@ -54,24 +55,19 @@
 				})
 				.catch(err => console.log(err))
 		}
+
+		assignAddressInfo(address)
 	}
 
 	const assignAddressInfo = (address: AddressAutoInfo) => {
-		if (address.prefecture.length !== 0) {
-			initialState.prefecture = address.prefecture
-		}
-		if (address.city.length !== 0) {
-			initialState.city = address.city
-		}
-		if (address.address1.length !== 0) {
-			initialState.address1 = address.address1
-		}
+		Object.keys(address).map(key => {
+			if (address[key as keyof AddressAutoInfo].length !== 0) {
+				initialState[key as keyof AddressAutoInfo] = address[key as keyof AddressAutoInfo]
+			}
+		})
 
 		initialState.address2 = ''
 	}
-
-	$: assignAddressInfo(address)
-
 	/**
 	 * Triggered when the form is submit.
 	 * If the form is still on the entry page, then, it will preventDefault, and displayed the entry verification page.
@@ -144,23 +140,32 @@
 
 	interface DepartmentInput {
 		index: number
-		department: string
-		bedQuantity: string
+		id: number
+		name: string
+		numberOfBeds: number
 	}
 
 	let departments: DepartmentInput[] = []
 
 	// fill the departments array with the data if there is any
 	if (initialState.departments.length === 0) {
-		departments = [{ index: 0, department: '内科', bedQuantity: '0' }]
+		departments = [
+			{
+				id: 1,
+				name: '内科',
+				numberOfBeds: 0,
+				index: 0
+			}
+		]
 	} else {
 		initialState.departments.map((department, index) => {
 			departments = [
 				...departments,
 				{
-					index: index,
-					department: department.department,
-					bedQuantity: department.bedQuantity
+					id: department.departmentId,
+					name: department.departmentName,
+					numberOfBeds: department.numberOfBeds,
+					index: index
 				}
 			]
 			index++
@@ -177,9 +182,10 @@
 		departments = [
 			...departments,
 			{
-				index: departments[departments.length - 1].index + 1,
-				department: '',
-				bedQuantity: '0'
+				id: 1,
+				name: '内科',
+				numberOfBeds: 0,
+				index: departments[departments.length - 1].index + 1
 			}
 		]
 	}
@@ -188,36 +194,45 @@
 	 * Delete one department form the departments array
 	 * @param e: event to get the right id
 	 */
-	const deleteDepartment = (e: any) => {
-		const itemToDelete = parseInt(e.target.closest('.department-wrapper').id)
-		departments = departments.filter(department => department.index !== itemToDelete)
-	}
-
-	const checkBedQuantity = (bedQuantity: string): string => {
-		if (isNaN(parseInt(bedQuantity))) {
-			bedQuantity = '0'
-		}
-
-		return bedQuantity
+	const deleteDepartment = (index: number) => {
+		departments = departments.filter(department => department.index !== index)
 	}
 
 	/**
 	 * We go through the array of bed input and calculate the number total of beds.
 	 * @param beds: array of bedInput
 	 */
-	const caculateTotalOfBeds = (departments: DepartmentInput[]): number => {
+	const getTotalOfBeds = (departments: DepartmentInput[]): number => {
 		let sum: number = 0
 		departments.map((department: DepartmentInput) => {
-			const numberOfBed = isNaN(parseInt(department.bedQuantity))
-				? 0
-				: parseInt(department.bedQuantity)
+			const numberOfBed = isNaN(department.numberOfBeds) ? 0 : department.numberOfBeds
 			sum += numberOfBed
 		})
 
 		return sum
 	}
-	$: bedQuantityTotal = caculateTotalOfBeds(departments)
-	$: initialState.departments = departments
+
+	$: bedTotal = getTotalOfBeds(departments)
+	$: initialState.departments = departments.map(department => {
+		return {
+			departmentId: department.id,
+			departmentName: department.name,
+			numberOfBeds: department.numberOfBeds
+		}
+	})
+
+	////////************** to improve*/
+	const handleSelectDepartment = (e: any) => {
+		const departmentId = parseInt(e.target.value)
+		const departmentIndex = parseInt(e.target.closest('.department-wrapper').id.split('-')[1])
+
+		const selectedDepartment = departmentsList.find(department => department.id === departmentId)
+
+		if (selectedDepartment) {
+			departments[departmentIndex].id = selectedDepartment.id
+			departments[departmentIndex].name = selectedDepartment.name
+		}
+	}
 </script>
 
 {#if uploadModalIsShown}
@@ -363,6 +378,7 @@
 				placeholder="丁目・番地"
 				errorMsg={'200文字以内で入力してください'}
 				inputSize="input--lg"
+				required={true}
 				bind:value={initialState.address1}
 				bind:isValid={formIsValid.address1}
 			/>
@@ -376,6 +392,7 @@
 				placeholder="建物名・部屋番号"
 				errorMsg={'200文字以内で入力してください'}
 				inputSize="input--lg"
+				required={true}
 				bind:value={initialState.address2}
 				bind:isValid={formIsValid.address2}
 			/>
@@ -398,8 +415,11 @@
 				name={'mobile-phone'}
 				label={'携帯電話'}
 				placeholder={'未入力'}
+				errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
 				inputSize={'input--md'}
+				required={true}
 				bind:value={initialState.mobile}
+				bind:isValid={formIsValid.mobile}
 			/>
 
 			<Input
@@ -430,23 +450,17 @@
 	<fieldset class="fieldset fieldset--foundation">
 		<legend class="legend">創立</legend>
 		<div class="form-row">
-			<SelectWithInput
-				label={'設立年月日'}
-				name={'year'}
-				datas={years}
-				unit="年"
-				bind:value={initialState.year}
-				bind:isValid={formIsValid.year}
-			/>
+			<div class="input-wrapper">
+				<label class="label" for="foundation-date">設立年月日</label>
+				<input
+					class="input"
+					type="date"
+					id="foundation-date"
+					name="foundation-date"
+					bind:value={initialState.foundationDate}
+				/>
+			</div>
 
-			<Select
-				options={months}
-				name={'months'}
-				unit="月"
-				bind:value={initialState.month}
-				bind:isValid={formIsValid.month}
-			/>
-			<!-- DateSelector -->
 			<Input
 				label="設立者"
 				name="founder"
@@ -456,6 +470,7 @@
 				bind:value={initialState.founder}
 				bind:isValid={formIsValid.founder}
 			/>
+
 			<!-- Input -->
 		</div>
 		<!-- .form-row -->
@@ -464,29 +479,43 @@
 
 	<fieldset class="fieldset fieldset--bed">
 		<legend class="legend">病床設定</legend>
-		<!-- <DepartmentSection bind:departments={initialState.departments} /> -->
 
 		<div class="form-row bed">
 			<h3 class="label">診療科目</h3>
 			<div class="container">
-				{#each departments as department}
-					<div class="department-wrapper" id={department.index.toString()}>
-						<Select
-							options={['内科', '外科', '診療内科']}
-							name={'departments'}
-							bind:value={department.department}
-						/>
-						<Input
-							name={'bed-quatity'}
-							label={'病床数'}
-							placeholder={'未入力'}
-							inputSize={'input--sm'}
-							functionOnBlur={checkBedQuantity}
-							bind:value={department.bedQuantity}
-						/>
+				{#each departments as selectedDepartment, index}
+					<div class="department-wrapper" id={'department-' + selectedDepartment.index.toString()}>
+						<div class="input-wrapper">
+							<input
+								list="departments"
+								bind:value={selectedDepartment.name}
+								on:input={handleSelectDepartment}
+							/>
+
+							<datalist id="departments">
+								{#each departmentsList as department}
+									<option value={department.id}>{department.name}</option>
+								{/each}
+							</datalist>
+
+							<select id="departments">
+								{#each departmentsList as department}
+									<option value={department.id}>{department.name}</option>
+								{/each}
+							</select>
+						</div>
+
+						<div class="input-wrapper">
+							<label for="bed-quantity">病床数</label>
+							<input type="number" min="0" bind:value={selectedDepartment.numberOfBeds} />
+						</div>
 
 						{#if departments.length > 1}
-							<button type="button" class="btn secondary delete" on:click={deleteDepartment}>
+							<button
+								type="button"
+								class="btn secondary delete"
+								on:click={() => deleteDepartment(selectedDepartment.index)}
+							>
 								<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
 							</button>
 						{/if}
@@ -495,9 +524,8 @@
 			</div>
 			<div class="bed-total">
 				<h3 class="label">'病床数合計'</h3>
-				<span class="content">{bedQuantityTotal}</span>
+				<span class="content">{bedTotal}</span>
 			</div>
-			<!-- </div> -->
 		</div>
 
 		<div class="form-row">
@@ -511,12 +539,11 @@
 		<legend class="legend">情報２</legend>
 
 		<div class="form-row">
-			<Input
-				label="従業員数"
-				name="number-of-employees"
-				unit="名"
-				errorMsg={'数字で入力して下さい'}
-				inputSize="input--sm"
+			<NumberInput
+				name={'number-of-employees'}
+				label={'従業員数'}
+				errorMsg={'入力してください'}
+				required={true}
 				bind:value={initialState.numberOfEmployees}
 				bind:isValid={formIsValid.numberOfEmployees}
 			/>
@@ -571,16 +598,14 @@
 		</div>
 
 		<div class="form-row">
-			<Input
-				label="関連施設拠点数"
-				name="number-of-facilities"
-				unit="軒"
-				errorMsg={'数字で入力して下さい'}
-				inputSize="input--sm"
+			<NumberInput
+				name={'number-of-branched'}
+				label={'関連施設拠点数'}
+				errorMsg={'入力してください'}
+				required={true}
 				bind:value={initialState.numberOfFacilities}
 				bind:isValid={formIsValid.numberOfFacilities}
 			/>
-			<!-- Input -->
 		</div>
 
 		<div class="form-row">
@@ -593,7 +618,6 @@
 			/>
 		</div>
 	</fieldset>
-	<!-- .fieldset--info2 -->
 
 	<fieldset class="fieldset">
 		<legend class="legend">担当者</legend>
@@ -650,7 +674,7 @@
 				<h3 class="label">参考書類など画像データ</h3>
 
 				<div class="container">
-					{#if initialState.pictures.length === 0}
+					{#if initialState.pictures === undefined || initialState.pictures.length === 0}
 						<div class="card">
 							<button class="image-empty" on:click={() => (uploadModalIsShown = true)}>
 								<span>+</span>
@@ -729,18 +753,14 @@
 		font-size: 14px;
 	}
 
+	:global(.input-wrapper:first-child > .label) {
+		width: 140px;
+	}
+
 	.input-wrapper {
 		display: flex;
 		gap: 10px;
 		align-items: flex-start;
-		margin-bottom: 20px;
-
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
-
 		.select {
 			height: 32px;
 			width: calc(((106 - 10 - 2) / 1366) * 100vw);
@@ -776,7 +796,7 @@
 	.label {
 		font-size: 18px;
 		font-weight: 400;
-		width: 130px;
+		width: 140px;
 	}
 
 	.card {
@@ -839,5 +859,87 @@
 		display: flex;
 		align-items: center;
 		gap: 18px;
+	}
+
+	@mixin responsiveInputWidth($width) {
+		width: calc((($width - 10 - 2) / 1366) * 100vw);
+	}
+
+	.input-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
+		width: fit-content;
+		gap: 10px;
+
+		&:first-child {
+			.label {
+				width: 140px;
+			}
+		}
+
+		.input {
+			max-height: 31px;
+			&::placeholder {
+				color: rgb(206, 205, 205);
+			}
+
+			&:focus {
+				border-color: var(--primary-color);
+			}
+
+			&--sm {
+				@include responsiveInputWidth((103));
+			}
+			&--md {
+				@include responsiveInputWidth((152));
+			}
+			&--lg {
+				@include responsiveInputWidth((359));
+			}
+			&--xl {
+				@include responsiveInputWidth((534));
+			}
+		}
+
+		.font-error {
+			position: absolute;
+			right: 0;
+			bottom: -14px;
+			font-size: 10px;
+			opacity: 0;
+		}
+	}
+
+	.error {
+		.input {
+			transition: border 300ms;
+			border-color: var(--error);
+			animation: buzz 100ms;
+			animation-iteration-count: 3;
+		}
+
+		.font-error {
+			opacity: 1;
+			transition: all 300ms;
+		}
+	}
+
+	.required-mark {
+		color: var(--error);
+	}
+
+	@keyframes buzz {
+		0% {
+			transform: translateX(0px);
+		}
+
+		50% {
+			transform: translateX(-10px);
+		}
+
+		100% {
+			transform: translateX(10px);
+		}
 	}
 </style>

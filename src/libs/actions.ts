@@ -12,7 +12,7 @@ import type { CustomerBackend, CustomerNewApi } from '@/models/BackendCustomer'
 export const loadData = async (url: string) => {
 	return await fetch(url + '/customer/list/customer', {
 		headers: {
-			Authorization: 'Token ' + currentKey,
+			Authorization: 'Token ' + '26a17e845bf28f6f15eafb037c3a83c06506077d',
 			'Content-Type': 'application/json'
 		},
 		method: 'GET'

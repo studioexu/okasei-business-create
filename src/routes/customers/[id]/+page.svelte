@@ -7,12 +7,9 @@
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
 	import type { Department } from '@/models/CustomerAPI.js'
+	import { getDateTime } from '@/libs/formatters.js'
 
 	export let data
-
-	console.log('customer raw info')
-
-	console.log(data.customer)
 
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
 	let bedQuantity: number = 0
@@ -61,8 +58,6 @@
 		pictures: customer.pictures,
 		miscellaneous: customer.miscellaneous
 	}
-
-	$: console.log(initialState)
 
 	customer.departments.forEach((department: Department) => (bedQuantity += department.numberOfBeds))
 </script>

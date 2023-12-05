@@ -49,6 +49,8 @@ export const actions = {
 				registBy: initialState.registeredBy
 			}
 
+			console.log(registration)
+
 			const updatedCustomer = formatCustomer('update', initialState, registration)
 
 			if (initialState.id) {

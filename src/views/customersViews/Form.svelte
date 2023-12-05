@@ -17,6 +17,7 @@
 	import type { Department } from '@/models/CustomerAPI'
 	import { loadDepartments } from '@/libs/actions'
 	import { currentApi } from '@/data/api'
+	import NumberInput from '@/components/NumberInput.svelte'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -414,6 +415,7 @@
 				placeholder="丁目・番地"
 				errorMsg={'200文字以内で入力してください'}
 				inputSize="input--lg"
+				required={true}
 				bind:value={initialState.address1}
 				bind:isValid={formIsValid.address1}
 			/>
@@ -427,6 +429,7 @@
 				placeholder="建物名・部屋番号"
 				errorMsg={'200文字以内で入力してください'}
 				inputSize="input--lg"
+				required={true}
 				bind:value={initialState.address2}
 				bind:isValid={formIsValid.address2}
 			/>
@@ -449,8 +452,11 @@
 				name={'mobile-phone'}
 				label={'携帯電話'}
 				placeholder={'未入力'}
+				errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
 				inputSize={'input--md'}
+				required={true}
 				bind:value={initialState.mobile}
+				bind:isValid={formIsValid.mobile}
 			/>
 
 			<Input
@@ -593,11 +599,26 @@
 				bind:isValid={formIsValid.numberOfEmployees}
 			/> -->
 
-			<div class="input-wrapper">
+			<!-- <div class="input-wrapper {formIsValid.numberOfEmployees ? '' : 'error'}">
 				<label class="label" for="number-of-employees">従業員数</label>
-				<input type="number" class="input input--sm" bind:value={initialState.numberOfEmployees} />
+				<input
+					required
+					type="number"
+					class="input input--sm"
+					bind:value={initialState.numberOfEmployees}
+				/>
 				<span class="unit">名</span>
-			</div>
+				<span class="font-error">入力してください。</span>
+			</div> -->
+
+			<NumberInput
+				name={'number-of-employees'}
+				label={'従業員数'}
+				errorMsg={'入力してください'}
+				required={true}
+				bind:value={initialState.numberOfEmployees}
+				bind:isValid={formIsValid.numberOfEmployees}
+			/>
 			<!-- Input -->
 		</div>
 
@@ -659,11 +680,14 @@
 				bind:isValid={formIsValid.numberOfFacilities}
 			/> -->
 
-			<div class="input-wrapper">
-				<label class="label" for="number-of-employees">関連施設拠点数</label>
-				<input type="number" class="input input--sm" bind:value={initialState.numberOfFacilities} />
-				<span class="unit">軒</span>
-			</div>
+			<NumberInput
+				name={'number-of-branched'}
+				label={'関連施設拠点数'}
+				errorMsg={'入力してください'}
+				required={true}
+				bind:value={initialState.numberOfFacilities}
+				bind:isValid={formIsValid.numberOfFacilities}
+			/>
 		</div>
 
 		<div class="form-row">
@@ -811,17 +835,14 @@
 		font-size: 14px;
 	}
 
+	:global(.input-wrapper:first-child > .label) {
+		width: 140px;
+	}
+
 	.input-wrapper {
 		display: flex;
 		gap: 10px;
 		align-items: flex-start;
-
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
-
 		.select {
 			height: 32px;
 			width: calc(((106 - 10 - 2) / 1366) * 100vw);
@@ -857,7 +878,7 @@
 	.label {
 		font-size: 18px;
 		font-weight: 400;
-		width: 130px;
+		width: 140px;
 	}
 
 	.card {
@@ -935,7 +956,7 @@
 
 		&:first-child {
 			.label {
-				width: 130px;
+				width: 140px;
 			}
 		}
 
@@ -969,6 +990,38 @@
 			bottom: -14px;
 			font-size: 10px;
 			opacity: 0;
+		}
+	}
+
+	.error {
+		.input {
+			transition: border 300ms;
+			border-color: var(--error);
+			animation: buzz 100ms;
+			animation-iteration-count: 3;
+		}
+
+		.font-error {
+			opacity: 1;
+			transition: all 300ms;
+		}
+	}
+
+	.required-mark {
+		color: var(--error);
+	}
+
+	@keyframes buzz {
+		0% {
+			transform: translateX(0px);
+		}
+
+		50% {
+			transform: translateX(-10px);
+		}
+
+		100% {
+			transform: translateX(10px);
 		}
 	}
 </style>

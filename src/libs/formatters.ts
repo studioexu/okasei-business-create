@@ -61,15 +61,27 @@ export const getDateTime = (time?: string): string => {
 	} else {
 		currentTime = new Date()
 	}
-	const day = currentTime.getDate() < 10 ? '0' + currentTime.getDate() : currentTime.getDate()
-	const month = currentTime.getMonth() < 10 ? '0' + currentTime.getMonth() : currentTime.getMonth()
+
+	const day =
+		currentTime.getUTCDate() < 10 ? '0' + currentTime.getUTCDate() : currentTime.getUTCDate()
+	const month =
+		currentTime.getUTCMonth() + 1 < 10
+			? '0' + currentTime.getUTCMonth() + 1
+			: currentTime.getUTCMonth() + 1
 	const year =
-		currentTime.getFullYear() < 10 ? '0' + currentTime.getFullYear() : currentTime.getFullYear()
-	const hour = currentTime.getHours() < 10 ? '0' + currentTime.getHours() : currentTime.getHours()
+		currentTime.getUTCFullYear() < 10
+			? '0' + currentTime.getUTCFullYear()
+			: currentTime.getUTCFullYear()
+	const hour =
+		currentTime.getUTCHours() < 10 ? '0' + currentTime.getUTCHours() : currentTime.getUTCHours()
 	const minute =
-		currentTime.getMinutes() < 10 ? '0' + currentTime.getMinutes() : currentTime.getMinutes()
+		currentTime.getUTCMinutes() < 10
+			? '0' + currentTime.getUTCMinutes()
+			: currentTime.getUTCMinutes()
 	const second =
-		currentTime.getSeconds() < 10 ? '0' + currentTime.getSeconds() : currentTime.getSeconds()
+		currentTime.getUTCSeconds() < 10
+			? '0' + currentTime.getUTCSeconds()
+			: currentTime.getUTCSeconds()
 
 	const formattedCurrentTime =
 		year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second + 'Z'
@@ -132,7 +144,8 @@ export const getDateTime = (time?: string): string => {
 export const formatCustomer = (
 	action: 'update' | 'create' | 'delete',
 	customer: CustomerEntries | CustomerNewApi,
-	registration?: any
+	registration?: any,
+	update?: any
 ): CustomerNewApi => {
 	const timeArray = getDateTime()
 
@@ -154,22 +167,22 @@ export const formatCustomer = (
 
 		case 'delete':
 			const deleted = {
-				Delete_Date: timeArray,
-				Delete_By: 1
+				deleteDate: timeArray,
+				deleteBy: 1
 			}
 
-			let customerToUpdate = customer as CustomerNewApi
-			customerToUpdate.delete_at = deleted.Delete_Date
-			customerToUpdate.delete_by = deleted.Delete_By
-			customerToUpdate.is_active = false
+			// let customerToUpdate = customer as CustomerNewApi
+			// customerToUpdate.delete_at = deleted.Delete_Date
+			// customerToUpdate.delete_by = deleted.Delete_By
+			// customerToUpdate.is_active = false
 
-			return customerToUpdate
+			return new CustomerNewApi(customer, registration, update, deleted)
 
 		default:
 			if (customer instanceof CustomerNewApi) {
 				return customer
 			} else {
-				return new CustomerNewApi(customer, registration)
+				return new CustomerNewApi(customer, registration, update)
 			}
 	}
 }

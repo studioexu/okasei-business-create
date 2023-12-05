@@ -68,16 +68,35 @@
 			case 'delete':
 				try {
 					if (currentUser !== undefined) {
-						deleteCustomer(currentUser, currentApi)
+						// const customerToDelete = allCustomers.find(
+						// 	customer => customer.id === parseInt(currentUser)
+						// )
 
-						allCustomers = allCustomers.filter(customer => {
-							if (customer.custCD.toString() === currentUser) {
-								customer.isActive = false
-								customer.delete.deleteDate = getDateTime()
-							}
+						// console.log(customerToDelete)
 
-							return customer
-						})
+						// deleteCustomer(currentUser, currentApi)
+
+						// allCustomers = allCustomers.filter(customer => {
+						// 	if (customer.custCD.toString() === currentUser) {
+						// 		customer.isActive = false
+						// 		customer.delete.deleteDate = getDateTime()
+
+						// 	}
+
+						// 	return customer
+						// })
+
+						const customer = allCustomers.find(
+							customer => customer.custCD.toString() === currentUser
+						)
+
+						if (customer) {
+							// customer.isActive = false
+							// customer.delete.deleteDate = getDateTime()
+							// customer.delete.deleteBy = 1
+
+							deleteCustomer(customer.custCD, currentApi)
+						}
 
 						//update the displayed data depending if we want to display the deleted customers or not.
 						if (deletedCustomersAreShown) {

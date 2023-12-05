@@ -88,8 +88,11 @@ export const checkIfPrefectureIsValid = (input: string): boolean => {
  * @param input : string input from the user
  * @returns boolean
  */
-export const checkIfInputIsNumber = (input: string): boolean => {
-	return !isNaN(parseInt(input))
+export const checkIfInputIsNumber = (input: string | number): boolean => {
+	if (typeof input === 'number') return !isNaN(input)
+	if (typeof input === 'string') return !isNaN(parseInt(input))
+
+	return false
 }
 
 /**
@@ -143,7 +146,7 @@ export const inputIsValid = (name: string, input: string): boolean => {
 
 		case 'numberOfEmployees':
 		case 'numberOfFacilities':
-			return input === '' || checkIfInputIsNumber(input)
+			return checkIfInputIsNumber(input)
 
 		default:
 			return true

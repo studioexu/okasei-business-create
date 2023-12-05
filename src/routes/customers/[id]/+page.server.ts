@@ -17,6 +17,8 @@ export const load = async ({ params }) => {
 
 	if (!customer) throw error(404)
 
+	console.log(customer)
+
 	return {
 		customer
 	}

@@ -123,11 +123,11 @@ export class CustomerAPI {
 			registBy: registration?.registBy || data.register_by
 		}
 		this._update = {
-			updateDate: update?.updateDate || getDateTime(data.update_at),
+			updateDate: update?.updateDate || data.update_at,
 			updateBy: update?.updateBy || data.update_by
 		}
 		;(this._delete = {
-			deleteDate: deleted?.deleteDate || getDateTime(data.delete_at),
+			deleteDate: deleted?.deleteDate || data.delete_at,
 			deleteBy: deleted?.deleteBy || data.delete_by
 		}),
 			(this._googleReview = data.googleReview),
@@ -210,7 +210,7 @@ export class CustomerAPI {
 	public get registDateTime() {
 		const dateTime = this._registration.registDate.split('T')
 		const date = dateTime[0]
-		const time = dateTime[1]?.split('Z')[0]
+		const time = dateTime[1]?.split('+')[0]
 
 		return {
 			date: date,
@@ -221,7 +221,7 @@ export class CustomerAPI {
 	public get deleteDateTime() {
 		const dateTime = this._delete.deleteDate.split('T')
 		const date = dateTime[0]
-		const time = dateTime[1]?.split('Z')[0]
+		const time = dateTime[1]?.split('+')[0]
 
 		return {
 			date: date,
@@ -232,7 +232,7 @@ export class CustomerAPI {
 	public get updateDateTime() {
 		const dateTime = this._update.updateDate.split('T')
 		const date = dateTime[0]
-		const time = dateTime[1]?.split('Z')[0]
+		const time = dateTime[1]?.split('+')[0]
 
 		return {
 			date: date,

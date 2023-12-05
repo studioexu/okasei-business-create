@@ -35,6 +35,12 @@
 		align-items: center;
 		gap: 10px;
 
+		&:first-child {
+			.label {
+				width: 130px;
+			}
+		}
+
 		.select {
 			width: calc(((103 - 10 - 2) / 1366) * 100vw);
 			height: 31px;

@@ -88,11 +88,8 @@ export const checkIfPrefectureIsValid = (input: string): boolean => {
  * @param input : string input from the user
  * @returns boolean
  */
-export const checkIfInputIsNumber = (input: string | number): boolean => {
-	if (typeof input === 'number') return !isNaN(input)
-	if (typeof input === 'string') return !isNaN(parseInt(input))
-
-	return false
+export const checkIfInputIsNumber = (input: string): boolean => {
+	return !isNaN(parseInt(input))
 }
 
 /**
@@ -101,7 +98,7 @@ export const checkIfInputIsNumber = (input: string | number): boolean => {
  * @param input : string, is the input entered by the user
  * @returns boolean
  */
-export const inputIsValid = (name: string, input: any): boolean => {
+export const inputIsValid = (name: string, input: string): boolean => {
 	switch (name) {
 		case 'branchNumber':
 			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 4)
@@ -125,15 +122,16 @@ export const inputIsValid = (name: string, input: any): boolean => {
 			return numberOFCharacterValidation(input, 20) || input === ''
 
 		case 'address1':
+			return numberOFCharacterValidation(input, 200) || input === ''
+
 		case 'address2':
-		case 'founder':
-		case 'homepage':
-			return numberOFCharacterValidation(input, 128) || input === ''
+			return numberOFCharacterValidation(input, 200) || input === ''
 
 		case 'phoneNumber':
-		case 'fax':
-		case 'mobile':
 			return phoneNumberValidation(input)
+
+		case 'fax':
+			return input === '' || phoneNumberValidation(input)
 
 		case 'year':
 			return input === '' || checkIfYearIsValid(input)
@@ -141,12 +139,20 @@ export const inputIsValid = (name: string, input: any): boolean => {
 		case 'month':
 			return input === '' || checkIfMonthIsValid(input)
 
+		case 'founder':
+			return input === '' || numberOFCharacterValidation(input, 100)
+
 		case 'quantity':
 			return checkIfInputIsNumber(input)
 
 		case 'numberOfEmployees':
+			return input === '' || checkIfInputIsNumber(input)
+
 		case 'numberOfFacilities':
-			return checkIfInputIsNumber(input)
+			return input === '' || checkIfInputIsNumber(input)
+
+		case 'homepage':
+			return input === '' || numberOFCharacterValidation(input, 200)
 
 		default:
 			return true

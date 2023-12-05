@@ -53,9 +53,9 @@
 
 	// DELETE MODAL
 
-	// let isShown: boolean = false
-	// let currentUser: string | undefined = undefined
-	// let phase: 'shown' | 'success' | 'error' = 'shown'
+	let isShown: boolean = false
+	let currentUser: string | undefined = undefined
+	let phase: 'shown' | 'success' | 'error' = 'shown'
 
 	// const onClick = (event: { detail: { key: string } }) => {
 	// 	switch (event.detail.key) {

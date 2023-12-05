@@ -14,6 +14,8 @@
 
 	export let data
 
+	console.log(data)
+
 	let allCustomers: CustomerFactory[] = data.data.map(
 		customer => new CustomerFactory(customer, 'newApi')
 	)
@@ -51,57 +53,57 @@
 
 	// DELETE MODAL
 
-	let isShown: boolean = false
-	let currentUser: string | undefined = undefined
-	let phase: 'shown' | 'success' | 'error' = 'shown'
+	// let isShown: boolean = false
+	// let currentUser: string | undefined = undefined
+	// let phase: 'shown' | 'success' | 'error' = 'shown'
 
-	const onClick = (event: { detail: { key: string } }) => {
-		switch (event.detail.key) {
-			case 'cancel':
-				isShown = false
-				break
-			case 'delete':
-				try {
-					if (currentUser !== undefined) {
-						const customer = allCustomers.find(
-							customer => customer.custCD.toString() === currentUser
-						)
+	// const onClick = (event: { detail: { key: string } }) => {
+	// 	switch (event.detail.key) {
+	// 		case 'cancel':
+	// 			isShown = false
+	// 			break
+	// 		case 'delete':
+	// 			try {
+	// 				if (currentUser !== undefined) {
+	// 					const customer = allCustomers.find(
+	// 						customer => customer.custCD.toString() === currentUser
+	// 					)
 
-						if (customer) {
-							customer.isActive = false
-							customer.delete.deleteDate = getDateTime()
-							customer.delete.deleteBy = 1
+	// 					if (customer) {
+	// 						customer.isActive = false
+	// 						customer.delete.deleteDate = getDateTime()
+	// 						customer.delete.deleteBy = 1
 
-							const submitBtn = document.getElementById('submit-btn')
-							submitBtn?.click()
-						}
+	// 						const submitBtn = document.getElementById('submit-btn')
+	// 						submitBtn?.click()
+	// 					}
 
-						//update the displayed data depending if we want to display the deleted customers or not.
-						if (deletedCustomersAreShown) {
-							customersToDisplay = allCustomers
-						} else {
-							customersToDisplay = allCustomers.filter(customer => customer.isActive)
-						}
+	// 					//update the displayed data depending if we want to display the deleted customers or not.
+	// 					if (deletedCustomersAreShown) {
+	// 						customersToDisplay = allCustomers
+	// 					} else {
+	// 						customersToDisplay = allCustomers.filter(customer => customer.isActive)
+	// 					}
 
-						goto('/customers')
-						phase = 'success'
-					}
-				} catch (error) {
-					console.log(error)
-					phase = 'error'
-				}
-				break
+	// 					goto('/customers')
+	// 					phase = 'success'
+	// 				}
+	// 			} catch (error) {
+	// 				console.log(error)
+	// 				phase = 'error'
+	// 			}
+	// 			break
 
-			case 'success':
-				isShown = false
-				phase = 'shown'
-				break
+	// 		case 'success':
+	// 			isShown = false
+	// 			phase = 'shown'
+	// 			break
 
-			case 'error':
-				phase = 'shown'
-				break
-		}
-	}
+	// 		case 'error':
+	// 			phase = 'shown'
+	// 			break
+	// 	}
+	// }
 
 	// PAGINATION
 
@@ -120,7 +122,7 @@
 </script>
 
 <section class="section section--customers-management" id="customers-management">
-	{#if isShown}
+	<!-- {#if isShown}
 		<form
 			id="delete-form"
 			method="POST"
@@ -135,7 +137,7 @@
 
 			<DeleteModal {phase} on:click={onClick} />
 		</form>
-	{/if}
+	{/if} -->
 
 	<header class="section__header">
 		<SearchMenu

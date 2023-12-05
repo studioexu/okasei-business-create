@@ -29,8 +29,6 @@
 
 	let uploadModalIsShown = false
 
-	$: console.log(initialState)
-
 	// ADDRESS AUTO FILL
 
 	let address: AddressAutoInfo = {

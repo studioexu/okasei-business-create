@@ -2,6 +2,7 @@ import { currentKey } from '@/data/api'
 import { formatCustomer } from './formatters'
 import type { CustomerFactory } from '@/Factories/CustomerFactory'
 import type { CustomerBackend, CustomerNewApi } from '@/models/BackendCustomer'
+import { json } from '@sveltejs/kit'
 
 /**
  * Load the data from the server.
@@ -12,7 +13,7 @@ import type { CustomerBackend, CustomerNewApi } from '@/models/BackendCustomer'
 export const loadData = async (url: string) => {
 	return await fetch(url + '/customer/list/customer', {
 		headers: {
-			Authorization: 'Token ' + '26a17e845bf28f6f15eafb037c3a83c06506077d',
+			Authorization: 'Token ' + currentKey,
 			'Content-Type': 'application/json'
 		},
 		method: 'GET'
@@ -20,9 +21,6 @@ export const loadData = async (url: string) => {
 		.then(res => res.json())
 		.then(data => {
 			// console.log('log my data')
-
-			// console.log(data)
-
 			return data.results
 		})
 		.catch(error => console.log(error))
@@ -120,35 +118,20 @@ export const updateCustomer = (updatedCustomer: Object, url: string, customerId:
 // 		})
 // }
 export const deleteCustomer = (id: number, url: string) => {
-	fetch('http://18.182.209.227/customer/activate/4', {
+	fetch(url + '/customer/inactivate/' + id, {
 		method: 'PATCH',
 		headers: {
 			Authorization: 'Token ' + currentKey,
-			'Content-Type': 'application/json',
-			'Content-Length': '0',
-			'Access-Control-Allow-Origin': 'http://localhost:8000/customers'
-		}
+			'Content-type': 'application/json;charset=UTF-8'
+		},
+		redirect: 'follow'
 	})
-	// .then(res => res.json())
-	// .then(data => {
-	// 	console.log(data)
-	// 	console.log('Successfully deleted')
-	// })
-	// .catch(err => console.log(err))
-
-	// fetch('http://18.182.209.227/customer/inactivate/4', {
-	// 	method: 'PUT',
-	// 	headers: {
-	// 		Authorization: 'Token ' + currentKey,
-	// 		'Content-type': 'application/json'
-	// 	}
-	// })
-	// 	.then(res => res.json())
-	// 	.then(data => {
-	// 		console.log('Customer successfully updated')
-	// 		console.log(data)
-	// 	})
-	// 	.catch(err => console.log(err))
+		.then(res => res.json())
+		.then(data => {
+			console.log(data)
+			console.log('Successfully deleted')
+		})
+		.catch(err => console.log(err))
 }
 
 export const loadDepartments = async (url: string) => {

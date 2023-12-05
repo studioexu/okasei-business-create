@@ -5,6 +5,8 @@
 	import { flip } from 'svelte/animate'
 	import { quintOut } from 'svelte/easing'
 	import Icon from '@/components/Icon.svelte'
+	import { deleteCustomer } from '@/libs/actions'
+	import { currentApi } from '@/data/api'
 
 	export let currentUser: string = ''
 	export let customersToDisplayOnPage: CustomerFactory[]
@@ -32,6 +34,8 @@
 	const handleDeleteItem = (e: any) => {
 		isShown = true
 		currentUser = e.target.closest('.row').id
+
+		// deleteCustomer(parseInt(currentUser), currentApi)
 	}
 
 	const handleEditItem = (e: any) => {

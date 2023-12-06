@@ -3,20 +3,20 @@ import { loadData, deleteCustomer, login } from '@/libs/actions.js'
 import { currentApi, currentKey } from '@/data/api.js'
 
 export const load = async () => {
-	// let data: any[] = await loadData(currentApi, currentKey)
+	let data: any[] = await loadData(currentApi, currentKey)
 
-	let data: any[] = await fetch('https://jsonplaceholder.typicode.com/todos/1', {
-		headers: {
-			'Content-Type': 'application/json'
-		},
-		method: 'GET'
-	})
-		.then(res => res.json())
-		.then(data => {
-			console.log(data)
-			return data
-		})
-		.catch(error => console.log(error))
+	// let data: any[] = await fetch(currentApi, {
+	// 	headers: {
+	// 		'Content-Type': 'application/json'
+	// 	},
+	// 	method: 'GET'
+	// })
+	// 	.then(res => res.json())
+	// 	.then(data => {
+	// 		console.log(data)
+	// 		return data
+	// 	})
+	// 	.catch(error => console.log(error))
 	// const keyResponse = await login(currentApi)
 	// async () => (data = await loadData(currentApi, currentKey))
 	// )

@@ -4,4 +4,4 @@ const newAPI = 'http://18.182.209.227'
 
 export const currentApi: string = newAPI
 
-export let currentKey: string = '8375a53af7fd1aec6583fcb24478f8549131b73e'
+export let currentKey: string = '0cbb0baebd54c60dec040f3115e74786ba0570bc'

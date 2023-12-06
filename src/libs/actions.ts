@@ -10,10 +10,10 @@ import { json } from '@sveltejs/kit'
  * @param url : string, corresponding to URL of the server
  * @returns the data from the server
  */
-export const loadData = async (url: string) => {
+export const loadData = async (url: string, key: string) => {
 	return await fetch(url + '/customer/list/customer', {
 		headers: {
-			Authorization: 'Token ' + currentKey,
+			Authorization: 'Token ' + key,
 			'Content-Type': 'application/json'
 		},
 		method: 'GET'
@@ -108,4 +108,25 @@ export const loadDepartments = async (url: string) => {
 			return data
 		})
 		.catch(error => console.log(error))
+}
+
+export const login = async (url: string) => {
+	const key = await fetch(url + '/api-auth/login/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			email: 'info@studio.exu.co.jp',
+			password: 'Pass@1234'
+		})
+	})
+		.then(res => res.json())
+		.then(data => {
+			console.log(data)
+			return data.key
+		})
+		.catch(err => err)
+
+	return key
 }

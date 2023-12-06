@@ -19,14 +19,14 @@
 
 	$: console.log(data)
 
-	let pikachu
+	// let pikachu
 
-	onMount(async () => {
-		const response = await loadData(currentApi, currentKey)
-		pikachu = await response.json()
-	})
+	// onMount(async () => {
+	// 	const response = await loadData(currentApi, currentKey)
+	// 	pikachu = await response.json()
+	// })
 
-	console.log(pikachu)
+	// console.log(pikachu)
 
 	// const pikachu = loadData(currentApi, '3affc4789c243911dbdb37adcabd4deb36c0eb4c')
 

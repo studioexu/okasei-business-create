@@ -7,7 +7,6 @@ export const load = async () => {
 
 	let data: any[] = await fetch(currentApi + '/customer/list/customer', {
 		headers: {
-			Authorization: 'Token ' + currentKey,
 			'Content-Type': 'application/json'
 		},
 		method: 'GET'
@@ -15,7 +14,7 @@ export const load = async () => {
 		.then(res => res.json())
 		.then(data => {
 			console.log(data)
-			return data.results
+			return data
 		})
 		.catch(error => console.log(error))
 	// const keyResponse = await login(currentApi)

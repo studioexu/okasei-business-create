@@ -3,7 +3,21 @@ import { loadData, deleteCustomer, login } from '@/libs/actions.js'
 import { currentApi, currentKey } from '@/data/api.js'
 
 export const load = async () => {
-	let data: any[] = await loadData(currentApi, currentKey)
+	// let data: any[] = await loadData(currentApi, currentKey)
+
+	let data: any[] = await fetch(currentApi + '/customer/list/customer', {
+		headers: {
+			Authorization: 'Token ' + currentKey,
+			'Content-Type': 'application/json'
+		},
+		method: 'GET'
+	})
+		.then(res => res.json())
+		.then(data => {
+			console.log(data)
+			return data.results
+		})
+		.catch(error => console.log(error))
 	// const keyResponse = await login(currentApi)
 	// async () => (data = await loadData(currentApi, currentKey))
 	// )

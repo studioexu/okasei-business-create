@@ -22,7 +22,7 @@ export const loadData = async (url: string, key: string) => {
 		.then(data => {
 			return data.results
 		})
-		.catch(error => console.log(error))
+		.catch(error => error)
 }
 
 /**

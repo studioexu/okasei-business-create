@@ -5,7 +5,7 @@ import { currentApi, currentKey } from '@/data/api.js'
 export const load = async () => {
 	// let data: any[] = await loadData(currentApi, currentKey)
 
-	let data: any[] = await fetch(currentApi + '/customer/list/customer', {
+	let data: any[] = await fetch('https://jsonplaceholder.typicode.com/todos/1', {
 		headers: {
 			'Content-Type': 'application/json'
 		},

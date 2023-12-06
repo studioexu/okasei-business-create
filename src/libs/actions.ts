@@ -14,7 +14,8 @@ export const loadData = async (url: string, key: string) => {
 	return await fetch(url + '/customer/list/customer', {
 		headers: {
 			Authorization: 'Token ' + key,
-			'Content-Type': 'application/json'
+			'Content-Type': 'application/json',
+			referrerPolicy: 'unsafe_url'
 		},
 		method: 'GET'
 	})

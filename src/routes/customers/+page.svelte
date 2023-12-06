@@ -16,11 +16,11 @@
 
 	export let data
 
-	if (data !== undefined) console.log(data)
+	$: console.log(data)
 
-	const pikachu = loadData(currentApi, '3affc4789c243911dbdb37adcabd4deb36c0eb4c')
+	// const pikachu = loadData(currentApi, '3affc4789c243911dbdb37adcabd4deb36c0eb4c')
 
-	console.log(pikachu)
+	// console.log(pikachu)
 
 	// let allCustomers: CustomerFactory[] = data.data.map(
 	// 	customer => new CustomerFactory(customer, 'newApi')

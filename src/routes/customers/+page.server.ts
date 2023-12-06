@@ -5,7 +5,7 @@ import { currentApi, currentKey } from '@/data/api.js'
 export const load = async () => {
 	// let data: any[]
 
-	// const keyResponse = await login(currentApi).then(
+	const keyResponse = await login(currentApi)
 	// 	async () => (data = await loadData(currentApi, currentKey))
 	// )
 
@@ -17,7 +17,7 @@ export const load = async () => {
 	// const data = currentKey
 	// if (!data) throw error(404)
 
-	return { data }
+	return { data, currentKey }
 }
 
 export const actions = {

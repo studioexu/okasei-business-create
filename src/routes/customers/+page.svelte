@@ -11,10 +11,16 @@
 	import { goto } from '$app/navigation'
 	import { getDateTime } from '@/libs/formatters'
 	import { enhance } from '$app/forms'
+	import { loadData } from '@/libs/actions.js'
+	import { currentApi } from '@/data/api.js'
 
 	export let data
 
 	if (data !== undefined) console.log(data)
+
+	const pikachu = loadData(currentApi, '3affc4789c243911dbdb37adcabd4deb36c0eb4c')
+
+	console.log(pikachu)
 
 	// let allCustomers: CustomerFactory[] = data.data.map(
 	// 	customer => new CustomerFactory(customer, 'newApi')

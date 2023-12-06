@@ -9,15 +9,15 @@ export const load = async () => {
 	// 	async () => (data = await loadData(currentApi, currentKey))
 	// )
 
-	const data: any[] = await login(currentApi).then(async key => await loadData(currentApi, key))
+	// const data: any[] = await login(currentApi).then(async key => await loadData(currentApi, key))
 
-	console.log(data)
+	// console.log(data)
 
 	// if (keyResponse) currentKey = keyResponse
 	// const data = currentKey
 	// if (!data) throw error(404)
 
-	return { data, keyResponse }
+	return { keyResponse }
 }
 
 export const actions = {

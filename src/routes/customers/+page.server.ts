@@ -17,7 +17,7 @@ export const load = async () => {
 	// const data = currentKey
 	// if (!data) throw error(404)
 
-	return { data, currentKey }
+	return { data, keyResponse }
 }
 
 export const actions = {

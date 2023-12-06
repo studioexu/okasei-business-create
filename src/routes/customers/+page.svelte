@@ -14,114 +14,114 @@
 
 	export let data
 
-	console.log(data)
+	if (data !== undefined) console.log(data)
 
-	let allCustomers: CustomerFactory[] = data.data.map(
-		customer => new CustomerFactory(customer, 'newApi')
-	)
+	// let allCustomers: CustomerFactory[] = data.data.map(
+	// 	customer => new CustomerFactory(customer, 'newApi')
+	// )
 
-	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
-	let filteredCustomers: CustomerFactory[]
-	let currentPage: number = 0
-	let deletedCustomersAreShown = false
+	// let customersToDisplay = allCustomers.filter(customer => customer.isActive)
+	// let filteredCustomers: CustomerFactory[]
+	// let currentPage: number = 0
+	// let deletedCustomersAreShown = false
 
-	$: currentPage
-	$: customersToDisplay
-	$: filteredCustomers
-	$: allCustomers
+	// $: currentPage
+	// $: customersToDisplay
+	// $: filteredCustomers
+	// $: allCustomers
 
-	/**
-	 * The toggle is ON, we display all the customers (deleted and active).
-	 * The toggle is OFF, We only display the active customers.
-	 * We change the state of deletedCustomersAreShown.
-	 * @param e
-	 */
-	const handleCheck = (e: any) => {
-		deletedCustomersAreShown = e.target.checked
+	// /**
+	//  * The toggle is ON, we display all the customers (deleted and active).
+	//  * The toggle is OFF, We only display the active customers.
+	//  * We change the state of deletedCustomersAreShown.
+	//  * @param e
+	//  */
+	// const handleCheck = (e: any) => {
+	// 	deletedCustomersAreShown = e.target.checked
 
-		if (deletedCustomersAreShown) {
-			customersToDisplay = filteredCustomers === undefined ? allCustomers : filteredCustomers
-		} else {
-			customersToDisplay =
-				filteredCustomers === undefined
-					? allCustomers.filter(customer => customer.isActive)
-					: filteredCustomers.filter(customer => customer.isActive)
-		}
+	// 	if (deletedCustomersAreShown) {
+	// 		customersToDisplay = filteredCustomers === undefined ? allCustomers : filteredCustomers
+	// 	} else {
+	// 		customersToDisplay =
+	// 			filteredCustomers === undefined
+	// 				? allCustomers.filter(customer => customer.isActive)
+	// 				: filteredCustomers.filter(customer => customer.isActive)
+	// 	}
 
-		currentPage = 0
-	}
+	// 	currentPage = 0
+	// }
 
-	// DELETE MODAL
+	// // DELETE MODAL
 
-	let isShown: boolean = false
-	let currentUser: string | undefined = undefined
-	let phase: 'shown' | 'success' | 'error' = 'shown'
+	// let isShown: boolean = false
+	// let currentUser: string | undefined = undefined
+	// let phase: 'shown' | 'success' | 'error' = 'shown'
 
-	const onClick = (event: { detail: { key: string } }) => {
-		switch (event.detail.key) {
-			case 'cancel':
-				isShown = false
-				break
-			case 'delete':
-				try {
-					if (currentUser !== undefined) {
-						const customer = allCustomers.find(
-							customer => customer.custCD.toString() === currentUser
-						)
+	// const onClick = (event: { detail: { key: string } }) => {
+	// 	switch (event.detail.key) {
+	// 		case 'cancel':
+	// 			isShown = false
+	// 			break
+	// 		case 'delete':
+	// 			try {
+	// 				if (currentUser !== undefined) {
+	// 					const customer = allCustomers.find(
+	// 						customer => customer.custCD.toString() === currentUser
+	// 					)
 
-						if (customer) {
-							customer.isActive = false
-							customer.delete.deleteDate = getDateTime()
-							customer.delete.deleteBy = 1
+	// 					if (customer) {
+	// 						customer.isActive = false
+	// 						customer.delete.deleteDate = getDateTime()
+	// 						customer.delete.deleteBy = 1
 
-							const submitBtn = document.getElementById('submit-btn')
-							submitBtn?.click()
-						}
+	// 						const submitBtn = document.getElementById('submit-btn')
+	// 						submitBtn?.click()
+	// 					}
 
-						//update the displayed data depending if we want to display the deleted customers or not.
-						if (deletedCustomersAreShown) {
-							customersToDisplay = allCustomers
-						} else {
-							customersToDisplay = allCustomers.filter(customer => customer.isActive)
-						}
+	// 					//update the displayed data depending if we want to display the deleted customers or not.
+	// 					if (deletedCustomersAreShown) {
+	// 						customersToDisplay = allCustomers
+	// 					} else {
+	// 						customersToDisplay = allCustomers.filter(customer => customer.isActive)
+	// 					}
 
-						goto('/customers')
-						phase = 'success'
-					}
-				} catch (error) {
-					console.log(error)
-					phase = 'error'
-				}
-				break
+	// 					goto('/customers')
+	// 					phase = 'success'
+	// 				}
+	// 			} catch (error) {
+	// 				console.log(error)
+	// 				phase = 'error'
+	// 			}
+	// 			break
 
-			case 'success':
-				isShown = false
-				phase = 'shown'
-				break
+	// 		case 'success':
+	// 			isShown = false
+	// 			phase = 'shown'
+	// 			break
 
-			case 'error':
-				phase = 'shown'
-				break
-		}
-	}
+	// 		case 'error':
+	// 			phase = 'shown'
+	// 			break
+	// 	}
+	// }
 
-	// PAGINATION
+	// // PAGINATION
 
-	/**
-	 * update the current page number
-	 * @param event: get the current number of the page
-	 */
-	const movePage = (event: { detail: { page: number } }): void => {
-		currentPage = event.detail.page
-	}
+	// /**
+	//  * update the current page number
+	//  * @param event: get the current number of the page
+	//  */
+	// const movePage = (event: { detail: { page: number } }): void => {
+	// 	currentPage = event.detail.page
+	// }
 
-	$: dividedUsers =
-		customersToDisplay.length > 0
-			? customersToDisplay.flatMap((_, i, self) => (i % 6 ? [] : [self.slice(i, i + 6)]))
-			: []
+	// $: dividedUsers =
+	// 	customersToDisplay.length > 0
+	// 		? customersToDisplay.flatMap((_, i, self) => (i % 6 ? [] : [self.slice(i, i + 6)]))
+	// 		: []
 </script>
 
-<section class="section section--customers-management" id="customers-management">
+<!-- <section class="section section--customers-management" id="customers-management">
 	<h1>Hello</h1>
 	{#if isShown}
 		<form
@@ -188,7 +188,7 @@
 	<footer class="section__footer">
 		<Pagination bind:current={currentPage} bind:pages={dividedUsers} on:click={movePage} />
 	</footer>
-</section>
+</section> -->
 
 <style lang="scss">
 	.section {

@@ -1,3 +1,6 @@
+<script lang="ts" context="module">
+</script>
+
 <script lang="ts">
 	import type { Picture } from '@/libs/customerTypes'
 	import type {
@@ -8,6 +11,8 @@
 
 	import { enhance } from '$app/forms'
 	import { prefectures, months } from '@/data/data'
+	import { getTotalOfBeds } from '@/libs/utils'
+
 	import Icon from '@/components/Icon.svelte'
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
@@ -29,16 +34,19 @@
 	// ADDRESS AUTO FILL
 
 	/**
-	 * Fetch the address corresponding to the postal code.
+	 * Fetch the address corresponding to the postal code and assign it to the initialState.address.
+	 * APIから郵便番号とマッチしている住所を読み込んで、InitialState.addressをアップデートする。
 	 * @param e
 	 */
-	const handlePostalCodeSearchSubmit = async (e: any) => {
+	const handlePostalCodeSearchSubmit = async (e: Event): Promise<void> => {
+		e.preventDefault()
+
 		let address: { prefecture: string; city: string; address1: string } = {
 			prefecture: '',
 			city: '',
 			address1: ''
 		}
-		e.preventDefault()
+
 		if (formIsValid.postalCode) {
 			const api = 'https://zipcloud.ibsnet.co.jp/api/search?zipcode='
 			const postalCode = initialState.postalCode
@@ -59,7 +67,11 @@
 		assignAddressInfo(address)
 	}
 
-	const assignAddressInfo = (address: AddressAutoInfo) => {
+	/**
+	 * This will assign the address information in the address object in InitialState.
+	 * @param address: corresponding to an address object with the prefecture, the city and the street
+	 */
+	const assignAddressInfo = (address: AddressAutoInfo): void => {
 		Object.keys(address).map(key => {
 			if (address[key as keyof AddressAutoInfo].length !== 0) {
 				initialState[key as keyof AddressAutoInfo] = address[key as keyof AddressAutoInfo]
@@ -68,13 +80,14 @@
 
 		initialState.address2 = ''
 	}
+
 	/**
 	 * Triggered when the form is submit.
 	 * If the form is still on the entry page, then, it will preventDefault, and displayed the entry verification page.
 	 * If the user is in the entry verification page, then, we submit the form.
-	 * @param e
+	 *
 	 */
-	const handleSubmit = (e: any): void => {
+	const handleSubmit = (): void => {
 		if (confirmationPageIsShown) {
 			isShown = true
 			isSucceeded = true
@@ -125,112 +138,84 @@
 	}
 
 	/**
-	 * Delete the corresponding image in the image array
-	 * @param e: event to get the id corresponding to the image
+	 * Delete the corresponding image in the picture array in initialState.
+	 * Initial State.picturesのArrayからユザーが削除したい写真を削除する。
+	 * @param index: index of the picture in the "pictures" array. PicturesのArrayで写真のインデックスである。
 	 */
-	const handleDeleteImage = (e: any) => {
-		const imageToDelete = e.target.closest('.card').id
-
+	const handleDeleteImage = (index: number): void => {
 		initialState.pictures = initialState.pictures.filter(
-			(image: Picture) => image.file.name !== imageToDelete
+			(image: Picture) => initialState.pictures.indexOf(image) !== index
 		)
 	}
 
 	// MANAGE DEPARTMENTS
 
-	interface DepartmentInput {
-		index: number
-		id: number
-		name: string
-		numberOfBeds: number
-	}
-
-	let departments: DepartmentInput[] = []
-
-	// fill the departments array with the data if there is any
 	if (initialState.departments.length === 0) {
-		departments = [
+		initialState.departments = [
 			{
-				id: 1,
-				name: '内科',
-				numberOfBeds: 0,
-				index: 0
+				departmentId: 1,
+				departmentName: '内科',
+				numberOfBeds: 0
 			}
 		]
-	} else {
-		initialState.departments.map((department, index) => {
-			departments = [
-				...departments,
-				{
-					id: department.departmentId,
-					name: department.departmentName,
-					numberOfBeds: department.numberOfBeds,
-					index: index
-				}
-			]
-			index++
-		})
 	}
 
 	/**
-	 * Update the departments array when add a department
+	 * Add a department in the departements array.
+	 * departementsのArrayni分科を追加する。
 	 * @param e
 	 */
-	const handleAddDepartment = (e: any): void => {
+	const handleAddDepartment = (e: Event): void => {
 		e.preventDefault()
 
-		departments = [
-			...departments,
+		initialState.departments = [
+			...initialState.departments,
 			{
-				id: 1,
-				name: '内科',
-				numberOfBeds: 0,
-				index: departments[departments.length - 1].index + 1
+				departmentId: 1,
+				departmentName: '内科',
+				numberOfBeds: 0
 			}
 		]
 	}
 
 	/**
-	 * Delete one department form the departments array
-	 * @param e: event to get the right id
+	 * Delete one department with the corresponding index in the "departments" array.
+	 * DepartmentsのArrayから分科を消す。
+	 * @param index: number, corresponding to the position of the department we want to delete in the "departments" array. 削除したい分科のインデックスである。
+	 *
 	 */
 	const deleteDepartment = (index: number) => {
-		departments = departments.filter(department => department.index !== index)
+		initialState.departments = initialState.departments.filter(
+			department => initialState.departments.indexOf(department) !== index
+		)
 	}
+
+	$: bedTotal = getTotalOfBeds(initialState.departments)
 
 	/**
-	 * We go through the array of bed input and calculate the number total of beds.
-	 * @param beds: array of bedInput
+	 * The user selects a department, the function will update the "departments" array and, by extension, the initialState.departments.
+	 * ユザーが分科を選択すると、DepartmentsのArrayとInitialState.departementsのArrayをアップデートする。
+	 * @param e: event, form the event, we will get the name of the department. イベントから、から分科名を貰う。
+	 * @param index：number, index of the department in the departments array. DepartmentsのArrayで分科のインデックスである。
 	 */
-	const getTotalOfBeds = (departments: DepartmentInput[]): number => {
-		let sum: number = 0
-		departments.map((department: DepartmentInput) => {
-			const numberOfBed = isNaN(department.numberOfBeds) ? 0 : department.numberOfBeds
-			sum += numberOfBed
-		})
+	const handleSelectDepartment = (e: Event, index: number): void => {
+		const departmentName: string = (e.target as HTMLOptionElement).value
 
-		return sum
-	}
+		if (departmentName) {
+			const departmentId = (
+				document.querySelector(
+					"#departments option[value='" + departmentName + "']"
+				) as HTMLOptionElement
+			)?.dataset.value
 
-	$: bedTotal = getTotalOfBeds(departments)
-	$: initialState.departments = departments.map(department => {
-		return {
-			departmentId: department.id,
-			departmentName: department.name,
-			numberOfBeds: department.numberOfBeds
-		}
-	})
+			const selectedDepartment = departmentsList.find(
+				department => departmentId && department.id === parseInt(departmentId)
+			)
 
-	////////************** to improve*/
-	const handleSelectDepartment = (e: any) => {
-		const departmentId = parseInt(e.target.value)
-		const departmentIndex = parseInt(e.target.closest('.department-wrapper').id.split('-')[1])
-
-		const selectedDepartment = departmentsList.find(department => department.id === departmentId)
-
-		if (selectedDepartment) {
-			departments[departmentIndex].id = selectedDepartment.id
-			departments[departmentIndex].name = selectedDepartment.name
+			if (selectedDepartment) {
+				initialState.departments[index].departmentId = selectedDepartment.id
+				initialState.departments[index].departmentName = selectedDepartment.name
+			}
 		}
 	}
 </script>
@@ -322,6 +307,7 @@
 				required={true}
 				options={['法人', '個人']}
 				bind:value={initialState.businessType}
+				bind:isValid={formIsValid.businessType}
 			/>
 		</div>
 	</fieldset>
@@ -364,6 +350,7 @@
 				placeholder="○○市"
 				errorMsg={'正しい街をご入力ください'}
 				inputSize="input--md"
+				required={true}
 				bind:value={initialState.city}
 				bind:isValid={formIsValid.city}
 			/>
@@ -417,7 +404,6 @@
 				placeholder={'未入力'}
 				errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
 				inputSize={'input--md'}
-				required={true}
 				bind:value={initialState.mobile}
 				bind:isValid={formIsValid.mobile}
 			/>
@@ -428,6 +414,7 @@
 				placeholder={'0000000000'}
 				errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
 				inputSize="input--md"
+				required={true}
 				bind:value={initialState.fax}
 				bind:isValid={formIsValid.fax}
 			/>
@@ -483,38 +470,37 @@
 		<div class="form-row bed">
 			<h3 class="label">診療科目</h3>
 			<div class="container">
-				{#each departments as selectedDepartment, index}
-					<div class="department-wrapper" id={'department-' + selectedDepartment.index.toString()}>
+				{#each initialState.departments as selectedDepartment, index}
+					<div class="department-wrapper" id={'department-' + index}>
 						<div class="input-wrapper">
 							<input
 								list="departments"
-								bind:value={selectedDepartment.name}
-								on:input={handleSelectDepartment}
+								bind:value={selectedDepartment.departmentName}
+								on:input={e => handleSelectDepartment(e, index)}
 							/>
 
 							<datalist id="departments">
 								{#each departmentsList as department}
-									<option value={department.id}>{department.name}</option>
+									<option
+										class="department-option"
+										data-value={department.id}
+										value={department.name}
+									/>
 								{/each}
 							</datalist>
-
-							<select id="departments">
-								{#each departmentsList as department}
-									<option value={department.id}>{department.name}</option>
-								{/each}
-							</select>
 						</div>
 
-						<div class="input-wrapper">
-							<label for="bed-quantity">病床数</label>
-							<input type="number" min="0" bind:value={selectedDepartment.numberOfBeds} />
-						</div>
+						<NumberInput
+							name={'bed-quantity'}
+							label={'病床数'}
+							bind:value={selectedDepartment.numberOfBeds}
+						/>
 
-						{#if departments.length > 1}
+						{#if initialState.departments.length > 1}
 							<button
 								type="button"
 								class="btn secondary delete"
-								on:click={() => deleteDepartment(selectedDepartment.index)}
+								on:click={() => deleteDepartment(index)}
 							>
 								<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
 							</button>
@@ -529,8 +515,7 @@
 		</div>
 
 		<div class="form-row">
-			<!-- svelte-ignore a11y-missing-content -->
-			<h3 class="label" />
+			<span class="label" />
 			<button class="btn primary" on:click={handleAddDepartment}>+新規追加</button>
 		</div>
 	</fieldset>
@@ -669,6 +654,7 @@
 
 	<fieldset class="fieldset">
 		<legend class="legend">画像</legend>
+
 		<div class="form-row">
 			<div class="input-wrapper">
 				<h3 class="label">参考書類など画像データ</h3>
@@ -694,7 +680,11 @@
 									inputSize={'input--lg'}
 									bind:value={image.memo}
 								/>
-								<button type="button" class="btn primary inline" on:click={handleDeleteImage}>
+								<button
+									type="button"
+									class="btn primary inline"
+									on:click={() => handleDeleteImage(index)}
+								>
 									削除
 								</button>
 							</div>
@@ -713,12 +703,14 @@
 </form>
 
 <style lang="scss">
-	.legend {
+	.hidden {
 		display: none;
 	}
 
-	.hidden {
-		display: none;
+	.container {
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
 	}
 
 	.form {
@@ -740,12 +732,12 @@
 		margin-bottom: 20px;
 	}
 
-	.required-mark {
-		color: var(--error);
-	}
-
 	.fieldset {
 		margin-bottom: 2rem;
+
+		.legend {
+			display: none;
+		}
 	}
 
 	.required-legend {
@@ -753,14 +745,49 @@
 		font-size: 14px;
 	}
 
+	:global(.required-mark) {
+		color: var(--error);
+	}
+
+	:global(.input-wrapper) {
+		position: relative;
+		display: flex;
+		gap: 10px;
+		align-items: flex-start;
+	}
+
 	:global(.input-wrapper:first-child > .label) {
 		width: 140px;
 	}
 
+	:global(.input-wrapper .input::placeholder) {
+		color: rgb(206, 205, 205);
+	}
+	:global(.input-wrapper .input:focus) {
+		border-color: var(--primary-color);
+	}
+
+	:global(.input-wrapper .font-error) {
+		position: absolute;
+		right: 0;
+		bottom: -14px;
+		font-size: 10px;
+		opacity: 0;
+	}
+
+	:global(.error .input) {
+		transition: border 300ms;
+		border-color: var(--error);
+		animation: buzz 100ms;
+		animation-iteration-count: 3;
+	}
+
+	:global(.error .font-error) {
+		opacity: 1;
+		transition: all 300ms;
+	}
+
 	.input-wrapper {
-		display: flex;
-		gap: 10px;
-		align-items: flex-start;
 		.select {
 			height: 32px;
 			width: calc(((106 - 10 - 2) / 1366) * 100vw);
@@ -842,12 +869,6 @@
 		}
 	}
 
-	.container {
-		display: flex;
-		flex-direction: column;
-		gap: 18px;
-	}
-
 	.bed-total {
 		display: flex;
 		align-items: center;
@@ -865,68 +886,15 @@
 		width: calc((($width - 10 - 2) / 1366) * 100vw);
 	}
 
+	// .input {
+	// 	width: calc(((103 - 10 - 2) / 1366) * 100vw);
+	// }
+
 	.input-wrapper {
-		position: relative;
-		display: flex;
-		align-items: center;
 		width: fit-content;
-		gap: 10px;
-
-		&:first-child {
-			.label {
-				width: 140px;
-			}
-		}
-
 		.input {
 			max-height: 31px;
-			&::placeholder {
-				color: rgb(206, 205, 205);
-			}
-
-			&:focus {
-				border-color: var(--primary-color);
-			}
-
-			&--sm {
-				@include responsiveInputWidth((103));
-			}
-			&--md {
-				@include responsiveInputWidth((152));
-			}
-			&--lg {
-				@include responsiveInputWidth((359));
-			}
-			&--xl {
-				@include responsiveInputWidth((534));
-			}
 		}
-
-		.font-error {
-			position: absolute;
-			right: 0;
-			bottom: -14px;
-			font-size: 10px;
-			opacity: 0;
-		}
-	}
-
-	.error {
-		.input {
-			transition: border 300ms;
-			border-color: var(--error);
-			animation: buzz 100ms;
-			animation-iteration-count: 3;
-		}
-
-		.font-error {
-			opacity: 1;
-			transition: all 300ms;
-		}
-	}
-
-	.required-mark {
-		color: var(--error);
 	}
 
 	@keyframes buzz {

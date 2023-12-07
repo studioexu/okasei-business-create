@@ -6,20 +6,10 @@
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
-	import type { Department } from '@/models/CustomerAPI.js'
-	import { getDateTime } from '@/libs/formatters.js'
 
 	export let data
 
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
-	let bedQuantity: number = 0
-
-	/**
-	 * On click, we redirect the user to the edit page
-	 */
-	const handleLinkClicked = () => {
-		window.location.href = '/customers/' + customer.custCD + '/edit'
-	}
 
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
@@ -58,8 +48,6 @@
 		pictures: customer.pictures,
 		miscellaneous: customer.miscellaneous
 	}
-
-	customer.departments.forEach((department: Department) => (bedQuantity += department.numberOfBeds))
 </script>
 
 <section class="section section--confirmation">
@@ -104,7 +92,24 @@
 
 		<div class="button-container">
 			{#if customer.isActive}
-				<button class="primary" on:click={handleLinkClicked}> 編集 </button>
+				<button
+					class="primary"
+					on:click={() => {
+						window.location.href = '/customers/' + customer.custCD + '/edit'
+					}}
+				>
+					編集
+				</button>
+			{:else}
+				<form
+					method="POST"
+					action="/customers/{initialState.id}?/reactivate"
+					id={'reactivate-form'}
+					name="reactivate-form"
+				>
+					<input type="hidden" name="id" value={initialState.id} />
+					<button type="submit" form="reactivate-form" class="primary"> 復活 </button>
+				</form>
 			{/if}
 		</div>
 	</footer>

@@ -1,8 +1,4 @@
 import { currentKey } from '@/data/api'
-import { formatCustomer } from './formatters'
-import type { CustomerFactory } from '@/Factories/CustomerFactory'
-import type { CustomerBackend, CustomerNewApi } from '@/models/BackendCustomer'
-import { json } from '@sveltejs/kit'
 
 /**
  * Load the data from the server.
@@ -80,6 +76,23 @@ export const updateCustomer = (updatedCustomer: Object, url: string, customerId:
  */
 export const deleteCustomer = (id: number, url: string) => {
 	fetch(url + '/customer/inactivate/' + id, {
+		method: 'PATCH',
+		headers: {
+			Authorization: 'Token ' + currentKey,
+			'Content-type': 'application/json;charset=UTF-8'
+		},
+		redirect: 'follow'
+	})
+		.then(res => res.json())
+		.then(data => {
+			console.log(data)
+			console.log('Successfully deleted')
+		})
+		.catch(err => console.log(err))
+}
+
+export const reactivateCustomer = (id: number, url: string) => {
+	fetch(url + '/customer/activate/' + id, {
 		method: 'PATCH',
 		headers: {
 			Authorization: 'Token ' + currentKey,

@@ -1,5 +1,6 @@
 import { prefectures } from '@/data/data'
 import { isValidPhoneNumber } from 'libphonenumber-js'
+import type { CustomerEntries, CustomerEntriesErrors } from './customerTypes'
 
 /**
  * We want to check if the user only use katakana
@@ -34,19 +35,6 @@ export const phoneNumberValidation = (phoneNumber: string) => {
 export const postalCodeValidation = (postalCode: string) => {
 	const regex = /^[0-9]{7}$/
 	return regex.test(postalCode)
-}
-
-/**
- * check if the year input is correct
- * 数字が入れたかどうか確認する。
- * @param year: string
- * @returns boolean
- */
-export const checkIfYearIsValid = (year: string) => {
-	const yearInt = parseInt(year)
-	const currentYear = new Date().getFullYear()
-
-	return yearInt !== 0 && yearInt <= currentYear
 }
 
 /**
@@ -95,6 +83,10 @@ export const checkIfInputIsNumber = (input: string | number): boolean => {
 	return false
 }
 
+// export const checkIfInputIsDate = (input: string): boolean => {
+// 	return !isNaN(new Date(input))
+// }
+
 /**
  * This function groups all the validators to check if the input is valid according to their type
  * @param name : string, is the type of the input
@@ -122,33 +114,63 @@ export const inputIsValid = (name: string, input: any): boolean => {
 			return checkIfPrefectureIsValid(input)
 
 		case 'city':
-			return numberOFCharacterValidation(input, 20) || input === ''
+			return numberOFCharacterValidation(input, 20)
 
 		case 'address1':
 		case 'address2':
+			return numberOFCharacterValidation(input, 200)
+
 		case 'founder':
 		case 'homepage':
 			return numberOFCharacterValidation(input, 128) || input === ''
 
 		case 'phoneNumber':
 		case 'fax':
-		case 'mobile':
 			return phoneNumberValidation(input)
 
-		case 'year':
-			return input === '' || checkIfYearIsValid(input)
+		case 'mobile':
+			return phoneNumberValidation(input) || input === ''
 
 		case 'month':
 			return input === '' || checkIfMonthIsValid(input)
 
 		case 'quantity':
-			return checkIfInputIsNumber(input)
-
 		case 'numberOfEmployees':
 		case 'numberOfFacilities':
 			return checkIfInputIsNumber(input)
 
+		case 'businessType':
+			return input.length > 0
+
 		default:
 			return true
 	}
+}
+
+/**
+ * Take the form and check if all the entries are valid.
+ * If there is one error, the function will return false.
+ * @param formEntries: Object of entries
+ * @returns boolean
+ */
+export const validationOnSubmit = (
+	formEntries: CustomerEntries,
+	formValidation: CustomerEntriesErrors
+): { isValid: boolean; formValidation: CustomerEntriesErrors } => {
+	let errorArray: boolean[] = []
+	let isValid = true
+
+	Object.keys(formEntries).map(key => {
+		const input = formEntries[key as keyof CustomerEntries]
+
+		formValidation[key as keyof CustomerEntriesErrors] = inputIsValid(key, input)
+		errorArray.push(!inputIsValid(key, input))
+	})
+
+	errorArray.forEach(error => {
+		if (error) {
+			isValid = false
+		}
+	})
+	return { isValid, formValidation }
 }

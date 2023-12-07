@@ -8,7 +8,6 @@
 	let fileToUpload: File
 
 	const handleChange = (e: any) => {
-		console.log(e.target.files[0])
 		fileToUpload = e.target.files[0]
 	}
 
@@ -35,6 +34,7 @@
 					<input
 						type="file"
 						id="file"
+						class="hidden"
 						name="file"
 						accept="image/png, image/jpeg, .pdf"
 						on:change={handleChange}
@@ -152,5 +152,9 @@
 			top: 0;
 			object-fit: contain;
 		}
+	}
+
+	.hidden {
+		display: none;
 	}
 </style>

@@ -11,136 +11,118 @@
 	import { goto } from '$app/navigation'
 	import { getDateTime } from '@/libs/formatters'
 	import { enhance } from '$app/forms'
-	import { loadData } from '@/libs/actions.js'
-	import { currentApi, currentKey } from '@/data/api.js'
-	import { onMount } from 'svelte'
 
 	export let data
 
-	$: console.log(data)
+	let allCustomers: CustomerFactory[] = data.data.map(
+		customer => new CustomerFactory(customer, 'newApi')
+	)
 
-	// let pikachu
+	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
+	let filteredCustomers: CustomerFactory[]
+	let currentPage: number = 0
+	let deletedCustomersAreShown = false
 
-	// onMount(async () => {
-	// 	const response = await loadData(currentApi, currentKey)
-	// 	pikachu = await response.json()
-	// })
+	$: currentPage = 0
+	$: customersToDisplay
+	$: filteredCustomers
+	$: allCustomers
 
-	// console.log(pikachu)
+	/**
+	 * The toggle is ON, we display all the customers (deleted and active).
+	 * The toggle is OFF, We only display the active customers.
+	 * We change the state of deletedCustomersAreShown.
+	 * @param e
+	 */
+	const handleCheck = (e: any) => {
+		deletedCustomersAreShown = e.target.checked
 
-	// const pikachu = loadData(currentApi, '3affc4789c243911dbdb37adcabd4deb36c0eb4c')
+		if (deletedCustomersAreShown) {
+			customersToDisplay = filteredCustomers === undefined ? allCustomers : filteredCustomers
+		} else {
+			customersToDisplay =
+				filteredCustomers === undefined
+					? allCustomers.filter(customer => customer.isActive)
+					: filteredCustomers.filter(customer => customer.isActive)
+		}
 
-	// console.log(pikachu)
+		currentPage = 0
+	}
 
-	// let allCustomers: CustomerFactory[] = data.data.map(
-	// 	customer => new CustomerFactory(customer, 'newApi')
-	// )
+	// DELETE MODAL
 
-	// let customersToDisplay = allCustomers.filter(customer => customer.isActive)
-	// let filteredCustomers: CustomerFactory[]
-	// let currentPage: number = 0
-	// let deletedCustomersAreShown = false
+	let isShown: boolean = false
+	let currentUser: string | undefined = undefined
+	let phase: 'shown' | 'success' | 'error' = 'shown'
 
-	// $: currentPage
-	// $: customersToDisplay
-	// $: filteredCustomers
-	// $: allCustomers
+	const onClick = (event: { detail: { key: string } }) => {
+		switch (event.detail.key) {
+			case 'cancel':
+				isShown = false
+				break
+			case 'delete':
+				try {
+					if (currentUser !== undefined) {
+						const customer = allCustomers.find(
+							customer => customer.custCD.toString() === currentUser
+						)
 
-	// /**
-	//  * The toggle is ON, we display all the customers (deleted and active).
-	//  * The toggle is OFF, We only display the active customers.
-	//  * We change the state of deletedCustomersAreShown.
-	//  * @param e
-	//  */
-	// const handleCheck = (e: any) => {
-	// 	deletedCustomersAreShown = e.target.checked
+						if (customer) {
+							customer.isActive = false
+							customer.delete.deleteDate = getDateTime()
+							customer.delete.deleteBy = 1
 
-	// 	if (deletedCustomersAreShown) {
-	// 		customersToDisplay = filteredCustomers === undefined ? allCustomers : filteredCustomers
-	// 	} else {
-	// 		customersToDisplay =
-	// 			filteredCustomers === undefined
-	// 				? allCustomers.filter(customer => customer.isActive)
-	// 				: filteredCustomers.filter(customer => customer.isActive)
-	// 	}
+							const submitBtn = document.getElementById('submit-btn')
+							submitBtn?.click()
+						}
 
-	// 	currentPage = 0
-	// }
+						//update the displayed data depending if we want to display the deleted customers or not.
+						if (deletedCustomersAreShown) {
+							customersToDisplay = allCustomers
+						} else {
+							customersToDisplay = allCustomers.filter(customer => customer.isActive)
+						}
 
-	// // DELETE MODAL
+						goto('/customers')
+						phase = 'success'
+					}
+				} catch (error) {
+					console.log(error)
+					phase = 'error'
+				}
+				break
 
-	// let isShown: boolean = false
-	// let currentUser: string | undefined = undefined
-	// let phase: 'shown' | 'success' | 'error' = 'shown'
+			case 'success':
+				isShown = false
+				phase = 'shown'
+				break
 
-	// const onClick = (event: { detail: { key: string } }) => {
-	// 	switch (event.detail.key) {
-	// 		case 'cancel':
-	// 			isShown = false
-	// 			break
-	// 		case 'delete':
-	// 			try {
-	// 				if (currentUser !== undefined) {
-	// 					const customer = allCustomers.find(
-	// 						customer => customer.custCD.toString() === currentUser
-	// 					)
+			case 'error':
+				phase = 'shown'
+				break
+		}
+	}
 
-	// 					if (customer) {
-	// 						customer.isActive = false
-	// 						customer.delete.deleteDate = getDateTime()
-	// 						customer.delete.deleteBy = 1
+	// PAGINATION
 
-	// 						const submitBtn = document.getElementById('submit-btn')
-	// 						submitBtn?.click()
-	// 					}
+	/**
+	 * update the current page number
+	 * @param event: get the current number of the page
+	 */
+	const movePage = (event: { detail: { page: number } }): void => {
+		currentPage = event.detail.page
+	}
 
-	// 					//update the displayed data depending if we want to display the deleted customers or not.
-	// 					if (deletedCustomersAreShown) {
-	// 						customersToDisplay = allCustomers
-	// 					} else {
-	// 						customersToDisplay = allCustomers.filter(customer => customer.isActive)
-	// 					}
-
-	// 					goto('/customers')
-	// 					phase = 'success'
-	// 				}
-	// 			} catch (error) {
-	// 				console.log(error)
-	// 				phase = 'error'
-	// 			}
-	// 			break
-
-	// 		case 'success':
-	// 			isShown = false
-	// 			phase = 'shown'
-	// 			break
-
-	// 		case 'error':
-	// 			phase = 'shown'
-	// 			break
-	// 	}
-	// }
-
-	// // PAGINATION
-
-	// /**
-	//  * update the current page number
-	//  * @param event: get the current number of the page
-	//  */
-	// const movePage = (event: { detail: { page: number } }): void => {
-	// 	currentPage = event.detail.page
-	// }
-
-	// $: dividedUsers =
-	// 	customersToDisplay.length > 0
-	// 		? customersToDisplay.flatMap((_, i, self) => (i % 6 ? [] : [self.slice(i, i + 6)]))
-	// 		: []
+	$: dividedUsers =
+		customersToDisplay.length > 0
+			? customersToDisplay.flatMap((_, i, self) => (i % 6 ? [] : [self.slice(i, i + 6)]))
+			: []
 </script>
 
-<!-- <section class="section section--customers-management" id="customers-management">
-	<h1>Hello</h1>
+<section class="section section--customers-management" id="customers-management">
 	{#if isShown}
 		<form
+			name="delete-form"
 			id="delete-form"
 			method="POST"
 			action="/customers?/delete"
@@ -148,9 +130,9 @@
 			on:submit|preventDefault
 		>
 			<input type="hidden" name="id" value={currentUser} />
-			<button type="submit" id="submit-btn" form="delete-form" class="del-btn primary"
-				>delete</button
-			>
+			<button type="submit" id="submit-btn" form="delete-form" class="del-btn primary">
+				delete
+			</button>
 
 			<DeleteModal {phase} on:click={onClick} />
 		</form>
@@ -204,7 +186,7 @@
 	<footer class="section__footer">
 		<Pagination bind:current={currentPage} bind:pages={dividedUsers} on:click={movePage} />
 	</footer>
-</section> -->
+</section>
 
 <style lang="scss">
 	.section {
@@ -218,6 +200,13 @@
 		&__footer {
 			margin-top: 18px;
 		}
+	}
+
+	.container {
+		display: flex;
+		padding: 0 18px;
+		justify-content: space-between;
+		align-items: center;
 	}
 
 	.toggle-wrapper {
@@ -280,16 +269,5 @@
 				}
 			}
 		}
-	}
-
-	.container {
-		display: flex;
-		padding: 0 18px;
-		justify-content: space-between;
-		align-items: center;
-	}
-
-	.del-btn {
-		z-index: 999;
 	}
 </style>

@@ -5,7 +5,7 @@
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 	import { goto } from '$app/navigation'
-	import { inputIsValid } from '@/libs/customerValidations.js'
+	import { validationOnSubmit } from '@/libs/customerValidations.js'
 	import { fade } from 'svelte/transition'
 	export let data
 
@@ -95,30 +95,10 @@
 		goto('/customers')
 	}
 
-	/**
-	 * Take the form and check if all the entries are valid.
-	 * If there is one error, the function will return false.
-	 * @param formEntries: Object of entries
-	 * @returns boolean
-	 */
-	const checkIfFormIsValid = (formEntries: CustomerEntries): boolean => {
-		let errorArray: boolean[] = []
-		let isValid = true
-
-		Object.keys(formEntries).map(key => {
-			const input = formEntries[key as keyof CustomerEntries]
-
-			formIsValid[key as keyof CustomerEntriesErrors] = inputIsValid(key, input)
-			errorArray.push(!inputIsValid(key, input))
-		})
-
-		errorArray.forEach(error => {
-			if (error) {
-				isValid = false
-			}
-		})
-
-		return isValid
+	const handleSubmitForm = () => {
+		const submitResult = validationOnSubmit(initialState, formIsValid)
+		confirmationPageIsShown = submitResult.isValid
+		formIsValid = submitResult.formValidation
 	}
 </script>
 
@@ -163,15 +143,7 @@
 				</div>
 				<button type="submit" class="btn primary" form="registration-form">登録</button>
 			{:else}
-				<button
-					type="button"
-					class="btn primary"
-					on:click={() => {
-						confirmationPageIsShown = checkIfFormIsValid(initialState)
-					}}
-				>
-					登録
-				</button>
+				<button type="button" class="btn primary" on:click={handleSubmitForm}> 登録 </button>
 			{/if}
 		</footer>
 	{/if}

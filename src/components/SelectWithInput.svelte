@@ -63,11 +63,6 @@
 
 <style lang="scss">
 	.input-wrapper {
-		display: flex;
-		gap: 10px;
-		position: relative;
-		align-self: center;
-
 		.label {
 			height: 32px;
 			display: flex;
@@ -75,48 +70,14 @@
 		}
 
 		.input {
-			width: calc(((103 - 10 - 2) / 1366) * 100vw);
-
-			&::placeholder {
-				color: rgb(206, 205, 205);
-			}
-
-			&:focus {
-				border-color: var(--primary-color);
-			}
-		}
-
-		.font-error {
-			position: absolute;
-			right: 0;
-			bottom: -14px;
-			font-size: 10px;
-			text-align: right;
-			opacity: 0;
+			width: calc(((152 - 10 - 2) / 1366) * 100vw);
+			// width: 150px;
 		}
 
 		.unit {
 			display: flex;
 			align-items: center;
 		}
-	}
-
-	.error {
-		.input {
-			transition: border 300ms;
-			border: 1.5px solid var(--error);
-			animation: buzz 100ms;
-			animation-iteration-count: 3;
-		}
-
-		.font-error {
-			opacity: 1;
-			transition: all 300ms;
-		}
-	}
-
-	.required-mark {
-		color: var(--error);
 	}
 
 	@keyframes buzz {

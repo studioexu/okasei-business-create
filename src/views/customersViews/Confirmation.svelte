@@ -2,25 +2,10 @@
 	import { fly } from 'svelte/transition'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
 	import type { CustomerEntries } from '@/libs/customerTypes'
-	import type { Department } from '@/models/CustomerAPI'
-
+	import { getTotalOfBeds } from '@/libs/utils'
 	export let initialState: CustomerEntries
 
 	let bedTotal: number = 0
-
-	/**
-	 * We go through the array of department input and calculate the number total of beds.
-	 * @param departments: array of Department
-	 */
-	const getTotalOfBeds = (departments: Department[]): number => {
-		let sum: number = 0
-		departments.map((department: Department) => {
-			const numberOfBed = isNaN(department.numberOfBeds) ? 0 : department.numberOfBeds
-			sum += numberOfBed
-		})
-
-		return sum
-	}
 
 	$: bedTotal = getTotalOfBeds(initialState.departments)
 </script>
@@ -165,7 +150,7 @@
 					{#each initialState.pictures as image}
 						<div class="card">
 							<div class="image-wrapper">
-								<img src={URL.createObjectURL(image.file)} alt="" />
+								<img src={URL.createObjectURL(image.file)} alt={image.memo} />
 							</div>
 							<p class="label">{image.memo}</p>
 						</div>
@@ -179,12 +164,14 @@
 <style lang="scss">
 	.confirmation {
 		overflow: hidden;
+		width: auto;
 		padding: 0 37px;
 		padding-top: 28px;
 		padding-bottom: 48px;
-		width: auto;
+
 		border-radius: 16px;
 		background-color: #fff;
+
 		box-shadow: 0px 8px 8px rgb(200, 200, 200);
 	}
 
@@ -224,23 +211,26 @@
 		}
 	}
 
-	.detail-wrapper {
+	:global(.detail-wrapper) {
 		position: relative;
 		display: flex;
-		gap: 18px;
 		padding: 11px 0;
+		column-gap: 18px;
+		// align-items: center;
+	}
 
-		.label {
-			font-size: 18px;
-			font-weight: 400;
-			width: 130px;
-			color: var(--gray);
-		}
+	:global(.detail-wrapper .label) {
+		color: var(--gray);
+		font-size: 18px;
+		font-weight: 500;
+		width: auto;
+	}
 
-		.label {
-			width: 130px;
-		}
+	:global(.detail-wrapper:first-child .label) {
+		width: 130px;
+	}
 
+	.detail-wrapper {
 		.total {
 			display: flex;
 			justify-content: space-between;

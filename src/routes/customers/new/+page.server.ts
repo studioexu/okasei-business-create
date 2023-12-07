@@ -2,11 +2,11 @@ import type { CustomerEntries } from '@/libs/customerTypes'
 import { formatCustomer } from '@/libs/formatters.js'
 import { createCustomer, loadDepartments } from '@/libs/actions'
 import { currentApi } from '@/data/api'
-import type { CustomerBackend, CustomerNewApi } from '@/models/BackendCustomer.js'
+import type { CustomerNewApi } from '@/models/BackendCustomer.js'
 import { debounce } from '@/libs/utils'
 import { error } from '@sveltejs/kit'
 
-export const load = async ({ params }) => {
+export const load = async () => {
 	const departmentsList = loadDepartments(currentApi)
 
 	if (!departmentsList) throw error(404)
@@ -24,7 +24,6 @@ export const actions = {
 
 		if (typeof initialStateString === 'string') {
 			initialState = JSON.parse(initialStateString)
-
 			let newCustomer: CustomerNewApi = formatCustomer('create', initialState)
 
 			createCustomer(newCustomer, currentApi)

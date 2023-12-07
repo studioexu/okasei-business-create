@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { checkIfInputIsNumber, inputIsValid } from '@/libs/customerValidations'
-	import { toCamelCase } from '@/libs/formatters'
+	import { checkIfInputIsNumber } from '@/libs/customerValidations'
 
 	export let placeholder: string = ''
 	export let value: number = 0
@@ -30,11 +29,12 @@
 		<span class="required-mark">{required ? '*' : ''}</span>
 	</label>
 	<input
-		required
 		type="number"
 		class="input"
 		id={name}
 		{name}
+		{required}
+		min="0"
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
@@ -49,55 +49,12 @@
 	}
 
 	.input-wrapper {
-		position: relative;
-		display: flex;
-		align-items: center;
 		width: fit-content;
-		gap: 10px;
-
-		// &:first-child {
-		// 	.label {
-		// 		width: 140px;
-		// 	}
-		// }
 
 		.input {
-			&::placeholder {
-				color: rgb(206, 205, 205);
-			}
-
-			&:focus {
-				border-color: var(--primary-color);
-			}
-
 			@include responsiveInputWidth((103));
+			width: 100px;
 		}
-
-		.font-error {
-			position: absolute;
-			right: 0;
-			bottom: -14px;
-			font-size: 10px;
-			opacity: 0;
-		}
-	}
-
-	.error {
-		.input {
-			transition: border 300ms;
-			border-color: var(--error);
-			animation: buzz 100ms;
-			animation-iteration-count: 3;
-		}
-
-		.font-error {
-			opacity: 1;
-			transition: all 300ms;
-		}
-	}
-
-	.required-mark {
-		color: var(--error);
 	}
 
 	@keyframes buzz {

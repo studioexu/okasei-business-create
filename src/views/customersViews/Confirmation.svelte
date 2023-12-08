@@ -7,11 +7,263 @@
 
 	let bedTotal: number = 0
 
+	const customerInformation = [
+		[
+			{
+				label: '顧客番号',
+				content: initialState.id !== undefined ? initialState.id : '',
+				unit: ''
+			},
+			{
+				label: '枝番',
+				content: initialState.branchNumber,
+				unit: ''
+			},
+			{
+				label: '決算月',
+				content: initialState.closingMonth,
+				unit: '月'
+			}
+		],
+
+		[
+			{
+				label: '施設名',
+				content: initialState.customerName,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: 'カナ',
+				content: initialState.kana,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '医療機関番号',
+				content: initialState.facilityNumber,
+				unit: ''
+			},
+			{
+				label: '区分',
+				content: initialState.businessType,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '郵便番号',
+				content: initialState.postalCode,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '都道府県',
+				content: initialState.prefecture,
+				unit: ''
+			},
+			{
+				label: '市区町村',
+				content: initialState.city,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '住所１',
+				content: initialState.address1,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '住所2',
+				content: initialState.address2,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '電話番号',
+				content: initialState.phoneNumber,
+				unit: ''
+			},
+			{
+				label: '携帯電話',
+				content: initialState.mobile,
+				unit: ''
+			},
+			{
+				label: 'FAX番号',
+				content: initialState.fax,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: 'メール',
+				content: initialState.email,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: 'ホームページ',
+				content: initialState.homepage,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '従業員数',
+				content: initialState.numberOfEmployees.toString(),
+				unit: '名'
+			}
+		],
+		[
+			{
+				label: '関連施設拠点数',
+				content: initialState.numberOfFacilities.toString(),
+				unit: '軒'
+			}
+		],
+		[
+			{
+				label: '口コミ',
+				content: initialState.reviews !== undefined ? initialState.reviews : '',
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '事業一覧',
+				content: initialState.business !== undefined ? initialState.business : '',
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '設立年月日',
+				content: initialState.year,
+				unit: '年'
+			},
+			{
+				content: initialState.month,
+				unit: '月'
+			},
+			{
+				label: '設立者',
+				content: initialState.founder,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '診療科目',
+				content: initialState.departments,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: 'ご担当者名',
+				content: initialState.personInCharge,
+				unit: ''
+			},
+			{
+				label: '役職',
+				content: initialState.personInChargeRole,
+				unit: ''
+			},
+			{
+				label: 'ご担当メモ',
+				content: initialState.personInChargeMemo,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '決裁者',
+				content: initialState.approver,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: 'その他',
+				content: initialState.miscellaneous,
+				unit: ''
+			}
+		],
+		[
+			{
+				label: '参考書類など 画像データ',
+				content: initialState.pictures,
+				unit: ''
+			}
+		]
+	]
+
 	$: bedTotal = getTotalOfBeds(initialState.departments)
 </script>
 
 <div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
-	<div class="form-row">
+	{#each customerInformation as information}
+		<div class="form-row">
+			{#each information as detail}
+				{#if detail.label === '診療科目'}
+					<div class="detail-wrapper bedding">
+						<h3 class="label">{detail.label}</h3>
+						<div class="container">
+							{#each initialState.departments as department}
+								<div class="bed-wrapper">
+									<h3 class="label">{department.departmentName}</h3>
+									<div class="quantity">
+										<h3 class="quantity__label">病床数</h3>
+										<p class="quantity__content">
+											{department.numberOfBeds ? department.numberOfBeds : 0}
+										</p>
+									</div>
+								</div>
+							{/each}
+
+							<div class="total">
+								<h3 class="total__label">病床数合計</h3>
+								<p class="total__content">{bedTotal}</p>
+							</div>
+						</div>
+					</div>
+				{:else if detail.label === '参考書類など 画像データ'}
+					<div class="detail-wrapper">
+						<h3 class="label">{detail.label}</h3>
+						<div class="container container--horizontal">
+							{#if initialState.pictures !== undefined}
+								{#each initialState.pictures as image}
+									<div class="card">
+										<div class="image-wrapper">
+											<img src={URL.createObjectURL(image.file)} alt={image.memo} />
+										</div>
+										<p class="label">{image.memo}</p>
+									</div>
+								{/each}
+							{/if}
+						</div>
+					</div>
+				{:else}
+					<DetailWrapper
+						label={detail.label}
+						content={typeof detail.content === 'string' ? detail.content : ''}
+						unit={detail.unit}
+					/>
+				{/if}
+			{/each}
+		</div>
+	{/each}
+
+	<!-- <div class="form-row">
 		<DetailWrapper
 			areaClass="customer-number"
 			content={initialState.id !== undefined ? initialState.id : ''}
@@ -158,7 +410,7 @@
 				{/if}
 			</div>
 		</div>
-	</div>
+	</div> -->
 </div>
 
 <style lang="scss">
@@ -216,7 +468,6 @@
 		display: flex;
 		padding: 11px 0;
 		column-gap: 18px;
-		// align-items: center;
 	}
 
 	:global(.detail-wrapper .label) {

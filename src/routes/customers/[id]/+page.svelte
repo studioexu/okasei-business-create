@@ -108,7 +108,7 @@
 					name="reactivate-form"
 				>
 					<input type="hidden" name="id" value={initialState.id} />
-					<button type="submit" form="reactivate-form" class="primary"> 復活 </button>
+					<button type="submit" form="reactivate-form" class="primary"> 有効化する </button>
 				</form>
 			{/if}
 		</div>

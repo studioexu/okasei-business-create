@@ -2,6 +2,8 @@ const localApi = 'http://localhost:3000'
 const demoApi = 'https://fake-server-2x0o.onrender.com/customers/'
 const newAPI = 'http://18.182.209.227'
 
-export const currentApi: string = newAPI
+const newDjangoApi = 'https://test.djangoapi.xyz/'
 
-export let currentKey: string = '4d2c9e8813cd5674ac33851eb71c5447956f0e13'
+export const currentApi: string = newDjangoApi
+
+export let currentKey: string = 'd4baca5afb33e91d6031074510fffc2b6a9de86a'

@@ -7,7 +7,7 @@ import { formatCustomer } from './formatters'
  * @returns the data from the server
  */
 export const loadData = async (url: string) => {
-	return await fetch(url)
+	return await fetch(url + '/customer')
 		.then(res => res.json())
 		.then(data => {
 			return data

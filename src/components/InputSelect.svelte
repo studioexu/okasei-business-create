@@ -6,7 +6,7 @@
 	export let errorMsg: string = ''
 	export let unit: string = ''
 	export let name: string = ''
-	export let datas: string[] = []
+	export let list: string[]
 	export let value: string = ''
 	export let required: boolean = false
 	export let isValid: boolean = true
@@ -53,8 +53,8 @@
 	{/if}
 
 	<datalist id="{name}s" class="datalist">
-		{#each datas as data}
-			<option class="option" value={data}>{data}</option>
+		{#each list as option}
+			<option class="option" value={option}>{option}</option>
 		{/each}
 	</datalist>
 
@@ -82,15 +82,7 @@
 		}
 
 		.input {
-			width: calc(((103 - 10 - 2) / 1366) * 100vw);
-
-			&::placeholder {
-				color: rgb(206, 205, 205);
-			}
-
-			&:focus {
-				border-color: var(--primary-color);
-			}
+			width: 105px;
 		}
 
 		.font-error {
@@ -105,38 +97,6 @@
 		.unit {
 			display: flex;
 			align-items: center;
-		}
-	}
-
-	.error {
-		.input {
-			transition: border 300ms;
-			border: 1.5px solid var(--error);
-			animation: buzz 100ms;
-			animation-iteration-count: 3;
-		}
-
-		.font-error {
-			opacity: 1;
-			transition: all 300ms;
-		}
-	}
-
-	.required-mark {
-		color: var(--error);
-	}
-
-	@keyframes buzz {
-		0% {
-			transform: translateX(0px);
-		}
-
-		50% {
-			transform: translateX(-10px);
-		}
-
-		100% {
-			transform: translateX(10px);
 		}
 	}
 </style>

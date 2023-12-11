@@ -14,7 +14,7 @@
 	export let data
 
 	let allCustomers: CustomerFactory[] = data.data.map(
-		customer => new CustomerFactory(customer, 'customer')
+		customer => new CustomerFactory(customer, 'newApi')
 	)
 
 	let confirmationPageIsShown = false

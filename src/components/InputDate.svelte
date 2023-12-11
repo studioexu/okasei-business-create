@@ -8,7 +8,7 @@
 	{#if label !== ''}
 		<label class="label" for={name}>{label}</label>
 	{/if}
-	<input type="date" id={name} {name} bind:value />
+	<input class="input" type="date" id={name} {name} bind:value />
 </div>
 
 <style lang="scss">
@@ -25,15 +25,7 @@
 			}
 		}
 
-		input {
-			height: 31px;
-		}
-
 		.input {
-			&::placeholder {
-				color: rgb(206, 205, 205);
-			}
-
 			&:focus {
 				border-color: var(--primary-color);
 			}
@@ -45,38 +37,6 @@
 			bottom: -14px;
 			font-size: 10px;
 			opacity: 0;
-		}
-	}
-
-	.error {
-		.input {
-			transition: border 300ms;
-			border-color: var(--error);
-			animation: buzz 100ms;
-			animation-iteration-count: 3;
-		}
-
-		.font-error {
-			opacity: 1;
-			transition: all 300ms;
-		}
-	}
-
-	.required-mark {
-		color: var(--error);
-	}
-
-	@keyframes buzz {
-		0% {
-			transform: translateX(0px);
-		}
-
-		50% {
-			transform: translateX(-10px);
-		}
-
-		100% {
-			transform: translateX(10px);
 		}
 	}
 </style>

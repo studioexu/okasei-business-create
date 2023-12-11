@@ -1,13 +1,18 @@
 <script lang="ts">
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
-	import CustomCheckbox from '@/components/CustomCheckbox.svelte'
+	import InputCheckbox from '@/components/InputCheckbox.svelte'
+	import InputDate from '@/components/InputDate.svelte'
+	import Icon from '@/components/Icon.svelte'
+	import InputNumber from '@/components/InputNumber.svelte'
+
 	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 	import { negociations } from '@/stores/negociations'
 	import { NegociationBackend, type Estimate } from '@/libs/negociationTypes'
-	import Icon from '@/components/Icon.svelte'
 	import type { Item, Memo, OutcomeHistory } from '@/libs/negociationTypes'
-	import DatePicker from '@/components/DatePicker.svelte'
+	import InputAddress from '@/components/InputAddress.svelte'
+	import InputSelect from '@/components/InputSelect.svelte'
+	import { prefectures } from '@/data/data'
 
 	export let initialState: any
 	export let customers: CustomerFactory[]
@@ -25,17 +30,17 @@
 		{
 			id: 1,
 			name: 'item A',
-			price: '10000'
+			price: 10000
 		},
 		{
 			id: 2,
 			name: 'item B',
-			price: '15000'
+			price: 15000
 		},
 		{
 			id: 3,
 			name: 'item C',
-			price: '20000'
+			price: 20000
 		}
 	]
 
@@ -45,10 +50,140 @@
 		}
 	})
 
-	let maxEstimateIndex = initialState.estimate.length > 1 ? initialState.estimate.length : 1
-	let maxMemoIndex = initialState.memo.length > 1 ? initialState.memo.length : 1
-	let maxHistoryIndex =
-		initialState.outcomeHistory.length > 1 ? initialState.outcomeHistory.length : 1
+	////// ARRAYS: ESTIMATE, MEMO, HISTORY
+
+	$: initialState.estimate =
+		initialState.estimate.length === 0
+			? [
+					...initialState.estimate,
+					{
+						issueDate: '',
+						dueDate: '',
+						estimateWithoutTax: '',
+						tax: '',
+						items: [
+							{
+								name: '',
+								quantity: ''
+							}
+						]
+					}
+			  ]
+			: initialState.estimate
+	$: initialState.outcomeHistory =
+		initialState.outcomeHistory.length === 0
+			? [...initialState.outcomeHistory, { date: '', memo: '' }]
+			: initialState.outcomeHistory
+	$: initialState.memo =
+		initialState.memo.length === 0
+			? [...initialState.memo, { date: '', memo: '' }]
+			: initialState.memo
+
+	/**
+	 * Add an item to the items array in a specific estimate object
+	 * @param index: corresponding to the index of the right estimate object.
+	 */
+	const addItem = (index: number): void => {
+		initialState.estimate[index].items = [
+			...initialState.estimate[index].items,
+			{ productName: '', quantity: '' }
+		]
+	}
+
+	/**
+	 * Remove an item in the items array of one estimate array.
+	 * @param index:corresponding to the index of the right estimate object we want to remove an item.
+	 * @param itemIndex: index of the item we want to remove.
+	 */
+	const removeItem = (estimateIndex: number, itemIndex: number): void => {
+		initialState.estimate[estimateIndex].items = initialState.estimate[estimateIndex].items.filter(
+			(item: Item) => initialState.estimate[estimateIndex].items[itemIndex] !== item && item
+		)
+	}
+
+	/**
+	 * Remove one object from the corresponding array.
+	 * @param index: index of the object in the array
+	 * @param arrayToUpdate: the array we want to update
+	 */
+	const handleDeleteItemFromArray = (
+		index: number,
+		arrayToUpdate: (Memo | OutcomeHistory | Estimate)[],
+		type: string
+	) => {
+		let updatedArray = arrayToUpdate.filter(item => arrayToUpdate.indexOf(item) !== index)
+		updateArray(updatedArray, type)
+	}
+
+	/**
+	 * We add an item in the array.
+	 * @param arrayToUpdate: the array where we want to add an item
+	 * @param arrayType: the type of the array.
+	 */
+	const addItemToArray = (
+		arrayToUpdate: (Memo | OutcomeHistory | Estimate)[],
+		arrayType: string
+	): void => {
+		let newArray: (Memo | OutcomeHistory | Estimate)[] = []
+
+		switch (arrayType) {
+			case 'memo':
+				newArray = [
+					...arrayToUpdate,
+					{
+						date: '',
+						memo: ''
+					}
+				]
+				break
+			case 'outcomeHistory':
+				newArray = [
+					...arrayToUpdate,
+					{
+						date: '',
+						memo: ''
+					}
+				]
+				break
+			case 'estimate':
+				newArray = [
+					...arrayToUpdate,
+					{
+						issueDate: '',
+						dueDate: '',
+						estimateWithoutTax: '',
+						withTax: false,
+						estimateTax: '',
+						items: [
+							{
+								name: '',
+								quantity: ''
+							}
+						]
+					}
+				]
+
+			default:
+				break
+		}
+
+		updateArray(newArray, arrayType)
+	}
+
+	const updateArray = (array: (Memo | OutcomeHistory | Estimate)[], type: string) => {
+		switch (type) {
+			case 'memo':
+				initialState.memo = array
+				break
+			case 'outcomeHistory':
+				initialState.outcomeHistory = array
+				break
+			case 'estimate':
+				initialState.estimate = array
+			default:
+				break
+		}
+	}
 
 	/**
 	 * calculate the total of the estimates
@@ -63,111 +198,6 @@
 	}
 
 	$: initialState.billingEstimation = calculateEstimateTotal().toString()
-	$: initialState.estimate = updateArray(maxEstimateIndex, initialState.estimate, 'estimate')
-	$: initialState.outcomeHistory = updateArray(
-		maxHistoryIndex,
-		initialState.outcomeHistory,
-		'historyMemo'
-	)
-	$: initialState.memo = updateArray(maxMemoIndex, initialState.memo, 'memo')
-	$: maxHistoryIndex
-
-	/**
-	 * Add an item to the items array in a specific estimate object
-	 * @param index: corresponding to the index of the right estimate object.
-	 */
-	const addItem = (index: number): void => {
-		const productArray = initialState.estimate[index].items
-		productArray.push({
-			productName: '',
-			quantity: ''
-		})
-		initialState.estimate[index].items = productArray
-	}
-
-	/**
-	 * Remove an item in the items array of one estimate array.
-	 * @param index:corresponding to the index of the right estimate object we want to remove an item.
-	 * @param itemIndex: index of the item we want to remove.
-	 */
-	const removeItem = (index: number, itemIndex: number): void => {
-		const newItemArray = initialState.estimate[index].items.filter(
-			(item: Item) => initialState.estimate[index].items[itemIndex] !== item && item
-		)
-		initialState.estimate[index].items = newItemArray
-	}
-
-	/**
-	 * Remove one object from the corresponding array.
-	 * @param index: index of the object in the array
-	 * @param maxIndex: number of items in the array
-	 * @param arrayToUpdate: the array we want to update
-	 */
-	const handleDeleteItemFromArray = (
-		index: number,
-		maxIndex: number,
-		arrayToUpdate: Memo[] | OutcomeHistory[] | Estimate[]
-	): void => {
-		const newArray = arrayToUpdate.slice(0, index).concat(arrayToUpdate.slice(index + 1))
-
-		for (let i = 0; i < newArray.length; i++) {
-			arrayToUpdate[i] = newArray[i]
-		}
-
-		maxIndex--
-	}
-
-	/**
-	 * We add an item in the array.
-	 * @param maxIndex: number of items in the array
-	 * @param arrayToUpdate: the array where we want to add an item
-	 * @param arrayType: the type of the array.
-	 */
-	const updateArray = (
-		maxIndex: number,
-		arrayToUpdate: Memo[] | OutcomeHistory[] | Estimate[],
-		arrayType: string
-	): Memo[] | OutcomeHistory[] | Estimate[] => {
-		let newArray: any[] = []
-		for (let i = 0; i < maxIndex; i++) {
-			if (arrayToUpdate[i]) {
-				newArray.push(arrayToUpdate[i])
-			} else {
-				switch (arrayType) {
-					case 'memo':
-						newArray.push({
-							date: '',
-							memo: ''
-						})
-						break
-					case 'historyMemo':
-						newArray.push({
-							date: '',
-							memo: ''
-						})
-						break
-					case 'estimate':
-						newArray.push({
-							issueDate: '',
-							dueDate: '',
-							estimateWithoutTax: '',
-							tax: '',
-							items: [
-								{
-									name: '',
-									quantity: ''
-								}
-							]
-						})
-
-					default:
-						break
-				}
-			}
-		}
-
-		return newArray
-	}
 
 	const getTotalBeds = (): string => {
 		let total = 0
@@ -267,7 +297,6 @@
 	 */
 	const handleChooseItem = (estimateIndex: number, itemIndex: number): void => {
 		const item = initialState.estimate[estimateIndex].items[itemIndex]
-
 		const correspondingItemInProducts = products.find(product => product.name === item.name)
 		item.price = correspondingItemInProducts?.price
 	}
@@ -326,8 +355,9 @@
 					type="button"
 					class="secondary inline btn"
 					on:click={() => window.open('/customers/' + currentCustomerId, '_blank')}
-					>顧客情報を確認</button
 				>
+					顧客情報を確認
+				</button>
 			{/if}
 		</div>
 	</fieldset>
@@ -343,7 +373,7 @@
 			/>
 		</div>
 		<div class="form-row">
-			<DatePicker
+			<InputDate
 				label={'商談開始日'}
 				name={'negotiation-start'}
 				bind:value={initialState.startingDate}
@@ -388,9 +418,9 @@
 		</div>
 
 		<div class="form-row">
-			<DatePicker label={'納期'} name={'billing-date'} bind:value={initialState.billingDate} />
+			<InputDate label={'納期'} name={'billing-date'} bind:value={initialState.billingDate} />
 
-			<CustomCheckbox value={'未確定'} />
+			<InputCheckbox label={'未確定'} name={'billing-date-not-confirmed'} />
 		</div>
 
 		<div class="form-row">
@@ -403,13 +433,13 @@
 		</div>
 
 		<div class="form-row">
-			<DatePicker label={'成否日'} name={'outcome'} bind:value={initialState.outcome} />
+			<InputDate label={'成否日'} name={'outcome'} bind:value={initialState.outcome} />
 
-			<CustomCheckbox value={'未定'} />
+			<InputCheckbox label={'未定'} name={'outcome-not-confirmed'} />
 		</div>
 
 		<div class="form-row">
-			<DatePicker
+			<InputDate
 				label={'次回連絡日時'}
 				name={'next-contact'}
 				bind:value={initialState.nextContactDate}
@@ -421,7 +451,7 @@
 		</div>
 
 		<div class="form-row">
-			<DatePicker label={'最終連絡'} name={'last-contact'} bind:value={initialState.lastContact} />
+			<InputDate label={'最終連絡'} name={'last-contact'} bind:value={initialState.lastContact} />
 		</div>
 	</fieldset>
 
@@ -440,49 +470,28 @@
 			</button>
 		</div>
 		<div class="form-row">
-			<Input
+			<InputSelect
 				name={'prefecture'}
-				inputSize={'input--sm'}
 				label={'都道府県'}
+				list={prefectures}
 				bind:value={initialState.prefecture}
 			/>
-			<Input
-				name={'city'}
-				inputSize={'input--sm'}
-				label={'市区町村'}
-				bind:value={initialState.city}
-			/>
+			<InputAddress name={'city'} label={'市区町村'} bind:value={initialState.city} />
 		</div>
 		<div class="form-row">
-			<Input
-				name={'address1'}
-				inputSize={'input--lg'}
-				label={'住所１'}
-				bind:value={initialState.address1}
-			/>
+			<InputAddress name={'address1'} label={'住所１'} bind:value={initialState.address1} />
 		</div>
 		<div class="form-row">
-			<Input
-				name={'address2'}
-				inputSize={'input--lg'}
-				label={'住所２'}
-				bind:value={initialState.address2}
-			/>
+			<InputAddress name={'address2'} label={'住所２'} bind:value={initialState.address2} />
 		</div>
 		<div class="form-row">
-			<Input
-				inputSize={'input--sm'}
+			<InputNumber
 				label={'距離'}
 				name={'distance'}
 				unit={'km'}
 				bind:value={initialState.distanceKm}
 			/>
-			<Input
-				inputSize={'input--sm'}
-				name={'duration'}
-				unit={'時間'}
-				bind:value={initialState.distanceTime}
-			/>
+			<InputNumber name={'duration'} unit={'時間'} bind:value={initialState.distanceTime} />
 		</div>
 	</fieldset>
 
@@ -497,48 +506,31 @@
 				{#each initialState.estimate as estimate, index}
 					<div class="wrapper" on:change={() => handleEstimateChange(index)}>
 						<div class="form-row">
-							<DatePicker
-								label={'発行日'}
-								name={'issue-date'}
-								bind:value={initialState.issueDate}
-							/>
+							<InputDate label={'発行日'} name={'issue-date'} bind:value={initialState.issueDate} />
 						</div>
 						<div class="form-row">
-							<DatePicker
+							<InputDate
 								label={'見積期日'}
 								name={'estimation-due-date'}
 								bind:value={initialState.dueDate}
 							/>
 						</div>
 						<div class="form-row">
-							<Input
+							<InputNumber
 								label={'税抜価格'}
 								name={'estimate-without-tax'}
 								unit="円"
-								inputSize={'input--md'}
 								on:input={calculateEstimateTotal}
 								bind:value={estimate.estimateWithoutTax}
 							/>
 
-							<Input
+							<InputNumber
 								label={'消費税'}
 								name={'tax'}
 								unit="円"
-								inputSize={'input--md'}
 								bind:value={estimate.estimateTax}
 							/>
-
-							<label class="checkbox-container" for="with-tax">
-								<input
-									class="checkbox"
-									type="checkbox"
-									id="with-tax"
-									name="with-tax"
-									bind:checked={estimate.withTax}
-								/>
-								税有り
-								<span class="checkmark" />
-							</label>
+							<InputCheckbox name={'with-tax'} label={'税有り'} bind:isChecked={estimate.withTax} />
 						</div>
 
 						{#each estimate.items as item, indexItem}
@@ -558,13 +550,8 @@
 									</datalist>
 								</div>
 
-								<Input unit={'円'} name={'price'} inputSize={'input--sm'} bind:value={item.price} />
-								<Input
-									unit={'台'}
-									name={'quantity'}
-									inputSize={'input--sm'}
-									bind:value={item.quantity}
-								/>
+								<InputNumber unit={'円'} name={'price'} bind:value={item.price} />
+								<InputNumber unit={'台'} name={'quantity'} bind:value={item.quantity} />
 								{#if estimate.items.length > 1}
 									<button
 										type="button"
@@ -581,12 +568,12 @@
 							<button type="button" class="btn add primary" on:click={() => addItem(index)}
 								>＋商品追加</button
 							>
-							{#if maxEstimateIndex > 1}
+							{#if initialState.estimate.length > 1}
 								<button
 									type="button"
 									class="btn primary delete"
 									on:click={() =>
-										handleDeleteItemFromArray(index, maxEstimateIndex--, initialState.estimate)}
+										handleDeleteItemFromArray(index, initialState.estimate, 'estimate')}
 									>削除</button
 								>
 							{/if}
@@ -594,7 +581,11 @@
 					</div>
 				{/each}
 
-				<button type="button" class="btn primary" on:click={() => maxEstimateIndex++}>
+				<button
+					type="button"
+					class="btn primary"
+					on:click={() => addItemToArray(initialState.estimate, 'estimate')}
+				>
 					＋見積追加
 				</button>
 			</div>
@@ -609,27 +600,32 @@
 				{#each initialState.memo as memo, index}
 					<div class="wrapper">
 						<div class="form-row">
-							<DatePicker name={'memo-date'} bind:value={memo.date} />
+							<InputDate name={'memo-date'} bind:value={memo.date} />
 						</div>
 						<div class="form-row">
 							<textarea name={'important-memo'} id="important-memo" bind:value={memo.memo} />
 						</div>
 						<div class="form-row">
-							{#if maxMemoIndex > 1}
+							{#if initialState.memo.length > 1}
 								<button
 									type="button"
 									class="btn primary delete"
-									on:click={() =>
-										handleDeleteItemFromArray(index, maxMemoIndex--, initialState.memo)}
-									>削除</button
+									on:click={() => handleDeleteItemFromArray(index, initialState.memo, 'memo')}
 								>
+									削除
+								</button>
 							{/if}
 						</div>
 					</div>
 				{/each}
 
-				<button type="button" class="btn primary" on:click={() => maxMemoIndex++}>＋新規追加</button
+				<button
+					type="button"
+					class="btn primary"
+					on:click={() => addItemToArray(initialState.memo, 'memo')}
 				>
+					＋新規追加
+				</button>
 			</div>
 		</div>
 	</fieldset>
@@ -676,7 +672,11 @@
 		<legend class="legend hidden">チェックボックス</legend>
 		<div class="container container--column">
 			{#each initialState.checkboxes as element}
-				<CustomCheckbox value={element.title} bind:isChecked={element.isChecked} />
+				<InputCheckbox
+					name={element.title}
+					label={element.title}
+					bind:isChecked={element.isChecked}
+				/>
 			{/each}
 		</div>
 	</fieldset>
@@ -711,7 +711,7 @@
 					{#each initialState.outcomeHistory as memo, index}
 						<div class="wrapper">
 							<div class="form-row">
-								<DatePicker name={'history-date'} bind:value={memo.date} />
+								<InputDate name={'history-date'} bind:value={memo.date} />
 
 								<Input
 									name={'history-memo'}
@@ -719,15 +719,15 @@
 									inputSize={'input--xl'}
 									bind:value={memo.memo}
 								/>
-								{#if maxHistoryIndex > 1}
+								{#if initialState.outcomeHistory > 1}
 									<button
 										type="button"
 										class="primary btn delete"
 										on:click={() =>
 											handleDeleteItemFromArray(
 												index,
-												maxHistoryIndex--,
-												initialState.outcomeHistory
+												initialState.outcomeHistory,
+												'outcomeHistory'
 											)}
 									>
 										削除
@@ -740,7 +740,11 @@
 			</div>
 
 			<div class="form-row">
-				<button type="button" class="btn primary" on:click={() => maxHistoryIndex++}>
+				<button
+					type="button"
+					class="btn primary"
+					on:click={() => addItemToArray(initialState.outcomeHistory, 'outcomeHistory')}
+				>
 					＋新規追加
 				</button>
 			</div>
@@ -790,75 +794,6 @@
 
 	.fieldset {
 		margin-bottom: 20px;
-	}
-
-	.btn {
-		margin: 0;
-	}
-
-	.checkbox-container {
-		position: relative;
-		display: flex;
-		justify-content: flex-end;
-		flex-direction: row-reverse;
-		align-items: center;
-		height: 31px;
-		gap: 12px;
-		font-size: 18px;
-		cursor: pointer;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
-
-		& :hover {
-			.checkbox ~ .checkmark {
-				background-color: #fff;
-			}
-		}
-
-		& :after {
-			content: '';
-			display: none;
-		}
-
-		.checkmark {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			top: 0;
-			left: 0;
-			height: 20px;
-			width: 20px;
-			border: 1px solid var(--black);
-			border-radius: 3px;
-
-			&:after {
-				width: 3px;
-				height: 8px;
-				border: solid white;
-				border-width: 0 3px 3px 0;
-				-webkit-transform: rotate(45deg);
-				-ms-transform: rotate(45deg);
-				transform: rotate(45deg);
-			}
-		}
-
-		.checkbox {
-			position: absolute;
-			height: 0;
-			width: 0;
-			opacity: 0;
-			cursor: pointer;
-
-			&:checked ~ .checkmark {
-				background-color: var(--primary);
-
-				&:after {
-					display: block;
-				}
-			}
-		}
 	}
 
 	.textarea-wrapper {
@@ -913,12 +848,6 @@
 	}
 
 	.input-wrapper {
-		position: relative;
-		display: flex;
-		align-items: center;
-		width: fit-content;
-		gap: 10px;
-
 		input {
 			height: 31px;
 		}
@@ -930,8 +859,48 @@
 		}
 	}
 
-	.required-mark {
+	:global(.input-wrapper) {
+		position: relative;
+		display: flex;
+		align-items: center;
+		width: fit-content;
+		gap: 10px;
+	}
+
+	:global(.input-wrapper .input) {
+		height: 31px;
+		&::placeholder {
+			color: rgb(206, 205, 205);
+		}
+
+		&:focus {
+			border-color: var(--primary-color);
+		}
+	}
+
+	:global(.required-mark) {
 		color: var(--error);
+	}
+
+	:global(.error .input) {
+		transition: border 300ms;
+		border-color: var(--error);
+		animation: buzz 100ms;
+		animation-iteration-count: 3;
+	}
+
+	:global(.error .input, .error .select) {
+		transition: border 300ms;
+		border-color: var(--error);
+		animation: buzz 100ms;
+		animation-iteration-count: 3;
+	}
+
+	:global(.error .font-error) {
+		.font-error {
+			opacity: 1;
+			transition: all 300ms;
+		}
 	}
 
 	@keyframes buzz {

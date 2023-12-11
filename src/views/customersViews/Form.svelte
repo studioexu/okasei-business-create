@@ -16,7 +16,7 @@
 	import ResultModal from '../modals/ResultModal.svelte'
 
 	export let formType: string
-	export let confirmationPageIsShown: boolean
+	export let confirmationPageIs@/components/InputSelect.svelte
 	export let initialState: CustomerEntries
 	export let formIsValid: CustomerEntriesErrors
 	export let isShown: boolean = false

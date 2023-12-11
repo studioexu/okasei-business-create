@@ -1,9 +1,11 @@
 <script lang="ts">
+	export let name: string = ''
+	export let label: string = ''
+
 	export let value: string
 	export let options: string[] = [' ']
-	export let label: string = ''
 	export let unit: string = ''
-	export let name: string = ''
+
 	export let isValid: boolean = true
 	export let errorMsg: string = ''
 	export let required: boolean = false
@@ -42,7 +44,7 @@
 		}
 
 		.select {
-			width: calc(((103 - 10 - 2) / 1366) * 100vw);
+			// width: 105px;
 			height: 31px;
 			color: var(--black);
 
@@ -64,23 +66,5 @@
 			font-size: 10px;
 			opacity: 0;
 		}
-	}
-
-	.error {
-		.select {
-			transition: border 300ms;
-			border: 1.5px solid var(--error);
-			animation: buzz 100ms;
-			animation-iteration-count: 3;
-		}
-
-		.font-error {
-			opacity: 1;
-			transition: all 300ms;
-		}
-	}
-
-	.required-mark {
-		color: var(--error);
 	}
 </style>

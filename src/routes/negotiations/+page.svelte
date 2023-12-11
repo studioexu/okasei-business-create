@@ -10,6 +10,7 @@
 	import { negociation, negociations } from '@/stores/negociations'
 	import { goto } from '$app/navigation'
 	import { onMount } from 'svelte'
+	import InputCheckbox from '@/components/InputCheckbox.svelte'
 
 	let searchIsShown = false
 	let displayMenuIsShown = false
@@ -155,9 +156,7 @@
 	 * When the user checks or unchecks a checkbox, it will save the parameters in the local storage.
 	 * @param e
 	 */
-	const handleChange = (e: any): void => {
-		const id: keyof NegotiationDataIsShown = e.target.id
-		negotiationDataIsShown[id] = e.target.checked
+	const handleChange = (): void => {
 		localStorage.setItem('negotiation-table-column-to-show', JSON.stringify(negotiationDataIsShown))
 	}
 
@@ -180,6 +179,8 @@
 	onMount(() => {
 		setColumnToDisplay()
 	})
+
+	// $: handleChange(negotiationDataIsShown)
 
 	// DELETE MODAL
 
@@ -295,17 +296,12 @@
 			<div class="container data-to-display">
 				{#each tableHeaders as header}
 					{#if header.id !== 'customerName'}
-						<label class="checkbox-container" for={header.id}>
-							<input
-								class="checkbox"
-								type="checkbox"
-								name={header.id}
-								id={header.id}
-								bind:checked={negotiationDataIsShown[header.id]}
-								on:change={handleChange}
-							/>{header.label}
-							<span class="checkmark" />
-						</label>
+						<InputCheckbox
+							name={header.id}
+							label={header.label}
+							bind:isChecked={negotiationDataIsShown[header.id]}
+							on:checked={handleChange}
+						/>
 					{/if}
 				{/each}
 			</div>

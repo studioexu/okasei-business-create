@@ -130,8 +130,8 @@ export const login = async (url: string) => {
 			'Content-Type': 'application/json'
 		},
 		body: JSON.stringify({
-			email: 'info@studio.exu.co.jp',
-			password: 'Pass@1234'
+			email: '',
+			password: ''
 		})
 	})
 		.then(res => res.json())

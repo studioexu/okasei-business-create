@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit'
 import { loadData, updateCustomer, loadDepartments } from '@/libs/actions.js'
 import type { CustomerEntries } from '@/libs/customerTypes.js'
 import { formatCustomer } from '@/libs/formatters.js'
-import type { CustomerBackend, CustomerNewApi } from '@/models/BackendCustomer.js'
+import type { CustomerNewApi } from '@/models/BackendCustomer.js'
 import { currentApi, currentKey } from '@/data/api.js'
 
 /**
@@ -12,13 +12,13 @@ import { currentApi, currentKey } from '@/data/api.js'
  */
 export const load = async ({ params }) => {
 	const data: CustomerNewApi[] = await loadData(currentApi, currentKey)
+	const departmentsList = await loadDepartments(currentApi)
 	const customer: CustomerNewApi | undefined = data.find(
 		(customer: CustomerNewApi) => customer.id?.toString() === params.id.toString()
 	)
 
-	const departmentsList = loadDepartments(currentApi)
-
 	if (!customer) throw error(404)
+	if (!departmentsList) throw error(404)
 
 	return {
 		customer,

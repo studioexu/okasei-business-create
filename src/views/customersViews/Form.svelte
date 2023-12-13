@@ -50,377 +50,6 @@
 		fieldset: Row[][]
 	}
 
-	const fieldsets: Fieldset[] = [
-		{
-			legend: '情報１',
-			fieldset: [
-				[
-					{
-						id: 'branchNumber',
-						type: 'text',
-						text: '枝番',
-						isError: false,
-						errorText: '数字４桁で入力して下さい',
-						inputSize: 'input--sm'
-					},
-					{
-						id: 'closingMonth',
-						type: 'select',
-						text: '決算月',
-						isError: false,
-						errorText: '数字４桁で入力して下さい',
-						inputSize: 'input--sm',
-						list: 'month',
-						options: months,
-						unit: '月',
-						required: true
-					}
-				],
-				[
-					{
-						id: 'customerName',
-						type: 'text',
-						text: '施設名',
-						isError: false,
-						errorText: '施設名を入力して下さい',
-						inputSize: 'input--xl',
-						placeholder: '株式会社○○',
-						required: true
-					}
-				],
-				[
-					{
-						id: 'kana',
-						type: 'text',
-						text: 'カナ',
-						isError: false,
-						errorText: 'カタカナで入力してください',
-						inputSize: 'input--xl',
-						placeholder: 'カブシキガイシャ○○',
-						required: true
-					}
-				],
-				[
-					{
-						id: 'facilityNumber',
-						type: 'text',
-						text: '医療機関番号',
-						isError: false,
-						errorText: '正しい医療機関番号を入力して下さい',
-						inputSize: 'input--sm',
-						required: true
-					},
-					{
-						id: 'businessType',
-						type: 'select',
-						text: '個人／法人',
-						isError: false,
-						errorText: '選択して下さい',
-						list: 'businessType',
-						options: ['法人', '個人'],
-						unit: '月',
-						required: true
-					}
-				]
-			]
-		},
-		{
-			legend: '住所',
-			fieldset: [
-				[
-					{
-						id: 'postalCode',
-						type: 'text',
-						text: '郵便番号',
-						isError: false,
-						errorText: "郵便番号を入力して下さい（'〒'や'ー'なし）",
-						inputSize: 'input--sm',
-						placeholder: '0000000',
-						required: true
-					}
-				],
-				[
-					{
-						id: 'prefecture',
-						type: 'text',
-						text: '都道府県',
-						isError: false,
-						errorText: '都道府県を一つ選んでください',
-						list: 'prefectures',
-						options: prefectures,
-						required: true,
-						placeholder: '○○県'
-					},
-					{
-						id: 'city',
-						type: 'text',
-						text: '市区町村',
-						isError: false,
-						errorText: '正しい街をご入力ください',
-						inputSize: 'input--md',
-						placeholder: '○○市',
-						required: true
-					}
-				],
-				[
-					{
-						id: 'address1',
-						type: 'text',
-						text: '住所１',
-						isError: false,
-						errorText: '200文字以内で入力してください',
-						inputSize: 'input--lg',
-						placeholder: '丁目・番地',
-						required: true
-					},
-					{
-						id: 'address2',
-						type: 'text',
-						text: '住所2',
-						isError: false,
-						errorText: '200文字以内で入力してください',
-						inputSize: 'input--lg',
-						placeholder: '建物名・部屋番号',
-						required: true
-					}
-				],
-
-				[
-					{
-						id: 'phoneNumber',
-						type: 'text',
-						text: '電話番号',
-						isError: false,
-						errorText: '正しい電話番号を入力して下さい（「ー」なし）',
-						inputSize: 'input--md',
-						placeholder: '0000000000',
-						required: true
-					},
-					{
-						id: 'mobilePhone',
-						type: 'text',
-						text: '携帯電話',
-						isError: false,
-						errorText: '正しい電話番号を入力して下さい（「ー」なし）',
-						inputSize: 'input--md',
-						placeholder: '0000000000'
-					},
-					{
-						id: 'fax',
-						type: 'text',
-						text: 'FAX番号',
-						isError: false,
-						errorText: '正しい電話番号を入力して下さい（「ー」なし）',
-						inputSize: 'input--md',
-						placeholder: '0000000000',
-						required: true
-					}
-				],
-
-				[
-					{
-						id: 'email',
-						type: 'text',
-						text: 'メール',
-						isError: false,
-						errorText: '未入力',
-						inputSize: 'input--lg',
-						placeholder: '',
-						required: true
-					}
-				]
-			]
-		},
-		{
-			legend: '創立',
-			fieldset: [
-				[
-					{
-						id: 'foundationDate',
-						type: 'date',
-						text: '設立年月日',
-						isError: false,
-						errorText: '日付を入力してください。',
-						placeholder: ''
-					},
-					{
-						id: 'founder',
-						type: 'text',
-						text: '設立者',
-						isError: false,
-						errorText: '正しい名前を入力して下さい',
-						inputSize: 'input--lg',
-						placeholder: '山田　太郎',
-						required: true
-					}
-				]
-			]
-		},
-		{
-			legend: '病床設定',
-			fieldset: [
-				[
-					{
-						id: 'department',
-						type: 'department',
-						text: '診療科目',
-						isError: false,
-						errorText: '',
-						placeholder: ''
-					}
-				]
-			]
-		},
-		{
-			legend: '情報２',
-			fieldset: [
-				[
-					{
-						id: 'numberOfEmployees',
-						type: 'number',
-						text: '従業員数',
-						isError: false,
-						errorText: '入力してください',
-						placeholder: '山田　太郎',
-						required: true
-					}
-				],
-				[
-					{
-						id: 'businessContent',
-						type: 'text',
-						text: '事業内容',
-						isError: false,
-						errorText: '200文字以内で入力してください',
-						placeholder: '未入力',
-						inputSize: 'input--lg',
-						required: true
-					}
-				],
-				[
-					{
-						id: 'homepage',
-						type: 'text',
-						text: 'ホームページ',
-						isError: false,
-						errorText: '200文字以内で入力してください',
-						placeholder: 'www.homepage.com',
-						inputSize: 'input--lg',
-						required: true
-					}
-				],
-				[
-					{
-						id: 'googleReview',
-						type: 'select',
-						text: 'Google評価',
-						isError: false,
-						errorText: '選択して下さい',
-						list: 'businessType',
-						options: [
-							{ value: false, text: '無し' },
-							{ value: true, text: '★有り' }
-						]
-					},
-					{
-						id: 'review',
-						type: 'text',
-						text: '口コミ',
-						isError: false,
-						errorText: '200文字以内で入力してください',
-						inputSize: 'input--lg',
-						placeholder: '件数、内容など'
-					}
-				],
-				[
-					{
-						id: 'numberOfbranches',
-						type: 'number',
-						text: '関連施設拠点数',
-						isError: false,
-						errorText: '入力してください',
-						placeholder: '山田　太郎',
-						required: true
-					}
-				],
-				[
-					{
-						id: 'miscellaneous',
-						type: 'text',
-						text: 'その他',
-						isError: false,
-						errorText: '200文字以内で入力してください',
-						inputSize: 'input--xl',
-						placeholder: '未入力'
-					}
-				]
-			]
-		},
-		{
-			legend: '担当者',
-			fieldset: [
-				[
-					{
-						id: 'personInCharge',
-						type: 'text',
-						text: 'ご担当者名',
-						isError: false,
-						errorText: '200文字以内で入力してください',
-						inputSize: 'input--md',
-						placeholder: '未入力'
-					},
-					{
-						id: 'role',
-						type: 'text',
-						text: '役職',
-						isError: false,
-						errorText: '200文字以内で入力してください',
-						inputSize: 'input--xl',
-						placeholder: '未入力'
-					}
-				],
-				[
-					{
-						id: 'presonInChargeMemo',
-						type: 'text',
-						text: 'ご担当メモ',
-						isError: false,
-						errorText: '200文字以内で入力してください',
-						inputSize: 'input--xl',
-						placeholder: '未入力'
-					}
-				],
-				[
-					{
-						id: 'approver',
-						type: 'text',
-						text: '決裁者',
-						isError: false,
-						errorText: '200文字以内で入力してください',
-						inputSize: 'input--md',
-						placeholder: '未入力'
-					}
-				],
-
-				[
-					{
-						id: 'preferedContactTime',
-						type: 'text',
-						text: '連絡の取りやすい時間',
-						isError: false,
-						errorText: '200文字以内で入力してください',
-						inputSize: 'input--xl',
-						placeholder: '未入力'
-					}
-				]
-			]
-		},
-		{
-			legend: '画像',
-			fieldset: [[]]
-		}
-	]
-
 	// ADDRESS AUTO FILL
 
 	/**
@@ -630,162 +259,6 @@
 >
 	<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
 	<p class="required-legend"><span class="required-mark">*</span> 必須</p>
-
-	<!-- {#each fieldsets as fieldset}
-		<fieldset class="fieldset">
-			<legend class="hidden">{fieldset.legend}</legend>
-
-			{#if fieldset.legend === '画像'}
-				<div class="form-row">
-					<div class="input-wrapper">
-						<h3 class="label">参考書類など画像データ</h3>
-
-						<div class="container">
-							{#if initialState.pictures === undefined || initialState.pictures.length === 0}
-								<div class="card">
-									<button class="image-empty" on:click={() => (uploadModalIsShown = true)}>
-										<span>+</span>
-									</button>
-									<p class="image-description">画像がアップロードされていません。</p>
-								</div>
-							{:else}
-								{#each initialState.pictures as image, index}
-									<div class="card" id={image.file.name}>
-										<div class="image-wrapper">
-											<img src={URL.createObjectURL(image.file)} alt="" />
-										</div>
-
-										<Input
-											placeholder="メモ"
-											name={'image-description'}
-											inputSize={'input--lg'}
-											bind:value={image.memo}
-										/>
-										<button
-											type="button"
-											class="btn primary inline"
-											on:click={() => handleDeleteImage(index)}
-										>
-											削除
-										</button>
-									</div>
-								{/each}
-							{/if}
-						</div>
-					</div>
-				</div>
-				<div class="form-row">
-					<span class="label" />
-					<button
-						type="button"
-						class="btn add primary"
-						on:click={() => (uploadModalIsShown = true)}
-					>
-						＋画像追加
-					</button>
-				</div>
-			{:else if fieldset.legend === '病床設定'}
-				<div class="form-row">
-					<div class="input-wrapper">
-						<h3 class="label">診療科目</h3>
-						<div class="container">
-							{#each initialState.departments as selectedDepartment, index}
-								<div class="department-wrapper" id={'department-' + index}>
-									<div class="input-wrapper">
-										<input
-											list="departments"
-											bind:value={selectedDepartment.departmentName}
-											on:input={e => handleSelectDepartment(e, index)}
-										/>
-
-										<datalist id="departments">
-											{#each departmentsList as department}
-												<option
-													class="department-option"
-													data-value={department.id}
-													value={department.name}
-												/>
-											{/each}
-										</datalist>
-									</div>
-
-									<NumberInput
-										name={'bed-quantity'}
-										label={'病床数'}
-										bind:value={selectedDepartment.numberOfBeds}
-									/>
-
-									{#if initialState.departments.length > 1}
-										<button
-											type="button"
-											class="btn secondary delete"
-											on:click={() => deleteDepartment(index)}
-										>
-											<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
-										</button>
-									{/if}
-								</div>
-							{/each}
-						</div>
-						<div class="bed-total">
-							<h3 class="label">'病床数合計'</h3>
-							<span class="content">{bedTotal}</span>
-						</div>
-					</div>
-				</div>
-				<div class="form-row">
-					<div class="input-wrapper">
-						<span class="label" />
-						<button class="btn primary" on:click={handleAddDepartment}>+新規追加</button>
-					</div>
-				</div>
-			{:else}
-				{#each fieldset.fieldset as row}
-					<div class="form-row">
-						{#each row as input}
-							{#if input.type === 'select'}
-								<div class="input-wrapper">
-									<label class="label" for={toKebab(input.id)}>{input.text}</label>
-									<select
-										class="select"
-										name={toKebab(input.id)}
-										id={toKebab(input.id)}
-										bind:value={initialState[input.id]}
-									>
-										{#each input.options ?? '' as option}
-											<option value={typeof option === 'string' ? option : option.value}
-												>{typeof option === 'string' ? option : option.text}</option
-											>{/each}
-									</select>
-								</div>
-							{:else}
-								<div class="input-wrapper">
-									<label class="label" for={toKebab(input.id)}>{input.text}</label>
-									<input
-										class="input {input.inputSize}"
-										type={input.type}
-										name={toKebab(input.id)}
-										id={toKebab(input.id)}
-										placeholder={input.placeholder}
-										list={input.list ?? ''}
-									/>
-
-									{#if input.list}
-										<datalist id={input.list} class="datalist">
-											{#each input.options ?? '' as data}
-												<option class="option" value={data}>{data}</option>
-											{/each}
-										</datalist>
-									{/if}
-									<span class="font-error">{input.errorText}</span>
-								</div>
-							{/if}
-						{/each}
-					</div>
-				{/each}
-			{/if}
-		</fieldset>
-	{/each} -->
 
 	<fieldset class="fieldset fieldset--info1">
 		<legend class="legend">情報１</legend>
@@ -1000,55 +473,59 @@
 		<legend class="legend">病床設定</legend>
 
 		<div class="form-row bed">
-			<h3 class="label">診療科目</h3>
-			<div class="container">
-				{#each initialState.departments as selectedDepartment, index}
-					<div class="department-wrapper" id={'department-' + index}>
-						<div class="input-wrapper">
-							<input
-								list="departments"
-								bind:value={selectedDepartment.departmentName}
-								on:input={e => handleSelectDepartment(e, index)}
+			<div class="input-wrapper">
+				<h3 class="label">診療科目</h3>
+				<div class="container">
+					{#each initialState.departments as selectedDepartment, index}
+						<div class="department-wrapper" id={'department-' + index}>
+							<div class="input-wrapper">
+								<input
+									list="departments"
+									bind:value={selectedDepartment.departmentName}
+									on:input={e => handleSelectDepartment(e, index)}
+								/>
+
+								<datalist id="departments">
+									{#each departmentsList as department}
+										<option
+											class="department-option"
+											data-value={department.id}
+											value={department.name}
+										/>
+									{/each}
+								</datalist>
+							</div>
+
+							<NumberInput
+								name={'bed-quantity'}
+								label={'病床数'}
+								bind:value={selectedDepartment.numberOfBeds}
 							/>
 
-							<datalist id="departments">
-								{#each departmentsList as department}
-									<option
-										class="department-option"
-										data-value={department.id}
-										value={department.name}
-									/>
-								{/each}
-							</datalist>
+							{#if initialState.departments.length > 1}
+								<button
+									type="button"
+									class="btn secondary delete"
+									on:click={() => deleteDepartment(index)}
+								>
+									<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
+								</button>
+							{/if}
 						</div>
-
-						<NumberInput
-							name={'bed-quantity'}
-							label={'病床数'}
-							bind:value={selectedDepartment.numberOfBeds}
-						/>
-
-						{#if initialState.departments.length > 1}
-							<button
-								type="button"
-								class="btn secondary delete"
-								on:click={() => deleteDepartment(index)}
-							>
-								<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
-							</button>
-						{/if}
-					</div>
-				{/each}
-			</div>
-			<div class="bed-total">
-				<h3 class="label">'病床数合計'</h3>
-				<span class="content">{bedTotal}</span>
+					{/each}
+				</div>
+				<div class="input-wrapper bed-total">
+					<h3 class="label">病床数合計</h3>
+					<span class="content">{bedTotal}</span>
+				</div>
 			</div>
 		</div>
 
 		<div class="form-row">
-			<span class="label" />
-			<button class="btn primary" on:click={handleAddDepartment}>+新規追加</button>
+			<div class="input-wrapper">
+				<span class="label" />
+				<button class="btn primary" on:click={handleAddDepartment}>+新規追加</button>
+			</div>
 		</div>
 	</fieldset>
 
@@ -1223,10 +700,12 @@
 			</div>
 		</div>
 		<div class="form-row">
-			<span class="label" />
-			<button type="button" class="btn add primary" on:click={() => (uploadModalIsShown = true)}>
-				＋画像追加
-			</button>
+			<div class="input-wrapper">
+				<span class="label" />
+				<button type="button" class="btn add primary" on:click={() => (uploadModalIsShown = true)}>
+					＋画像追加
+				</button>
+			</div>
 		</div>
 	</fieldset>
 </form>

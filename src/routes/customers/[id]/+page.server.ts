@@ -2,7 +2,7 @@ import { error } from '@sveltejs/kit'
 import { loadData, reactivateCustomer } from '@/libs/actions.js'
 import { currentApi, currentKey } from '@/data/api.js'
 
-import type { CustomerBackend, CustomerNewApi } from '@/models/BackendCustomer.js'
+import type { CustomerNewApi } from '@/models/BackendCustomer.js'
 
 export const load = async ({ params }) => {
 	const data: CustomerNewApi[] = await loadData(currentApi, currentKey)

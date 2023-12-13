@@ -1,6 +1,7 @@
 <script lang="ts">
-	export let value: string
-	export let options: string[] = [' ']
+	export let value: string | number | boolean
+	// export let options: string[] = [' ']
+	export let options: { value: number | string | boolean; text: string }[]
 	export let label: string = ''
 	export let unit: string = ''
 	export let name: string = ''
@@ -17,9 +18,9 @@
 		</label>
 	{/if}
 
-	<select class="select" bind:value id={name}>
+	<select class="select" id={name} bind:value>
 		{#each options as option}
-			<option value={option}>{option}</option>
+			<option value={option.value}>{option.text}</option>
 		{/each}
 	</select>
 	{#if unit !== ''}

@@ -90,8 +90,6 @@
 		miscellaneous: true
 	}
 
-	$: console.log(formIsValid)
-
 	const handleSubmitForm = () => {
 		const submitResult = validationOnSubmit(initialState, formIsValid)
 		confirmationPageIsShown = submitResult.isValid

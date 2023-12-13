@@ -11,15 +11,15 @@
 
 	import { enhance } from '$app/forms'
 	import { prefectures, months } from '@/data/data'
-	import { getTotalOfBeds, toKebab } from '@/libs/utils'
+	import { getTotalOfBeds } from '@/libs/utils'
 
-	import Icon from '@/components/Icon.svelte'
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
 	import SelectWithInput from '@/components/SelectWithInput.svelte'
 	import UploadModal from '@/views/modals/UploadModal.svelte'
 	import ResultModal from '../modals/ResultModal.svelte'
 	import NumberInput from '@/components/NumberInput.svelte'
+	import InputDepartment from '@/components/InputDepartment.svelte'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -30,25 +30,6 @@
 	export let departmentsList: { id: number; cd1: string; cd2: string; name: string }[]
 
 	let uploadModalIsShown = false
-
-	interface Row {
-		id: string
-		type: string
-		list?: string
-		options?: string[] | { value: boolean; text: string }[]
-		text: string
-		isError?: boolean
-		errorText?: string
-		inputSize?: string
-		required?: boolean
-		unit?: string
-		placeholder?: string
-	}
-
-	interface Fieldset {
-		legend: string
-		fieldset: Row[][]
-	}
 
 	// ADDRESS AUTO FILL
 
@@ -197,46 +178,7 @@
 		]
 	}
 
-	/**
-	 * Delete one department with the corresponding index in the "departments" array.
-	 * DepartmentsのArrayから分科を消す。
-	 * @param index: number, corresponding to the position of the department we want to delete in the "departments" array. 削除したい分科のインデックスである。
-	 *
-	 */
-	const deleteDepartment = (index: number) => {
-		initialState.departments = initialState.departments.filter(
-			department => initialState.departments.indexOf(department) !== index
-		)
-	}
-
 	$: bedTotal = getTotalOfBeds(initialState.departments)
-
-	/**
-	 * The user selects a department, the function will update the "departments" array and, by extension, the initialState.departments.
-	 * ユザーが分科を選択すると、DepartmentsのArrayとInitialState.departementsのArrayをアップデートする。
-	 * @param e: event, form the event, we will get the name of the department. イベントから、から分科名を貰う。
-	 * @param index：number, index of the department in the departments array. DepartmentsのArrayで分科のインデックスである。
-	 */
-	const handleSelectDepartment = (e: Event, index: number): void => {
-		const departmentName: string = (e.target as HTMLOptionElement).value
-
-		if (departmentName) {
-			const departmentId = (
-				document.querySelector(
-					"#departments option[value='" + departmentName + "']"
-				) as HTMLOptionElement
-			)?.dataset.value
-
-			const selectedDepartment = departmentsList.find(
-				department => departmentId && department.id === parseInt(departmentId)
-			)
-
-			if (selectedDepartment) {
-				initialState.departments[index].departmentId = selectedDepartment.id
-				initialState.departments[index].departmentName = selectedDepartment.name
-			}
-		}
-	}
 </script>
 
 {#if uploadModalIsShown}
@@ -324,7 +266,10 @@
 				name={'business-type'}
 				errorMsg={'一つを選んで下さい'}
 				required={true}
-				options={['法人', '個人']}
+				options={[
+					{ value: 'C', text: '法人' },
+					{ value: 'I', text: '個人' }
+				]}
 				bind:value={initialState.businessType}
 				bind:isValid={formIsValid.businessType}
 			/>
@@ -476,42 +421,13 @@
 			<div class="input-wrapper">
 				<h3 class="label">診療科目</h3>
 				<div class="container">
-					{#each initialState.departments as selectedDepartment, index}
-						<div class="department-wrapper" id={'department-' + index}>
-							<div class="input-wrapper">
-								<input
-									list="departments"
-									bind:value={selectedDepartment.departmentName}
-									on:input={e => handleSelectDepartment(e, index)}
-								/>
-
-								<datalist id="departments">
-									{#each departmentsList as department}
-										<option
-											class="department-option"
-											data-value={department.id}
-											value={department.name}
-										/>
-									{/each}
-								</datalist>
-							</div>
-
-							<NumberInput
-								name={'bed-quantity'}
-								label={'病床数'}
-								bind:value={selectedDepartment.numberOfBeds}
-							/>
-
-							{#if initialState.departments.length > 1}
-								<button
-									type="button"
-									class="btn secondary delete"
-									on:click={() => deleteDepartment(index)}
-								>
-									<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
-								</button>
-							{/if}
-						</div>
+					{#each initialState.departments as department, index}
+						<InputDepartment
+							bind:departments={initialState.departments}
+							bind:department
+							{index}
+							{departmentsList}
+						/>
 					{/each}
 				</div>
 				<div class="input-wrapper bed-total">
@@ -567,14 +483,15 @@
 		</div>
 
 		<div class="form-row">
-			<div class="input-wrapper">
-				<label class="label" for="google-review"> Google評価 </label>
-
-				<select class="select" bind:value={initialState.googleReview} id="google-review">
-					<option value={false}>無し</option>
-					<option value={true}>★有り</option>
-				</select>
-			</div>
+			<Select
+				label={'Google評価'}
+				name={'"google-review"'}
+				options={[
+					{ value: false, text: '無し' },
+					{ value: true, text: '★有り' }
+				]}
+				bind:value={initialState.googleReview}
+			/>
 
 			{#if initialState.googleReview}
 				<Input
@@ -711,19 +628,6 @@
 </form>
 
 <style lang="scss">
-	@mixin responsiveInputWidth($width) {
-		width: calc((($width - 10 - 2) / 1366) * 100vw);
-	}
-	.hidden {
-		display: none;
-	}
-
-	.container {
-		display: flex;
-		flex-direction: column;
-		gap: 18px;
-	}
-
 	.form {
 		width: auto;
 		padding: 0 37px;
@@ -738,8 +642,8 @@
 		display: flex;
 		align-items: flex-start;
 		justify-content: flex-start;
-		gap: 18px;
 		flex-wrap: wrap;
+		gap: 18px;
 		margin-bottom: 20px;
 	}
 
@@ -751,15 +655,19 @@
 		}
 	}
 
+	.hidden {
+		display: none;
+	}
+
+	.container {
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
+	}
+
 	.required-legend {
 		float: right;
 		font-size: 14px;
-	}
-
-	.label {
-		font-size: 18px;
-		font-weight: 400;
-		// width: 140px;
 	}
 
 	:global(.required-mark) {
@@ -771,30 +679,16 @@
 		display: flex;
 		gap: 10px;
 		align-items: flex-start;
-
-		.input {
-			&--sm {
-				@include responsiveInputWidth((103));
-				width: 103px;
-			}
-			&--md {
-				@include responsiveInputWidth((152));
-			}
-			&--lg {
-				@include responsiveInputWidth((359));
-			}
-			&--xl {
-				@include responsiveInputWidth((534));
-			}
-		}
-	}
-
-	:global(.input-wrapper:first-child > .label) {
-		width: 140px;
 	}
 
 	:global(.input-wrapper > .label) {
 		width: fit-content;
+		font-size: 18px;
+		font-weight: 400;
+	}
+
+	:global(.input-wrapper:first-child > .label) {
+		width: 140px;
 	}
 
 	:global(.input-wrapper .input::placeholder) {
@@ -824,20 +718,15 @@
 		transition: all 300ms;
 	}
 
-	.input-wrapper {
-		.select {
-			height: 32px;
-			width: calc(((106 - 10 - 2) / 1366) * 100vw);
-			padding-left: 10px;
-			font-size: 18px;
-			color: var(--black);
-			border: 1px solid var(--gray);
-			border-radius: 8px;
-			outline: none;
+	:global(.input-wrapper .unit) {
+		height: 31px;
+		display: flex;
+		align-items: center;
+	}
 
-			&:focus {
-				border-color: var(--primary-color);
-			}
+	.input-wrapper {
+		.input {
+			max-height: 31px;
 		}
 	}
 
@@ -886,46 +775,8 @@
 		}
 	}
 
-	.btn {
-		margin: 0;
-
-		&.delete {
-			min-width: 0 !important;
-			padding: 0;
-			height: 32px;
-			width: 32px;
-			display: flex;
-			align-items: center;
-			justify-content: center;
-		}
-	}
-
 	.bed-total {
-		display: flex;
-		align-items: center;
-		height: 32px;
 		align-self: flex-end;
-	}
-
-	.department-wrapper {
-		display: flex;
-		align-items: center;
-		gap: 18px;
-	}
-
-	@mixin responsiveInputWidth($width) {
-		width: calc((($width - 10 - 2) / 1366) * 100vw);
-	}
-
-	// .input {
-	// 	width: calc(((103 - 10 - 2) / 1366) * 100vw);
-	// }
-
-	.input-wrapper {
-		width: fit-content;
-		.input {
-			max-height: 31px;
-		}
 	}
 
 	@keyframes buzz {
@@ -939,31 +790,6 @@
 
 		100% {
 			transform: translateX(10px);
-		}
-	}
-
-	.input-wrapper {
-		.select {
-			width: calc(((103 - 10 - 2) / 1366) * 100vw);
-			height: 31px;
-			font-size: 18px;
-			color: var(--black);
-
-			&:focus {
-				border-color: var(--primary-color);
-			}
-		}
-
-		.unit {
-			height: 32px;
-			display: flex;
-			align-items: center;
-		}
-	}
-
-	.error {
-		.select {
-			border-color: var(--error);
 		}
 	}
 </style>

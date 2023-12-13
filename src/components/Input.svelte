@@ -61,14 +61,6 @@
 	}
 
 	.input-wrapper {
-		width: fit-content;
-
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
-
 		.input {
 			&--sm {
 				@include responsiveInputWidth((103));

@@ -20,7 +20,6 @@
 
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let filteredCustomers: CustomerFactory[]
-	let currentPage: number = 0
 	let deletedCustomersAreShown = false
 
 	$: currentPage = 0
@@ -30,24 +29,32 @@
 
 	/**
 	 * The toggle is ON, we display all the customers (deleted and active).
+	 * トグルがONであれば、顧客を全員表示する。（削除された顧客もアクティブの顧客も）
 	 * The toggle is OFF, We only display the active customers.
-	 * We change the state of deletedCustomersAreShown.
-	 * @param e
+	 * トグルがONであれば、アクティブの顧客のみ表示する。
+	 * @param deletedCustomersAreShown: boolean
 	 */
-	const handleCheck = (e: any) => {
-		deletedCustomersAreShown = e.target.checked
+	const displayCustomers = (deletedCustomersAreShown: boolean) => {
+		const customers = filteredCustomers === undefined ? allCustomers : filteredCustomers
 
-		if (deletedCustomersAreShown) {
-			customersToDisplay = filteredCustomers === undefined ? allCustomers : filteredCustomers
-		} else {
-			customersToDisplay =
-				filteredCustomers === undefined
-					? allCustomers.filter(customer => customer.isActive)
-					: filteredCustomers.filter(customer => customer.isActive)
-		}
+		deletedCustomersAreShown
+			? (customersToDisplay = customers)
+			: (customersToDisplay = customers.filter(customer => customer.isActive))
+	}
 
+	/**
+	 * When deletedCustomersAreShown is modified, the function will be called.
+	 * It will set the current page to 0 and call displayCustomers to display the right customers.
+	 * deletedCustomersAreShownが変更があれば、HandleCheckのファンクションをコールする。
+	 * 当ページを０にして、正しい顧客を表示するためにdisplayCustomersをコールする。
+	 * @param deletedCustomersAreShown: boolean
+	 */
+	const handleCheck = (deletedCustomersAreShown: boolean) => {
+		displayCustomers(deletedCustomersAreShown)
 		currentPage = 0
 	}
+
+	$: handleCheck(deletedCustomersAreShown)
 
 	// DELETE MODAL
 
@@ -72,16 +79,11 @@
 							customer.delete.deleteDate = getDateTime()
 							customer.delete.deleteBy = 1
 
-							const submitBtn = document.getElementById('submit-btn')
+							const submitBtn = document.getElementById('submit-btn') as HTMLButtonElement
 							submitBtn?.click()
 						}
 
-						//update the displayed data depending if we want to display the deleted customers or not.
-						if (deletedCustomersAreShown) {
-							customersToDisplay = allCustomers
-						} else {
-							customersToDisplay = allCustomers.filter(customer => customer.isActive)
-						}
+						displayCustomers(deletedCustomersAreShown)
 
 						goto('/customers')
 						phase = 'success'
@@ -113,7 +115,7 @@
 		currentPage = event.detail.page
 	}
 
-	$: dividedUsers =
+	$: dividedCustomers =
 		customersToDisplay.length > 0
 			? customersToDisplay.flatMap((_, i, self) => (i % 6 ? [] : [self.slice(i, i + 6)]))
 			: []
@@ -122,10 +124,10 @@
 <section class="section section--customers-management" id="customers-management">
 	{#if isShown}
 		<form
-			name="delete-form"
-			id="delete-form"
 			method="POST"
 			action="/customers?/delete"
+			name="delete-form"
+			id="delete-form"
 			use:enhance
 			on:submit|preventDefault
 		>
@@ -133,9 +135,9 @@
 			<button type="submit" id="submit-btn" form="delete-form" class="del-btn primary">
 				delete
 			</button>
-
-			<DeleteModal {phase} on:click={onClick} />
 		</form>
+
+		<DeleteModal {phase} on:click={onClick} />
 	{/if}
 
 	<header class="section__header">
@@ -143,8 +145,8 @@
 			bind:data={allCustomers}
 			bind:customersToDisplay
 			bind:filteredCustomers
-			{deletedCustomersAreShown}
 			bind:currentPage
+			{deletedCustomersAreShown}
 		/>
 
 		<div class="container">
@@ -155,7 +157,7 @@
 						type="checkbox"
 						id="checkbox"
 						name="checkbox"
-						on:click={handleCheck}
+						bind:checked={deletedCustomersAreShown}
 					/>
 					<span class="slider" />
 				</label>
@@ -177,14 +179,14 @@
 
 	<div class="section__main">
 		<Table
-			bind:customersToDisplayOnPage={dividedUsers[currentPage]}
+			bind:customersToDisplayOnPage={dividedCustomers[currentPage]}
 			bind:currentUser
 			bind:isShown
 		/>
 	</div>
 
 	<footer class="section__footer">
-		<Pagination bind:current={currentPage} bind:pages={dividedUsers} on:click={movePage} />
+		<Pagination bind:current={currentPage} bind:pages={dividedCustomers} on:click={movePage} />
 	</footer>
 </section>
 

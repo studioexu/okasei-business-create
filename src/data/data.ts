@@ -48,9 +48,9 @@ export const prefectures: string[] = [
 	'沖縄県'
 ]
 
-export const months: string[] = ['']
+export const months: { value: string; text: string }[] = []
 
 //fill months array
 for (let i = 1; i <= 12; i++) {
-	months.push(i.toString())
+	months.push({ value: i.toString(), text: i.toString() })
 }

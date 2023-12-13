@@ -112,7 +112,7 @@
 			<label class="label" for={input.name}>{input.label}</label>
 			<input
 				type="text"
-				class="input {input.name === 'facility-name' ? 'input--lg' : 'input--md'}"
+				class="input {input.name === 'facility-name' && 'input--lg'}"
 				id={input.name}
 				name={input.name}
 				bind:value={input.value}
@@ -123,18 +123,18 @@
 </form>
 
 <style lang="scss">
+	@mixin responsiveInputWidth($width) {
+		width: calc((($width - 8 - 2) / 1366) * 100vw);
+	}
+
 	.search-menu {
 		display: flex;
 		justify-content: space-between;
-		margin-bottom: 1.5rem;
-		padding: 0 18px;
 		row-gap: 10px;
 		flex-wrap: wrap;
+		margin-bottom: 1.5rem;
+		padding: 0 18px;
 		color: var(--black);
-	}
-
-	@mixin responsiveInputWidth($width) {
-		width: calc((($width - 8 - 2) / 1366) * 100vw);
 	}
 
 	.input-wrapper {
@@ -149,14 +149,12 @@
 
 		.input {
 			padding: 4px 8px;
+			@include responsiveInputWidth((130));
 
 			&:focus {
 				border-color: var(--primary-color);
 			}
 
-			&--md {
-				@include responsiveInputWidth((130));
-			}
 			&--lg {
 				@include responsiveInputWidth((190));
 			}
@@ -167,15 +165,12 @@
 		.input-wrapper {
 			width: auto;
 			.input {
-				&--md {
-					@include responsiveInputWidth((160));
-				}
+				@include responsiveInputWidth((160));
 			}
 		}
 		.input-wrapper:nth-child(1) {
 			width: 100%;
 			justify-content: center;
-			flex-grow: 3;
 
 			.label {
 				min-width: 60px;

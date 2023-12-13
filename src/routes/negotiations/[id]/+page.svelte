@@ -5,11 +5,11 @@
 
 	import { negociations } from '@/stores/negociations'
 	import { page } from '$app/stores'
+	import type { NegociationEntries } from '@/libs/negociationTypes'
 
 	const negociation = $negociations.find(
 		negociation => negociation.negociationId.toString() === $page.params.id
 	)
-
 	/**
 	 * On click, we redirect the user to the edit page
 	 */
@@ -17,42 +17,68 @@
 		window.location.href = '/negotiations/' + negociation?.negociationId + '/edit'
 	}
 
-	let initialState = {
-		custCd: negociation?.custCd,
-		negociationId: negociation?.negociationId,
-		status: negociation?.status,
-		startingDate: negociation?.firstTransaction,
-		condition: negociation?.condition,
-		inflow: negociation?.inflow,
-		preference: negociation?.preference,
-		billingDate: negociation?.billingDate,
-		scheduledDeposit: negociation?.scheduledDeposit,
-		outcome: negociation?.outcome,
-		nextContactDate:
-			negociation?.nextContact?.length !== undefined ? negociation?.nextContact.split(' ')[0] : '',
-		nextContactTime:
-			negociation?.nextContact?.length !== undefined ? negociation?.nextContact.split(' ')[1] : '',
-		lastContact: negociation?.lastContact,
-		postalCode: negociation?.postalCode,
-		prefecture: negociation?.prefecture,
-		city: negociation?.city,
-		address1: negociation?.address1,
-		address2: negociation?.address2,
-		distanceKm: negociation?.distanceKm,
-		distanceTime: negociation?.distanceTime,
-		estimate: negociation?.estimate,
-		memo: negociation?.memo,
-		employeeInCharge: negociation?.personInCharge,
-		responsiblePerson: negociation?.responsiblePerson,
-		communication: negociation?.communication,
-		directMessage: negociation?.dm,
-		videoUrl: negociation?.video,
-		checkboxes: negociation?.checkboxes,
-		checkBottleneck: negociation?.checkBottleneck,
-		occasion: negociation?.occasion,
-		risk: negociation?.risk,
-		outcomeHistory: negociation?.outcomeHistory
+	let initialState: NegociationEntries
+
+	if (negociation !== undefined) {
+		initialState = {
+			custCd: negociation?.custCd,
+			negociationId: negociation?.negociationId,
+			status: negociation?.status,
+			startingDate: negociation?.firstTransaction,
+			condition: negociation?.condition,
+			inflow: negociation?.inflow,
+			preference: negociation?.preference,
+			billingDate: negociation?.billingDate,
+			scheduledDeposit: negociation?.scheduledDeposit,
+			outcome: negociation?.outcome,
+			nextContactDate: negociation.nextContactDate,
+			nextContactTime: negociation.nextContactTime,
+			lastContact: negociation?.lastContact,
+			postalCode: negociation?.postalCode,
+			prefecture: negociation?.prefecture,
+			city: negociation?.city,
+			address1: negociation?.address1,
+			address2: negociation?.address2,
+			distanceKm: negociation?.distanceKm,
+			distanceTime: negociation?.distanceTime,
+			estimate: negociation?.estimate,
+			memo: negociation?.memo,
+			personInCharge: negociation?.personInCharge,
+			responsiblePerson: negociation?.responsiblePerson,
+			communication: negociation?.communication,
+			dm: negociation?.dm,
+			video: negociation?.video,
+			checkboxes: negociation?.checkboxes,
+			checkBottleneck: negociation?.checkBottleneck,
+			occasion: negociation?.occasion,
+			risk: negociation?.risk,
+			outcomeHistory: negociation?.outcomeHistory,
+			numberOfBeds: 0,
+			billingEstimation: 0,
+			customerName: '',
+			registerBy: negociation.register_by,
+			registerAt: negociation.register_at,
+			updateBy: negociation.update_by,
+			updateAt: negociation.update_at,
+			deleteBy: negociation.delete_by,
+			deleteAt: negociation.delete_at
+		}
 	}
+
+	const registrationData = [
+		{
+			type: 'register',
+			title: '登録'
+		},
+		{
+			type: 'update',
+			title: '更新'
+		},
+		{
+			type: 'delete',
+			title: '削除'
+		}
+	]
 </script>
 
 <section class="section section--confirmation">
@@ -61,6 +87,31 @@
 	</div>
 
 	<footer class="section__footer">
+		<!-- <div class="metadata">
+			{#each registrationData as registration}
+				<div class="registration">
+					{#if initialState[(<keyof NegociationEntries>registration.type + 'By')] !== null && initialState[registration.type + 'At'] !== ''}
+						<div class="registration__data">
+							<h3 class="registration__data__title">{registration.title}者名</h3>
+							<p class="registration__data__content">{initialState[registration.type + 'By']}</p>
+						</div>
+						<div class="registration__data">
+							<h3 class="registration__data__title">{registration.title}日</h3>
+							<p class="registration__data__content">
+								{initialState[registration.type + 'At'].split('T')[0]}
+							</p>
+						</div>
+						<div class="registration__data">
+							<h3 class="registration__data__title">{registration.title}時刻</h3>
+							<p class="registration__data__content">
+								{initialState[registration.type + 'At'].split('T')[1].split('.')[0]}
+							</p>
+						</div>
+					{/if}
+				</div>
+			{/each}
+		</div> -->
+
 		<div class="button-container">
 			<button class="primary" on:click={handleLinkClicked}> 編集 </button>
 		</div>

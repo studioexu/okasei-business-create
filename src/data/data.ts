@@ -48,6 +48,8 @@ export const prefectures: string[] = [
 	'沖縄県'
 ]
 
+export const tax = 0.1
+
 export const years: string[] = []
 export const months: string[] = ['']
 const minYear = 1800

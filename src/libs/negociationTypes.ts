@@ -1,14 +1,15 @@
 export interface Item {
 	name: string
-	quantity: string
+	quantity: number
+	price: number
 }
 
 export interface Estimate {
 	issueDate: string
 	dueDate: string
-	estimateWithoutTax: string
+	estimateWithoutTax: number
 	withTax: boolean
-	estimateTax: string
+	estimateTax: number
 	items: Item[]
 }
 
@@ -38,15 +39,16 @@ export interface Negociation {
 	billingDate: string
 	scheduledDeposit: string
 	outcome: string
-	nextContact: string
+	nextContactDate: string
+	nextContactTime: string
 	lastContact: string
 	postalCode: string
 	prefecture: string
 	city: string
 	address1: string
 	address2: string
-	distanceKm: string
-	distanceTime: string
+	distanceKm: number
+	distanceTime: number
 	estimate: Estimate[]
 	personInCharge: string
 	memo: Memo[]
@@ -61,11 +63,19 @@ export interface Negociation {
 	outcomeHistory: OutcomeHistory[]
 	responsiblePerson: string
 	communication: string
-	numberOfBeds: string
-	billingEstimation: string
+	numberOfBeds: number
+	billingEstimation: number
+	registerBy?: number | null
+	registerAt?: string
+	updateBy?: number | null
+	updateAt?: string
+	deleteBy?: number | null
+	deleteAt?: string
 }
 
 export interface NegociationEntries {
+	custCd: number
+	negociationId: number
 	status: string
 	startingDate: string
 	condition: string
@@ -82,8 +92,8 @@ export interface NegociationEntries {
 	city: string
 	address1: string
 	address2: string
-	distanceKm: string
-	distanceTime: string
+	distanceKm: number
+	distanceTime: number
 	estimate: Estimate[]
 	memo: Memo[]
 	personInCharge: string
@@ -96,11 +106,15 @@ export interface NegociationEntries {
 	occasion: string
 	risk: string
 	outcomeHistory: OutcomeHistory[]
-	custCd: number
-	negociationId: number
 	customerName: string
-	numberOfBeds: string
-	billingEstimation: string
+	numberOfBeds: number
+	billingEstimation: number
+	registerBy?: number | null
+	registerAt?: string
+	updateBy?: number | null
+	updateAt?: string
+	deleteBy?: number | null
+	deleteAt?: string
 }
 
 export class NegociationBackend {
@@ -112,16 +126,17 @@ export class NegociationBackend {
 	contact: string
 	billingDate: string
 	outcome: string
-	nextContact: string
+	nextContactDate: string
+	nextContactTime: string
 	lastContact: string
 	postalCode: string
 	prefecture: string
 	city: string
 	address1: string
 	address2: string
-	distanceKm: string
-	distanceTime: string
-	numberOfBeds: string
+	distanceKm: number
+	distanceTime: number
+	numberOfBeds: number
 	estimate: Estimate[]
 	personInCharge: string
 	memo: Memo[]
@@ -138,7 +153,13 @@ export class NegociationBackend {
 	responsiblePerson: string
 	communication: string
 	scheduledDeposit: string
-	billingEstimation: string
+	billingEstimation: number
+	register_by?: number | null
+	register_at?: string
+	update_by?: number | null
+	update_at?: string
+	delete_by?: number | null
+	delete_at?: string
 
 	constructor(data: NegociationEntries) {
 		this.negociationId = data.negociationId
@@ -149,7 +170,8 @@ export class NegociationBackend {
 		this.contact = data.inflow
 		this.billingDate = data.billingDate
 		this.outcome = data.outcome
-		this.nextContact = data.nextContactDate + ' ' + data.nextContactTime
+		this.nextContactDate = data.nextContactDate
+		this.nextContactTime = data.nextContactTime
 		this.lastContact = data.lastContact
 		this.postalCode = data.postalCode
 		this.prefecture = data.prefecture
@@ -176,5 +198,11 @@ export class NegociationBackend {
 		this.communication = data.communication
 		this.scheduledDeposit = data.scheduledDeposit
 		this.billingEstimation = data.billingEstimation
+		this.register_by = data.registerBy
+		this.register_at = data.registerAt
+		this.update_by = data.updateBy
+		this.update_at = data.updateAt
+		this.delete_by = data.deleteBy
+		this.delete_at = data.deleteAt
 	}
 }

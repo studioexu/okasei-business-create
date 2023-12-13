@@ -2,11 +2,15 @@
 	export let label: string = ''
 	export let value: string
 	export let name: string
+	export let required: boolean = false
 </script>
 
 <div class="input-wrapper">
 	{#if label !== ''}
-		<label class="label" for={name}>{label}</label>
+		<label class="label" for={name}>
+			{label}
+			<span class="required-mark">{required ? '*' : ''}</span>
+		</label>
 	{/if}
 	<input class="input" type="date" id={name} {name} bind:value />
 </div>

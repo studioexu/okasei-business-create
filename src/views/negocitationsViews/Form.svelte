@@ -5,16 +5,17 @@
 	import InputDate from '@/components/InputDate.svelte'
 	import Icon from '@/components/Icon.svelte'
 	import InputNumber from '@/components/InputNumber.svelte'
+	import InputAddress from '@/components/InputAddress.svelte'
+	import InputSelect from '@/components/InputSelect.svelte'
 
 	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 	import { negociations } from '@/stores/negociations'
 	import { NegociationBackend, type Estimate } from '@/libs/negociationTypes'
-	import type { Item, Memo, OutcomeHistory } from '@/libs/negociationTypes'
-	import InputAddress from '@/components/InputAddress.svelte'
-	import InputSelect from '@/components/InputSelect.svelte'
-	import { prefectures } from '@/data/data'
+	import type { Item, Memo, NegociationEntries, OutcomeHistory } from '@/libs/negociationTypes'
 
-	export let initialState: any
+	import { prefectures, tax } from '@/data/data'
+
+	export let initialState: NegociationEntries
 	export let customers: CustomerFactory[]
 	export let isSucceeded: boolean
 	export let isShown: boolean
@@ -23,8 +24,8 @@
 	export let currentCustomerId: number
 
 	let currentCustomer: CustomerFactory | undefined
-
-	const tax = 0.1
+	let outcomeNotConfirmed = false
+	let billingDateNotConfirmed = false
 
 	const products = [
 		{
@@ -50,7 +51,7 @@
 		}
 	})
 
-	////// ARRAYS: ESTIMATE, MEMO, HISTORY
+	////// INITIATE ARRAYS: ESTIMATE, MEMO, HISTORY
 
 	$: initialState.estimate =
 		initialState.estimate.length === 0
@@ -59,12 +60,14 @@
 					{
 						issueDate: '',
 						dueDate: '',
-						estimateWithoutTax: '',
-						tax: '',
+						estimateWithoutTax: 0,
+						withTax: false,
+						estimateTax: 0,
 						items: [
 							{
 								name: '',
-								quantity: ''
+								quantity: 0,
+								price: 0
 							}
 						]
 					}
@@ -79,6 +82,8 @@
 			? [...initialState.memo, { date: '', memo: '' }]
 			: initialState.memo
 
+	///// REMOVE OR ADD ITEM IN PRODUCT ARRAY IN ESTIMATE
+
 	/**
 	 * Add an item to the items array in a specific estimate object
 	 * @param index: corresponding to the index of the right estimate object.
@@ -86,7 +91,7 @@
 	const addItem = (index: number): void => {
 		initialState.estimate[index].items = [
 			...initialState.estimate[index].items,
-			{ productName: '', quantity: '' }
+			{ name: '', quantity: 0, price: 0 }
 		]
 	}
 
@@ -100,6 +105,8 @@
 			(item: Item) => initialState.estimate[estimateIndex].items[itemIndex] !== item && item
 		)
 	}
+
+	//// REMOVE OR ADD ELEMENT IN ESTIMATE / MEMO / OUTCOMEHISTORY ARRAYS
 
 	/**
 	 * Remove one object from the corresponding array.
@@ -124,126 +131,58 @@
 		arrayToUpdate: (Memo | OutcomeHistory | Estimate)[],
 		arrayType: string
 	): void => {
-		let newArray: (Memo | OutcomeHistory | Estimate)[] = []
+		let newObject: Memo | OutcomeHistory | Estimate | null = null
 
 		switch (arrayType) {
 			case 'memo':
-				newArray = [
-					...arrayToUpdate,
-					{
-						date: '',
-						memo: ''
-					}
-				]
+				newObject = {
+					date: '',
+					memo: ''
+				}
 				break
 			case 'outcomeHistory':
-				newArray = [
-					...arrayToUpdate,
-					{
-						date: '',
-						memo: ''
-					}
-				]
+				newObject = {
+					date: '',
+					memo: ''
+				}
 				break
 			case 'estimate':
-				newArray = [
-					...arrayToUpdate,
-					{
-						issueDate: '',
-						dueDate: '',
-						estimateWithoutTax: '',
-						withTax: false,
-						estimateTax: '',
-						items: [
-							{
-								name: '',
-								quantity: ''
-							}
-						]
-					}
-				]
-
+				newObject = {
+					issueDate: '',
+					dueDate: '',
+					estimateWithoutTax: 0,
+					withTax: false,
+					estimateTax: 0,
+					items: [
+						{
+							name: '',
+							quantity: 0,
+							price: 0
+						}
+					]
+				}
 			default:
+				null
 				break
 		}
 
-		updateArray(newArray, arrayType)
+		if (newObject !== null) arrayToUpdate = [...arrayToUpdate, newObject]
+
+		updateArray(arrayToUpdate, arrayType)
 	}
 
 	const updateArray = (array: (Memo | OutcomeHistory | Estimate)[], type: string) => {
 		switch (type) {
 			case 'memo':
-				initialState.memo = array
+				initialState.memo = array as Memo[]
 				break
 			case 'outcomeHistory':
-				initialState.outcomeHistory = array
+				initialState.outcomeHistory = array as OutcomeHistory[]
 				break
 			case 'estimate':
-				initialState.estimate = array
+				initialState.estimate = array as Estimate[]
 			default:
 				break
-		}
-	}
-
-	/**
-	 * calculate the total of the estimates
-	 */
-	const calculateEstimateTotal = (): string => {
-		let estimateTotal = 0
-		initialState.estimate.map((estimate: Estimate) => {
-			estimateTotal += parseInt(estimate.estimateWithoutTax)
-		})
-
-		return estimateTotal.toString()
-	}
-
-	$: initialState.billingEstimation = calculateEstimateTotal().toString()
-
-	const getTotalBeds = (): string => {
-		let total = 0
-
-		initialState.estimate.map((estimate: Estimate) => {
-			estimate.items.map(item => {
-				const itemQuantity = isNaN(parseInt(item.quantity)) ? 0 : parseInt(item.quantity)
-				total += itemQuantity
-			})
-		})
-
-		return total.toString() + '台'
-	}
-
-	/**
-	 * Triggered when the form is submit.
-	 * If the form is still on the entry page, then, it will preventDefault, and displayed the entry verification page.
-	 * If the user is in the entry verification page, then, we submit the form.
-	 * @param e
-	 */
-	const handleSubmit = (e: any): void => {
-		e.preventDefault()
-
-		if (confirmationPageIsShown) {
-			isShown = true
-			isSucceeded = true
-
-			initialState.numberOfBeds = getTotalBeds()
-			initialState.billingEstimation = calculateEstimateTotal()
-
-			if (formType === 'create') {
-				let customer = customers.find(customer => customer.custCD === currentCustomerId)
-				initialState.customerName = customer?.custName
-				negociations.set([...$negociations, new NegociationBackend(initialState)])
-			}
-
-			if (formType === 'update') {
-				let newArray = $negociations.map(negociation => {
-					if (negociation.negociationId === initialState.negociationId) {
-						return new NegociationBackend(initialState)
-					} else {
-						return negociation
-					}
-				})
-				negociations.set(newArray)
-			}
 		}
 	}
 
@@ -256,9 +195,34 @@
 			const address = currentCustomer[0].address
 
 			Object.keys(address).map(key => {
-				initialState[key] = address[key]
+				initialState[
+					key as keyof {
+						postalCode: string
+						prefecture: string
+						city: string
+						address1: string
+						address2: string
+					}
+				] = address[key]
 			})
 		}
+	}
+
+	/////// ESTIMATE ARRAY
+
+	$: initialState.billingEstimation = getEstimateTotal()
+
+	const getTotalBeds = (): number => {
+		let total = 0
+
+		initialState.estimate.map((estimate: Estimate) => {
+			estimate.items.map(item => {
+				const itemQuantity = isNaN(item.quantity) ? 0 : item.quantity
+				total += itemQuantity
+			})
+		})
+
+		return total
 	}
 
 	/**
@@ -279,42 +243,92 @@
 	 * update the estimate tax amount in the initialState when there are changes.
 	 * @param index: corresponding to the index in the array of estimate.
 	 */
-	const handleEstimateChange = (index: number): void => {
-		let estimateAmount = isNaN(parseInt(initialState.estimate[index].estimateWithoutTax))
+	const updateEstimateTaxOnChange = (index: number): void => {
+		let estimateAmount = isNaN(initialState.estimate[index].estimateWithoutTax)
 			? 0
-			: parseInt(initialState.estimate[index].estimateWithoutTax)
+			: initialState.estimate[index].estimateWithoutTax
 
 		initialState.estimate[index].estimateTax = getTaxAmount(
 			initialState.estimate[index].withTax,
 			estimateAmount
-		).toString()
+		)
 	}
 
 	/**
-	 * When the user chooses an item, it will display the right price.
+	 * When the user chooses an item,
+	 * it will update the right items array with the selected item and the corresponding price.
 	 * @param estimateIndex
 	 * @param itemIndex
 	 */
 	const handleChooseItem = (estimateIndex: number, itemIndex: number): void => {
 		const item = initialState.estimate[estimateIndex].items[itemIndex]
 		const correspondingItemInProducts = products.find(product => product.name === item.name)
-		item.price = correspondingItemInProducts?.price
+		if (correspondingItemInProducts) item.price = correspondingItemInProducts.price
 	}
 
 	/**
-	 * Calculate the estimate when add items.
+	 * Calculate the total of all estimates in estimate array.
+	 * お見積もりの合計。
+	 * @returns estimateTotal, 見積もりの合計
+	 */
+	const getEstimateTotal = (): number => {
+		let estimateTotal = 0
+		initialState.estimate.map((estimate: Estimate) => {
+			estimateTotal += estimate.estimateWithoutTax
+		})
+
+		return estimateTotal
+	}
+
+	/**
+	 * Calculate one estimate corresponding to the index. お見積もりを計算する。
 	 * @param estimateIndex
 	 */
 	const getEstimate = (estimateIndex: number): void => {
 		let estimate = 0
 		const items = initialState.estimate[estimateIndex].items
 
-		items.map((item: any) => {
-			estimate +=
-				(isNaN(parseInt(item.price)) ? 0 : parseInt(item.price)) *
-				(isNaN(parseInt(item.quantity)) ? 0 : parseInt(item.quantity))
+		items.map((item: Item) => {
+			estimate += (isNaN(item.price) ? 0 : item.price) * (isNaN(item.quantity) ? 0 : item.quantity)
 		})
 		initialState.estimate[estimateIndex].estimateWithoutTax = estimate
+	}
+
+	////// FORM SUBMIT
+
+	/**
+	 * Triggered when the form is submit.
+	 * If the form is still on the entry page, then, it will preventDefault, and displayed the entry verification page.
+	 * If the user is in the entry verification page, then, we submit the form.
+	 * @param e
+	 */
+	const handleSubmit = (e: any): void => {
+		e.preventDefault()
+
+		if (confirmationPageIsShown) {
+			isShown = true
+			isSucceeded = true
+
+			initialState.numberOfBeds = getTotalBeds()
+			initialState.billingEstimation = getEstimateTotal()
+
+			if (formType === 'create') {
+				let customer = customers.find(customer => customer.custCD === currentCustomerId)
+				initialState.customerName = customer?.custName
+				negociations.set([...$negociations, new NegociationBackend(initialState)])
+			}
+
+			if (formType === 'update') {
+				let newArray = $negociations.map(negociation => {
+					if (negociation.negociationId === initialState.negociationId) {
+						return new NegociationBackend(initialState)
+					} else {
+						return negociation
+					}
+				})
+				negociations.set(newArray)
+			}
+		}
 	}
 </script>
 
@@ -369,6 +383,7 @@
 				label={'ステータス'}
 				name={'status'}
 				options={['受注', '新規受注', '再問合せ', '見送り', '失注', '在庫無し']}
+				required={true}
 				bind:value={initialState.status}
 			/>
 		</div>
@@ -376,6 +391,7 @@
 			<InputDate
 				label={'商談開始日'}
 				name={'negotiation-start'}
+				required={true}
 				bind:value={initialState.startingDate}
 			/>
 		</div>
@@ -420,7 +436,11 @@
 		<div class="form-row">
 			<InputDate label={'納期'} name={'billing-date'} bind:value={initialState.billingDate} />
 
-			<InputCheckbox label={'未確定'} name={'billing-date-not-confirmed'} />
+			<InputCheckbox
+				label={'未確定'}
+				name={'billing-date-not-confirmed'}
+				bind:isChecked={billingDateNotConfirmed}
+			/>
 		</div>
 
 		<div class="form-row">
@@ -435,7 +455,11 @@
 		<div class="form-row">
 			<InputDate label={'成否日'} name={'outcome'} bind:value={initialState.outcome} />
 
-			<InputCheckbox label={'未定'} name={'outcome-not-confirmed'} />
+			<InputCheckbox
+				label={'未定'}
+				name={'outcome-not-confirmed'}
+				bind:isChecked={outcomeNotConfirmed}
+			/>
 		</div>
 
 		<div class="form-row">
@@ -504,15 +528,15 @@
 			</div>
 			<div class="container container--column">
 				{#each initialState.estimate as estimate, index}
-					<div class="wrapper" on:change={() => handleEstimateChange(index)}>
+					<div class="wrapper" on:change={() => updateEstimateTaxOnChange(index)}>
 						<div class="form-row">
-							<InputDate label={'発行日'} name={'issue-date'} bind:value={initialState.issueDate} />
+							<InputDate label={'発行日'} name={'issue-date'} bind:value={estimate.issueDate} />
 						</div>
 						<div class="form-row">
 							<InputDate
 								label={'見積期日'}
 								name={'estimation-due-date'}
-								bind:value={initialState.dueDate}
+								bind:value={estimate.dueDate}
 							/>
 						</div>
 						<div class="form-row">
@@ -520,7 +544,7 @@
 								label={'税抜価格'}
 								name={'estimate-without-tax'}
 								unit="円"
-								on:input={calculateEstimateTotal}
+								on:input={() => getEstimate(index)}
 								bind:value={estimate.estimateWithoutTax}
 							/>
 
@@ -664,7 +688,7 @@
 				bind:value={initialState.dm}
 			/>
 
-			<Input name={'presentation-video'} label={'PR動画'} bind:value={initialState.videoUrl} />
+			<Input name={'presentation-video'} label={'PR動画'} bind:value={initialState.video} />
 		</div>
 	</fieldset>
 
@@ -719,7 +743,7 @@
 									inputSize={'input--xl'}
 									bind:value={memo.memo}
 								/>
-								{#if initialState.outcomeHistory > 1}
+								{#if initialState.outcomeHistory.length > 1}
 									<button
 										type="button"
 										class="primary btn delete"
@@ -865,6 +889,10 @@
 		align-items: center;
 		width: fit-content;
 		gap: 10px;
+	}
+
+	:global(.input-wrapper:first-child .label) {
+		width: 130px;
 	}
 
 	:global(.input-wrapper .input) {

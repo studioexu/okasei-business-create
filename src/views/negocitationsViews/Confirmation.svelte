@@ -75,14 +75,14 @@
 							<Wrapper label={'見積期日'} content={estimate.dueDate} />
 						</div>
 						<div class="form-row">
-							<Wrapper label={'税抜価格'} content={estimate.estimateWithoutTax} />
-							<Wrapper label={'消費税'} content={estimate.estimateTax} />
+							<Wrapper label={'税抜価格'} content={estimate.estimateWithoutTax.toString()} />
+							<Wrapper label={'消費税'} content={estimate.estimateTax.toString()} />
 						</div>
 
 						{#each estimate.items as item}
 							<div class="form-row">
 								<Wrapper label={'商品'} content={item.name} />
-								<Wrapper content={item.quantity} />
+								<Wrapper content={item.quantity.toString()} />
 							</div>
 						{/each}
 					</div>

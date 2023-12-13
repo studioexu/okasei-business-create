@@ -25,15 +25,6 @@
 		goto('/negotiations')
 	}
 
-	const updateIndexArray = (maxIndex: number) => {
-		const array: string[] = []
-		for (let i = 0; i < maxIndex; i++) {
-			array.push(i.toString())
-		}
-
-		return array
-	}
-
 	let initialState: NegociationEntries = {
 		negociationId: 0,
 		custCd: 0,
@@ -54,8 +45,8 @@
 		city: '',
 		address1: '',
 		address2: '',
-		distanceKm: '',
-		distanceTime: '',
+		distanceKm: 0,
+		distanceTime: 0,
 		estimate: [],
 		memo: [],
 		personInCharge: '',
@@ -82,11 +73,11 @@
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
-		numberOfBeds: '',
-		billingEstimation: ''
+		numberOfBeds: 0,
+		billingEstimation: 0
 	}
 
-	let initialState2Errors = {
+	let initialStateErrors = {
 		status: false,
 		startingDate: false,
 		condition: false,
@@ -109,19 +100,15 @@
 		responsiblePerson: false,
 		communication: false,
 		directMessage: false,
-		videoUrl: false,
+		video: false,
 		checkboxes: false,
 		checkBottleneck: false,
 		occasion: false,
 		risk: false
 	}
 
-	let negociationIds: number[] = $negociations.map(negociation => negociation.negociationId)
-
-	$: initialState.negociationId = Math.max(...negociationIds) + 1
-
-	let displayClass: string = ''
-	$: displayClass
+	const negociationIds: number[] = $negociations.map(negociation => negociation.negociationId)
+	initialState.negociationId = Math.max(...negociationIds) + 1
 
 	const initialStateIsValid = (initialStateErrors: Object) => {
 		let isValid = true

@@ -1,5 +1,6 @@
 import { prefectures } from '@/data/data'
 import { isValidPhoneNumber } from 'libphonenumber-js'
+import type { CustomerEntries, CustomerEntriesErrors } from './customerTypes'
 
 /**
  * We want to check if the user only use katakana
@@ -34,19 +35,6 @@ export const phoneNumberValidation = (phoneNumber: string) => {
 export const postalCodeValidation = (postalCode: string) => {
 	const regex = /^[0-9]{7}$/
 	return regex.test(postalCode)
-}
-
-/**
- * check if the year input is correct
- * 数字が入れたかどうか確認する。
- * @param year: string
- * @returns boolean
- */
-export const checkIfYearIsValid = (year: string) => {
-	const yearInt = parseInt(year)
-	const currentYear = new Date().getFullYear()
-
-	return yearInt !== 0 && yearInt <= currentYear
 }
 
 /**
@@ -88,9 +76,16 @@ export const checkIfPrefectureIsValid = (input: string): boolean => {
  * @param input : string input from the user
  * @returns boolean
  */
-export const checkIfInputIsNumber = (input: string): boolean => {
-	return !isNaN(parseInt(input))
+export const checkIfInputIsNumber = (input: string | number): boolean => {
+	if (typeof input === 'number') return !isNaN(input)
+	if (typeof input === 'string') return !isNaN(parseInt(input))
+
+	return false
 }
+
+// export const checkIfInputIsDate = (input: string): boolean => {
+// 	return !isNaN(new Date(input))
+// }
 
 /**
  * This function groups all the validators to check if the input is valid according to their type
@@ -98,7 +93,7 @@ export const checkIfInputIsNumber = (input: string): boolean => {
  * @param input : string, is the input entered by the user
  * @returns boolean
  */
-export const inputIsValid = (name: string, input: string): boolean => {
+export const inputIsValid = (name: string, input: any): boolean => {
 	switch (name) {
 		case 'branchNumber':
 			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 4)
@@ -119,42 +114,63 @@ export const inputIsValid = (name: string, input: string): boolean => {
 			return checkIfPrefectureIsValid(input)
 
 		case 'city':
-			return numberOFCharacterValidation(input, 20) || input === ''
+			return numberOFCharacterValidation(input, 20)
 
 		case 'address1':
-			return numberOFCharacterValidation(input, 200) || input === ''
-
 		case 'address2':
-			return numberOFCharacterValidation(input, 200) || input === ''
+			return numberOFCharacterValidation(input, 200)
+
+		case 'founder':
+		case 'homepage':
+			return numberOFCharacterValidation(input, 128) || input === ''
 
 		case 'phoneNumber':
+		case 'fax':
 			return phoneNumberValidation(input)
 
-		case 'fax':
-			return input === '' || phoneNumberValidation(input)
-
-		case 'year':
-			return input === '' || checkIfYearIsValid(input)
+		case 'mobile':
+			return phoneNumberValidation(input) || input === ''
 
 		case 'month':
 			return input === '' || checkIfMonthIsValid(input)
 
-		case 'founder':
-			return input === '' || numberOFCharacterValidation(input, 100)
-
 		case 'quantity':
+		case 'numberOfEmployees':
+		case 'numberOfFacilities':
 			return checkIfInputIsNumber(input)
 
-		case 'numberOfEmployees':
-			return input === '' || checkIfInputIsNumber(input)
-
-		case 'numberOfFacilities':
-			return input === '' || checkIfInputIsNumber(input)
-
-		case 'homepage':
-			return input === '' || numberOFCharacterValidation(input, 200)
+		case 'businessType':
+			return input.length > 0
 
 		default:
 			return true
 	}
+}
+
+/**
+ * Take the form and check if all the entries are valid.
+ * If there is one error, the function will return false.
+ * @param formEntries: Object of entries
+ * @returns boolean
+ */
+export const validationOnSubmit = (
+	formEntries: CustomerEntries,
+	formValidation: CustomerEntriesErrors
+): { isValid: boolean; formValidation: CustomerEntriesErrors } => {
+	let errorArray: boolean[] = []
+	let isValid = true
+
+	Object.keys(formEntries).map(key => {
+		const input = formEntries[key as keyof CustomerEntries]
+
+		formValidation[key as keyof CustomerEntriesErrors] = inputIsValid(key, input)
+		errorArray.push(!inputIsValid(key, input))
+	})
+
+	errorArray.forEach(error => {
+		if (error) {
+			isValid = false
+		}
+	})
+	return { isValid, formValidation }
 }

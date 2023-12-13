@@ -31,19 +31,10 @@
 
 <style lang="scss">
 	.input-wrapper {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
-
 		.select {
 			width: calc(((103 - 10 - 2) / 1366) * 100vw);
 			height: 31px;
+			font-size: 18px;
 			color: var(--black);
 
 			&:focus {
@@ -56,31 +47,11 @@
 			display: flex;
 			align-items: center;
 		}
-
-		.font-error {
-			position: absolute;
-			right: 0;
-			bottom: -14px;
-			font-size: 10px;
-			opacity: 0;
-		}
 	}
 
 	.error {
 		.select {
-			transition: border 300ms;
-			border: 1.5px solid var(--error);
-			animation: buzz 100ms;
-			animation-iteration-count: 3;
+			border-color: var(--error);
 		}
-
-		.font-error {
-			opacity: 1;
-			transition: all 300ms;
-		}
-	}
-
-	.required-mark {
-		color: var(--error);
 	}
 </style>

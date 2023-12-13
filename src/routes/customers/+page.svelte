@@ -27,7 +27,14 @@
 	$: filteredCustomers
 	$: allCustomers
 
-	const displayDeletedCustomers = (deletedCustomersAreShown: boolean) => {
+	/**
+	 * The toggle is ON, we display all the customers (deleted and active).
+	 * トグルがONであれば、顧客を全員表示する。（削除された顧客もアクティブの顧客も）
+	 * The toggle is OFF, We only display the active customers.
+	 * トグルがONであれば、アクティブの顧客のみ表示する。
+	 * @param deletedCustomersAreShown: boolean
+	 */
+	const displayCustomers = (deletedCustomersAreShown: boolean) => {
 		const customers = filteredCustomers === undefined ? allCustomers : filteredCustomers
 
 		deletedCustomersAreShown
@@ -36,12 +43,14 @@
 	}
 
 	/**
-	 * The toggle is ON, we display all the customers (deleted and active).
-	 * The toggle is OFF, We only display the active customers.
-	 * We change the state of deletedCustomersAreShown.
+	 * When deletedCustomersAreShown is modified, the function will be called.
+	 * It will set the current page to 0 and call displayCustomers to display the right customers.
+	 * deletedCustomersAreShownが変更があれば、HandleCheckのファンクションをコールする。
+	 * 当ページを０にして、正しい顧客を表示するためにdisplayCustomersをコールする。
+	 * @param deletedCustomersAreShown: boolean
 	 */
 	const handleCheck = (deletedCustomersAreShown: boolean) => {
-		displayDeletedCustomers(deletedCustomersAreShown)
+		displayCustomers(deletedCustomersAreShown)
 		currentPage = 0
 	}
 
@@ -74,7 +83,7 @@
 							submitBtn?.click()
 						}
 
-						displayDeletedCustomers(deletedCustomersAreShown)
+						displayCustomers(deletedCustomersAreShown)
 
 						goto('/customers')
 						phase = 'success'
@@ -149,7 +158,6 @@
 						id="checkbox"
 						name="checkbox"
 						bind:checked={deletedCustomersAreShown}
-						on:click={handleCheck}
 					/>
 					<span class="slider" />
 				</label>

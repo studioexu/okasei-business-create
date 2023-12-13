@@ -1,11 +1,10 @@
 <script lang="ts">
-	export let name: string = ''
+	export let value: string | number | boolean
+	// export let options: string[] = [' ']
+	export let options: { value: number | string | boolean; text: string }[]
 	export let label: string = ''
-
-	export let value: string
-	export let options: string[] = [' ']
 	export let unit: string = ''
-
+	export let name: string = ''
 	export let isValid: boolean = true
 	export let errorMsg: string = ''
 	export let required: boolean = false
@@ -19,9 +18,9 @@
 		</label>
 	{/if}
 
-	<select class="select" bind:value id={name}>
+	<select class="select" id={name} bind:value>
 		{#each options as option}
-			<option value={option}>{option}</option>
+			<option value={option.value}>{option.text}</option>
 		{/each}
 	</select>
 	{#if unit !== ''}
@@ -33,19 +32,10 @@
 
 <style lang="scss">
 	.input-wrapper {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
-
 		.select {
-			// width: 105px;
+			width: calc(((103 - 10 - 2) / 1366) * 100vw);
 			height: 31px;
+			font-size: 18px;
 			color: var(--black);
 
 			&:focus {
@@ -58,13 +48,11 @@
 			display: flex;
 			align-items: center;
 		}
+	}
 
-		.font-error {
-			position: absolute;
-			right: 0;
-			bottom: -14px;
-			font-size: 10px;
-			opacity: 0;
+	.error {
+		.select {
+			border-color: var(--error);
 		}
 	}
 </style>

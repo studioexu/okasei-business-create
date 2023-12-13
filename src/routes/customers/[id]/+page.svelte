@@ -9,15 +9,7 @@
 
 	export let data
 
-	let customer: CustomerFactory = new CustomerFactory(data.customer, 'customer')
-	let bedQuantity: number = 0
-
-	/**
-	 * On click, we redirect the user to the edit page
-	 */
-	const handleLinkClicked = () => {
-		window.location.href = '/customers/' + customer.custCD + '/edit'
-	}
+	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
 
 	let initialState: CustomerEntries = {
 		id: customer.custCD,
@@ -37,11 +29,12 @@
 		mobile: customer.address.mobile,
 		year: customer.foundationDate.year,
 		month: customer.foundationDate.month,
-		founder: customer.foundation.establishedBy,
-		departments: customer.departmentDetail,
-		numberOfEmployees: customer.numberOfEmployees,
+		foundationDate: customer.foundation.establishDate,
+		founder: customer.foundation.establishBy,
+		departments: customer.departments,
+		numberOfEmployees: customer.numEmployees === undefined ? 0 : customer.numEmployees,
 		homepage: customer.url,
-		numberOfFacilities: customer.numBranch,
+		numberOfFacilities: customer.numBranch === undefined ? 0 : customer.numBranch,
 		isActive: customer.isActive,
 		googleReview: customer.googleReview,
 		reviews: customer.reviews,
@@ -55,8 +48,6 @@
 		pictures: customer.pictures,
 		miscellaneous: customer.miscellaneous
 	}
-
-	customer.departmentDetail.forEach((bed: any) => (bedQuantity += parseInt(bed.bedQuantity)))
 </script>
 
 <section class="section section--confirmation">
@@ -101,7 +92,24 @@
 
 		<div class="button-container">
 			{#if customer.isActive}
-				<button class="primary" on:click={handleLinkClicked}> 編集 </button>
+				<button
+					class="primary"
+					on:click={() => {
+						window.location.href = '/customers/' + customer.custCD + '/edit'
+					}}
+				>
+					編集
+				</button>
+			{:else}
+				<form
+					method="POST"
+					action="/customers/{initialState.id}?/reactivate"
+					id={'reactivate-form'}
+					name="reactivate-form"
+				>
+					<input type="hidden" name="id" value={initialState.id} />
+					<button type="submit" form="reactivate-form" class="primary"> 有効化する </button>
+				</form>
 			{/if}
 		</div>
 	</footer>

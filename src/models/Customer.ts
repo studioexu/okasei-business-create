@@ -74,7 +74,7 @@ export class Customer {
 		this._custName = data.Cust_Name
 		this._custKana = data.Cust_Kana
 		this._instId = data.Inst_ID
-		this._custType = data.Cust_Type === 'C' ? '法人' : '個人'
+		this._custType = data.Cust_Type
 		this._address = {
 			postalCode: data.Address.Cust_Postal,
 			prefecture: data.Address.Cust_Ken,

@@ -27,26 +27,25 @@
 	$: filteredCustomers
 	$: allCustomers
 
+	const displayDeletedCustomers = (deletedCustomersAreShown: boolean) => {
+		const customers = filteredCustomers === undefined ? allCustomers : filteredCustomers
+
+		deletedCustomersAreShown
+			? (customersToDisplay = customers)
+			: (customersToDisplay = customers.filter(customer => customer.isActive))
+	}
+
 	/**
 	 * The toggle is ON, we display all the customers (deleted and active).
 	 * The toggle is OFF, We only display the active customers.
 	 * We change the state of deletedCustomersAreShown.
-	 * @param e
 	 */
-	const handleCheck = (e: any) => {
-		deletedCustomersAreShown = e.target.checked
-
-		if (deletedCustomersAreShown) {
-			customersToDisplay = filteredCustomers === undefined ? allCustomers : filteredCustomers
-		} else {
-			customersToDisplay =
-				filteredCustomers === undefined
-					? allCustomers.filter(customer => customer.isActive)
-					: filteredCustomers.filter(customer => customer.isActive)
-		}
-
+	const handleCheck = (deletedCustomersAreShown: boolean) => {
+		displayDeletedCustomers(deletedCustomersAreShown)
 		currentPage = 0
 	}
+
+	$: handleCheck(deletedCustomersAreShown)
 
 	// DELETE MODAL
 
@@ -75,12 +74,7 @@
 							submitBtn?.click()
 						}
 
-						//update the displayed data depending if we want to display the deleted customers or not.
-						if (deletedCustomersAreShown) {
-							customersToDisplay = allCustomers
-						} else {
-							customersToDisplay = allCustomers.filter(customer => customer.isActive)
-						}
+						displayDeletedCustomers(deletedCustomersAreShown)
 
 						goto('/customers')
 						phase = 'success'
@@ -121,10 +115,10 @@
 <section class="section section--customers-management" id="customers-management">
 	{#if isShown}
 		<form
-			name="delete-form"
-			id="delete-form"
 			method="POST"
 			action="/customers?/delete"
+			name="delete-form"
+			id="delete-form"
 			use:enhance
 			on:submit|preventDefault
 		>
@@ -154,6 +148,7 @@
 						type="checkbox"
 						id="checkbox"
 						name="checkbox"
+						bind:checked={deletedCustomersAreShown}
 						on:click={handleCheck}
 					/>
 					<span class="slider" />

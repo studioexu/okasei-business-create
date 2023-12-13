@@ -6,7 +6,7 @@
 	import Form from '@/views/customersViews/Form.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
-	import { validationOnSubmit } from '@/libs/customerValidations'
+	import { inputIsValid } from '@/libs/customerValidations'
 	import { fade } from 'svelte/transition'
 
 	let confirmationPageIsShown = false
@@ -15,6 +15,14 @@
 
 	const goBack = () => {
 		goto('/customers')
+	}
+
+	const handleEditClicked = () => {
+		confirmationPageIsShown = false
+	}
+
+	const handleCheckForm = () => {
+		confirmationPageIsShown = checkIfFormIsValid(initialState)
 	}
 
 	let initialState: CustomerEntries = {
@@ -90,10 +98,33 @@
 		miscellaneous: true
 	}
 
-	const handleSubmitForm = () => {
-		const submitResult = validationOnSubmit(initialState, formIsValid)
-		confirmationPageIsShown = submitResult.isValid
-		formIsValid = submitResult.formValidation
+	/**
+	 * Take the form and check if all the entries are valid.
+	 * If there is one error, the function will return false.
+	 * @param formEntries: Object of entries
+	 * @returns boolean
+	 */
+	const checkIfFormIsValid = (formEntries: Object): boolean => {
+		let errorArray: boolean[] = []
+		let isValid = true
+		const customerKeys = Object.keys(formEntries)
+		const customerValues = Object.values(formEntries)
+
+		for (let i = 0; i < customerKeys.length; i++) {
+			const name: string = customerKeys[i]
+			const input: string = customerValues[i]
+
+			formIsValid[name as keyof CustomerEntriesErrors] = inputIsValid(name, input)
+			errorArray.push(!inputIsValid(name, input))
+		}
+
+		errorArray.forEach(error => {
+			if (error) {
+				isValid = false
+			}
+		})
+
+		return isValid
 	}
 </script>
 
@@ -128,18 +159,11 @@
 		<footer class="section__footer">
 			{#if confirmationPageIsShown}
 				<div in:fade>
-					<button
-						class="btn secondary"
-						on:click={() => {
-							confirmationPageIsShown = false
-						}}
-					>
-						修正
-					</button>
+					<button class="btn secondary" on:click={handleEditClicked}>修正</button>
 				</div>
 				<button type="submit" class="btn primary" form="registration-form">登録</button>
 			{:else}
-				<button type="button" class="btn primary" on:click={handleSubmitForm}> 登録 </button>
+				<button type="button" class="btn primary" on:click={handleCheckForm}>登録</button>
 			{/if}
 		</footer>
 	{/if}

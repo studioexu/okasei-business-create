@@ -1,10 +1,9 @@
 import { error } from '@sveltejs/kit'
-import { loadData, updateCustomer, loadDepartments } from '@/libs/actions.js'
+import { loadData, updateCustomer } from '@/libs/actions.js'
 import type { CustomerEntries } from '@/libs/customerTypes.js'
 import { formatCustomer } from '@/libs/formatters.js'
-import type { CustomerNewApi } from '@/models/BackendCustomer.js'
-import { currentApi, currentKey } from '@/data/api.js'
-import { debounce } from '@/libs/utils'
+import type { CustomerBackend } from '@/models/BackendCustomer.js'
+import { currentApi } from '@/data/api.js'
 
 /**
  * We load the necessary data.
@@ -12,18 +11,15 @@ import { debounce } from '@/libs/utils'
  * @returns
  */
 export const load = async ({ params }) => {
-	const data: CustomerNewApi[] = await loadData(currentApi, currentKey)
-	const departmentsList = await loadDepartments(currentApi)
-	const customer: CustomerNewApi | undefined = data.find(
-		(customer: CustomerNewApi) => customer.id?.toString() === params.id.toString()
+	const data: CustomerBackend[] = await loadData(currentApi)
+	const customer: CustomerBackend | undefined = data.find(
+		(customer: CustomerBackend) => customer.Cust_CD?.toString() === params.id.toString()
 	)
 
 	if (!customer) throw error(404)
-	if (!departmentsList) throw error(404)
 
 	return {
-		customer,
-		departmentsList
+		customer
 	}
 }
 
@@ -32,19 +28,24 @@ export const load = async ({ params }) => {
  * Here, we will only update the customer information. So, we just have only one action.
  */
 export const actions = {
-	update: debounce(async ({ request }) => {
+	update: async ({ request }) => {
 		const data = await request.formData()
+		let initialState: CustomerEntries
+
 		const initialStateString = data.get('initialState')
+		if (typeof initialStateString === 'string') {
+			initialState = JSON.parse(initialStateString)
 
-		let initialState: CustomerEntries = JSON.parse(initialStateString)
-		const registration = {
-			registDate: initialState.registrationDate,
-			registBy: initialState.registeredBy
-		}
-		const updatedCustomer = formatCustomer('update', initialState, registration)
+			const registration = {
+				registDate: initialState.registrationDate,
+				registBy: initialState.registeredBy
+			}
 
-		if (initialState.id) {
-			updateCustomer(updatedCustomer, currentApi, initialState.id)
+			const updatedCustomer = formatCustomer('update', initialState, registration)
+
+			if (initialState.id) {
+				updateCustomer(updatedCustomer, currentApi, initialState.id)
+			}
 		}
-	}, 200)
+	}
 }

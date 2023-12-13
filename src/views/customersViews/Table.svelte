@@ -122,6 +122,12 @@
 		border-spacing: 0;
 		border-collapse: collapse;
 
+		.table-header {
+			text-align: left;
+			padding: 18px calc((27 / 1366) * 100vw);
+			display: none;
+		}
+
 		.row {
 			position: relative;
 			cursor: pointer;

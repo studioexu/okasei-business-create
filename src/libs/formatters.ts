@@ -1,5 +1,5 @@
 import { parsePhoneNumber } from 'libphonenumber-js'
-import { CustomerNewApi } from '@/models/BackendCustomer'
+import { CustomerBackend } from '@/models/BackendCustomer'
 import type { CustomerEntries } from './customerTypes'
 
 /**
@@ -54,39 +54,20 @@ export const toCamelCase = (text: string): string => {
  * Get the time and date
  * @returns string with the right date and time
  */
-export const getDateTime = (time?: string): string => {
-	let currentTime: Date
-	if (time) {
-		currentTime = new Date(time)
-	} else {
-		currentTime = new Date()
+export const getDateTime = (): string => {
+	let options: Intl.DateTimeFormatOptions = {
+		timeZone: 'Asia/Tokyo',
+		year: 'numeric',
+		month: 'numeric',
+		day: 'numeric',
+		hour: 'numeric',
+		minute: 'numeric',
+		second: 'numeric'
 	}
 
-	const day =
-		currentTime.getUTCDate() < 10 ? '0' + currentTime.getUTCDate() : currentTime.getUTCDate()
-	const month =
-		currentTime.getUTCMonth() + 1 < 10
-			? '0' + currentTime.getUTCMonth() + 1
-			: currentTime.getUTCMonth() + 1
-	const year =
-		currentTime.getUTCFullYear() < 10
-			? '0' + currentTime.getUTCFullYear()
-			: currentTime.getUTCFullYear()
-	const hour =
-		currentTime.getUTCHours() < 10 ? '0' + currentTime.getUTCHours() : currentTime.getUTCHours()
-	const minute =
-		currentTime.getUTCMinutes() < 10
-			? '0' + currentTime.getUTCMinutes()
-			: currentTime.getUTCMinutes()
-	const second =
-		currentTime.getUTCSeconds() < 10
-			? '0' + currentTime.getUTCSeconds()
-			: currentTime.getUTCSeconds()
+	const formatter = new Intl.DateTimeFormat([], options)
 
-	const formattedCurrentTime =
-		year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second + 'Z'
-
-	return formattedCurrentTime
+	return formatter.format(new Date())
 }
 
 /**
@@ -99,10 +80,9 @@ export const getDateTime = (time?: string): string => {
  */
 export const formatCustomer = (
 	action: 'update' | 'create' | 'delete',
-	customer: CustomerEntries | CustomerNewApi,
-	registration?: any,
-	update?: any
-): CustomerNewApi => {
+	customer: CustomerEntries | CustomerBackend,
+	registration?: any
+): CustomerBackend => {
 	const timeArray = getDateTime()
 
 	switch (action) {
@@ -112,28 +92,32 @@ export const formatCustomer = (
 				registBy: 1
 			}
 
-			return new CustomerNewApi(customer, create)
+			return new CustomerBackend(customer, create)
 
 		case 'update':
 			const updated = {
 				updateBy: 1,
 				updateDate: timeArray
 			}
-			return new CustomerNewApi(customer, registration, updated)
+			return new CustomerBackend(customer, registration, updated)
 
 		case 'delete':
 			const deleted = {
-				deleteDate: timeArray,
-				deleteBy: 1
+				Delete_Date: timeArray,
+				Delete_By: 1
 			}
 
-			return new CustomerNewApi(customer, registration, update, deleted)
+			let customerToUpdate = customer as CustomerBackend
+			customerToUpdate.delete = deleted
+			customerToUpdate.is_active = false
+
+			return customerToUpdate
 
 		default:
-			if (customer instanceof CustomerNewApi) {
+			if (customer instanceof CustomerBackend) {
 				return customer
 			} else {
-				return new CustomerNewApi(customer, registration, update)
+				return new CustomerBackend(customer, registration)
 			}
 	}
 }

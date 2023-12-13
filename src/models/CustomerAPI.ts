@@ -86,7 +86,7 @@ export class CustomerAPI {
 		this._custName = data.name
 		this._custKana = data.kana
 		this._instId = data.institution_cd
-		this._custType = data.type
+		this._custType = data.type === 'C' ? '法人' : '個人'
 		this._address = {
 			postalCode: data.postal_cd,
 			prefecture: data.ken,
@@ -173,6 +173,19 @@ export class CustomerAPI {
 	}
 
 	public get departments() {
+		// const newDepartments: Department[] = this._departments.map(department => {
+		// 	return {
+		// 		department: {
+		// 			id: department.department.id,
+		// 			cd1: department.department.cd1,
+		// 			cd2: department.department.cd2,
+		// 			name: department.department.name
+		// 		},
+		// 		numberOfBeds: department.number_of_beds
+		// 	}
+		// })
+
+		// return newDepartments
 		return this._departments
 	}
 
@@ -251,6 +264,17 @@ export class CustomerAPI {
 	public get custType() {
 		return this._custType
 	}
+
+	// public get departmentDetail() {
+	// 	const detail = this._departments.department.map((dept: any) => {
+	// 		return {
+	// 			department: dept.department || dept.dept_ID,
+	// 			quantity: dept.quantity || dept.num_beds
+	// 		}
+	// 	})
+
+	// 	return detail
+	// }
 
 	public set isActive(active: boolean) {
 		this._isActive = active

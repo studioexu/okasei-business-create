@@ -324,7 +324,10 @@
 				name={'business-type'}
 				errorMsg={'一つを選んで下さい'}
 				required={true}
-				options={['法人', '個人']}
+				options={[
+					{ value: 'C', text: '法人' },
+					{ value: 'I', text: '個人' }
+				]}
 				bind:value={initialState.businessType}
 				bind:isValid={formIsValid.businessType}
 			/>
@@ -567,14 +570,15 @@
 		</div>
 
 		<div class="form-row">
-			<div class="input-wrapper">
-				<label class="label" for="google-review"> Google評価 </label>
-
-				<select class="select" bind:value={initialState.googleReview} id="google-review">
-					<option value={false}>無し</option>
-					<option value={true}>★有り</option>
-				</select>
-			</div>
+			<Select
+				label={'Google評価'}
+				name={'"google-review"'}
+				options={[
+					{ value: false, text: '無し' },
+					{ value: true, text: '★有り' }
+				]}
+				bind:value={initialState.googleReview}
+			/>
 
 			{#if initialState.googleReview}
 				<Input

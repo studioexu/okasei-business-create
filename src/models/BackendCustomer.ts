@@ -75,7 +75,7 @@ export class CustomerBackend {
 		this.Cust_Name = data.customerName
 		this.Cust_Kana = data.kana
 		this.Inst_ID = data.facilityNumber
-		this.Cust_Type = data.businessType === '法人' ? 'C' : 'I'
+		this.Cust_Type = data.businessType
 		this.Address = {
 			Cust_Postal: data.postalCode,
 			Cust_Ken: data.prefecture,
@@ -176,7 +176,7 @@ export class CustomerNewApi {
 		this.name = data.customerName
 		this.kana = data.kana
 		this.institution_cd = data.facilityNumber
-		this.type = data.businessType === '法人' ? 'C' : 'I'
+		this.type = data.businessType
 		this.postal_cd = data.postalCode
 		this.ken = data.prefecture
 		this.city = data.city

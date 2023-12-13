@@ -48,7 +48,7 @@
 			},
 			{
 				label: '区分',
-				content: initialState.businessType,
+				content: initialState.businessType === 'C' ? '法人' : '個人',
 				unit: ''
 			}
 		],
@@ -287,7 +287,7 @@
 			label={'医療機関番号'}
 		/>
 
-		<DetailWrapper areaClass="business-type" content={initialState.businessType} label={'区分'} />
+		<DetailWrapper areaClass="business-type" content={initialState.businessType　=== 'C' ? '法人' : '個人'} label={'区分'} />
 	</div>
 	<div class="form-row">
 		<DetailWrapper areaClass="postal-code" content={initialState.postalCode} label={'郵便番号'} />

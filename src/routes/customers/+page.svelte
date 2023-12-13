@@ -145,8 +145,8 @@
 			bind:data={allCustomers}
 			bind:customersToDisplay
 			bind:filteredCustomers
-			{deletedCustomersAreShown}
 			bind:currentPage
+			{deletedCustomersAreShown}
 		/>
 
 		<div class="container">

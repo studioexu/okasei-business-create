@@ -4,6 +4,6 @@ const newAPI = 'http://18.182.209.227'
 
 const newDjangoApi = 'https://test.okaseiexu.net'
 
-export const currentApi: string = localApi
+export const currentApi: string = newDjangoApi
 
-export let currentKey: string = '564cdd02397b82dac18ebaaafb4811b37d5c0f6c'
+export let currentKey: string = 'cfdf5711c73b1d51f563935ebf8728d16415b79f'

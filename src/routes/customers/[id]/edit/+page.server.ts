@@ -4,6 +4,7 @@ import type { CustomerEntries } from '@/libs/customerTypes.js'
 import { formatCustomer } from '@/libs/formatters.js'
 import type { CustomerNewApi } from '@/models/BackendCustomer.js'
 import { currentApi, currentKey } from '@/data/api.js'
+import { debounce } from '@/libs/utils'
 
 /**
  * We load the necessary data.
@@ -31,24 +32,19 @@ export const load = async ({ params }) => {
  * Here, we will only update the customer information. So, we just have only one action.
  */
 export const actions = {
-	update: async ({ request }) => {
+	update: debounce(async ({ request }) => {
 		const data = await request.formData()
-		let initialState: CustomerEntries
-
 		const initialStateString = data.get('initialState')
-		if (typeof initialStateString === 'string') {
-			initialState = JSON.parse(initialStateString)
 
-			const registration = {
-				registDate: initialState.registrationDate,
-				registBy: initialState.registeredBy
-			}
-
-			const updatedCustomer = formatCustomer('update', initialState, registration)
-
-			if (initialState.id) {
-				updateCustomer(updatedCustomer, currentApi, initialState.id)
-			}
+		let initialState: CustomerEntries = JSON.parse(initialStateString)
+		const registration = {
+			registDate: initialState.registrationDate,
+			registBy: initialState.registeredBy
 		}
-	}
+		const updatedCustomer = formatCustomer('update', initialState, registration)
+
+		if (initialState.id) {
+			updateCustomer(updatedCustomer, currentApi, initialState.id)
+		}
+	}, 200)
 }

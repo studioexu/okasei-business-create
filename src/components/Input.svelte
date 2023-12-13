@@ -61,8 +61,6 @@
 	}
 
 	.input-wrapper {
-		width: fit-content;
-
 		.input {
 			&--sm {
 				@include responsiveInputWidth((103));

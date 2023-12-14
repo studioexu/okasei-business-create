@@ -210,18 +210,18 @@
 				margin-right: 32px;
 
 				&:first-child span {
-					background: #ccc;
+					background: rgba(#ed6d35, 0.6);
 				}
 
 				&:nth-child(2) span {
-					background: var(--primary);
+					background: #ed6d35;
 				}
 
 				&:last-child {
 					margin-right: 0px;
 
 					span {
-						background: var(--back);
+						background: rgba(#ed6d35, 0.2);
 					}
 				}
 
@@ -349,17 +349,17 @@
 					border-radius: 0 16px 16px 0;
 
 					&:first-child {
-						background: var(--back);
+						background: rgba(#ed6d35, 0.2);
 					}
 
 					&:nth-child(2) {
-						background: var(--primary);
+						background: #ed6d35;
 						color: #fff;
 						margin-top: calc(-1 * var(--height));
 					}
 
 					&:last-child {
-						background: #cdcdcd;
+						background: rgba(#fff, 0.4);
 						margin-top: calc(-1 * var(--height));
 					}
 				}

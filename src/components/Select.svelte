@@ -20,6 +20,7 @@
 	{/if}
 
 	<select class="select" bind:value id={name}>
+		<option value=" " disabled selected>未選択</option>
 		{#each options as option}
 			<option value={option}>{option}</option>
 		{/each}

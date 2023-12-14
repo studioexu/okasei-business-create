@@ -1,7 +1,8 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
-	import type { Negociation } from '@/libs/negociationTypes'
+	// import type { Negociation } from '@/libs/negociationTypes'
+	import type { Negociation } from '@/models/Negociation'
 	import type { MouseEventHandler } from 'svelte/elements'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import Input from '@/components/Input.svelte'
@@ -11,15 +12,20 @@
 	import { goto } from '$app/navigation'
 	import { onMount } from 'svelte'
 	import InputCheckbox from '@/components/InputCheckbox.svelte'
+	import { NegociationFactory } from '@/Factories/NegociationFactory'
 
 	let searchIsShown = false
 	let displayMenuIsShown = false
-	let filteredNegociations: Negociation[] = $negociations
+
+	const allNegociations: NegociationFactory[] = $negociations.map(
+		negociation => new NegociationFactory(negociation, 'local')
+	)
+	let filteredNegociations = allNegociations
 
 	const tableHeaders: { label: string; id: keyof NegotiationDataIsShown }[] = [
 		{ label: '施設名', id: 'customerName' },
 		{ label: 'ステータス', id: 'status' },
-		{ label: '商談開始日', id: 'firstTransaction' },
+		{ label: '商談開始日', id: 'startingDate' },
 		{ label: '可能性', id: 'condition' },
 		{ label: '流入', id: 'inflow' },
 		{ label: '納期', id: 'billingDate' },
@@ -84,8 +90,8 @@
 		name: string
 		year: string
 		month: string
-	}): Negociation[] => {
-		let filtered = $negociations
+	}): NegociationFactory[] => {
+		let filtered = allNegociations
 
 		Object.keys(searchInput).map(key => {
 			if (searchInput[key as keyof { name: string; year: string; month: string }] !== '') {
@@ -94,8 +100,8 @@
 						return negociation.customerName.includes(searchInput.name)
 					} else {
 						let date
-						if (key === 'month') date = new Date(negociation.firstTransaction).getMonth() + 1
-						if (key === 'year') date = new Date(negociation.firstTransaction).getFullYear()
+						if (key === 'month') date = new Date(negociation.startingDate).getMonth() + 1
+						if (key === 'year') date = new Date(negociation.startingDate).getFullYear()
 
 						return (
 							date ===
@@ -105,31 +111,6 @@
 				})
 			}
 		})
-
-		// if (searchInput.name !== '') {
-		// 	filtered = filtered.filter(negociation => {
-		// 		if (negociation.customerName.includes(searchInput.name)) {
-		// 			return negociation
-		// 		}
-		// 	})
-		// }
-
-		// if (searchInput.year !== '') {
-		// 	filtered = filtered.filter(negociation => {
-		// 		if (new Date(negociation.firstTransaction).getFullYear() === parseInt(searchInput.year)) {
-		// 			return negociation
-		// 		}
-		// 	})
-		// }
-
-		// if (searchInput.month !== '') {
-		// 	filtered = filtered.filter(negociation => {
-		// 		if (new Date(negociation.firstTransaction).getMonth() + 1 === parseInt(searchInput.month)) {
-		// 			return negociation
-		// 		}
-		// 	})
-		// }
-
 		return filtered
 	}
 
@@ -142,7 +123,7 @@
 		custCd: boolean
 		customerName: boolean
 		status: boolean
-		firstTransaction: boolean
+		startingDate: boolean
 		condition: boolean
 		inflow: boolean
 		billingDate: boolean
@@ -162,7 +143,7 @@
 	const negotiationDataIsShown: NegotiationDataIsShown = {
 		customerName: true,
 		status: true,
-		firstTransaction: true,
+		startingDate: true,
 		condition: true,
 		inflow: true,
 		billingDate: true,
@@ -227,6 +208,8 @@
 		deleteModalIsShown = true
 	}
 
+	$: console.log(filteredNegociations)
+
 	/**
 	 * On click on the delete modal.
 	 * @param event
@@ -247,7 +230,7 @@
 						negociation.set({
 							customerName: '',
 							status: '',
-							firstTransaction: '',
+							startingDate: '',
 							condition: '',
 							inflow: '',
 							billingDate: '',
@@ -402,7 +385,16 @@
 										{:else if header.id === 'memo'}
 											{negociation.memo[negociation.memo.length - 1].memo}
 										{:else if header.id === 'numberOfBeds'}
-											{negociation.numberOfBeds.toString() + '台'}
+											{negociation.minMaxBed.min === negociation.minMaxBed.max
+												? negociation.minMaxBed.min + '台'
+												: negociation.minMaxBed.min + '-' + negociation.minMaxBed.max + '台'}
+										{:else if header.id === 'billingEstimation'}
+											{negociation.minMaxEstimate.min === negociation.minMaxEstimate.max
+												? negociation.minMaxEstimate.min + '円'
+												: negociation.minMaxEstimate.min +
+												  '-' +
+												  negociation.minMaxEstimate.max +
+												  '円'}
 										{:else if header.id === 'nextContact'}
 											{negociation.nextContactDate !== '' ? negociation.nextContactDate : 'ー'}
 											{negociation.nextContactTime !== '' ? negociation.nextContactTime : 'ー'}

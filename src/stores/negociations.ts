@@ -1,11 +1,11 @@
 import { readable, writable, type Writable } from 'svelte/store'
 import type { Readable } from 'svelte/motion'
-import type { Negociation, NegociationBackend } from '@/libs/negociationTypes'
+import type { NegociationBackend } from '@/libs/negociationTypes'
 
 export const negociation: Writable<NegociationBackend> = writable({
 	customerName: '',
 	status: '',
-	firstTransaction: '',
+	startingDate: '',
 	condition: '',
 	inflow: '',
 	billingDate: '',
@@ -59,7 +59,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社ガスト',
 		status: '受注',
-		firstTransaction: '2002-01-01',
+		startingDate: '2002-01-01',
 		condition: 'A',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',
@@ -134,7 +134,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社泉',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		startingDate: '2023-01-01',
 		condition: 'B',
 		inflow: '新規FAX',
 		billingDate: '',
@@ -186,7 +186,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社任天堂',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		startingDate: '2023-01-01',
 		condition: 'A',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',
@@ -238,7 +238,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社泉',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		startingDate: '2023-01-01',
 		condition: 'B',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',
@@ -290,7 +290,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社泉',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		startingDate: '2023-01-01',
 		condition: 'A',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',
@@ -342,7 +342,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社泉',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		startingDate: '2023-01-01',
 		condition: 'B',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',
@@ -394,7 +394,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社泉',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		startingDate: '2023-01-01',
 		condition: 'A',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',
@@ -446,7 +446,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社泉',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		startingDate: '2023-01-01',
 		condition: 'B',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',
@@ -498,7 +498,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社泉',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		startingDate: '2023-01-01',
 		condition: 'A',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',
@@ -550,7 +550,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社泉',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		startingDate: '2023-01-01',
 		condition: 'B',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',
@@ -602,7 +602,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社泉',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		startingDate: '2023-01-01',
 		condition: 'A',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',
@@ -654,7 +654,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 	{
 		customerName: '株式会社泉',
 		status: '受注',
-		firstTransaction: '2023-01-01',
+		startingDate: '2023-01-01',
 		condition: 'B',
 		inflow: '新規FAX',
 		billingDate: '2023-06-30',

@@ -38,7 +38,7 @@
 		justify-content: flex-end;
 		flex-direction: row-reverse;
 		align-items: center;
-		margin-bottom: 12px;
+		height: 31px;
 		gap: 18px;
 		font-size: 18px;
 		cursor: pointer;
@@ -68,6 +68,7 @@
 			width: 20px;
 			border: 1px solid var(--black);
 			border-radius: 3px;
+			background-color: #fff;
 
 			&:after {
 				width: 3px;

@@ -1,4 +1,4 @@
-import { formatCustomer } from './formatters'
+import { currentKey } from '@/data/api'
 
 /**
  * Load the data from the server.
@@ -6,13 +6,19 @@ import { formatCustomer } from './formatters'
  * @param url : string, corresponding to URL of the server
  * @returns the data from the server
  */
-export const loadData = async (url: string) => {
-	return await fetch(url + '/customer')
+export const loadData = async (url: string, key: string) => {
+	return await fetch(url + '/customer/list/customer', {
+		headers: {
+			Authorization: 'Token ' + key,
+			'Content-Type': 'application/json'
+		},
+		method: 'GET'
+	})
 		.then(res => res.json())
 		.then(data => {
-			return data
+			return data.results
 		})
-		.catch(error => console.log(error))
+		.catch(error => error)
 }
 
 /**
@@ -21,9 +27,12 @@ export const loadData = async (url: string) => {
  * @param customerEntry : Object corresponding to the inputs entered by the user.
  */
 export const createCustomer = async (newCustomer: Object, url: string) => {
-	await fetch(url, {
+	await fetch(url + '/customer/register', {
 		method: 'POST',
-		headers: { 'Content-type': 'application/json;charset=UTF-8' },
+		headers: {
+			Authorization: 'Token ' + currentKey,
+			'Content-type': 'application/json;charset=UTF-8'
+		},
 		body: JSON.stringify(newCustomer)
 	})
 		.then(res => res.json())
@@ -42,12 +51,19 @@ export const createCustomer = async (newCustomer: Object, url: string) => {
  * @param customerId : string, corresponding to the id of the customer we want to update.
  */
 export const updateCustomer = (updatedCustomer: Object, url: string, customerId: string) => {
-	fetch(url + customerId, {
+	fetch(url + '/customer/update/' + customerId, {
 		method: 'PUT',
-		headers: { 'Content-type': 'application/json;charset=UTF-8' },
+		headers: {
+			Authorization: 'Token ' + currentKey,
+			'Content-type': 'application/json;charset=UTF-8'
+		},
 		body: JSON.stringify(updatedCustomer)
 	})
-		.then(() => console.log('Customer successfully updated'))
+		.then(res => res.json())
+		.then(data => {
+			console.log('Customer successfully updated')
+			console.log(data)
+		})
 		.catch(err => console.log(err))
 }
 
@@ -58,25 +74,72 @@ export const updateCustomer = (updatedCustomer: Object, url: string, customerId:
  * @param customerId : string, corresponding to the customer's id we want to delete
  * @returns the new data
  */
-export const deleteCustomer = (customerId: string, url: string) => {
-	fetch(url + customerId, {
-		method: 'GET',
-		headers: { 'Content-type': 'application/json;charset=UTF-8' }
+export const deleteCustomer = (id: number, url: string) => {
+	fetch(url + '/customer/inactivate/' + id, {
+		method: 'PATCH',
+		headers: {
+			Authorization: 'Token ' + currentKey,
+			'Content-type': 'application/json;charset=UTF-8'
+		},
+		redirect: 'follow'
 	})
 		.then(res => res.json())
-		.then(customer => {
-			const customerToDelete = formatCustomer('delete', customer)
-
-			fetch(url + customerId, {
-				method: 'PUT',
-				headers: { 'Content-type': 'application/json;charset=UTF-8' },
-				body: JSON.stringify(customerToDelete)
-			})
-				.then(res => res.json())
-				.then(data => {
-					console.log('Customer successfully deleted')
-					console.log(data)
-				})
-				.catch(err => console.log(err))
+		.then(data => {
+			console.log(data)
+			console.log('Successfully deleted')
 		})
+		.catch(err => console.log(err))
+}
+
+export const reactivateCustomer = (id: number, url: string) => {
+	fetch(url + '/customer/activate/' + id, {
+		method: 'PATCH',
+		headers: {
+			Authorization: 'Token ' + currentKey,
+			'Content-type': 'application/json;charset=UTF-8'
+		},
+		redirect: 'follow'
+	})
+		.then(res => res.json())
+		.then(data => {
+			console.log(data)
+			console.log('Successfully deleted')
+		})
+		.catch(err => console.log(err))
+}
+
+export const loadDepartments = async (url: string) => {
+	return await fetch(url + '/customer/list/department', {
+		headers: {
+			Authorization: 'Token ' + currentKey,
+			'Content-Type': 'application/json'
+		},
+		method: 'GET'
+	})
+		.then(res => res.json())
+		.then(data => {
+			return data
+		})
+		.catch(error => console.log(error))
+}
+
+export const login = async (url: string) => {
+	const key = await fetch(url + '/api-auth/login/', {
+		method: 'POST',
+		headers: {
+			'Content-Type': 'application/json'
+		},
+		body: JSON.stringify({
+			email: '',
+			password: ''
+		})
+	})
+		.then(res => res.json())
+		.then(data => {
+			console.log(data)
+			return data.key
+		})
+		.catch(err => err)
+
+	return key
 }

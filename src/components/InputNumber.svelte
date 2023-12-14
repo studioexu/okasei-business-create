@@ -9,6 +9,7 @@
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
+	export let disabled: boolean = false
 
 	/**
 	 * Check if the value of the input is valid, when the focus is not on the input.
@@ -24,10 +25,12 @@
 </script>
 
 <div class="input-wrapper {isValid ? '' : 'error'}">
-	<label class="label" for={name}>
-		{label}
-		<span class="required-mark">{required ? '*' : ''}</span>
-	</label>
+	{#if label !== ''}
+		<label class="label" for={name}>
+			{label}
+			<span class="required-mark">{required ? '*' : ''}</span>
+		</label>
+	{/if}
 	<input
 		type="number"
 		class="input"
@@ -38,6 +41,7 @@
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
+		{disabled}
 	/>
 	<span class="unit">{unit}</span>
 	<span class="font-error">{errorMsg}</span>
@@ -49,6 +53,7 @@
 
 		.input {
 			width: 105px;
+			text-align: right;
 		}
 	}
 </style>

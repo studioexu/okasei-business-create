@@ -1,11 +1,4 @@
-import type {
-	Item,
-	Estimate,
-	OutcomeHistory,
-	NegociationBackend,
-	Checkbox,
-	Memo
-} from '@/libs/negociationTypes'
+import type { Item, Estimate, OutcomeHistory, Checkbox, Memo } from '@/libs/negociationTypes'
 
 const getTotalBedsByEstimate = (items: Item[]) => {
 	let total = 0
@@ -14,12 +7,8 @@ const getTotalBedsByEstimate = (items: Item[]) => {
 	return total
 }
 
-const getEstimate = (estimate: Estimate) => {
-	let total = 0
-
-	total = total + estimate.estimateWithoutTax + estimate.estimateTax
-
-	return total
+const formateNumberCompact = (number: number) => {
+	return new Intl.NumberFormat('ja-JP', { notation: 'compact' }).format(BigInt(number))
 }
 
 export class Negociation {
@@ -253,8 +242,8 @@ export class Negociation {
 	public get minMaxEstimate() {
 		const estimates: number[] = this._estimate.map(estimate => estimate.estimateWithoutTax)
 
-		const min = estimates.length === 0 ? 0 : Math.min(...estimates)
-		const max = estimates.length === 0 ? 0 : Math.max(...estimates)
+		const min = estimates.length === 0 ? 0 : formateNumberCompact(Math.min(...estimates))
+		const max = estimates.length === 0 ? 0 : formateNumberCompact(Math.max(...estimates))
 
 		return {
 			min: min,

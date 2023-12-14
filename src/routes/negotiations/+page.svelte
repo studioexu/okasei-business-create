@@ -1,8 +1,6 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
-	// import type { Negociation } from '@/libs/negociationTypes'
-	import type { Negociation } from '@/models/Negociation'
 	import type { MouseEventHandler } from 'svelte/elements'
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import Input from '@/components/Input.svelte'
@@ -68,18 +66,6 @@
 		year: '',
 		month: ''
 	}
-
-	// const formatNumberToString = (number: number) => {
-	// 	const array = number.toString().split('')
-
-	// 	console.log(array)
-
-	// 	for(let i = array.length - 1; i > 0 ; i--){
-	// 		if(array[i])
-	// 	}
-	// }
-
-	// formatNumberToString(900000)
 
 	/**
 	 * The function filters the data when the user enters new input
@@ -190,8 +176,6 @@
 	onMount(() => {
 		setColumnToDisplay()
 	})
-
-	// $: handleChange(negotiationDataIsShown)
 
 	// DELETE MODAL
 

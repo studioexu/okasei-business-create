@@ -180,7 +180,32 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		distanceTime: 0,
 		preference: '',
 		contact: '',
-		estimate: [],
+		estimate: [
+			{
+				issueDate: '2023-02-14',
+				dueDate: '2023-10-23',
+				estimateWithoutTax: 130000,
+				estimateTax: 1300,
+				items: [{ name: 'item', quantity: 20, price: 650 }],
+				withTax: true
+			},
+			{
+				issueDate: '2023-02-14',
+				dueDate: '2023-10-23',
+				estimateWithoutTax: 3250,
+				estimateTax: 1300,
+				items: [{ name: 'item', quantity: 5, price: 650 }],
+				withTax: true
+			},
+			{
+				issueDate: '2023-02-14',
+				dueDate: '2023-10-23',
+				estimateWithoutTax: 650000,
+				estimateTax: 0,
+				items: [{ name: 'item', quantity: 100, price: 650 }],
+				withTax: true
+			}
+		],
 		responsiblePerson: ''
 	},
 	{

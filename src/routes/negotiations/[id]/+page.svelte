@@ -24,7 +24,7 @@
 			custCd: negociation?.custCd,
 			negociationId: negociation?.negociationId,
 			status: negociation?.status,
-			startingDate: negociation?.firstTransaction,
+			startingDate: negociation?.startingDate,
 			condition: negociation?.condition,
 			inflow: negociation?.inflow,
 			preference: negociation?.preference,

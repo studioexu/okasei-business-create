@@ -1,13 +1,16 @@
 <script lang="ts">
-	export let value: string | number | boolean
-	// export let options: string[] = [' ']
-	export let options: { value: number | string | boolean; text: string }[]
-	export let label: string = ''
-	export let unit: string = ''
 	export let name: string = ''
+	export let label: string = ''
+
+	export let value: string | number | boolean
+	export let options: string[] | { value: number | string | boolean; text: string }[]
+	export let unit: string = ''
+
 	export let isValid: boolean = true
 	export let errorMsg: string = ''
 	export let required: boolean = false
+
+	$: console.log(value)
 </script>
 
 <div class="input-wrapper {isValid ? '' : 'error'}">
@@ -18,9 +21,15 @@
 		</label>
 	{/if}
 
-	<select class="select" id={name} bind:value>
+	<select class="select {value === '' && 'empty'}" bind:value id={name}>
+		<option class="option" value={''} disabled selected>未選択</option>
+
 		{#each options as option}
-			<option value={option.value}>{option.text}</option>
+			{#if typeof option === 'string'}
+				<option value={option}>{option}</option>
+			{:else}
+				<option value={option.value}>{option.text}</option>
+			{/if}
 		{/each}
 	</select>
 	{#if unit !== ''}
@@ -32,14 +41,24 @@
 
 <style lang="scss">
 	.input-wrapper {
+		display: flex;
+		align-items: center;
+		gap: 10px;
+
 		.select {
-			width: calc(((103 - 10 - 2) / 1366) * 100vw);
 			height: 31px;
-			font-size: 18px;
 			color: var(--black);
 
 			&:focus {
 				border-color: var(--primary-color);
+			}
+
+			option[value=''][disabled] {
+				display: none;
+			}
+
+			&.empty {
+				color: #d0cfcf;
 			}
 		}
 
@@ -48,11 +67,13 @@
 			display: flex;
 			align-items: center;
 		}
-	}
 
-	.error {
-		.select {
-			border-color: var(--error);
+		.font-error {
+			position: absolute;
+			right: 0;
+			bottom: -14px;
+			font-size: 10px;
+			opacity: 0;
 		}
 	}
 </style>

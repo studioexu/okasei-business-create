@@ -20,4 +20,24 @@
 </div>
 
 <style lang="scss">
+	.detail-wrapper {
+		position: relative;
+		display: flex;
+		padding: 11px 0;
+		column-gap: 18px;
+		align-items: center;
+
+		.label {
+			color: var(--gray);
+			font-size: 18px;
+			font-weight: 500;
+			width: auto;
+		}
+
+		&:first-child {
+			.label {
+				width: 130px;
+			}
+		}
+	}
 </style>

@@ -9,6 +9,8 @@
 	export let isValid: boolean = true
 	export let errorMsg: string = ''
 	export let required: boolean = false
+
+	$: console.log(value)
 </script>
 
 <div class="input-wrapper {isValid ? '' : 'error'}">
@@ -20,7 +22,7 @@
 	{/if}
 
 	<select class="select {value === '' && 'empty'}" bind:value id={name}>
-		<option class="option" value="" disabled selected>未選択</option>
+		<option class="option" value={''} disabled selected>未選択</option>
 
 		{#each options as option}
 			{#if typeof option === 'string'}

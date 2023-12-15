@@ -17,7 +17,7 @@
 	)
 
 	let confirmationPageIsShown = false
-	let customers = data.data.map(customer => new CustomerFactory(customer, 'customer'))
+	let customers = data.data.map(customer => new CustomerFactory(customer, 'newApi'))
 	let initialState: NegociationEntries
 
 	if (negociation !== undefined) {

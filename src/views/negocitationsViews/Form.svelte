@@ -25,6 +25,11 @@
 
 	let currentCustomer: CustomerFactory | undefined
 
+	const customersOptions: { value: number; text: string }[] = customers.map(customer => ({
+		value: customer.custCD,
+		text: customer.custName
+	}))
+
 	const products = [
 		{
 			id: 1,
@@ -342,20 +347,13 @@
 		<legend class="legend hidden">顧客選択</legend>
 
 		<div class="form-row">
-			<div class="input-wrapper">
-				<label class="label" for="select-customer">顧客選択</label>
-				<select
-					class="select"
-					name="select-customer"
-					id="select-customer"
-					bind:value={currentCustomerId}
-				>
-					<option value=" " selected disabled class="placeholder">未選択</option>
-					{#each customers as customer}
-						<option value={customer.custCD}>{customer.custName}</option>
-					{/each}
-				</select>
-			</div>
+			<Select
+				label={'顧客選択'}
+				name={'select-customer'}
+				options={customersOptions}
+				required={true}
+				bind:value={currentCustomerId}
+			/>
 
 			<button
 				type="button"

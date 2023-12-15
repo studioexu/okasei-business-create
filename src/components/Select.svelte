@@ -2,8 +2,8 @@
 	export let name: string = ''
 	export let label: string = ''
 
-	export let value: string
-	export let options: string[] = [' ']
+	export let value: string | number | boolean
+	export let options: string[] | { value: number | string | boolean; text: string }[]
 	export let unit: string = ''
 
 	export let isValid: boolean = true
@@ -19,10 +19,15 @@
 		</label>
 	{/if}
 
-	<select class="select" bind:value id={name}>
-		<option value=" " disabled selected>未選択</option>
+	<select class="select {value === '' && 'empty'}" bind:value id={name}>
+		<option class="option" value="" disabled selected>未選択</option>
+
 		{#each options as option}
-			<option value={option}>{option}</option>
+			{#if typeof option === 'string'}
+				<option value={option}>{option}</option>
+			{:else}
+				<option value={option.value}>{option.text}</option>
+			{/if}
 		{/each}
 	</select>
 	{#if unit !== ''}
@@ -38,19 +43,20 @@
 		align-items: center;
 		gap: 10px;
 
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
-
 		.select {
-			// width: 105px;
 			height: 31px;
 			color: var(--black);
 
 			&:focus {
 				border-color: var(--primary-color);
+			}
+
+			option[value=''][disabled] {
+				display: none;
+			}
+
+			&.empty {
+				color: #d0cfcf;
 			}
 		}
 

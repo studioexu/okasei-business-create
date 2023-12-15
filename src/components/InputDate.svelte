@@ -12,7 +12,7 @@
 			<span class="required-mark">{required ? '*' : ''}</span>
 		</label>
 	{/if}
-	<input class="input" type="date" id={name} {name} bind:value />
+	<input class="input {value === '' && 'empty'}" type="date" id={name} {name} bind:value />
 </div>
 
 <style lang="scss">
@@ -23,15 +23,18 @@
 		width: fit-content;
 		gap: 10px;
 
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
+		// &:first-child {
+		// 	.label {
+		// 		width: 130px;
+		// 	}
+		// }
 
 		.input {
 			&:focus {
 				border-color: var(--primary-color);
+			}
+			&.empty {
+				color: #d0cfcf;
 			}
 		}
 

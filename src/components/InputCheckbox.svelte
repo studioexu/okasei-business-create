@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { createEventDispatcher } from 'svelte'
 
-	export let value: string = ''
 	export let isChecked: boolean = false
 	export let name: string
 	export let label: string
@@ -23,7 +22,7 @@
 		type="checkbox"
 		{name}
 		id={name}
-		{value}
+		value={name}
 		on:change={handleChange}
 		checked={isChecked}
 	/>

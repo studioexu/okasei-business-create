@@ -73,11 +73,11 @@
 		position: relative;
 		align-self: center;
 
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
+		// &:first-child {
+		// 	.label {
+		// 		width: 130px;
+		// 	}
+		// }
 
 		.label {
 			width: max-content;

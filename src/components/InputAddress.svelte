@@ -50,10 +50,10 @@
 		class="input {name}"
 		id={name}
 		{name}
+		{placeholder}
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
-		{placeholder}
 	/>
 	<span class="font-error">{errorMsg}</span>
 </div>
@@ -70,11 +70,11 @@
 		width: fit-content;
 		gap: 10px;
 
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
+		// &:first-child {
+		// 	.label {
+		// 		width: 130px;
+		// 	}
+		// }
 
 		.input {
 			@include responsiveInputWidth((359));

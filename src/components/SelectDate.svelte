@@ -3,14 +3,10 @@
 	export let label: string = ''
 	export let options: string[] = []
 	export let value: string = ''
-
-	$: console.log('selectDate value')
-
-	$: console.log(value)
 </script>
 
 <div class="input-wrapper">
-	<select {name} id={name} class="select" bind:value>
+	<select {name} id={name} class="select {value === '' && 'empty'}" bind:value>
 		<option value="" selected disabled class="placeholder">未選択</option>
 		{#each options as option}
 			<option value={option}>{option}</option>
@@ -26,13 +22,8 @@
 	.input-wrapper {
 		display: flex;
 		gap: 12px;
-
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
 	}
+
 	.select {
 		width: calc(((103 - 10 - 2) / 1366) * 100vw);
 		height: 31px;
@@ -43,8 +34,8 @@
 			border-color: var(--primary-color);
 		}
 
-		&:required:invalid {
-			color: #969696;
+		&.empty {
+			color: #d0cfcf;
 		}
 
 		option[value=''][disabled] {

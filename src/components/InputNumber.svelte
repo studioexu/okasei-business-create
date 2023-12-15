@@ -35,13 +35,14 @@
 		type="number"
 		class="input"
 		id={name}
+		min="0"
 		{name}
 		{required}
-		min="0"
+		{disabled}
+		{placeholder}
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
-		{disabled}
 	/>
 	<span class="unit">{unit}</span>
 	<span class="font-error">{errorMsg}</span>

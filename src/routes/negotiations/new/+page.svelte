@@ -8,14 +8,13 @@
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
-	import type { CustomerEntries } from '@/libs/customerTypes.js'
 	import type { NegociationEntries } from '@/libs/negociationTypes.js'
-	import { negociation, negociations } from '@/stores/negociations.js'
+	import { negociations } from '@/stores/negociations.js'
 
 	export let data
 
 	let allCustomers: CustomerFactory[] = data.data.map(
-		customer => new CustomerFactory(customer, 'customer')
+		customer => new CustomerFactory(customer, 'newApi')
 	)
 
 	let confirmationPageIsShown = false
@@ -26,17 +25,10 @@
 		goto('/negotiations')
 	}
 
-	const updateIndexArray = (maxIndex: number) => {
-		const array: string[] = []
-		for (let i = 0; i < maxIndex; i++) {
-			array.push(i.toString())
-		}
-
-		return array
-	}
-
 	let initialState: NegociationEntries = {
 		negociationId: 0,
+		custCd: 0,
+		customerName: '',
 		status: '',
 		startingDate: '',
 		condition: '',
@@ -44,7 +36,6 @@
 		preference: '',
 		billingDate: '',
 		scheduledDeposit: '',
-		paymentMethod: '',
 		outcome: '',
 		nextContactDate: '',
 		nextContactTime: '',
@@ -54,8 +45,8 @@
 		city: '',
 		address1: '',
 		address2: '',
-		distanceKm: '',
-		distanceTime: '',
+		distanceKm: 0,
+		distanceTime: 0,
 		estimate: [],
 		memo: [],
 		personInCharge: '',
@@ -82,13 +73,11 @@
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
-		custCd: 0,
-		customerName: '',
-		numberOfBeds: '',
-		billingEstimation: ''
+		numberOfBeds: 0,
+		billingEstimation: 0
 	}
 
-	let initialState2Errors = {
+	let initialStateErrors = {
 		status: false,
 		startingDate: false,
 		condition: false,
@@ -96,7 +85,6 @@
 		preference: false,
 		billingDate: false,
 		scheduledDeposit: false,
-		paymentMethod: false,
 		outcome: false,
 		nextContact: false,
 		postalCode: false,
@@ -112,19 +100,15 @@
 		responsiblePerson: false,
 		communication: false,
 		directMessage: false,
-		videoUrl: false,
+		video: false,
 		checkboxes: false,
 		checkBottleneck: false,
 		occasion: false,
 		risk: false
 	}
 
-	let negociationIds: number[] = $negociations.map(negociation => negociation.negociationId)
-
-	$: initialState.negociationId = Math.max(...negociationIds) + 1
-
-	let displayClass: string = ''
-	$: displayClass
+	const negociationIds: number[] = $negociations.map(negociation => negociation.negociationId)
+	initialState.negociationId = Math.max(...negociationIds) + 1
 
 	const initialStateIsValid = (initialStateErrors: Object) => {
 		let isValid = true
@@ -155,11 +139,11 @@
 	<div class="section__main">
 		<Form
 			bind:initialState
-			customers={allCustomers}
 			bind:isSucceeded
 			bind:isShown
 			bind:confirmationPageIsShown
 			bind:currentCustomerId={initialState.custCd}
+			customers={allCustomers}
 			formType="create"
 		/>
 		{#if confirmationPageIsShown && !isShown}

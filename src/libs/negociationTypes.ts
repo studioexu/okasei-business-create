@@ -1,81 +1,71 @@
 export interface Item {
 	name: string
-	quantity: number
-	price: number
+	quantity: string
 }
 
 export interface Estimate {
 	issueDate: string
 	dueDate: string
-	estimateWithoutTax: number
-	withTax: boolean
-	estimateTax: number
+	estimateWithoutTax: string
+	tax: string
 	items: Item[]
 }
 
-export interface Memo {
+interface Memo {
 	date: string
 	memo: string
 }
 
-export interface OutcomeHistory {
+interface OutcomeHistory {
 	date: string
 	memo: string
 }
 
-export interface Checkbox {
+interface Checkbox {
 	title: string
 	isChecked: boolean
 }
 
-// export interface Negociation {
-// 	negociationId: number
-// 	custCd: number
-// 	customerName: string
-// 	status: string
-// 	startingDate: string
-// 	condition: string
-// 	contact: string
-// 	billingDate: string
-// 	scheduledDeposit: string
-// 	outcome: string
-// 	nextContactDate: string
-// 	nextContactTime: string
-// 	lastContact: string
-// 	postalCode: string
-// 	prefecture: string
-// 	city: string
-// 	address1: string
-// 	address2: string
-// 	distanceKm: number
-// 	distanceTime: number
-// 	estimate: Estimate[]
-// 	personInCharge: string
-// 	memo: Memo[]
-// 	dm: string
-// 	video: string
-// 	inflow: string
-// 	preference: string
-// 	checkboxes: Checkbox[]
-// 	checkBottleneck: string
-// 	occasion: string
-// 	risk: string
-// 	outcomeHistory: OutcomeHistory[]
-// 	responsiblePerson: string
-// 	communication: string
-// 	numberOfBeds: number
-// 	billingEstimation: number
-// 	registerBy?: number | null
-// 	registerAt?: string
-// 	updateBy?: number | null
-// 	updateAt?: string
-// 	deleteBy?: number | null
-// 	deleteAt?: string
-// }
+export interface Negociation {
+	negociationId: number
+	customerName: string
+	status: string
+	firstTransaction: string
+	condition: string
+	contact: string
+	billingDate: string
+	scheduledDeposit: string
+	outcome: string
+	nextContact: string
+	lastContact: string
+	postalCode: string
+	prefecture: string
+	city: string
+	address1: string
+	address2: string
+	distanceKm: string
+	distanceTime: string
+	estimate: Estimate[]
+	personInCharge: string
+	memo: Memo[]
+	dm: string
+	video: string
+	custCd: number
+	inflow: string
+	preference: string
+	checkboxes: Checkbox[]
+	checkBottleneck: string
+	occasion: string
+	risk: string
+	outcomeHistory: OutcomeHistory[]
+	responsiblePerson: string
+	communication: string
+	paymentMethod: string
+	numberOfBeds: string
+	billingEstimation: string
+}
 
 export interface NegociationEntries {
-	custCd: number
-	negociationId: number
 	status: string
 	startingDate: string
 	condition: string
@@ -83,6 +73,7 @@ export interface NegociationEntries {
 	preference: string
 	billingDate: string
 	scheduledDeposit: string
+	paymentMethod: string
 	outcome: string
 	nextContactDate: string
 	nextContactTime: string
@@ -92,8 +83,8 @@ export interface NegociationEntries {
 	city: string
 	address1: string
 	address2: string
-	distanceKm: number
-	distanceTime: number
+	distanceKm: string
+	distanceTime: string
 	estimate: Estimate[]
 	memo: Memo[]
 	personInCharge: string
@@ -106,37 +97,33 @@ export interface NegociationEntries {
 	occasion: string
 	risk: string
 	outcomeHistory: OutcomeHistory[]
+	custCd: number
+	negociationId: number
 	customerName: string
-	numberOfBeds: number
-	billingEstimation: number
-	registerBy?: number | null
-	registerAt?: string
-	updateBy?: number | null
-	updateAt?: string
-	deleteBy?: number | null
-	deleteAt?: string
+	numberOfBeds: string
+	billingEstimation: string
 }
 
 export class NegociationBackend {
 	negociationId: number
 	customerName: string
 	status: string
-	startingDate: string
+	firstTransaction: string
 	condition: string
 	contact: string
 	billingDate: string
+	scheduledDeposit: string
 	outcome: string
-	nextContactDate: string
-	nextContactTime: string
+	nextContact: string
 	lastContact: string
 	postalCode: string
 	prefecture: string
 	city: string
 	address1: string
 	address2: string
-	distanceKm: number
-	distanceTime: number
-	numberOfBeds: number
+	distanceKm: string
+	distanceTime: string
+	numberOfBeds: string
 	estimate: Estimate[]
 	personInCharge: string
 	memo: Memo[]
@@ -152,26 +139,20 @@ export class NegociationBackend {
 	outcomeHistory: OutcomeHistory[]
 	responsiblePerson: string
 	communication: string
-	scheduledDeposit: string
-	billingEstimation: number
-	register_by?: number | null
-	register_at?: string
-	update_by?: number | null
-	update_at?: string
-	delete_by?: number | null
-	delete_at?: string
+	paymentMethod: string
+	billingEstimation: string
 
 	constructor(data: NegociationEntries) {
 		this.negociationId = data.negociationId
 		this.customerName = data.customerName
 		this.status = data.status
-		this.startingDate = data.startingDate
+		this.firstTransaction = data.startingDate
 		this.condition = data.condition
 		this.contact = data.inflow
 		this.billingDate = data.billingDate
+		this.scheduledDeposit = data.scheduledDeposit
 		this.outcome = data.outcome
-		this.nextContactDate = data.nextContactDate
-		this.nextContactTime = data.nextContactTime
+		this.nextContact = data.nextContactDate + ' ' + data.nextContactTime
 		this.lastContact = data.lastContact
 		this.postalCode = data.postalCode
 		this.prefecture = data.prefecture
@@ -196,13 +177,7 @@ export class NegociationBackend {
 		this.outcomeHistory = data.outcomeHistory
 		this.responsiblePerson = data.responsiblePerson
 		this.communication = data.communication
-		this.scheduledDeposit = data.scheduledDeposit
+		this.paymentMethod = data.paymentMethod
 		this.billingEstimation = data.billingEstimation
-		this.register_by = data.registerBy
-		this.register_at = data.registerAt
-		this.update_by = data.updateBy
-		this.update_at = data.updateAt
-		this.delete_by = data.deleteBy
-		this.delete_at = data.deleteAt
 	}
 }

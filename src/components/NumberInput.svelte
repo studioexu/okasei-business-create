@@ -9,7 +9,6 @@
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
-	export let disabled: boolean = false
 
 	/**
 	 * Check if the value of the input is valid, when the focus is not on the input.
@@ -25,21 +24,17 @@
 </script>
 
 <div class="input-wrapper {isValid ? '' : 'error'}">
-	{#if label !== ''}
-		<label class="label" for={name}>
-			{label}
-			<span class="required-mark">{required ? '*' : ''}</span>
-		</label>
-	{/if}
+	<label class="label" for={name}>
+		{label}
+		<span class="required-mark">{required ? '*' : ''}</span>
+	</label>
 	<input
 		type="number"
 		class="input"
 		id={name}
-		min="0"
 		{name}
 		{required}
-		{disabled}
-		{placeholder}
+		min="0"
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
@@ -49,12 +44,30 @@
 </div>
 
 <style lang="scss">
+	@mixin responsiveInputWidth($width) {
+		width: calc((($width - 10 - 2) / 1366) * 100vw);
+	}
+
 	.input-wrapper {
 		width: fit-content;
 
 		.input {
-			width: 105px;
-			text-align: right;
+			@include responsiveInputWidth((103));
+			width: 100px;
+		}
+	}
+
+	@keyframes buzz {
+		0% {
+			transform: translateX(0px);
+		}
+
+		50% {
+			transform: translateX(-10px);
+		}
+
+		100% {
+			transform: translateX(10px);
 		}
 	}
 </style>

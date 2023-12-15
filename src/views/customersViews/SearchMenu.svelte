@@ -31,17 +31,19 @@
 			value: ''
 		},
 		{
-			name: 'phone',
+			name: 'phone-number',
 			label: '電話番号',
 			value: ''
 		}
 	]
 
 	/**
-	 * FilterData will filter data according the keywords entered by the user and the type of the input.
-	 * @param data: Array, it will be the array that it will be filtered
-	 * @param filterType: string, the filter that we want to apply
-	 * @param input: string, the keywords entered by the user
+	 * FilterData will filter the data according the keywords entered by the user and the type of the input.
+	 * データタイプによるデータを超注する。
+	 * @param data: Array, it will be the array that it will be filtered。　データを超注したい元のArrayである。
+	 * @param filterType: string, the filter that we want to apply。データのタイプ
+	 * @param input: string, the keywords entered by the user。データの内容である。
+	 * @returns array with the data filtered. 超注されたでーたのArray.
 	 */
 	const filterData = (data: CustomerFactory[], filterType: string, input: string) => {
 		switch (filterType) {
@@ -75,9 +77,9 @@
 
 	/**
 	 * it will lauch a research according to the input entered by the user, when the user clicks on 検索 button.
-	 * @param e
+	 * ユザーが入力するとFilerData()を利用して、自動で検索する。結果で表示されるデータをアップデータする。
 	 */
-	function handleSearch(e?: any) {
+	const handleSearch = (): void => {
 		let filteredData: CustomerFactory[] = data
 
 		if (instId !== '') {
@@ -96,6 +98,7 @@
 			filteredData = filterData(filteredData, 'facility-name', custName)
 		}
 		currentPage = 0
+
 		filteredCustomers = filteredData
 		customersToDisplay = deletedCustomersAreShown
 			? filteredCustomers
@@ -109,7 +112,7 @@
 			<label class="label" for={input.name}>{input.label}</label>
 			<input
 				type="text"
-				class="input {input.name === 'facility-name' ? 'input--lg' : 'input--md'}"
+				class="input {input.name === 'facility-name' && 'input--lg'}"
 				id={input.name}
 				name={input.name}
 				bind:value={input.value}
@@ -120,19 +123,18 @@
 </form>
 
 <style lang="scss">
+	@mixin responsiveInputWidth($width) {
+		width: calc((($width - 8 - 2) / 1366) * 100vw);
+	}
+
 	.search-menu {
 		display: flex;
-		justify-content: flex-start;
 		justify-content: space-between;
+		row-gap: 10px;
+		flex-wrap: wrap;
 		margin-bottom: 1.5rem;
 		padding: 0 18px;
 		color: var(--black);
-		row-gap: 10px;
-		flex-wrap: wrap;
-	}
-
-	@mixin responsiveInputWidth($width) {
-		width: calc((($width - 8 - 2) / 1366) * 100vw);
 	}
 
 	.input-wrapper {
@@ -147,16 +149,14 @@
 
 		.input {
 			padding: 4px 8px;
+			@include responsiveInputWidth((130));
 
 			&:focus {
 				border-color: var(--primary-color);
 			}
 
-			&--md {
-				@include responsiveInputWidth((137));
-			}
 			&--lg {
-				@include responsiveInputWidth((226));
+				@include responsiveInputWidth((190));
 			}
 		}
 	}
@@ -165,15 +165,12 @@
 		.input-wrapper {
 			width: auto;
 			.input {
-				&--md {
-					@include responsiveInputWidth((160));
-				}
+				@include responsiveInputWidth((160));
 			}
 		}
 		.input-wrapper:nth-child(1) {
 			width: 100%;
 			justify-content: center;
-			flex-grow: 3;
 
 			.label {
 				min-width: 60px;

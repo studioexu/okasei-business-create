@@ -1,32 +1,23 @@
 <script lang="ts">
-	import { createEventDispatcher } from 'svelte'
-
+	export let value: string = ''
 	export let isChecked: boolean = false
-	export let name: string
-	export let label: string
-
-	const dispatch = createEventDispatcher()
 
 	const handleChange = (e: any) => {
 		isChecked = e.target.checked
-
-		dispatch('checked', {
-			isChecked: e.target.checked
-		})
 	}
 </script>
 
-<label class="checkbox-container" for={name}>
+<label class="checkbox-container" for={value}>
+	{value}
 	<input
 		class="checkbox"
 		type="checkbox"
-		{name}
-		id={name}
-		value={name}
+		name={value}
+		id={value}
+		{value}
 		on:change={handleChange}
 		checked={isChecked}
 	/>
-	{label}
 	<span class="checkmark" />
 </label>
 
@@ -37,7 +28,8 @@
 		justify-content: flex-end;
 		flex-direction: row-reverse;
 		align-items: center;
-		height: 31px;
+		width: 100%;
+		margin-bottom: 12px;
 		gap: 18px;
 		font-size: 18px;
 		cursor: pointer;
@@ -67,7 +59,6 @@
 			width: 20px;
 			border: 1px solid var(--black);
 			border-radius: 3px;
-			background-color: #fff;
 
 			&:after {
 				width: 3px;

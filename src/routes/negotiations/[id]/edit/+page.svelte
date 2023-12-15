@@ -12,29 +12,37 @@
 	import { CustomerFactory } from '@/Factories/CustomerFactory.js'
 	import type { NegociationEntries } from '@/libs/negociationTypes.js'
 
+	let confirmationPageIsShown = false
+
 	const negociation = $negociations.find(
 		negociation => negociation.negociationId.toString() === $page.params.id
 	)
 
-	let confirmationPageIsShown = false
-	let customers = data.data.map(customer => new CustomerFactory(customer, 'newApi'))
+	let customers = data.data.map(customer => new CustomerFactory(customer, 'customer'))
+
 	let initialState: NegociationEntries
 
 	if (negociation !== undefined) {
 		initialState = {
 			negociationId: negociation?.negociationId,
-			custCd: negociation?.custCd,
 			customerName: negociation?.customerName,
 			status: negociation?.status,
-			startingDate: negociation?.startingDate,
+			startingDate: negociation?.firstTransaction,
 			condition: negociation?.condition,
 			inflow: negociation?.inflow,
 			preference: negociation?.preference,
 			billingDate: negociation?.billingDate,
 			scheduledDeposit: negociation?.scheduledDeposit,
+			paymentMethod: negociation?.paymentMethod,
 			outcome: negociation?.outcome,
-			nextContactDate: negociation.nextContactDate,
-			nextContactTime: negociation.nextContactTime,
+			nextContactDate:
+				negociation?.nextContact?.length !== undefined
+					? negociation?.nextContact.split(' ')[0]
+					: '',
+			nextContactTime:
+				negociation?.nextContact?.length !== undefined
+					? negociation?.nextContact.split(' ')[1]
+					: '',
 			lastContact: negociation?.lastContact,
 			postalCode: negociation?.postalCode,
 			prefecture: negociation?.prefecture,
@@ -55,16 +63,13 @@
 			occasion: negociation?.occasion,
 			risk: negociation?.risk,
 			outcomeHistory: negociation?.outcomeHistory,
+			custCd: negociation?.custCd,
 			numberOfBeds: negociation?.numberOfBeds,
-			billingEstimation: negociation.billingEstimation,
-			registerBy: negociation.register_by,
-			registerAt: negociation.register_at,
-			updateBy: negociation.update_by,
-			updateAt: negociation.update_at,
-			deleteBy: negociation.delete_by,
-			deleteAt: negociation.delete_at
+			billingEstimation: negociation.billingEstimation
 		}
 	}
+
+	$: console.log(negociation)
 
 	let isSucceeded: boolean = false
 	let isShown: boolean = false
@@ -72,6 +77,14 @@
 
 	const goBack = () => {
 		goto('/negotiations')
+	}
+
+	const handleEditClicked = () => {
+		confirmationPageIsShown = false
+	}
+
+	const handleCheckForm = () => {
+		confirmationPageIsShown = true
 	}
 </script>
 
@@ -95,9 +108,9 @@
 			bind:initialState
 			bind:isShown
 			bind:isSucceeded
+			{customers}
 			bind:currentCustomerId={initialState.custCd}
 			formType={'update'}
-			{customers}
 		/>
 	</div>
 
@@ -105,26 +118,11 @@
 		<footer class="section__footer">
 			{#if confirmationPageIsShown}
 				<div in:fade>
-					<button
-						class="btn secondary"
-						on:click={() => {
-							confirmationPageIsShown = false
-						}}
-					>
-						修正
-					</button>
+					<button class="btn secondary" on:click={handleEditClicked}>修正</button>
 				</div>
 				<button type="submit" class="btn primary" form="negociation-form">登録</button>
 			{:else}
-				<button
-					type="button"
-					class="btn primary"
-					on:click={() => {
-						confirmationPageIsShown = true
-					}}
-				>
-					登録
-				</button>
+				<button type="button" class="btn primary" on:click={handleCheckForm}>登録</button>
 			{/if}
 		</footer>
 	{/if}

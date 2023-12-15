@@ -1,10 +1,8 @@
 <script lang="ts">
-	import type { NegociationEntries } from '@/libs/negociationTypes'
-
 	import Icon from '@/components/Icon.svelte'
 	import Wrapper from '@/components/DetailWrapper.svelte'
 
-	export let initialState: NegociationEntries
+	export let initialState: any
 </script>
 
 <div class="negociation-confirmation">
@@ -29,6 +27,9 @@
 	</div>
 	<div class="form-row">
 		<Wrapper label={'入金予定'} content={initialState.scheduledDeposit} />
+	</div>
+	<div class="form-row">
+		<Wrapper label={'支払い方法'} content={initialState.paymentMethod} />
 	</div>
 	<div class="form-row">
 		<Wrapper label={'成否日'} content={initialState.outcome} />
@@ -69,20 +70,20 @@
 			<h3 class="label">見積もり金額</h3>
 			<div class="container">
 				{#each initialState.estimate as estimate, index}
-					<div class="wrapper-data">
+					<div class="data-container">
 						<div class="form-row">
 							<Wrapper label={'発行日'} content={estimate.issueDate} />
 							<Wrapper label={'見積期日'} content={estimate.dueDate} />
 						</div>
 						<div class="form-row">
-							<Wrapper label={'税抜価格'} content={estimate.estimateWithoutTax.toString()} />
-							<Wrapper label={'消費税'} content={estimate.estimateTax.toString()} />
+							<Wrapper label={'税抜価格'} content={estimate.estimateWithoutTax} />
+							<Wrapper label={'消費税'} content={estimate.tax} />
 						</div>
 
 						{#each estimate.items as item}
 							<div class="form-row">
 								<Wrapper label={'商品'} content={item.name} />
-								<Wrapper content={item.quantity.toString()} />
+								<Wrapper content={item.quantity} />
 							</div>
 						{/each}
 					</div>
@@ -103,15 +104,15 @@
 		</div>
 	</div>
 	<div class="form-row">
-		<Wrapper label={'自社担当者'} content={initialState.personInCharge} />
+		<Wrapper label={'自社担当者'} content={initialState.employeeInCharge} />
 	</div>
 	<div class="form-row">
 		<Wrapper label={'責任者'} content={initialState.responsiblePerson} />
 	</div>
 	<div class="form-row">
 		<Wrapper label={'オカセイ便り'} content={initialState.communication} />
-		<Wrapper label={'DM発送'} content={initialState.dm} />
-		<Wrapper label={'PR動画'} content={initialState.video} />
+		<Wrapper label={'DM発送'} content={initialState.directMessage} />
+		<Wrapper label={'PR動画'} content={initialState.videoUrl} />
 	</div>
 
 	<div class="form-row">
@@ -120,9 +121,9 @@
 				<div class="wrapper">
 					<div class="checkbox-wrapper">
 						{#if !checkbox.isChecked}
-							<Icon icon={{ path: 'checkbox-empty', color: 'var(--gray)' }} />
+							<Icon icon={{ path: 'checkbox-empty', color: 'rgb(200, 200, 200)' }} />
 						{:else}
-							<Icon icon={{ path: 'checkbox-checked', color: 'var(--gray)' }} />
+							<Icon icon={{ path: 'checkbox-checked', color: 'rgb(200, 200, 200)' }} />
 						{/if}
 					</div>
 
@@ -160,10 +161,10 @@
 
 <style lang="scss">
 	.container {
-		position: relative;
 		display: flex;
 		flex-direction: column;
 		gap: 12px;
+		position: relative;
 		border-radius: 8px;
 		.form-row {
 			justify-content: space-between;
@@ -189,12 +190,24 @@
 		align-self: flex-start;
 	}
 
-	.wrapper-data {
+	.wrapper {
+		display: flex;
+		align-items: center;
+		gap: 18px;
+
+		&:first-child {
+			.label {
+				width: 130px;
+			}
+		}
+	}
+
+	.data-container {
 		width: calc((600 / 1366) * 100vw);
 		min-width: 520px;
-		margin-bottom: 18px;
 		padding: 18px 20px;
-
+		// max-width: 531px;
+		margin-bottom: 18px;
 		background-color: #f4f4f4;
 		border-radius: 8px;
 
@@ -202,6 +215,13 @@
 			margin: 0;
 			padding: 0;
 			border-bottom: none;
+			.wrapper {
+				// &:first-child {
+				.label {
+					width: 90px;
+				}
+				// }
+			}
 		}
 	}
 

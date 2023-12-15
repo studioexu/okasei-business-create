@@ -1,21 +1,14 @@
 <script lang="ts">
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
-	import InputCheckbox from '@/components/InputCheckbox.svelte'
-	import InputDate from '@/components/InputDate.svelte'
-	import Icon from '@/components/Icon.svelte'
-	import InputNumber from '@/components/InputNumber.svelte'
-	import InputAddress from '@/components/InputAddress.svelte'
-	import InputSelect from '@/components/InputSelect.svelte'
-
+	import SelectDate from '@/components/SelectDate.svelte'
+	import DateInput from '@/components/DateInput.svelte'
+	import CustomCheckbox from '@/components/CustomCheckbox.svelte'
 	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 	import { negociations } from '@/stores/negociations'
 	import { NegociationBackend, type Estimate } from '@/libs/negociationTypes'
-	import type { Item, Memo, NegociationEntries, OutcomeHistory } from '@/libs/negociationTypes'
 
-	import { prefectures, tax } from '@/data/data'
-
-	export let initialState: NegociationEntries
+	export let initialState: any
 	export let customers: CustomerFactory[]
 	export let isSucceeded: boolean
 	export let isShown: boolean
@@ -25,279 +18,110 @@
 
 	let currentCustomer: CustomerFactory | undefined
 
-	const customersOptions: { value: number; text: string }[] = customers.map(customer => ({
-		value: customer.custCD,
-		text: customer.custName
-	}))
-
-	const products = [
-		{
-			id: 1,
-			name: 'item A',
-			price: 10000
-		},
-		{
-			id: 2,
-			name: 'item B',
-			price: 15000
-		},
-		{
-			id: 3,
-			name: 'item C',
-			price: 20000
-		}
-	]
-
 	$: currentCustomer = customers.filter(customer => {
+		console.log(customer.custCD)
+
 		if (customer.custCD === currentCustomerId) {
 			return customer
 		}
 	})
 
-	////// INITIATE ARRAYS: ESTIMATE, MEMO, HISTORY
+	let maxEstimateIndex = initialState.estimate.length > 1 ? initialState.estimate.length : 1
+	let maxMemoIndex = initialState.memo.length > 1 ? initialState.memo.length : 1
+	let maxHistoryIndex =
+		initialState.outcomeHistory.length > 1 ? initialState.outcomeHistory.length : 1
 
-	$: initialState.estimate =
-		initialState.estimate.length === 0
-			? [
-					...initialState.estimate,
-					{
-						issueDate: '',
-						dueDate: '',
-						estimateWithoutTax: 0,
-						withTax: false,
-						estimateTax: 0,
-						items: [
-							{
-								name: '',
-								quantity: 0,
-								price: 0
-							}
-						]
-					}
-			  ]
-			: initialState.estimate
-	$: initialState.outcomeHistory =
-		initialState.outcomeHistory.length === 0
-			? [...initialState.outcomeHistory, { date: '', memo: '' }]
-			: initialState.outcomeHistory
-	$: initialState.memo =
-		initialState.memo.length === 0
-			? [...initialState.memo, { date: '', memo: '' }]
-			: initialState.memo
+	const calculateEstimateTotal = () => {
+		let estimateTotal = 0
+		initialState.estimate.map((estimate: Estimate) => {
+			estimateTotal += parseInt(estimate.estimateWithoutTax)
+		})
 
-	///// REMOVE OR ADD ITEM IN PRODUCT ARRAY IN ESTIMATE
-
-	/**
-	 * Add an item to the items array in a specific estimate object
-	 * @param index: corresponding to the index of the right estimate object.
-	 */
-	const addItem = (index: number): void => {
-		initialState.estimate[index].items = [
-			...initialState.estimate[index].items,
-			{ name: '', quantity: 0, price: 0 }
-		]
+		return estimateTotal.toString()
 	}
 
-	/**
-	 * Remove an item in the items array of one estimate array.
-	 * @param index:corresponding to the index of the right estimate object we want to remove an item.
-	 * @param itemIndex: index of the item we want to remove.
-	 */
-	const removeItem = (estimateIndex: number, itemIndex: number): void => {
-		initialState.estimate[estimateIndex].items = initialState.estimate[estimateIndex].items.filter(
-			(item: Item) => initialState.estimate[estimateIndex].items[itemIndex] !== item && item
-		)
+	$: initialState.billingEstimation = calculateEstimateTotal().toString()
+	$: initialState.estimate = updateArray(maxEstimateIndex, initialState.estimate, 'estimate')
+	$: initialState.outcomeHistory = updateArray(
+		maxHistoryIndex,
+		initialState.outcomeHistory,
+		'historyMemo'
+	)
+	$: initialState.memo = updateArray(maxMemoIndex, initialState.memo, 'memo')
+	$: maxHistoryIndex
+
+	const handleAddProduct = (index: number) => {
+		const productArray = initialState.estimate[index].items
+		productArray.push({
+			productName: '',
+			quantity: ''
+		})
+		initialState.estimate[index].items = productArray
 	}
 
-	//// REMOVE OR ADD ELEMENT IN ESTIMATE / MEMO / OUTCOMEHISTORY ARRAYS
+	const handleDeleteItemFromArray = (index: number, maxIndex: number, arrayToUpdate: any[]) => {
+		const newArray = arrayToUpdate.slice(0, index).concat(arrayToUpdate.slice(index + 1))
 
-	/**
-	 * Remove one object from the corresponding array.
-	 * @param index: index of the object in the array
-	 * @param arrayToUpdate: the array we want to update
-	 */
-	const handleDeleteItemFromArray = (
-		index: number,
-		arrayToUpdate: (Memo | OutcomeHistory | Estimate)[],
-		type: string
-	) => {
-		let updatedArray = arrayToUpdate.filter(item => arrayToUpdate.indexOf(item) !== index)
-		updateArray(updatedArray, type)
-	}
-
-	/**
-	 * We add an item in the array.
-	 * @param arrayToUpdate: the array where we want to add an item
-	 * @param arrayType: the type of the array.
-	 */
-	const addItemToArray = (
-		arrayToUpdate: (Memo | OutcomeHistory | Estimate)[],
-		arrayType: string
-	): void => {
-		let newObject: Memo | OutcomeHistory | Estimate | null = null
-
-		switch (arrayType) {
-			case 'memo':
-				newObject = {
-					date: '',
-					memo: ''
-				}
-				break
-			case 'outcomeHistory':
-				newObject = {
-					date: '',
-					memo: ''
-				}
-				break
-			case 'estimate':
-				newObject = {
-					issueDate: '',
-					dueDate: '',
-					estimateWithoutTax: 0,
-					withTax: false,
-					estimateTax: 0,
-					items: [
-						{
-							name: '',
-							quantity: 0,
-							price: 0
-						}
-					]
-				}
-			default:
-				null
-				break
+		for (let i = 0; i < newArray.length; i++) {
+			arrayToUpdate[i] = newArray[i]
 		}
 
-		if (newObject !== null) arrayToUpdate = [...arrayToUpdate, newObject]
-
-		updateArray(arrayToUpdate, arrayType)
+		maxIndex--
 	}
 
-	const updateArray = (array: (Memo | OutcomeHistory | Estimate)[], type: string) => {
-		switch (type) {
-			case 'memo':
-				initialState.memo = array as Memo[]
-				break
-			case 'outcomeHistory':
-				initialState.outcomeHistory = array as OutcomeHistory[]
-				break
-			case 'estimate':
-				initialState.estimate = array as Estimate[]
-			default:
-				break
+	const updateArray = (maxIndex: number, arrayToUpdate: any[], arrayType: string) => {
+		let newArray: any[] = []
+		for (let i = 0; i < maxIndex; i++) {
+			if (arrayToUpdate[i]) {
+				newArray.push(arrayToUpdate[i])
+			} else {
+				switch (arrayType) {
+					case 'memo':
+						newArray.push({
+							date: '',
+							memo: ''
+						})
+						break
+					case 'historyMemo':
+						newArray.push({
+							date: '',
+							memo: ''
+						})
+						break
+					case 'estimate':
+						newArray.push({
+							issueDate: '',
+							dueDate: '',
+							estimateWithoutTax: '',
+							tax: '',
+							items: [
+								{
+									name: '',
+									quantity: ''
+								}
+							]
+						})
+
+					default:
+						break
+				}
+			}
 		}
+
+		return newArray
 	}
 
-	/**
-	 * When the user click on the button, it will auto fill the billing address with the customer's address.
-	 *
-	 */
-	const handleAutoFill = (): void => {
-		if (currentCustomer !== undefined) {
-			const address = currentCustomer[0].address
-
-			Object.keys(address).map(key => {
-				initialState[
-					key as keyof {
-						postalCode: string
-						prefecture: string
-						city: string
-						address1: string
-						address2: string
-					}
-				] = address[key]
-			})
-		}
-	}
-
-	/////// ESTIMATE ARRAY
-
-	$: initialState.billingEstimation = getEstimateTotal()
-
-	const getTotalBeds = (): number => {
+	const getTotalBeds = () => {
 		let total = 0
 
 		initialState.estimate.map((estimate: Estimate) => {
 			estimate.items.map(item => {
-				const itemQuantity = isNaN(item.quantity) ? 0 : item.quantity
-				total += itemQuantity
+				total += parseInt(item.quantity)
 			})
 		})
 
-		return total
+		return total.toString() + '台'
 	}
-
-	/**
-	 *
-	 * @param isTaxIsAdded: boolean, check if the tax has to be added or not. 税金を追加するかどうかと確認する。
-	 * @param estimateWithoutTax: number, corresponding to the amout of the estimate without the tax. 税抜の見積もりの金額である。
-	 * @returns number: if we add the tax, we will return the round result of the multiplication between the estimate amount and the current tax amount.
-	 */
-	const getTaxAmount = (isTaxAdded: boolean, estimateWithoutTax: number): number => {
-		if (isTaxAdded) {
-			return Math.round(estimateWithoutTax * tax)
-		} else {
-			return 0
-		}
-	}
-
-	/**
-	 * update the estimate tax amount in the initialState when there are changes.
-	 * @param index: corresponding to the index in the array of estimate.
-	 */
-	const updateEstimateTaxOnChange = (index: number): void => {
-		let estimateAmount = isNaN(initialState.estimate[index].estimateWithoutTax)
-			? 0
-			: initialState.estimate[index].estimateWithoutTax
-
-		initialState.estimate[index].estimateTax = getTaxAmount(
-			initialState.estimate[index].withTax,
-			estimateAmount
-		)
-	}
-
-	/**
-	 * When the user chooses an item,
-	 * it will update the right items array with the selected item and the corresponding price.
-	 * @param estimateIndex
-	 * @param itemIndex
-	 */
-	const handleChooseItem = (estimateIndex: number, itemIndex: number): void => {
-		const item = initialState.estimate[estimateIndex].items[itemIndex]
-		const correspondingItemInProducts = products.find(product => product.name === item.name)
-		if (correspondingItemInProducts) item.price = correspondingItemInProducts.price
-	}
-
-	/**
-	 * Calculate the total of all estimates in estimate array.
-	 * お見積もりの合計。
-	 * @returns estimateTotal, 見積もりの合計
-	 */
-	const getEstimateTotal = (): number => {
-		let estimateTotal = 0
-		initialState.estimate.map((estimate: Estimate) => {
-			estimateTotal += estimate.estimateWithoutTax
-		})
-
-		return estimateTotal
-	}
-
-	/**
-	 * Calculate one estimate corresponding to the index. お見積もりを計算する。
-	 * @param estimateIndex
-	 */
-	const getEstimate = (estimateIndex: number): void => {
-		let estimate = 0
-		const items = initialState.estimate[estimateIndex].items
-
-		items.map((item: Item) => {
-			estimate += (isNaN(item.price) ? 0 : item.price) * (isNaN(item.quantity) ? 0 : item.quantity)
-		})
-		initialState.estimate[estimateIndex].estimateWithoutTax = estimate
-	}
-
-	////// FORM SUBMIT
 
 	/**
 	 * Triggered when the form is submit.
@@ -313,7 +137,7 @@
 			isSucceeded = true
 
 			initialState.numberOfBeds = getTotalBeds()
-			initialState.billingEstimation = getEstimateTotal()
+			initialState.billingEstimation = calculateEstimateTotal()
 
 			if (formType === 'create') {
 				let customer = customers.find(customer => customer.custCD === currentCustomerId)
@@ -333,6 +157,22 @@
 			}
 		}
 	}
+
+	const hours: string[] = ['']
+
+	for (let i = 1; i <= 24; i++) {
+		hours.push(i.toString() + ':00')
+	}
+
+	const handleAutoFill = () => {
+		if (currentCustomer !== undefined) {
+			initialState.postalCode = currentCustomer[0].address.postalCode
+			initialState.prefecture = currentCustomer[0].address.prefecture
+			initialState.city = currentCustomer[0].address.city
+			initialState.address1 = currentCustomer[0].address.address1
+			initialState.address2 = currentCustomer[0].address.address2
+		}
+	}
 </script>
 
 <form
@@ -347,13 +187,20 @@
 		<legend class="legend hidden">顧客選択</legend>
 
 		<div class="form-row">
-			<Select
-				label={'顧客選択'}
-				name={'select-customer'}
-				options={customersOptions}
-				required={true}
-				bind:value={currentCustomerId}
-			/>
+			<div class="input-wrapper">
+				<label class="label" for="select-customer">顧客選択</label>
+				<select
+					class="select"
+					name="select-customer"
+					id="select-customer"
+					bind:value={currentCustomerId}
+				>
+					<option value=" " selected disabled class="placeholder">未選択</option>
+					{#each customers as customer}
+						<option value={customer.custCD}>{customer.custName}</option>
+					{/each}
+				</select>
+			</div>
 
 			<button
 				type="button"
@@ -365,9 +212,8 @@
 					type="button"
 					class="secondary inline btn"
 					on:click={() => window.open('/customers/' + currentCustomerId, '_blank')}
+					>顧客情報を確認</button
 				>
-					顧客情報を確認
-				</button>
 			{/if}
 		</div>
 	</fieldset>
@@ -379,15 +225,13 @@
 				label={'ステータス'}
 				name={'status'}
 				options={['受注', '新規受注', '再問合せ', '見送り', '失注', '在庫無し']}
-				required={true}
 				bind:value={initialState.status}
 			/>
 		</div>
 		<div class="form-row">
-			<InputDate
+			<DateInput
+				name={'negociation-start'}
 				label={'商談開始日'}
-				name={'negotiation-start'}
-				required={true}
 				bind:value={initialState.startingDate}
 			/>
 		</div>
@@ -430,41 +274,59 @@
 		</div>
 
 		<div class="form-row">
-			<InputDate label={'納期'} name={'billing-date'} bind:value={initialState.billingDate} />
+			<DateInput name={'billing'} label={'納期'} bind:value={initialState.billingDate} />
+			<CustomCheckbox value={'未確定'} />
 		</div>
 
 		<div class="form-row">
 			<Input
 				label={'入金予定'}
-				placeholder={'前払い'}
+				placeholder={'未入力'}
 				name={'scheduled-deposit'}
 				bind:value={initialState.scheduledDeposit}
 			/>
 		</div>
 
 		<div class="form-row">
-			<InputDate label={'成否日'} name={'outcome'} bind:value={initialState.outcome} />
+			<Select
+				name={'payment-method'}
+				label={'支払い方法'}
+				options={[
+					'確認前',
+					'確認中',
+					'前払い（振込）',
+					'前払い（代引き）',
+					'クレジットカード',
+					'前金＋後払い',
+					'全額後払い'
+				]}
+				bind:value={initialState.paymentMethod}
+			/>
 		</div>
 
 		<div class="form-row">
-			<InputDate
+			<DateInput label={'成否日'} name={'outcome'} bind:value={initialState.outcome} />
+
+			<CustomCheckbox value={'未定'} />
+		</div>
+
+		<div class="form-row">
+			<DateInput
 				label={'次回連絡日時'}
 				name={'next-contact'}
 				bind:value={initialState.nextContactDate}
 			/>
 
-			<div class="input-wrapper">
-				<input
-					class="input"
-					type="time"
-					id="next-contact-time"
-					bind:value={initialState.nextContactTime}
-				/>
-			</div>
+			<SelectDate
+				name={'time'}
+				label={'時'}
+				options={hours}
+				bind:value={initialState.nextContactTime}
+			/>
 		</div>
 
 		<div class="form-row">
-			<InputDate label={'最終連絡'} name={'last-contact'} bind:value={initialState.lastContact} />
+			<DateInput label={'最終連絡'} name={'last-contact'} bind:value={initialState.lastContact} />
 		</div>
 	</fieldset>
 
@@ -475,38 +337,46 @@
 				name={'postal-code'}
 				inputSize={'input--sm'}
 				label={'納期先'}
-				placeholder={'0000000'}
 				bind:value={initialState.postalCode}
 			/>
 
-			<button type="button" class="btn primary inline" on:click={handleAutoFill}>
-				顧客情報コピー
-			</button>
+			<button type="button" class="btn primary inline" on:click={handleAutoFill}
+				>顧客情報同情</button
+			>
 		</div>
 		<div class="form-row">
-			<InputSelect
+			<Input
 				name={'prefecture'}
+				inputSize={'input--sm'}
 				label={'都道府県'}
-				list={prefectures}
-				placeholder={'〇〇県'}
 				bind:value={initialState.prefecture}
 			/>
-			<InputAddress name={'city'} label={'市区町村'} bind:value={initialState.city} />
-		</div>
-		<div class="form-row">
-			<InputAddress name={'address1'} label={'住所１'} bind:value={initialState.address1} />
-		</div>
-		<div class="form-row">
-			<InputAddress name={'address2'} label={'住所２'} bind:value={initialState.address2} />
-		</div>
-		<div class="form-row">
-			<InputNumber
-				label={'距離'}
-				name={'distance'}
-				unit={'km'}
-				bind:value={initialState.distanceKm}
+			<Input
+				name={'city'}
+				inputSize={'input--sm'}
+				label={'市区町村'}
+				bind:value={initialState.city}
 			/>
-			<InputNumber name={'duration'} unit={'時間'} bind:value={initialState.distanceTime} />
+		</div>
+		<div class="form-row">
+			<Input
+				name={'address1'}
+				inputSize={'input--lg'}
+				label={'住所１'}
+				bind:value={initialState.address1}
+			/>
+		</div>
+		<div class="form-row">
+			<Input
+				name={'address2'}
+				inputSize={'input--lg'}
+				label={'住所２'}
+				bind:value={initialState.address2}
+			/>
+		</div>
+		<div class="form-row">
+			<Input label={'距離'} name={'distance'} unit={'km'} bind:value={initialState.distanceKm} />
+			<Input name={'duration'} unit={'時間'} bind:value={initialState.distanceTime} />
 		</div>
 	</fieldset>
 
@@ -514,74 +384,54 @@
 		<legend class="legend hidden estimate">見積もり</legend>
 
 		<div class="form-row">
-			<h3 class="label">見積もり金額</h3>
-			<div class="container container--column">
+			<div>
+				<h3 class="label">見積もり金額</h3>
+				<button type="button" class="btn primary" on:click={() => maxEstimateIndex++}
+					>＋見積追加</button
+				>
+			</div>
+			<div class="column">
 				{#each initialState.estimate as estimate, index}
-					<div class="wrapper" on:change={() => updateEstimateTaxOnChange(index)}>
+					<div class="container">
 						<div class="form-row">
-							<InputDate label={'発行日'} name={'issue-date'} bind:value={estimate.issueDate} />
+							<DateInput label={'発行日'} name={'issue-date'} bind:value={estimate.issueDate} />
 						</div>
 						<div class="form-row">
-							<InputDate
+							<DateInput
 								label={'見積期日'}
 								name={'estimation-due-date'}
 								bind:value={estimate.dueDate}
 							/>
 						</div>
 						<div class="form-row">
-							<InputNumber
+							<Input
 								label={'税抜価格'}
-								name={'estimate-without-tax'}
+								name={'price-without-tax'}
 								unit="円"
-								on:input={() => getEstimate(index)}
+								on:input={calculateEstimateTotal}
 								bind:value={estimate.estimateWithoutTax}
 							/>
-
-							<InputNumber
-								label={'消費税'}
-								name={'tax'}
-								unit={'円'}
-								disabled={true}
-								bind:value={estimate.estimateTax}
-							/>
-
-							<InputCheckbox name={'with-tax'} label={'税有り'} bind:isChecked={estimate.withTax} />
+							<Input label={'消費税'} name={'tax'} unit="円" bind:value={estimate.tax} />
 						</div>
 
-						{#each estimate.items as item, indexItem}
-							<div class="form-row" on:change={() => getEstimate(index)}>
-								<InputSelect
-									placeholder={'商品を選択'}
-									label={'選択'}
-									list={products.map(product => product.name)}
-									bind:value={item.name}
-									on:select={() => handleChooseItem(index, indexItem)}
-								/>
-
-								<InputNumber unit={'円'} name={'price'} bind:value={item.price} />
-								<InputNumber unit={'台'} name={'quantity'} bind:value={item.quantity} />
-								{#if estimate.items.length > 1}
-									<button
-										type="button"
-										class="btn secondary delete"
-										on:click={() => removeItem(index, indexItem)}
-									>
-										<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
-									</button>
-								{/if}
+						{#each estimate.items as item}
+							<div class="form-row">
+								<Input label={'商品'} name={'product'} bind:value={item.name} />
+								<button type="button" class="btn primary">商品選択</button>
+								<Input unit={'台'} name={'quantity'} bind:value={item.quantity} />
 							</div>
 						{/each}
 
 						<div class="form-row">
-							<button type="button" class="btn add primary" on:click={() => addItem(index)}
+							<button type="button" class="btn add primary" on:click={() => handleAddProduct(index)}
 								>＋商品追加</button
 							>
-							{#if initialState.estimate.length > 1}
+							{#if maxEstimateIndex > 1}
 								<button
 									type="button"
 									class="btn primary delete"
 									on:click={() =>
-										handleDeleteItemFromArray(index, initialState.estimate, 'estimate')}
+										handleDeleteItemFromArray(index, maxEstimateIndex--, initialState.estimate)}
 									>削除</button
 								>
 							{/if}
@@ -590,60 +440,37 @@
 				{/each}
 			</div>
 		</div>
-
-		<div class="form-row">
-			<div class="input-wrapper">
-				<span class="label" />
-				<button
-					type="button"
-					class="btn primary"
-					on:click={() => addItemToArray(initialState.estimate, 'estimate')}
-				>
-					＋見積追加
-				</button>
-			</div>
-		</div>
 	</fieldset>
 
 	<fieldset class="fieldset">
 		<legend class="legend hidden">重要メモ</legend>
 		<div class="form-row">
 			<h3 class="label">重要メモ</h3>
-			<div class="container container--column">
+			<div class="column">
 				{#each initialState.memo as memo, index}
-					<div class="wrapper">
+					<div class="container">
 						<div class="form-row">
-							<InputDate name={'memo-date'} bind:value={memo.date} />
+							<DateInput name={'memo-date'} bind:value={memo.date} />
 						</div>
 						<div class="form-row">
 							<textarea name={'important-memo'} id="important-memo" bind:value={memo.memo} />
 						</div>
 						<div class="form-row">
-							{#if initialState.memo.length > 1}
+							{#if maxMemoIndex > 1}
 								<button
 									type="button"
 									class="btn primary delete"
-									on:click={() => handleDeleteItemFromArray(index, initialState.memo, 'memo')}
+									on:click={() =>
+										handleDeleteItemFromArray(index, maxMemoIndex--, initialState.memo)}
+									>削除</button
 								>
-									削除
-								</button>
 							{/if}
 						</div>
 					</div>
 				{/each}
-			</div>
-		</div>
 
-		<div class="form-row">
-			<div class="input-wrapper">
-				<span class="label" />
-				<button
-					type="button"
-					class="btn primary"
-					on:click={() => addItemToArray(initialState.memo, 'memo')}
+				<button type="button" class="btn primary" on:click={() => maxMemoIndex++}>＋新規追加</button
 				>
-					＋新規追加
-				</button>
 			</div>
 		</div>
 	</fieldset>
@@ -682,26 +509,15 @@
 				bind:value={initialState.dm}
 			/>
 
-			<Input
-				name={'presentation-video'}
-				label={'PR動画'}
-				placeholder={'未入力'}
-				bind:value={initialState.video}
-			/>
+			<Input name={'presentation-video'} label={'PR動画'} bind:value={initialState.videoUrl} />
 		</div>
 	</fieldset>
 
-	<fieldset class=" fieldset">
+	<fieldset class=" fieldset checkboxes-container">
 		<legend class="legend hidden">チェックボックス</legend>
-		<div class="container container--column">
-			{#each initialState.checkboxes as element}
-				<InputCheckbox
-					name={element.title}
-					label={element.title}
-					bind:isChecked={element.isChecked}
-				/>
-			{/each}
-		</div>
+		{#each initialState.checkboxes as element}
+			<CustomCheckbox value={element.title} bind:isChecked={element.isChecked} />
+		{/each}
 	</fieldset>
 
 	<fieldset class="fieldset">
@@ -730,60 +546,43 @@
 		<legend class="legend">商談経緯</legend>
 		<div class="fieldset__main">
 			<div class="form-row">
-				<div class="container container--column">
+				<div class="column">
 					{#each initialState.outcomeHistory as memo, index}
 						<div class="wrapper">
-							<div class="form-row">
-								<InputDate name={'history-date'} bind:value={memo.date} />
-
-								<Input
-									name={'history-memo'}
-									placeholder={'未入力'}
-									inputSize={'input--xl'}
-									bind:value={memo.memo}
-								/>
-								{#if initialState.outcomeHistory.length > 1}
-									<button
-										type="button"
-										class="primary btn delete"
-										on:click={() =>
-											handleDeleteItemFromArray(
-												index,
-												initialState.outcomeHistory,
-												'outcomeHistory'
-											)}
-									>
-										削除
-									</button>
-								{/if}
-							</div>
+							<DateInput name={'history-day'} bind:value={memo.date} />
+							<Input
+								name={'history-memo'}
+								placeholder={'未入力'}
+								inputSize={'input--xl'}
+								bind:value={memo.memo}
+							/>
+							{#if maxHistoryIndex > 1}
+								<button
+									type="button"
+									class="primary btn delete"
+									on:click={() =>
+										handleDeleteItemFromArray(
+											index,
+											maxHistoryIndex--,
+											initialState.outcomeHistory
+										)}>削除</button
+								>
+							{/if}
 						</div>
 					{/each}
 				</div>
 			</div>
 
 			<div class="form-row">
-				<button
-					type="button"
-					class="btn primary"
-					on:click={() => addItemToArray(initialState.outcomeHistory, 'outcomeHistory')}
+				<button type="button" class="btn primary" on:click={() => maxHistoryIndex++}
+					>＋新規追加</button
 				>
-					＋新規追加
-				</button>
 			</div>
 		</div>
 	</fieldset>
 </form>
 
 <style lang="scss">
-	.form {
-		&__header {
-			color: var(--primary);
-			font-weight: 700;
-			margin-bottom: 18px;
-		}
-	}
-
 	.hidden {
 		display: none;
 	}
@@ -793,44 +592,58 @@
 		align-items: flex-start;
 		margin-bottom: 20px;
 		gap: 12px;
-		flex-wrap: wrap;
 	}
 
-	.fieldset {
-		margin-bottom: 20px;
-	}
-
-	.textarea-wrapper {
-		display: flex;
-		width: 100%;
-
-		.label {
-			width: 190px;
+	.form {
+		&__header {
+			color: var(--primary);
+			font-weight: 700;
+			margin-bottom: 18px;
 		}
+	}
 
-		textarea {
-			resize: none;
-			min-width: 30vw;
-			width: calc(100% - 24px);
-			height: calc(100px - 24px);
-			border-radius: 8px;
-			padding: 12px;
-			outline: none;
+	.checkboxes-container {
+		display: flex;
+		flex-direction: column;
+	}
+
+	textarea {
+		resize: none;
+		width: calc(100% - 24px);
+		height: calc(100px - 24px);
+		border-radius: 8px;
+		padding: 12px;
+	}
+
+	.container {
+		position: relative;
+		background-color: #f4f4f4;
+		padding: 10px 21px;
+		border-radius: 8px;
+		width: fit-content;
+
+		.form-row {
+			justify-content: space-between;
+			// flex-wrap: wrap;
 		}
 	}
 
 	.label {
 		font-size: 18px;
 		font-weight: 400;
+		width: 130px;
 	}
 
-	.display {
-		width: 105px;
+	.column {
+		display: flex;
+		flex-direction: column;
+		gap: 18px;
 	}
 
 	.btn {
 		margin: 0;
 		align-self: flex-start;
+		padding: 0;
 		padding-top: 0;
 		padding-bottom: 0;
 		height: 32px;
@@ -847,108 +660,56 @@
 		}
 	}
 
+	.fieldset {
+		margin-bottom: 20px;
+	}
+
+	.textarea-wrapper {
+		display: flex;
+		width: 100%;
+
+		.label {
+			width: 190px;
+		}
+	}
+
 	.wrapper {
-		padding: 18px 21px;
+		padding: 16px 26px;
 		border-radius: 8px;
+		display: flex;
+		justify-content: space-between;
 		gap: 18px;
+		flex-wrap: wrap;
 		background-color: #f4f4f4;
-
-		.form-row:last-child {
-			margin-bottom: 0;
-		}
-
-		textarea {
-			resize: none;
-			min-width: 30vw;
-			width: 100%;
-			height: calc(100px - 24px);
-			border-radius: 8px;
-			padding: 12px;
-			outline: none;
-		}
 	}
 
-	.container {
+	.input-wrapper {
 		display: flex;
-		gap: 18px;
-		flex-grow: 1;
+		gap: 12px;
 
-		&--column {
-			flex-direction: column;
+		&:first-child {
+			.label {
+				width: 130px;
+			}
 		}
 	}
-
-	:global(.input-wrapper) {
-		position: relative;
-		display: flex;
-		align-items: center;
-		width: fit-content;
-		gap: 10px;
-	}
-
-	:global(.input-wrapper .label) {
-		align-self: flex-start;
+	.select {
 		height: 31px;
-		display: flex;
-		align-items: center;
-		min-width: 80px;
-	}
-
-	:global(.form-row > .label) {
-		width: 130px;
-	}
-
-	:global(.fieldset > .form-row > .input-wrapper:first-child .label) {
-		width: 130px;
-	}
-
-	:global(.input-wrapper .input) {
-		height: 31px;
-		&::placeholder {
-			color: rgb(206, 205, 205);
-		}
 
 		&:focus {
 			border-color: var(--primary-color);
 		}
-	}
 
-	:global(.required-mark) {
-		color: var(--error);
-	}
+		&:required:invalid {
+			color: #c4c4c4;
+		}
 
-	:global(.error .input) {
-		transition: border 300ms;
-		border-color: var(--error);
-		animation: buzz 100ms;
-		animation-iteration-count: 3;
-	}
-
-	:global(.error .input, .error .select) {
-		transition: border 300ms;
-		border-color: var(--error);
-		animation: buzz 100ms;
-		animation-iteration-count: 3;
-	}
-
-	:global(.error .font-error) {
-		.font-error {
-			opacity: 1;
-			transition: all 300ms;
+		option[value=''][disabled] {
+			display: none;
 		}
 	}
 
-	@keyframes buzz {
-		0% {
-			transform: translateX(0px);
-		}
-
-		50% {
-			transform: translateX(-10px);
-		}
-
-		100% {
-			transform: translateX(10px);
-		}
+	.btn {
+		margin: 0;
 	}
 </style>

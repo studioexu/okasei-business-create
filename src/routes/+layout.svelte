@@ -36,8 +36,6 @@
 </main>
 
 <style>
-	@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
-
 	:root {
 		--primary: #0093d0;
 		--back: #d0f1ff;
@@ -45,8 +43,6 @@
 		--modal-back: rgba(89, 88, 87, 0.8);
 		--gray: #7b7c7d;
 		--error: #eb3c3c;
-
-		--font-main: 'Noto Sans JP', sans-serif;
 	}
 
 	:global(*) {

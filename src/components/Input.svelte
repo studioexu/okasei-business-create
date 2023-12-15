@@ -61,18 +61,6 @@
 	}
 
 	.input-wrapper {
-		position: relative;
-		display: flex;
-		align-items: center;
-		width: fit-content;
-		gap: 10px;
-
-		// &:first-child {
-		// 	.label {
-		// 		width: 130px;
-		// 	}
-		// }
-
 		.input {
 			&--sm {
 				@include responsiveInputWidth((103));
@@ -88,13 +76,19 @@
 				@include responsiveInputWidth((534));
 			}
 		}
+	}
 
-		.font-error {
-			position: absolute;
-			right: 0;
-			bottom: -14px;
-			font-size: 10px;
-			opacity: 0;
+	@keyframes buzz {
+		0% {
+			transform: translateX(0px);
+		}
+
+		50% {
+			transform: translateX(-10px);
+		}
+
+		100% {
+			transform: translateX(10px);
 		}
 	}
 </style>

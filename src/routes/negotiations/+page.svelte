@@ -1,29 +1,50 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
-	import type { MouseEventHandler } from 'svelte/elements'
-	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import Input from '@/components/Input.svelte'
 	import Icon from '@/components/Icon.svelte'
-	import SelectDate from '@/components/SelectDate.svelte'
+	import Select from '@/components/Select.svelte'
 	import { negociation, negociations } from '@/stores/negociations'
+
+	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import { goto } from '$app/navigation'
-	import { onMount } from 'svelte'
-	import InputCheckbox from '@/components/InputCheckbox.svelte'
-	import { NegociationFactory } from '@/Factories/NegociationFactory'
+	import type { Negociation } from '@/libs/negociationTypes'
 
 	let searchIsShown = false
 	let displayMenuIsShown = false
+	let deleteModalIsShown = false
 
-	const allNegociations: NegociationFactory[] = $negociations.map(
-		negociation => new NegociationFactory(negociation, 'local')
-	)
-	let filteredNegociations = allNegociations
+	let filteredNegociations: Negociation[] = $negociations
 
-	const tableHeaders: { label: string; id: keyof NegotiationDataIsShown }[] = [
+	let research = {
+		name: '',
+		year: '',
+		month: ''
+	}
+
+	const years: string[] = ['']
+	const months: string[] = ['']
+	const currentYear = new Date().getFullYear()
+	const minYear = 2000
+
+	for (let i = minYear; i < currentYear; i++) {
+		years.push(i.toString())
+	}
+
+	for (let i = 1; i <= 12; i++) {
+		months.push(i.toString())
+	}
+
+	let searchInput = {
+		text: '',
+		year: '',
+		month: ''
+	}
+
+	const tableHeaders: { label: string; id: keyof DataIsShown }[] = [
 		{ label: '施設名', id: 'customerName' },
 		{ label: 'ステータス', id: 'status' },
-		{ label: '商談開始日', id: 'startingDate' },
+		{ label: '商談開始日', id: 'firstTransaction' },
 		{ label: '可能性', id: 'condition' },
 		{ label: '流入', id: 'inflow' },
 		{ label: '納期', id: 'billingDate' },
@@ -40,76 +61,12 @@
 		{ label: 'PR動画', id: 'video' }
 	]
 
-	const headerButtons: { text: string; action: MouseEventHandler<HTMLButtonElement> }[] = [
-		{ text: '＋新規追加', action: () => (window.location.href = '/negotiations/new') },
-		{ text: '表示・非表示', action: () => (displayMenuIsShown = !displayMenuIsShown) },
-		{ text: '絞り込み検索', action: () => (searchIsShown = !searchIsShown) }
-	]
-
-	// SEARCH FEATURE
-
-	const years: string[] = ['']
-	const months: string[] = ['']
-	const currentYear = new Date().getFullYear() + 1
-	const minYear = 2000
-
-	for (let i = minYear; i <= currentYear; i++) {
-		years.push(i.toString())
-	}
-
-	for (let i = 1; i <= 12; i++) {
-		months.push(i.toString())
-	}
-
-	$: searchInput = {
-		name: '',
-		year: '',
-		month: ''
-	}
-
-	/**
-	 * The function filters the data when the user enters new input
-	 * @param searchInput: Object composed of the name, year and month
-	 * @returns new array with the filtered negotiations
-	 */
-	const handleSearch = (searchInput: {
-		name: string
-		year: string
-		month: string
-	}): NegociationFactory[] => {
-		let filtered = allNegociations
-
-		Object.keys(searchInput).map(key => {
-			if (searchInput[key as keyof { name: string; year: string; month: string }] !== '') {
-				filtered = filtered.filter(negociation => {
-					if (key === 'name') {
-						return negociation.customerName.includes(searchInput.name)
-					} else {
-						let date
-						if (key === 'month') date = new Date(negociation.startingDate).getMonth() + 1
-						if (key === 'year') date = new Date(negociation.startingDate).getFullYear()
-
-						return (
-							date ===
-							parseInt(searchInput[key as keyof { name: string; year: string; month: string }])
-						)
-					}
-				})
-			}
-		})
-		return filtered
-	}
-
-	$: filteredNegociations = handleSearch(searchInput)
-
-	//NEGOTIATION DATA TO DISPLAY
-
-	interface NegotiationDataIsShown {
+	interface DataIsShown {
 		negociationId: boolean
 		custCd: boolean
 		customerName: boolean
 		status: boolean
-		startingDate: boolean
+		firstTransaction: boolean
 		condition: boolean
 		inflow: boolean
 		billingDate: boolean
@@ -126,10 +83,10 @@
 		video: boolean
 	}
 
-	const negotiationDataIsShown: NegotiationDataIsShown = {
+	const dataIsShown: DataIsShown = {
 		customerName: true,
 		status: true,
-		startingDate: true,
+		firstTransaction: true,
 		condition: true,
 		inflow: true,
 		billingDate: true,
@@ -148,57 +105,20 @@
 		custCd: false
 	}
 
-	/**
-	 * It is Called when the user check/uncheck the column to display.
-	 * It will save the settings in the localStorage.
-	 *
-	 */
-	const handleChange = (): void => {
-		localStorage.setItem('negotiation-table-column-to-show', JSON.stringify(negotiationDataIsShown))
+	const handleChange = (e: any) => {
+		const id: keyof DataIsShown = e.target.id
+		dataIsShown[id] = e.target.checked
 	}
 
-	/**
-	 * get the file on the local storage and update the object of the columns to display.
-	 * If there isn't any data in the local storage, it will do nothing.
-	 */
-	const setColumnToDisplay = (): void => {
-		const setColumnToDisplay = localStorage.getItem('negotiation-table-column-to-show')
-
-		if (setColumnToDisplay) {
-			const columns: NegotiationDataIsShown = JSON.parse(setColumnToDisplay)
-			for (const key in columns) {
-				negotiationDataIsShown[key as keyof NegotiationDataIsShown] =
-					columns[key as keyof NegotiationDataIsShown]
-			}
-		}
-	}
-
-	onMount(() => {
-		setColumnToDisplay()
-	})
-
-	// DELETE MODAL
-
-	let phase: 'shown' | 'success' | 'error' = 'shown'
-	let currentUser: number
-	let deleteModalIsShown = false
-
-	/**
-	 * The function opens the delete modal and pass the index.
-	 * @param index: index of the element to delete
-	 */
-	const openModal = (index: number): void => {
+	const openModal = (index: number) => {
 		currentUser = index
 		deleteModalIsShown = true
 	}
 
-	$: console.log(filteredNegociations)
+	let phase: 'shown' | 'success' | 'error' = 'shown'
+	let currentUser: number
 
-	/**
-	 * On click on the delete modal.
-	 * @param event
-	 */
-	const onClick = (event: { detail: { key: string } }): void => {
+	const onClick = (event: { detail: { key: string } }) => {
 		switch (event.detail.key) {
 			case 'cancel':
 				deleteModalIsShown = false
@@ -214,21 +134,20 @@
 						negociation.set({
 							customerName: '',
 							status: '',
-							startingDate: '',
+							firstTransaction: '',
 							condition: '',
 							inflow: '',
 							billingDate: '',
 							scheduledDeposit: '',
 							outcome: '',
-							nextContactDate: '',
-							nextContactTime: '',
+							nextContact: '',
 							lastContact: '',
 							postalCode: '',
 							prefecture: '',
 							city: '',
 							address1: '',
 							address2: '',
-							numberOfBeds: 0,
+							numberOfBeds: '',
 							estimate: [],
 							personInCharge: '',
 							responsiblePerson: '',
@@ -242,12 +161,13 @@
 							occasion: '',
 							risk: '',
 							outcomeHistory: [],
+							paymentMethod: '',
 							communication: '',
-							distanceKm: 0,
-							distanceTime: 0,
+							distanceKm: '',
+							distanceTime: '',
 							preference: '',
 							contact: '',
-							billingEstimation: 0
+							billingEstimation: ''
 						})
 						goto('/negotiations')
 						phase = 'shown'
@@ -283,50 +203,55 @@
 	{/if}
 	<header class="section__header">
 		<div class="container">
-			{#each headerButtons as button}
-				<button type="button" class="primary" on:click={button.action}>
-					{button.text}
-				</button>
-			{/each}
+			<button
+				type="button"
+				class="primary"
+				on:click={() => (window.location.href = '/negotiations/new')}>＋新規追加</button
+			>
+			<button
+				type="button"
+				class="primary"
+				on:click={() => (displayMenuIsShown = !displayMenuIsShown)}
+			>
+				表示・非表示
+			</button>
+			<button type="button" class="primary" on:click={() => (searchIsShown = !searchIsShown)}>
+				絞り込み検索
+			</button>
 		</div>
 
 		{#if displayMenuIsShown}
 			<div class="container data-to-display">
 				{#each tableHeaders as header}
 					{#if header.id !== 'customerName'}
-						<InputCheckbox
-							name={header.id}
-							label={header.label}
-							bind:isChecked={negotiationDataIsShown[header.id]}
-							on:checked={handleChange}
-						/>
+						<label class="checkbox-container" for={header.id}>
+							<input
+								class="checkbox"
+								type="checkbox"
+								name={header.id}
+								id={header.id}
+								checked
+								on:change={handleChange}
+							/>{header.label}
+							<span class="checkmark" />
+						</label>
 					{/if}
 				{/each}
 			</div>
 		{/if}
 
 		{#if searchIsShown}
-			<div class="search-menu" on:input={() => handleSearch(searchInput)}>
+			<div class="search-menu">
 				<Input
 					label={'施設名'}
 					inputSize={'input--lg'}
 					name={'name-search'}
-					bind:value={searchInput.name}
+					bind:value={searchInput.text}
 				/>
 
 				<div class="container">
-					<SelectDate
-						name={'search-year'}
-						label={'年'}
-						options={years}
-						bind:value={searchInput.year}
-					/>
-					<SelectDate
-						name={'search-month'}
-						label={'月'}
-						options={months}
-						bind:value={searchInput.month}
-					/>
+					<Select label={'商談開始月'} options={years} unit={'年'} bind:value={searchInput.year} />
+					<Select options={months} unit={'月'} bind:value={searchInput.month} />
 				</div>
 			</div>
 		{/if}
@@ -338,7 +263,7 @@
 				<thead>
 					<tr>
 						{#each tableHeaders as header}
-							{#if negotiationDataIsShown[header.id]}
+							{#if dataIsShown[header.id]}
 								<th class="theader">{header.label}</th>
 							{/if}
 						{/each}
@@ -350,10 +275,11 @@
 					{#each filteredNegociations as negociation, index}
 						<tr class="trow">
 							{#each tableHeaders as header}
-								{#if negotiationDataIsShown[header.id]}
+								{#if dataIsShown[header.id]}
 									<td
-										class="tdata {header.id} {header.id === 'condition' &&
-											header.id + '--' + negociation[header.id]}"
+										class="tdata {header.id} {header.id === 'condition'
+											? header.id + '--' + negociation[header.id]
+											: ''}"
 									>
 										{#if header.id === 'customerName'}
 											<a href={'/negotiations/' + negociation.negociationId}>
@@ -368,22 +294,6 @@
 												negociation.address2}
 										{:else if header.id === 'memo'}
 											{negociation.memo[negociation.memo.length - 1].memo}
-										{:else if header.id === 'numberOfBeds'}
-											{negociation.minMaxBed.min === negociation.minMaxBed.max
-												? negociation.minMaxBed.min + '台'
-												: negociation.minMaxBed.min + '-' + negociation.minMaxBed.max + '台'}
-										{:else if header.id === 'billingEstimation'}
-											{negociation.minMaxEstimate.min === negociation.minMaxEstimate.max
-												? negociation.minMaxEstimate.min + '円'
-												: negociation.minMaxEstimate.min +
-												  '-' +
-												  negociation.minMaxEstimate.max +
-												  '円'}
-										{:else if header.id === 'nextContact'}
-											{negociation.nextContactDate !== '' ? negociation.nextContactDate : 'ー'}
-											{negociation.nextContactTime !== '' ? negociation.nextContactTime : 'ー'}
-										{:else if header.id === 'outcome' || header.id === 'billingDate'}
-											{negociation[header.id] !== '' ? negociation[header.id] : '未定'}
 										{:else}
 											{negociation[header.id]}
 										{/if}
@@ -391,13 +301,12 @@
 								{/if}
 							{/each}
 							<td class="tdata icon">
-								<button
-									class="delete"
-									type="button"
-									on:click={() => openModal(negociation.negociationId)}
-								>
+								<!-- svelte-ignore a11y-click-events-have-key-events -->
+								<!-- svelte-ignore missing-declaration -->
+								<!-- svelte-ignore a11y-no-static-element-interactions -->
+								<span on:click={() => openModal(negociation.negociationId)}>
 									<Icon icon={{ path: 'delete', color: '#0093d0' }} />
-								</button>
+								</span>
 							</td>
 						</tr>
 					{/each}
@@ -408,7 +317,9 @@
 </section>
 
 <style lang="scss">
+	@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
 	.section {
+		font-family: 'Noto Sans JP', sans-serif;
 		color: var(--black);
 
 		&__header {
@@ -438,29 +349,6 @@
 		}
 	}
 
-	.search-menu {
-		display: flex;
-		justify-content: flex-start;
-		align-items: center;
-		margin-top: 20px;
-		padding: 16px 12px;
-		gap: 24px;
-		background-color: #fff;
-		border-radius: 16px;
-
-		.container {
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
-			gap: 18px;
-		}
-	}
-
-	.btn {
-		height: fit-content;
-		width: fit-content;
-	}
-
 	.table-wrapper {
 		height: calc((558 / 768) * 100vh);
 		overflow-y: scroll;
@@ -483,20 +371,23 @@
 	.table {
 		width: max-content;
 		border-collapse: collapse;
-		background-color: #fff;
+
+		.tbody {
+			background-color: #fff;
+		}
 
 		.theader {
 			position: sticky;
 			top: 0;
 			height: 42px;
 			font-weight: bold;
-			color: var(--primary);
+			font-family: 'Noto Sans JP';
 			background-color: var(--back);
+			color: var(--primary);
 		}
 
 		.trow {
-			height: fit-content;
-			border-bottom: 1px solid var(--gray);
+			border-bottom: 1px solid var(--primary);
 
 			&:last-child {
 				border: none;
@@ -504,8 +395,8 @@
 		}
 
 		.tdata {
-			width: fit-content;
 			padding: 11px 22px;
+			width: fit-content;
 			text-align: center;
 			&.customerName {
 				max-width: 200px;
@@ -529,18 +420,68 @@
 					color: var(--primary);
 				}
 			}
+		}
 
-			&:nth-child(2n) {
-				background-color: rgb(244, 244, 244);
+		.tdata:nth-child(2n) {
+			background-color: rgb(244, 244, 244);
+		}
+	}
+
+	.checkbox {
+		margin-right: 11px;
+	}
+
+	.search-menu {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		margin-top: 20px;
+		padding: 16px 12px;
+		gap: 24px;
+		background-color: rgb(196, 227, 247);
+		background-color: #fff;
+		border-radius: 16px;
+
+		.container {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			gap: 18px;
+
+			.label {
+				font-size: 18px;
+				font-weight: 400;
 			}
 		}
 	}
 
+	.btn {
+		height: fit-content;
+		width: fit-content;
+	}
+
+	// .btn ~ .icon {
+	// 	span {
+	// 		cursor: pointer;
+
+	// 		&:hover {
+	// 			opacity: 0.5;
+	// 		}
+	// 	}
+
+	// 	> :global(.svg-icon) {
+	// 		height: 18px * 1.2;
+	// 	}
+	// }
+
 	.icon {
-		button {
+		display: inline-flex;
+		align-items: center;
+		justify-content: center;
+		width: 64px;
+
+		span {
 			cursor: pointer;
-			background-color: transparent;
-			margin: auto;
 
 			&:hover {
 				opacity: 0.5;
@@ -548,6 +489,73 @@
 
 			> :global(.svg-icon) {
 				height: 18px * 1.2;
+			}
+		}
+	}
+	// }
+
+	.checkbox-container {
+		position: relative;
+		display: flex;
+		justify-content: flex-end;
+		flex-direction: row-reverse;
+		align-items: center;
+		width: 160px;
+		margin-bottom: 12px;
+		gap: 18px;
+		font-size: 18px;
+		cursor: pointer;
+		-webkit-user-select: none;
+		-moz-user-select: none;
+		-ms-user-select: none;
+		user-select: none;
+
+		& :hover {
+			.checkbox ~ .checkmark {
+				background-color: #ccc;
+			}
+		}
+
+		& :after {
+			content: '';
+			display: none;
+		}
+
+		.checkmark {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			top: 0;
+			left: 0;
+			height: 20px;
+			width: 20px;
+			border: 1px solid var(--black);
+			border-radius: 3px;
+
+			&:after {
+				width: 3px;
+				height: 8px;
+				border: solid white;
+				border-width: 0 3px 3px 0;
+				-webkit-transform: rotate(45deg);
+				-ms-transform: rotate(45deg);
+				transform: rotate(45deg);
+			}
+		}
+
+		.checkbox {
+			position: absolute;
+			height: 0;
+			width: 0;
+			opacity: 0;
+			cursor: pointer;
+
+			&:checked ~ .checkmark {
+				background-color: var(--primary);
+
+				&:after {
+					display: block;
+				}
 			}
 		}
 	}

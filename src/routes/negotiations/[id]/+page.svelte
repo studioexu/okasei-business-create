@@ -5,11 +5,11 @@
 
 	import { negociations } from '@/stores/negociations'
 	import { page } from '$app/stores'
-	import type { NegociationEntries } from '@/libs/negociationTypes'
 
 	const negociation = $negociations.find(
 		negociation => negociation.negociationId.toString() === $page.params.id
 	)
+
 	/**
 	 * On click, we redirect the user to the edit page
 	 */
@@ -17,52 +17,41 @@
 		window.location.href = '/negotiations/' + negociation?.negociationId + '/edit'
 	}
 
-	let initialState: NegociationEntries
-
-	if (negociation !== undefined) {
-		initialState = {
-			custCd: negociation?.custCd,
-			negociationId: negociation?.negociationId,
-			status: negociation?.status,
-			startingDate: negociation?.startingDate,
-			condition: negociation?.condition,
-			inflow: negociation?.inflow,
-			preference: negociation?.preference,
-			billingDate: negociation?.billingDate,
-			scheduledDeposit: negociation?.scheduledDeposit,
-			outcome: negociation?.outcome,
-			nextContactDate: negociation.nextContactDate,
-			nextContactTime: negociation.nextContactTime,
-			lastContact: negociation?.lastContact,
-			postalCode: negociation?.postalCode,
-			prefecture: negociation?.prefecture,
-			city: negociation?.city,
-			address1: negociation?.address1,
-			address2: negociation?.address2,
-			distanceKm: negociation?.distanceKm,
-			distanceTime: negociation?.distanceTime,
-			estimate: negociation?.estimate,
-			memo: negociation?.memo,
-			personInCharge: negociation?.personInCharge,
-			responsiblePerson: negociation?.responsiblePerson,
-			communication: negociation?.communication,
-			dm: negociation?.dm,
-			video: negociation?.video,
-			checkboxes: negociation?.checkboxes,
-			checkBottleneck: negociation?.checkBottleneck,
-			occasion: negociation?.occasion,
-			risk: negociation?.risk,
-			outcomeHistory: negociation?.outcomeHistory,
-			numberOfBeds: 0,
-			billingEstimation: 0,
-			customerName: '',
-			registerBy: negociation.register_by,
-			registerAt: negociation.register_at,
-			updateBy: negociation.update_by,
-			updateAt: negociation.update_at,
-			deleteBy: negociation.delete_by,
-			deleteAt: negociation.delete_at
-		}
+	let initialState = {
+		status: negociation?.status,
+		startingDate: negociation?.firstTransaction,
+		condition: negociation?.condition,
+		inflow: negociation?.inflow,
+		preference: negociation?.preference,
+		billingDate: negociation?.billingDate,
+		scheduledDeposit: negociation?.scheduledDeposit,
+		paymentMethod: negociation?.paymentMethod,
+		outcome: negociation?.outcome,
+		nextContactDate:
+			negociation?.nextContact?.length !== undefined ? negociation?.nextContact.split(' ')[0] : '',
+		nextContactTime:
+			negociation?.nextContact?.length !== undefined ? negociation?.nextContact.split(' ')[1] : '',
+		lastContact: negociation?.lastContact,
+		postalCode: negociation?.postalCode,
+		prefecture: negociation?.prefecture,
+		city: negociation?.city,
+		address1: negociation?.address1,
+		address2: negociation?.address2,
+		distanceKm: negociation?.distanceKm,
+		distanceTime: negociation?.distanceTime,
+		estimate: negociation?.estimate,
+		memo: negociation?.memo,
+		employeeInCharge: negociation?.personInCharge,
+		responsiblePerson: negociation?.responsiblePerson,
+		communication: negociation?.communication,
+		directMessage: negociation?.dm,
+		videoUrl: negociation?.video,
+		checkboxes: negociation?.checkboxes,
+		checkBottleneck: negociation?.checkBottleneck,
+		occasion: negociation?.occasion,
+		risk: negociation?.risk,
+		outcomeHistory: negociation?.outcomeHistory,
+		custCd: negociation?.custCd
 	}
 </script>
 
@@ -72,46 +61,6 @@
 	</div>
 
 	<footer class="section__footer">
-		<div class="metadata">
-			<div class="metadata">
-				<div class="registration">
-					<div class="registration__data">
-						<h3 class="registration__data__title">登録者名</h3>
-						<p class="registration__data__content">山田太郎</p>
-					</div>
-					<div class="registration__data">
-						<h3 class="registration__data__title">登録日</h3>
-						<p class="registration__data__content">{initialState.registerAt?.split('T')[0]}</p>
-					</div>
-					<div class="registration__data">
-						<h3 class="registration__data__title">登録時刻</h3>
-						<p class="registration__data__content">
-							{initialState.registerAt?.split('T')[1].split('.')[0]}
-						</p>
-					</div>
-				</div>
-
-				{#if initialState.updateAt !== '' && initialState.updateAt !== undefined}
-					<div class="registration">
-						<div class="registration__data">
-							<h3 class="registration__data__title">更新者名</h3>
-							<p class="registration__data__content">山田太郎</p>
-						</div>
-						<div class="registration__data">
-							<h3 class="registration__data__title">更新日</h3>
-							<p class="registration__data__content">{initialState.updateAt?.split('T')[0]}</p>
-						</div>
-						<div class="registration__data">
-							<h3 class="registration__data__title">更新時刻</h3>
-							<p class="registration__data__content">
-								{initialState.updateAt?.split('T')[1].split('.')[0]}
-							</p>
-						</div>
-					</div>
-				{/if}
-			</div>
-		</div>
-
 		<div class="button-container">
 			<button class="primary" on:click={handleLinkClicked}> 編集 </button>
 		</div>
@@ -130,28 +79,27 @@
 			padding-bottom: 48px;
 			margin-top: 20px;
 		}
-
-		&__footer {
+	}
+	.section__footer {
+		display: flex;
+		justify-content: space-between;
+		align-items: flex-end;
+		margin-top: 1rem;
+		padding-bottom: 2rem;
+		.registration {
 			display: flex;
-			justify-content: space-between;
-			align-items: flex-end;
-			margin-top: 1rem;
-			padding-bottom: 2rem;
-			.registration {
+			gap: 2rem;
+			align-items: center;
+			&__data {
 				display: flex;
-				gap: 2rem;
 				align-items: center;
-				&__data {
-					display: flex;
-					align-items: center;
-					gap: 1rem;
+				gap: 1rem;
 
-					&__title {
-						font-size: 14px;
-					}
-					&__content {
-						font-size: 14px;
-					}
+				&__title {
+					font-size: 14px;
+				}
+				&__content {
+					font-size: 14px;
 				}
 			}
 		}

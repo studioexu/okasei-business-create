@@ -57,7 +57,7 @@ export const negociation: Writable<NegociationBackend> = writable({
 
 export const negociations: Writable<NegociationBackend[]> = writable([
 	{
-		customerName: '株式会社ガスト',
+		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
 		startingDate: '2002-01-01',
 		condition: 'A',
@@ -80,7 +80,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		dm: '郵送済み',
 		video: '2023-05-30',
 		negociationId: 1,
-		custCd: 18,
+		custCd: 1,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
 			{ title: '動画視聴　確認', isChecked: false },
@@ -132,7 +132,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		delete_at: '2023-11-25T16:09:16.703988+09:00'
 	},
 	{
-		customerName: '株式会社泉',
+		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
 		startingDate: '2023-01-01',
 		condition: 'B',
@@ -209,7 +209,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		responsiblePerson: ''
 	},
 	{
-		customerName: '株式会社任天堂',
+		customerName: '社会営利法人 yyyyyyy 緑風荘',
 		status: '受注',
 		startingDate: '2023-01-01',
 		condition: 'A',
@@ -231,7 +231,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		dm: '郵送済み',
 		video: '2023-05-30',
 		negociationId: 3,
-		custCd: 10,
+		custCd: 2,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
 			{ title: '動画視聴　確認', isChecked: false },
@@ -261,7 +261,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		responsiblePerson: ''
 	},
 	{
-		customerName: '株式会社泉',
+		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
 		startingDate: '2023-01-01',
 		condition: 'B',
@@ -313,7 +313,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		responsiblePerson: ''
 	},
 	{
-		customerName: '株式会社泉',
+		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
 		startingDate: '2023-01-01',
 		condition: 'A',
@@ -365,7 +365,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		responsiblePerson: ''
 	},
 	{
-		customerName: '株式会社泉',
+		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
 		startingDate: '2023-01-01',
 		condition: 'B',
@@ -417,7 +417,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		responsiblePerson: ''
 	},
 	{
-		customerName: '株式会社泉',
+		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
 		startingDate: '2023-01-01',
 		condition: 'A',
@@ -469,7 +469,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		responsiblePerson: ''
 	},
 	{
-		customerName: '株式会社泉',
+		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
 		startingDate: '2023-01-01',
 		condition: 'B',
@@ -491,7 +491,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		dm: '郵送済み',
 		video: '2023-05-30',
 		negociationId: 8,
-		custCd: 1,
+		custCd: 3,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
 			{ title: '動画視聴　確認', isChecked: false },
@@ -521,7 +521,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		responsiblePerson: ''
 	},
 	{
-		customerName: '株式会社泉',
+		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
 		startingDate: '2023-01-01',
 		condition: 'A',
@@ -573,7 +573,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		responsiblePerson: ''
 	},
 	{
-		customerName: '株式会社泉',
+		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
 		startingDate: '2023-01-01',
 		condition: 'B',
@@ -625,7 +625,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		responsiblePerson: ''
 	},
 	{
-		customerName: '株式会社泉',
+		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
 		startingDate: '2023-01-01',
 		condition: 'A',
@@ -677,7 +677,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		responsiblePerson: ''
 	},
 	{
-		customerName: '株式会社泉',
+		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
 		startingDate: '2023-01-01',
 		condition: 'B',

@@ -46,7 +46,7 @@
 		{ text: '絞り込み検索', action: () => (searchIsShown = !searchIsShown) }
 	]
 
-	// SEARCH NEGOTIATIONS
+	// SEARCH FEATURE
 
 	const years: string[] = ['']
 	const months: string[] = ['']
@@ -102,7 +102,7 @@
 
 	$: filteredNegociations = handleSearch(searchInput)
 
-	//NEGOTIATION DATE TO DISPLAY
+	//NEGOTIATION DATA TO DISPLAY
 
 	interface NegotiationDataIsShown {
 		negociationId: boolean
@@ -391,12 +391,13 @@
 								{/if}
 							{/each}
 							<td class="tdata icon">
-								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<!-- svelte-ignore missing-declaration -->
-								<!-- svelte-ignore a11y-no-static-element-interactions -->
-								<span on:click={() => openModal(negociation.negociationId)}>
+								<button
+									class="delete"
+									type="button"
+									on:click={() => openModal(negociation.negociationId)}
+								>
 									<Icon icon={{ path: 'delete', color: '#0093d0' }} />
-								</span>
+								</button>
 							</td>
 						</tr>
 					{/each}
@@ -460,25 +461,6 @@
 		width: fit-content;
 	}
 
-	.icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 64px;
-
-		span {
-			cursor: pointer;
-
-			&:hover {
-				opacity: 0.5;
-			}
-
-			> :global(.svg-icon) {
-				height: 18px * 1.2;
-			}
-		}
-	}
-
 	.table-wrapper {
 		height: calc((558 / 768) * 100vh);
 		overflow-y: scroll;
@@ -513,6 +495,7 @@
 		}
 
 		.trow {
+			height: fit-content;
 			border-bottom: 1px solid var(--gray);
 
 			&:last-child {
@@ -549,6 +532,22 @@
 
 			&:nth-child(2n) {
 				background-color: rgb(244, 244, 244);
+			}
+		}
+	}
+
+	.icon {
+		button {
+			cursor: pointer;
+			background-color: transparent;
+			margin: auto;
+
+			&:hover {
+				opacity: 0.5;
+			}
+
+			> :global(.svg-icon) {
+				height: 18px * 1.2;
 			}
 		}
 	}

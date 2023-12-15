@@ -1,21 +1,24 @@
 <script lang="ts">
 	import { toCamelCase } from '@/libs/formatters'
+	import { createEventDispatcher } from 'svelte'
 
 	export let label: string = ''
 	export let placeholder: string = ''
 	export let errorMsg: string = ''
 	export let unit: string = ''
 	export let name: string = ''
-	export let list: string[]
 	export let value: string = ''
+	export let list: string[]
+
 	export let required: boolean = false
 	export let isValid: boolean = true
+
+	const dispatch = createEventDispatcher()
 
 	import { inputIsValid } from '@/libs/customerValidations'
 
 	const handleChange = (e: any) => {
 		const input = e.target.value
-
 		isValid = inputIsValid(toCamelCase(name), input)
 	}
 
@@ -23,6 +26,8 @@
 		if (!isValid) {
 			isValid = inputIsValid(name, value)
 		}
+
+		dispatch('select', { value: value })
 	}
 
 	$: checkValueOnChange(value)
@@ -39,13 +44,13 @@
 	<input
 		class="input"
 		id={name}
-		{name}
-		autocomplete="off"
 		list="{name}s"
+		autocomplete="off"
+		{placeholder}
+		{name}
 		on:blur={handleChange}
 		on:click={() => (value = '')}
 		bind:value
-		{placeholder}
 	/>
 
 	{#if unit !== ''}
@@ -54,7 +59,7 @@
 
 	<datalist id="{name}s" class="datalist">
 		{#each list as option}
-			<option class="option" value={option}>{option}</option>
+			<option class="option" value={option} />
 		{/each}
 	</datalist>
 
@@ -68,11 +73,11 @@
 		position: relative;
 		align-self: center;
 
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
+		// &:first-child {
+		// 	.label {
+		// 		width: 130px;
+		// 	}
+		// }
 
 		.label {
 			width: max-content;
@@ -81,9 +86,9 @@
 			align-items: center;
 		}
 
-		.input {
-			width: 105px;
-		}
+		// .input {
+		// 	width: 105px;
+		// }
 
 		.font-error {
 			position: absolute;

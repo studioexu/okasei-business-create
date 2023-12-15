@@ -5,13 +5,27 @@
 	import { inputIsValid } from '@/libs/customerValidations'
 	import { toCamelCase } from '@/libs/formatters'
 
-	export let placeholder: string = ''
 	export let value: string = ''
 	export let name: string
 	export let label: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
+
+	const setPlaceholder = (name: string) => {
+		switch (name) {
+			case 'city':
+				return '〇〇市'
+			case 'address1':
+				return '〇〇区〇〇町'
+			case 'address2':
+				return '1-1-1'
+			default:
+				return ''
+		}
+	}
+
+	let placeholder: string = setPlaceholder(name)
 
 	/**
 	 * Check if the value of the input is valid, when the focus is not on the input.
@@ -36,10 +50,10 @@
 		class="input {name}"
 		id={name}
 		{name}
+		{placeholder}
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
-		{placeholder}
 	/>
 	<span class="font-error">{errorMsg}</span>
 </div>
@@ -56,17 +70,16 @@
 		width: fit-content;
 		gap: 10px;
 
-		&:first-child {
-			.label {
-				width: 130px;
-			}
-		}
+		// &:first-child {
+		// 	.label {
+		// 		width: 130px;
+		// 	}
+		// }
 
 		.input {
 			@include responsiveInputWidth((359));
-
 			&.city {
-				@include responsiveInputWidth((105));
+				width: 105px;
 			}
 		}
 

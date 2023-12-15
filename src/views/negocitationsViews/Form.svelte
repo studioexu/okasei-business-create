@@ -24,8 +24,6 @@
 	export let currentCustomerId: number
 
 	let currentCustomer: CustomerFactory | undefined
-	let outcomeNotConfirmed = false
-	let billingDateNotConfirmed = false
 
 	const products = [
 		{
@@ -435,12 +433,6 @@
 
 		<div class="form-row">
 			<InputDate label={'納期'} name={'billing-date'} bind:value={initialState.billingDate} />
-
-			<InputCheckbox
-				label={'未確定'}
-				name={'billing-date-not-confirmed'}
-				bind:isChecked={billingDateNotConfirmed}
-			/>
 		</div>
 
 		<div class="form-row">
@@ -454,12 +446,6 @@
 
 		<div class="form-row">
 			<InputDate label={'成否日'} name={'outcome'} bind:value={initialState.outcome} />
-
-			<InputCheckbox
-				label={'未定'}
-				name={'outcome-not-confirmed'}
-				bind:isChecked={outcomeNotConfirmed}
-			/>
 		</div>
 
 		<div class="form-row">
@@ -470,7 +456,12 @@
 			/>
 
 			<div class="input-wrapper">
-				<input type="time" id="next-contact-time" bind:value={initialState.nextContactTime} />
+				<input
+					class="input"
+					type="time"
+					id="next-contact-time"
+					bind:value={initialState.nextContactTime}
+				/>
 			</div>
 		</div>
 
@@ -486,6 +477,7 @@
 				name={'postal-code'}
 				inputSize={'input--sm'}
 				label={'納期先'}
+				placeholder={'0000000'}
 				bind:value={initialState.postalCode}
 			/>
 
@@ -498,6 +490,7 @@
 				name={'prefecture'}
 				label={'都道府県'}
 				list={prefectures}
+				placeholder={'〇〇県'}
 				bind:value={initialState.prefecture}
 			/>
 			<InputAddress name={'city'} label={'市区町村'} bind:value={initialState.city} />
@@ -523,9 +516,7 @@
 		<legend class="legend hidden estimate">見積もり</legend>
 
 		<div class="form-row">
-			<div>
-				<h3 class="label">見積もり金額</h3>
-			</div>
+			<h3 class="label">見積もり金額</h3>
 			<div class="container container--column">
 				{#each initialState.estimate as estimate, index}
 					<div class="wrapper" on:change={() => updateEstimateTaxOnChange(index)}>
@@ -551,28 +542,23 @@
 							<InputNumber
 								label={'消費税'}
 								name={'tax'}
-								unit="円"
+								unit={'円'}
+								disabled={true}
 								bind:value={estimate.estimateTax}
 							/>
+
 							<InputCheckbox name={'with-tax'} label={'税有り'} bind:isChecked={estimate.withTax} />
 						</div>
 
 						{#each estimate.items as item, indexItem}
 							<div class="form-row" on:change={() => getEstimate(index)}>
-								<div class="input-wrapper">
-									<label class="label" for="product-list">商品</label>
-									<input
-										placeholder="商品を選択"
-										list="product-list"
-										bind:value={item.name}
-										on:change={() => handleChooseItem(index, indexItem)}
-									/>
-									<datalist id="product-list" class="datalist">
-										{#each products as product}
-											<option class="option" value={product.name}>{product.name}</option>
-										{/each}
-									</datalist>
-								</div>
+								<InputSelect
+									placeholder={'商品を選択'}
+									label={'選択'}
+									list={products.map(product => product.name)}
+									bind:value={item.name}
+									on:select={() => handleChooseItem(index, indexItem)}
+								/>
 
 								<InputNumber unit={'円'} name={'price'} bind:value={item.price} />
 								<InputNumber unit={'台'} name={'quantity'} bind:value={item.quantity} />
@@ -604,7 +590,12 @@
 						</div>
 					</div>
 				{/each}
+			</div>
+		</div>
 
+		<div class="form-row">
+			<div class="input-wrapper">
+				<span class="label" />
 				<button
 					type="button"
 					class="btn primary"
@@ -642,7 +633,12 @@
 						</div>
 					</div>
 				{/each}
+			</div>
+		</div>
 
+		<div class="form-row">
+			<div class="input-wrapper">
+				<span class="label" />
 				<button
 					type="button"
 					class="btn primary"
@@ -688,7 +684,12 @@
 				bind:value={initialState.dm}
 			/>
 
-			<Input name={'presentation-video'} label={'PR動画'} bind:value={initialState.video} />
+			<Input
+				name={'presentation-video'}
+				label={'PR動画'}
+				placeholder={'未入力'}
+				bind:value={initialState.video}
+			/>
 		</div>
 	</fieldset>
 
@@ -797,25 +798,6 @@
 		flex-wrap: wrap;
 	}
 
-	.btn {
-		margin: 0;
-		align-self: flex-start;
-		padding-top: 0;
-		padding-bottom: 0;
-		height: 32px;
-
-		&.delete {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			padding: 0;
-			height: 32px;
-			width: 70px;
-			min-width: 0;
-			margin-left: auto;
-		}
-	}
-
 	.fieldset {
 		margin-bottom: 20px;
 	}
@@ -842,7 +824,29 @@
 	.label {
 		font-size: 18px;
 		font-weight: 400;
-		width: 130px;
+	}
+
+	.display {
+		width: 105px;
+	}
+
+	.btn {
+		margin: 0;
+		align-self: flex-start;
+		padding-top: 0;
+		padding-bottom: 0;
+		height: 32px;
+
+		&.delete {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0;
+			height: 32px;
+			width: 70px;
+			min-width: 0;
+			margin-left: auto;
+		}
 	}
 
 	.wrapper {
@@ -851,10 +855,14 @@
 		gap: 18px;
 		background-color: #f4f4f4;
 
+		.form-row:last-child {
+			margin-bottom: 0;
+		}
+
 		textarea {
 			resize: none;
 			min-width: 30vw;
-			width: calc(100% - 24px);
+			width: 100%;
 			height: calc(100px - 24px);
 			border-radius: 8px;
 			padding: 12px;
@@ -865,21 +873,10 @@
 	.container {
 		display: flex;
 		gap: 18px;
+		flex-grow: 1;
 
 		&--column {
 			flex-direction: column;
-		}
-	}
-
-	.input-wrapper {
-		input {
-			height: 31px;
-		}
-
-		&:first-child {
-			.label {
-				width: 130px;
-			}
 		}
 	}
 
@@ -891,7 +888,19 @@
 		gap: 10px;
 	}
 
-	:global(.input-wrapper:first-child .label) {
+	:global(.input-wrapper .label) {
+		align-self: flex-start;
+		height: 31px;
+		display: flex;
+		align-items: center;
+		min-width: 80px;
+	}
+
+	:global(.form-row > .label) {
+		width: 130px;
+	}
+
+	:global(.fieldset > .form-row > .input-wrapper:first-child .label) {
 		width: 130px;
 	}
 

@@ -26,7 +26,7 @@
 			custCd: negociation?.custCd,
 			customerName: negociation?.customerName,
 			status: negociation?.status,
-			startingDate: negociation?.firstTransaction,
+			startingDate: negociation?.startingDate,
 			condition: negociation?.condition,
 			inflow: negociation?.inflow,
 			preference: negociation?.preference,

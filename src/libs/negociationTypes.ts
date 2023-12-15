@@ -23,55 +23,55 @@ export interface OutcomeHistory {
 	memo: string
 }
 
-interface Checkbox {
+export interface Checkbox {
 	title: string
 	isChecked: boolean
 }
 
-export interface Negociation {
-	negociationId: number
-	custCd: number
-	customerName: string
-	status: string
-	firstTransaction: string
-	condition: string
-	contact: string
-	billingDate: string
-	scheduledDeposit: string
-	outcome: string
-	nextContactDate: string
-	nextContactTime: string
-	lastContact: string
-	postalCode: string
-	prefecture: string
-	city: string
-	address1: string
-	address2: string
-	distanceKm: number
-	distanceTime: number
-	estimate: Estimate[]
-	personInCharge: string
-	memo: Memo[]
-	dm: string
-	video: string
-	inflow: string
-	preference: string
-	checkboxes: Checkbox[]
-	checkBottleneck: string
-	occasion: string
-	risk: string
-	outcomeHistory: OutcomeHistory[]
-	responsiblePerson: string
-	communication: string
-	numberOfBeds: number
-	billingEstimation: number
-	registerBy?: number | null
-	registerAt?: string
-	updateBy?: number | null
-	updateAt?: string
-	deleteBy?: number | null
-	deleteAt?: string
-}
+// export interface Negociation {
+// 	negociationId: number
+// 	custCd: number
+// 	customerName: string
+// 	status: string
+// 	startingDate: string
+// 	condition: string
+// 	contact: string
+// 	billingDate: string
+// 	scheduledDeposit: string
+// 	outcome: string
+// 	nextContactDate: string
+// 	nextContactTime: string
+// 	lastContact: string
+// 	postalCode: string
+// 	prefecture: string
+// 	city: string
+// 	address1: string
+// 	address2: string
+// 	distanceKm: number
+// 	distanceTime: number
+// 	estimate: Estimate[]
+// 	personInCharge: string
+// 	memo: Memo[]
+// 	dm: string
+// 	video: string
+// 	inflow: string
+// 	preference: string
+// 	checkboxes: Checkbox[]
+// 	checkBottleneck: string
+// 	occasion: string
+// 	risk: string
+// 	outcomeHistory: OutcomeHistory[]
+// 	responsiblePerson: string
+// 	communication: string
+// 	numberOfBeds: number
+// 	billingEstimation: number
+// 	registerBy?: number | null
+// 	registerAt?: string
+// 	updateBy?: number | null
+// 	updateAt?: string
+// 	deleteBy?: number | null
+// 	deleteAt?: string
+// }
 
 export interface NegociationEntries {
 	custCd: number
@@ -121,7 +121,7 @@ export class NegociationBackend {
 	negociationId: number
 	customerName: string
 	status: string
-	firstTransaction: string
+	startingDate: string
 	condition: string
 	contact: string
 	billingDate: string
@@ -165,7 +165,7 @@ export class NegociationBackend {
 		this.negociationId = data.negociationId
 		this.customerName = data.customerName
 		this.status = data.status
-		this.firstTransaction = data.startingDate
+		this.startingDate = data.startingDate
 		this.condition = data.condition
 		this.contact = data.inflow
 		this.billingDate = data.billingDate

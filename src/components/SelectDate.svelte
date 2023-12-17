@@ -20,26 +20,36 @@
 
 <style lang="scss">
 	.input-wrapper {
+		position: relative;
 		display: flex;
-		gap: 12px;
-	}
+		align-items: center;
+		width: fit-content;
+		gap: 10px;
 
-	.select {
-		width: calc(((103 - 10 - 2) / 1366) * 100vw);
-		height: 31px;
-		padding-bottom: 0;
-		padding-top: 0;
-
-		&:focus {
-			border-color: var(--primary-color);
+		.label {
+			align-self: flex-start;
+			display: flex;
+			align-items: center;
+			height: 31px;
 		}
 
-		&.empty {
-			color: #d0cfcf;
-		}
+		.select {
+			width: calc(((103 - 10 - 2) / 1366) * 100vw);
+			height: 31px;
+			padding-bottom: 0;
+			padding-top: 0;
 
-		option[value=''][disabled] {
-			display: none;
+			&:focus {
+				border-color: var(--primary-color);
+			}
+
+			&.empty {
+				color: #d0cfcf;
+			}
+
+			option[value=''][disabled] {
+				display: none;
+			}
 		}
 	}
 </style>

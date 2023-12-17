@@ -3,7 +3,6 @@
 	import Select from '@/components/Select.svelte'
 	import InputCheckbox from '@/components/InputCheckbox.svelte'
 	import InputDate from '@/components/InputDate.svelte'
-	import Icon from '@/components/Icon.svelte'
 	import InputNumber from '@/components/InputNumber.svelte'
 	import InputAddress from '@/components/InputAddress.svelte'
 	import InputSelect from '@/components/InputSelect.svelte'
@@ -11,9 +10,9 @@
 	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 	import { negociations } from '@/stores/negociations'
 	import { NegociationBackend, type Estimate } from '@/libs/negociationTypes'
-	import type { Item, Memo, NegociationEntries, OutcomeHistory } from '@/libs/negociationTypes'
+	import type { Memo, NegociationEntries, OutcomeHistory } from '@/libs/negociationTypes'
 
-	import { prefectures, tax } from '@/data/data'
+	import { prefectures } from '@/data/data'
 	import InputEstimate from '@/components/InputEstimate.svelte'
 
 	export let initialState: NegociationEntries
@@ -30,24 +29,6 @@
 		value: customer.custCD,
 		text: customer.custName
 	}))
-
-	const products = [
-		{
-			id: 1,
-			name: 'item A',
-			price: 10000
-		},
-		{
-			id: 2,
-			name: 'item B',
-			price: 15000
-		},
-		{
-			id: 3,
-			name: 'item C',
-			price: 20000
-		}
-	]
 
 	$: currentCustomer = customers.filter(customer => {
 		if (customer.custCD === currentCustomerId) {
@@ -85,30 +66,6 @@
 		initialState.memo.length === 0
 			? [...initialState.memo, { date: '', memo: '' }]
 			: initialState.memo
-
-	///// REMOVE OR ADD ITEM IN PRODUCT ARRAY IN ESTIMATE
-
-	/**
-	 * Add an item to the items array in a specific estimate object
-	 * @param index: corresponding to the index of the right estimate object.
-	 */
-	const addItem = (index: number): void => {
-		initialState.estimate[index].items = [
-			...initialState.estimate[index].items,
-			{ name: '', quantity: 0, price: 0 }
-		]
-	}
-
-	/**
-	 * Remove an item in the items array of one estimate array.
-	 * @param index:corresponding to the index of the right estimate object we want to remove an item.
-	 * @param itemIndex: index of the item we want to remove.
-	 */
-	const removeItem = (estimateIndex: number, itemIndex: number): void => {
-		initialState.estimate[estimateIndex].items = initialState.estimate[estimateIndex].items.filter(
-			(item: Item) => initialState.estimate[estimateIndex].items[itemIndex] !== item && item
-		)
-	}
 
 	//// REMOVE OR ADD ELEMENT IN ESTIMATE / MEMO / OUTCOMEHISTORY ARRAYS
 
@@ -212,10 +169,6 @@
 		}
 	}
 
-	/////// ESTIMATE ARRAY
-
-	$: initialState.billingEstimation = getEstimateTotal()
-
 	const getTotalBeds = (): number => {
 		let total = 0
 
@@ -227,75 +180,6 @@
 		})
 
 		return total
-	}
-
-	/**
-	 *
-	 * @param isTaxIsAdded: boolean, check if the tax has to be added or not. 税金を追加するかどうかと確認する。
-	 * @param estimateWithoutTax: number, corresponding to the amout of the estimate without the tax. 税抜の見積もりの金額である。
-	 * @returns number: if we add the tax, we will return the round result of the multiplication between the estimate amount and the current tax amount.
-	 */
-	const getTaxAmount = (isTaxAdded: boolean, estimateWithoutTax: number): number => {
-		if (isTaxAdded) {
-			return Math.round(estimateWithoutTax * tax)
-		} else {
-			return 0
-		}
-	}
-
-	/**
-	 * update the estimate tax amount in the initialState when there are changes.
-	 * @param index: corresponding to the index in the array of estimate.
-	 */
-	const updateEstimateTaxOnChange = (index: number): void => {
-		let estimateAmount = isNaN(initialState.estimate[index].estimateWithoutTax)
-			? 0
-			: initialState.estimate[index].estimateWithoutTax
-
-		initialState.estimate[index].estimateTax = getTaxAmount(
-			initialState.estimate[index].withTax,
-			estimateAmount
-		)
-	}
-
-	/**
-	 * When the user chooses an item,
-	 * it will update the right items array with the selected item and the corresponding price.
-	 * @param estimateIndex
-	 * @param itemIndex
-	 */
-	const handleChooseItem = (estimateIndex: number, itemIndex: number): void => {
-		const item = initialState.estimate[estimateIndex].items[itemIndex]
-		const correspondingItemInProducts = products.find(product => product.name === item.name)
-		if (correspondingItemInProducts) item.price = correspondingItemInProducts.price
-	}
-
-	/**
-	 * Calculate the total of all estimates in estimate array.
-	 * お見積もりの合計。
-	 * @returns estimateTotal, 見積もりの合計
-	 */
-	const getEstimateTotal = (): number => {
-		let estimateTotal = 0
-		initialState.estimate.map((estimate: Estimate) => {
-			estimateTotal += estimate.estimateWithoutTax
-		})
-
-		return estimateTotal
-	}
-
-	/**
-	 * Calculate one estimate corresponding to the index. お見積もりを計算する。
-	 * @param estimateIndex
-	 */
-	const getEstimate = (estimateIndex: number): void => {
-		let estimate = 0
-		const items = initialState.estimate[estimateIndex].items
-
-		items.map((item: Item) => {
-			estimate += (isNaN(item.price) ? 0 : item.price) * (isNaN(item.quantity) ? 0 : item.quantity)
-		})
-		initialState.estimate[estimateIndex].estimateWithoutTax = estimate
 	}
 
 	////// FORM SUBMIT
@@ -314,7 +198,6 @@
 			isSucceeded = true
 
 			initialState.numberOfBeds = getTotalBeds()
-			initialState.billingEstimation = getEstimateTotal()
 
 			if (formType === 'create') {
 				let customer = customers.find(customer => customer.custCD === currentCustomerId)
@@ -525,80 +408,6 @@
 						on:deleteEstimate={() =>
 							handleDeleteItemFromArray(index, initialState.estimate, 'estimate')}
 					/>
-					<!-- <div class="wrapper" on:change={() => updateEstimateTaxOnChange(index)}>
-						<div class="form-row">
-							<InputDate label={'発行日'} name={'issue-date'} bind:value={estimate.issueDate} />
-						</div>
-						<div class="form-row">
-							<InputDate
-								label={'見積期日'}
-								name={'estimation-due-date'}
-								bind:value={estimate.dueDate}
-							/>
-						</div>
-						<div class="form-row">
-							<InputNumber
-								label={'税抜価格'}
-								name={'estimate-without-tax'}
-								unit="円"
-								on:input={() => getEstimate(index)}
-								bind:value={estimate.estimateWithoutTax}
-							/>
-
-							<InputNumber
-								label={'消費税'}
-								name={'tax'}
-								unit={'円'}
-								disabled={true}
-								bind:value={estimate.estimateTax}
-							/>
-
-							<InputCheckbox
-								name={'with-tax' + index}
-								label={'税有り'}
-								bind:isChecked={estimate.withTax}
-							/>
-						</div>
-
-						{#each estimate.items as item, indexItem}
-							<div class="form-row" on:change={() => getEstimate(index)}>
-								<InputSelect
-									placeholder={'商品を選択'}
-									label={'選択'}
-									list={products.map(product => product.name)}
-									bind:value={item.name}
-									on:select={() => handleChooseItem(index, indexItem)}
-								/>
-
-								<InputNumber unit={'円'} name={'price'} bind:value={item.price} />
-								<InputNumber unit={'台'} name={'quantity'} bind:value={item.quantity} />
-								{#if estimate.items.length > 1}
-									<button
-										type="button"
-										class="btn secondary delete"
-										on:click={() => removeItem(index, indexItem)}
-									>
-										<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
-									</button>
-								{/if}
-							</div>
-						{/each}
-
-						<div class="form-row">
-							<button type="button" class="btn add primary" on:click={() => addItem(index)}
-								>＋商品追加</button
-							>
-							{#if initialState.estimate.length > 1}
-								<button
-									type="button"
-									class="btn primary delete"
-									on:click={() =>
-										handleDeleteItemFromArray(index, initialState.estimate, 'estimate')}
-									>削除</button
-								>
-							{/if}
-						</div>
-					</div> -->
 				{/each}
 			</div>
 		</div>
@@ -630,8 +439,8 @@
 						<div class="form-row">
 							<textarea name={'important-memo'} id="important-memo" bind:value={memo.memo} />
 						</div>
-						<div class="form-row">
-							{#if initialState.memo.length > 1}
+						{#if initialState.memo.length > 1}
+							<div class="form-row">
 								<button
 									type="button"
 									class="btn primary delete"
@@ -639,8 +448,8 @@
 								>
 									削除
 								</button>
-							{/if}
-						</div>
+							</div>
+						{/if}
 					</div>
 				{/each}
 			</div>
@@ -721,7 +530,7 @@
 		<div class="form-row">
 			<div class="textarea-wrapper">
 				<label class="label" for="bottleneck">ボトルネック確認</label>
-				<textarea name="bottleneck" id="bottleneck" bind:value={initialState.checkBottleneck} />
+				<textarea name="bottleneck" id="bottleneck" bind:value={initialState.bottleneck} />
 			</div>
 		</div>
 		<div class="form-row">
@@ -799,6 +608,7 @@
 	.hidden {
 		display: none;
 	}
+
 	:global(.form-row) {
 		display: flex;
 		justify-content: flex-start;
@@ -808,32 +618,12 @@
 		flex-wrap: wrap;
 	}
 
+	:global(.form-row:last-child()) {
+		margin-bottom: 0;
+	}
+
 	.fieldset {
 		margin-bottom: 20px;
-	}
-
-	.textarea-wrapper {
-		display: flex;
-		width: 100%;
-
-		.label {
-			width: 190px;
-		}
-
-		textarea {
-			resize: none;
-			min-width: 30vw;
-			width: calc(100% - 24px);
-			height: calc(100px - 24px);
-			border-radius: 8px;
-			padding: 12px;
-			outline: none;
-		}
-	}
-
-	.label {
-		font-size: 18px;
-		font-weight: 400;
 	}
 
 	.display {
@@ -880,6 +670,25 @@
 		}
 	}
 
+	.textarea-wrapper {
+		display: flex;
+		width: 100%;
+
+		.label {
+			width: 190px;
+		}
+
+		textarea {
+			resize: none;
+			min-width: 30vw;
+			width: 100%;
+			height: calc(100px - 24px);
+			border-radius: 8px;
+			padding: 12px;
+			outline: none;
+		}
+	}
+
 	.container {
 		display: flex;
 		gap: 18px;
@@ -890,19 +699,7 @@
 		}
 	}
 
-	:global(.input-wrapper) {
-		position: relative;
-		display: flex;
-		align-items: center;
-		width: fit-content;
-		gap: 10px;
-	}
-
 	:global(.input-wrapper .label) {
-		align-self: flex-start;
-		height: 31px;
-		display: flex;
-		align-items: center;
 		min-width: 80px;
 	}
 
@@ -914,53 +711,28 @@
 		width: 130px;
 	}
 
-	:global(.input-wrapper .input) {
-		height: 31px;
-		&::placeholder {
-			color: rgb(206, 205, 205);
-		}
-
-		&:focus {
-			border-color: var(--primary-color);
-		}
-	}
-
 	:global(.required-mark) {
 		color: var(--error);
 	}
 
-	:global(.error .input) {
-		transition: border 300ms;
-		border-color: var(--error);
-		animation: buzz 100ms;
-		animation-iteration-count: 3;
-	}
-
-	:global(.error .input, .error .select) {
-		transition: border 300ms;
-		border-color: var(--error);
-		animation: buzz 100ms;
-		animation-iteration-count: 3;
-	}
-
-	:global(.error .font-error) {
-		.font-error {
-			opacity: 1;
-			transition: all 300ms;
-		}
-	}
-
-	@keyframes buzz {
-		0% {
-			transform: translateX(0px);
+	.input-wrapper {
+		.label {
+			font-size: 18px;
+			font-weight: 400;
 		}
 
-		50% {
-			transform: translateX(-10px);
+		.input {
+			height: 31px;
 		}
 
-		100% {
-			transform: translateX(10px);
+		&:first-child {
+			display: flex;
+			gap: 10px;
+			.label {
+				display: block;
+				height: 31px;
+				min-width: 130px;
+			}
 		}
 	}
 </style>

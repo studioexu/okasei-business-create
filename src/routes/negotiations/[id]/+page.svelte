@@ -49,7 +49,7 @@
 			dm: negociation?.dm,
 			video: negociation?.video,
 			checkboxes: negociation?.checkboxes,
-			checkBottleneck: negociation?.checkBottleneck,
+			bottleneck: negociation?.bottleneck,
 			occasion: negociation?.occasion,
 			risk: negociation?.risk,
 			outcomeHistory: negociation?.outcomeHistory,

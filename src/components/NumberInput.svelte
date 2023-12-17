@@ -51,8 +51,14 @@
 	.input-wrapper {
 		width: fit-content;
 
+		.label {
+			align-self: flex-start;
+			display: flex;
+			align-items: center;
+			height: 31px;
+		}
+
 		.input {
-			@include responsiveInputWidth((103));
 			width: 100px;
 		}
 	}

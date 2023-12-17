@@ -238,7 +238,7 @@
 							negociationId: 0,
 							custCd: 0,
 							checkboxes: [],
-							checkBottleneck: '',
+							bottleneck: '',
 							occasion: '',
 							risk: '',
 							outcomeHistory: [],

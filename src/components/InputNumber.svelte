@@ -50,11 +50,57 @@
 
 <style lang="scss">
 	.input-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
 		width: fit-content;
+		gap: 10px;
+
+		.label {
+			align-self: flex-start;
+			display: flex;
+			align-items: center;
+			height: 31px;
+		}
 
 		.input {
 			width: 105px;
 			text-align: right;
+			height: 31px;
+			&::placeholder {
+				color: rgb(206, 205, 205);
+			}
+			&:focus {
+				border-color: var(--primary-color);
+			}
+		}
+	}
+
+	.error {
+		.input {
+			transition: border 300ms;
+			border-color: var(--error);
+			animation: buzz 100ms;
+			animation-iteration-count: 3;
+		}
+
+		.font-error {
+			opacity: 1;
+			transition: all 300ms;
+		}
+	}
+
+	@keyframes buzz {
+		0% {
+			transform: translateX(0px);
+		}
+
+		50% {
+			transform: translateX(-10px);
+		}
+
+		100% {
+			transform: translateX(10px);
 		}
 	}
 </style>

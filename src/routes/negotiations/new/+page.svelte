@@ -69,7 +69,7 @@
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
@@ -102,7 +102,7 @@
 		directMessage: false,
 		video: false,
 		checkboxes: false,
-		checkBottleneck: false,
+		bottleneck: false,
 		occasion: false,
 		risk: false
 	}

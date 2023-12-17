@@ -73,22 +73,12 @@
 		position: relative;
 		align-self: center;
 
-		// &:first-child {
-		// 	.label {
-		// 		width: 130px;
-		// 	}
-		// }
-
 		.label {
-			width: max-content;
-			height: 32px;
+			align-self: flex-start;
 			display: flex;
 			align-items: center;
+			height: 31px;
 		}
-
-		// .input {
-		// 	width: 105px;
-		// }
 
 		.font-error {
 			position: absolute;
@@ -102,6 +92,34 @@
 		.unit {
 			display: flex;
 			align-items: center;
+		}
+	}
+
+	.error {
+		.select {
+			transition: border 300ms;
+			border-color: var(--error);
+			animation: buzz 100ms;
+			animation-iteration-count: 3;
+		}
+
+		.font-error {
+			opacity: 1;
+			transition: all 300ms;
+		}
+	}
+
+	@keyframes buzz {
+		0% {
+			transform: translateX(0px);
+		}
+
+		50% {
+			transform: translateX(-10px);
+		}
+
+		100% {
+			transform: translateX(10px);
 		}
 	}
 </style>

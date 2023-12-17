@@ -28,51 +28,6 @@ export interface Checkbox {
 	isChecked: boolean
 }
 
-// export interface Negociation {
-// 	negociationId: number
-// 	custCd: number
-// 	customerName: string
-// 	status: string
-// 	startingDate: string
-// 	condition: string
-// 	contact: string
-// 	billingDate: string
-// 	scheduledDeposit: string
-// 	outcome: string
-// 	nextContactDate: string
-// 	nextContactTime: string
-// 	lastContact: string
-// 	postalCode: string
-// 	prefecture: string
-// 	city: string
-// 	address1: string
-// 	address2: string
-// 	distanceKm: number
-// 	distanceTime: number
-// 	estimate: Estimate[]
-// 	personInCharge: string
-// 	memo: Memo[]
-// 	dm: string
-// 	video: string
-// 	inflow: string
-// 	preference: string
-// 	checkboxes: Checkbox[]
-// 	checkBottleneck: string
-// 	occasion: string
-// 	risk: string
-// 	outcomeHistory: OutcomeHistory[]
-// 	responsiblePerson: string
-// 	communication: string
-// 	numberOfBeds: number
-// 	billingEstimation: number
-// 	registerBy?: number | null
-// 	registerAt?: string
-// 	updateBy?: number | null
-// 	updateAt?: string
-// 	deleteBy?: number | null
-// 	deleteAt?: string
-// }
-
 export interface NegociationEntries {
 	custCd: number
 	negociationId: number
@@ -102,7 +57,7 @@ export interface NegociationEntries {
 	dm: string
 	video: string
 	checkboxes: Checkbox[]
-	checkBottleneck: string
+	bottleneck: string
 	occasion: string
 	risk: string
 	outcomeHistory: OutcomeHistory[]
@@ -146,7 +101,7 @@ export class NegociationBackend {
 	inflow: string
 	preference: string
 	checkboxes: Checkbox[]
-	checkBottleneck: string
+	bottleneck: string
 	occasion: string
 	risk: string
 	outcomeHistory: OutcomeHistory[]
@@ -190,7 +145,7 @@ export class NegociationBackend {
 		this.inflow = data.inflow
 		this.preference = data.preference
 		this.checkboxes = data.checkboxes
-		this.checkBottleneck = data.checkBottleneck
+		this.bottleneck = data.bottleneck
 		this.occasion = data.occasion
 		this.risk = data.risk
 		this.outcomeHistory = data.outcomeHistory

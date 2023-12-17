@@ -43,7 +43,7 @@ export const negociation: Writable<NegociationBackend> = writable({
 		{ title: '前払い（特別値引き）の説明', isChecked: false },
 		{ title: '中古　購入経験', isChecked: false }
 	],
-	checkBottleneck: '',
+	bottleneck: '',
 	occasion: '',
 	risk: '',
 	outcomeHistory: [],
@@ -96,7 +96,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: 'test',
+		bottleneck: 'test',
 		occasion: 'test',
 		risk: 'test',
 		outcomeHistory: [{ date: '2023-05-30', memo: 'テスト' }],
@@ -170,7 +170,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
@@ -247,7 +247,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
@@ -299,7 +299,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
@@ -351,7 +351,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
@@ -403,7 +403,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
@@ -455,7 +455,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
@@ -507,7 +507,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
@@ -559,7 +559,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
@@ -611,7 +611,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
@@ -663,7 +663,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],
@@ -715,7 +715,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 			{ title: '前払い（特別値引き）の説明', isChecked: false },
 			{ title: '中古　購入経験', isChecked: false }
 		],
-		checkBottleneck: '',
+		bottleneck: '',
 		occasion: '',
 		risk: '',
 		outcomeHistory: [],

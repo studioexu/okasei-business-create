@@ -133,7 +133,7 @@
 	</div>
 
 	<div class="form-row">
-		<Wrapper label={'ボトルネック確認'} content={initialState.checkBottleneck} />
+		<Wrapper label={'ボトルネック確認'} content={initialState.bottleneck} />
 	</div>
 
 	<div class="form-row">

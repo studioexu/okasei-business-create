@@ -40,7 +40,7 @@ export class Negociation {
 	private _inflow: string
 	private _preference: string
 	private _checkboxes: Checkbox[]
-	private _checkBottleneck: string
+	private _bottleneck: string
 	private _occasion: string
 	private _risk: string
 	private _outcomeHistory: OutcomeHistory[]
@@ -84,7 +84,7 @@ export class Negociation {
 		this._inflow = data.inflow
 		this._preference = data.preference
 		this._checkboxes = data.checkboxes
-		this._checkBottleneck = data.checkBottleneck
+		this._bottleneck = data.bottleneck
 		this._occasion = data.occasion
 		this._risk = data.risk
 		this._outcomeHistory = data.outcomeHistory
@@ -184,8 +184,8 @@ export class Negociation {
 	public get checkboxes() {
 		return this._checkboxes
 	}
-	public get checkBottleneck() {
-		return this._checkBottleneck
+	public get bottleneck() {
+		return this._bottleneck
 	}
 	public get occasion() {
 		return this._occasion

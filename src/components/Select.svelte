@@ -9,8 +9,6 @@
 	export let isValid: boolean = true
 	export let errorMsg: string = ''
 	export let required: boolean = false
-
-	$: console.log(value)
 </script>
 
 <div class="input-wrapper {isValid ? '' : 'error'}">
@@ -41,9 +39,18 @@
 
 <style lang="scss">
 	.input-wrapper {
+		position: relative;
 		display: flex;
 		align-items: center;
+		width: fit-content;
 		gap: 10px;
+
+		.label {
+			align-self: flex-start;
+			display: flex;
+			align-items: center;
+			height: 31px;
+		}
 
 		.select {
 			height: 31px;
@@ -74,6 +81,34 @@
 			bottom: -14px;
 			font-size: 10px;
 			opacity: 0;
+		}
+	}
+
+	.error {
+		.select {
+			transition: border 300ms;
+			border-color: var(--error);
+			animation: buzz 100ms;
+			animation-iteration-count: 3;
+		}
+
+		.font-error {
+			opacity: 1;
+			transition: all 300ms;
+		}
+	}
+
+	@keyframes buzz {
+		0% {
+			transform: translateX(0px);
+		}
+
+		50% {
+			transform: translateX(-10px);
+		}
+
+		100% {
+			transform: translateX(10px);
 		}
 	}
 </style>

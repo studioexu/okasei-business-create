@@ -14,6 +14,7 @@
 	import type { Item, Memo, NegociationEntries, OutcomeHistory } from '@/libs/negociationTypes'
 
 	import { prefectures, tax } from '@/data/data'
+	import InputEstimate from '@/components/InputEstimate.svelte'
 
 	export let initialState: NegociationEntries
 	export let customers: CustomerFactory[]
@@ -517,7 +518,14 @@
 			<h3 class="label">見積もり金額</h3>
 			<div class="container container--column">
 				{#each initialState.estimate as estimate, index}
-					<div class="wrapper" on:change={() => updateEstimateTaxOnChange(index)}>
+					<InputEstimate
+						{index}
+						bind:initialState
+						bind:estimate
+						on:deleteEstimate={() =>
+							handleDeleteItemFromArray(index, initialState.estimate, 'estimate')}
+					/>
+					<!-- <div class="wrapper" on:change={() => updateEstimateTaxOnChange(index)}>
 						<div class="form-row">
 							<InputDate label={'発行日'} name={'issue-date'} bind:value={estimate.issueDate} />
 						</div>
@@ -545,7 +553,11 @@
 								bind:value={estimate.estimateTax}
 							/>
 
-							<InputCheckbox name={'with-tax'} label={'税有り'} bind:isChecked={estimate.withTax} />
+							<InputCheckbox
+								name={'with-tax' + index}
+								label={'税有り'}
+								bind:isChecked={estimate.withTax}
+							/>
 						</div>
 
 						{#each estimate.items as item, indexItem}
@@ -586,7 +598,7 @@
 								>
 							{/if}
 						</div>
-					</div>
+					</div> -->
 				{/each}
 			</div>
 		</div>
@@ -787,7 +799,7 @@
 	.hidden {
 		display: none;
 	}
-	.form-row {
+	:global(.form-row) {
 		display: flex;
 		justify-content: flex-start;
 		align-items: flex-start;

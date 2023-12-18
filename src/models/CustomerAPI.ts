@@ -20,8 +20,8 @@ export interface Picture {
 }
 
 export class CustomerAPI {
-	private _id?: string
-	private _custCD?: string | undefined
+	private _id?: number
+	private _custCD?: number | undefined
 	private _custBranchCD: string
 	private _custName: string
 	private _custKana: string

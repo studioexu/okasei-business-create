@@ -9,8 +9,8 @@ export interface Picture {
 }
 
 export class CustomerBackend {
-	id?: string
-	Cust_CD?: string | undefined
+	id?: number
+	Cust_CD?: number | undefined
 	Cust_Branch_CD: string
 	Cust_Name: string
 	Cust_Kana: string
@@ -27,9 +27,9 @@ export class CustomerBackend {
 		Cust_Email: string
 		Cust_Mobile: string
 	}
-	Num_Employees: string
+	Num_Employees: number
 	URL: string
-	Num_Branch: string
+	Num_Branch: number
 	foundation: {
 		Establish_Date: string
 		Established_By: string
@@ -125,8 +125,8 @@ export class CustomerBackend {
 }
 
 export class CustomerNewApi {
-	id?: string
-	cd?: string
+	id?: number
+	cd?: number
 	branch_cd: string
 	name: string
 	kana: string
@@ -139,9 +139,9 @@ export class CustomerNewApi {
 	address2: string
 	phone: string
 	fax: string
-	number_of_employee: string
+	number_of_employee: number
 	url: string
-	number_of_branch: string
+	number_of_branch: number
 	establish_date: string
 	establish_by: string
 	is_active: boolean

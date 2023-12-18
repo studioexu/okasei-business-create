@@ -18,7 +18,7 @@
 	import SelectWithInput from '@/components/SelectWithInput.svelte'
 	import UploadModal from '@/views/modals/UploadModal.svelte'
 	import ResultModal from '../modals/ResultModal.svelte'
-	import NumberInput from '@/components/NumberInput.svelte'
+	import InputNumber from '@/components/InputNumber.svelte'
 	import InputDepartment from '@/components/InputDepartment.svelte'
 
 	export let formType: string
@@ -449,7 +449,7 @@
 		<legend class="legend">情報２</legend>
 
 		<div class="form-row">
-			<NumberInput
+			<InputNumber
 				name={'number-of-employees'}
 				label={'従業員数'}
 				errorMsg={'入力してください'}
@@ -506,7 +506,7 @@
 		</div>
 
 		<div class="form-row">
-			<NumberInput
+			<InputNumber
 				name={'number-of-branches'}
 				label={'関連施設拠点数'}
 				errorMsg={'入力してください'}

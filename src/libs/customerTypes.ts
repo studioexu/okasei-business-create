@@ -1,12 +1,8 @@
+import type { Department } from '@/models/CustomerAPI'
+
 export interface Picture {
 	file: File
 	memo: string
-}
-
-export interface Department {
-	index: number
-	department: string
-	bedQuantity: string
 }
 
 export interface CustomerEntries {
@@ -28,11 +24,12 @@ export interface CustomerEntries {
 	mobile: string
 	year: string
 	month: string
+	foundationDate: string
 	founder: string
 	departments: Department[]
-	numberOfEmployees: string
+	numberOfEmployees: number
 	homepage: string
-	numberOfFacilities: string
+	numberOfFacilities: number
 	isActive: true
 	googleReview: false
 	reviews: string
@@ -66,6 +63,7 @@ export interface CustomerEntriesErrors {
 	mobile: boolean
 	year: boolean
 	month: boolean
+	foundationDate: string
 	founder: boolean
 	departments: boolean
 	numberOfEmployees: boolean

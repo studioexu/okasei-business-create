@@ -17,6 +17,10 @@
 		goto('/customers')
 	}
 
+	export let data
+
+	let departmentsList = data.departmentsList
+
 	let initialState: CustomerEntries = {
 		custCd: '',
 		branchNumber: '',
@@ -37,9 +41,9 @@
 		month: '',
 		founder: '',
 		departments: [],
-		numberOfEmployees: '',
+		numberOfEmployees: 0,
 		homepage: '',
-		numberOfFacilities: '',
+		numberOfFacilities: 0,
 		isActive: true,
 		googleReview: false,
 		reviews: '',
@@ -51,7 +55,8 @@
 		approver: '',
 		contactTime: '',
 		pictures: [],
-		miscellaneous: ''
+		miscellaneous: '',
+		foundationDate: ''
 	}
 
 	let formIsValid: CustomerEntriesErrors = {
@@ -87,7 +92,8 @@
 		approver: true,
 		contactTime: true,
 		pictures: true,
-		miscellaneous: true
+		miscellaneous: true,
+		foundationDate: ''
 	}
 
 	const handleSubmitForm = () => {
@@ -121,6 +127,7 @@
 			bind:formIsValid
 			bind:isShown
 			bind:isSucceeded
+			{departmentsList}
 		/>
 	</div>
 

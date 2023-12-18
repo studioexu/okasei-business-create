@@ -84,7 +84,8 @@
 		approver: true,
 		contactTime: true,
 		pictures: true,
-		miscellaneous: true
+		miscellaneous: true,
+		foundationDate: ''
 	}
 
 	let isSucceeded: boolean = false

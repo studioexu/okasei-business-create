@@ -3,6 +3,7 @@
 	import Select from '@/components/Select.svelte'
 	import InputCheckbox from '@/components/InputCheckbox.svelte'
 	import InputDate from '@/components/InputDate.svelte'
+	import Icon from '@/components/Icon.svelte'
 	import InputNumber from '@/components/InputNumber.svelte'
 	import InputAddress from '@/components/InputAddress.svelte'
 	import InputSelect from '@/components/InputSelect.svelte'
@@ -10,10 +11,11 @@
 	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 	import { negociations } from '@/stores/negociations'
 	import { NegociationBackend, type Estimate } from '@/libs/negociationTypes'
-	import type { Memo, NegociationEntries, OutcomeHistory } from '@/libs/negociationTypes'
+	import type { Item, Memo, NegociationEntries, OutcomeHistory } from '@/libs/negociationTypes'
 
-	import { prefectures } from '@/data/data'
+	import { prefectures, tax } from '@/data/data'
 	import InputEstimate from '@/components/InputEstimate.svelte'
+	import { NegociationFactory } from '@/Factories/NegociationFactory'
 
 	export let initialState: NegociationEntries
 	export let customers: CustomerFactory[]
@@ -29,6 +31,21 @@
 		value: customer.custCD,
 		text: customer.custName
 	}))
+
+	const textareaFieldsets: { id: keyof NegociationEntries; label: string }[] = [
+		{
+			id: 'bottleneck',
+			label: 'ボトルネック確認'
+		},
+		{
+			id: 'occasion',
+			label: '機会（チャンス）'
+		},
+		{
+			id: 'risk',
+			label: '脅威（リスク）'
+		}
+	]
 
 	$: currentCustomer = customers.filter(customer => {
 		if (customer.custCD === currentCustomerId) {
@@ -527,24 +544,15 @@
 
 	<fieldset class="fieldset">
 		<legend class="legend hidden">コメント</legend>
-		<div class="form-row">
-			<div class="textarea-wrapper">
-				<label class="label" for="bottleneck">ボトルネック確認</label>
-				<textarea name="bottleneck" id="bottleneck" bind:value={initialState.bottleneck} />
+
+		{#each textareaFieldsets as fieldset}
+			<div class="form-row">
+				<div class="textarea-wrapper">
+					<label class="label" for={fieldset.id}>{fieldset.label}</label>
+					<textarea name={fieldset.id} id={fieldset.id} bind:value={initialState[fieldset.id]} />
+				</div>
 			</div>
-		</div>
-		<div class="form-row">
-			<div class="textarea-wrapper">
-				<label class="label" for="chance">機会（チャンス）</label>
-				<textarea name="chance" id="chance" bind:value={initialState.occasion} />
-			</div>
-		</div>
-		<div class="form-row">
-			<div class="textarea-wrapper">
-				<label class="label" for="risk">脅威（リスク）</label>
-				<textarea name="risk" id="risk" bind:value={initialState.risk} />
-			</div>
-		</div>
+		{/each}
 	</fieldset>
 
 	<fieldset class="fieldset">

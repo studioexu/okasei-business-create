@@ -17,6 +17,8 @@
 		goto('/customers')
 	}
 
+	$: console.log(initialState)
+
 	export let data
 
 	let departmentsList = data.departmentsList
@@ -93,7 +95,7 @@
 		contactTime: true,
 		pictures: true,
 		miscellaneous: true,
-		foundationDate: ''
+		foundationDate: true
 	}
 
 	const handleSubmitForm = () => {

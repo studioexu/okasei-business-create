@@ -15,11 +15,17 @@
 
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
-	import SelectWithInput from '@/components/SelectWithInput.svelte'
 	import UploadModal from '@/views/modals/UploadModal.svelte'
 	import ResultModal from '../modals/ResultModal.svelte'
 	import InputNumber from '@/components/InputNumber.svelte'
 	import InputDepartment from '@/components/InputDepartment.svelte'
+	import InputAddress from '@/components/InputAddress.svelte'
+	import InputDate from '@/components/InputDate.svelte'
+	import InputSelect from '@/components/InputSelect.svelte'
+	import InputTextNumber from '@/components/InputTextNumber.svelte'
+	import InputName from '@/components/InputName.svelte'
+	import InputFreeText from '@/components/InputFreeText.svelte'
+	import type { Department } from '@/models/CustomerAPI'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -205,11 +211,10 @@
 	<fieldset class="fieldset fieldset--info1">
 		<legend class="legend">情報１</legend>
 		<div class="form-row">
-			<Input
+			<InputTextNumber
 				label={'枝番'}
 				name={'branch-number'}
 				errorMsg={'数字４桁で入力して下さい'}
-				inputSize={'input--sm'}
 				required={true}
 				bind:value={initialState.branchNumber}
 				bind:isValid={formIsValid.branchNumber}
@@ -225,12 +230,11 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputFreeText
 				label="施設名"
 				name="customer-name"
 				placeholder={'株式会社○○'}
 				errorMsg={'施設名を入力して下さい'}
-				inputSize={'input--xl'}
 				required={true}
 				bind:value={initialState.customerName}
 				bind:isValid={formIsValid.customerName}
@@ -238,12 +242,11 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputFreeText
 				label="カナ"
 				name="kana"
 				placeholder={'カナ'}
 				errorMsg={'カタカナで入力してください'}
-				inputSize={'input--xl'}
 				required={true}
 				bind:value={initialState.kana}
 				bind:isValid={formIsValid.kana}
@@ -251,11 +254,10 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputTextNumber
 				label="医療機関番号"
 				name="facility-number"
 				errorMsg={'正しい医療機関番号を入力して下さい'}
-				inputSize="input--sm"
 				required={true}
 				bind:value={initialState.facilityNumber}
 				bind:isValid={formIsValid.facilityNumber}
@@ -280,12 +282,11 @@
 		<legend class="legend">住所</legend>
 
 		<div class="form-row">
-			<Input
+			<InputTextNumber
 				label="郵便番号"
 				name="postal-code"
 				placeholder={'0000000'}
 				errorMsg={"郵便番号を入力して下さい（'〒'や'ー'なし）"}
-				inputSize="input--sm"
 				required={true}
 				bind:value={initialState.postalCode}
 				bind:isValid={formIsValid.postalCode}
@@ -295,10 +296,10 @@
 		</div>
 
 		<div class="form-row">
-			<SelectWithInput
+			<InputSelect
 				label={'都道府県'}
 				name="prefecture"
-				datas={prefectures}
+				list={prefectures}
 				placeholder="○○県"
 				errorMsg={'都道府県を一つ選んでください'}
 				required={true}
@@ -306,12 +307,10 @@
 				bind:isValid={formIsValid.prefecture}
 			/>
 
-			<Input
+			<InputAddress
 				label={'市区町村'}
 				name="city"
-				placeholder="○○市"
 				errorMsg={'正しい街をご入力ください'}
-				inputSize="input--md"
 				required={true}
 				bind:value={initialState.city}
 				bind:isValid={formIsValid.city}
@@ -319,12 +318,10 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputAddress
 				label={'住所１'}
 				name="address1"
-				placeholder="丁目・番地"
 				errorMsg={'200文字以内で入力してください'}
-				inputSize="input--lg"
 				required={true}
 				bind:value={initialState.address1}
 				bind:isValid={formIsValid.address1}
@@ -332,12 +329,10 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputAddress
 				label={'住所２'}
 				name="address2"
-				placeholder="建物名・部屋番号"
 				errorMsg={'200文字以内で入力してください'}
-				inputSize="input--lg"
 				required={true}
 				bind:value={initialState.address2}
 				bind:isValid={formIsValid.address2}
@@ -345,32 +340,29 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputTextNumber
 				label="電話番号"
 				name="phone-number"
 				placeholder={'0000000000'}
 				errorMsg={'正しい電話番号を入力して下さい（「ー」なし）'}
-				inputSize="input--md"
 				required={true}
 				bind:value={initialState.phoneNumber}
 				bind:isValid={formIsValid.phoneNumber}
 			/>
-			<Input
+			<InputTextNumber
 				name={'mobile-phone'}
 				label={'携帯電話'}
 				placeholder={'未入力'}
 				errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
-				inputSize={'input--md'}
 				bind:value={initialState.mobile}
 				bind:isValid={formIsValid.mobile}
 			/>
 
-			<Input
+			<InputTextNumber
 				label="FAX番号"
 				name="fax"
 				placeholder={'0000000000'}
 				errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
-				inputSize="input--md"
 				required={true}
 				bind:value={initialState.fax}
 				bind:isValid={formIsValid.fax}
@@ -378,36 +370,22 @@
 		</div>
 
 		<div class="form-row">
-			<Input
-				name={'email'}
-				label={'メール'}
-				placeholder={'未入力'}
-				inputSize={'input--lg'}
-				bind:value={initialState.email}
-			/>
+			<InputAddress name={'email'} label={'メール'} bind:value={initialState.email} />
 		</div>
 	</fieldset>
 
 	<fieldset class="fieldset fieldset--foundation">
 		<legend class="legend">創立</legend>
 		<div class="form-row">
-			<div class="input-wrapper">
-				<label class="label" for="foundation-date">設立年月日</label>
-				<input
-					class="input"
-					type="date"
-					id="foundation-date"
-					name="foundation-date"
-					bind:value={initialState.foundationDate}
-				/>
-			</div>
+			<InputDate
+				label={'設立年月日'}
+				name={'foundation-date'}
+				bind:value={initialState.foundationDate}
+			/>
 
-			<Input
+			<InputName
 				label="設立者"
 				name="founder"
-				placeholder={'山田　太郎'}
-				errorMsg={'正しい名前を入力して下さい'}
-				inputSize="input--lg"
 				bind:value={initialState.founder}
 				bind:isValid={formIsValid.founder}
 			/>
@@ -460,23 +438,20 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputFreeText
 				label="事業内容"
 				name="business-content"
 				placeholder={'未入力'}
 				errorMsg={'200文字以内で入力してください'}
-				inputSize="input--lg"
 				bind:value={initialState.business}
 			/>
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputAddress
 				label="ホームページ"
 				name="homepage"
-				placeholder={'www.homepage.com'}
 				errorMsg={'200文字以内で入力してください'}
-				inputSize="input--lg"
 				bind:value={initialState.homepage}
 				bind:isValid={formIsValid.homepage}
 			/>
@@ -494,12 +469,11 @@
 			/>
 
 			{#if initialState.googleReview}
-				<Input
+				<InputFreeText
 					label="口コミ"
 					name="commnents"
 					placeholder={'件数、内容など'}
 					errorMsg={'200文字以内で入力してください'}
-					inputSize="input--lg"
 					bind:value={initialState.reviews}
 				/>
 			{/if}
@@ -517,11 +491,10 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputFreeText
 				name={'miscellaneous'}
 				label={'その他'}
 				placeholder={'未入力'}
-				inputSize={'input--xl'}
 				bind:value={initialState.miscellaneous}
 			/>
 		</div>
@@ -530,11 +503,9 @@
 	<fieldset class="fieldset">
 		<legend class="legend">担当者</legend>
 		<div class="form-row">
-			<Input
+			<InputName
 				name={'person-in-charge'}
 				label={'ご担当者名'}
-				placeholder={'未入力'}
-				inputSize={'input--md'}
 				bind:value={initialState.personInCharge}
 			/>
 			<Input
@@ -547,29 +518,21 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputFreeText
 				name={'person-in-charge-memo'}
 				label={'ご担当メモ'}
 				placeholder={'未入力'}
-				inputSize={'input--xl'}
 				bind:value={initialState.personInChargeMemo}
 			/>
 		</div>
 		<div class="form-row">
-			<Input
-				name={'approver'}
-				label={'決裁者'}
-				placeholder={'未入力'}
-				inputSize={'input--md'}
-				bind:value={initialState.approver}
-			/>
+			<InputName name={'approver'} label={'決裁者'} bind:value={initialState.approver} />
 		</div>
 		<div class="form-row">
-			<Input
+			<InputFreeText
 				name={'prefered-contact-time'}
 				label={'連絡の取りやすい時間'}
 				placeholder={'未入力'}
-				inputSize={'input--xl'}
 				bind:value={initialState.contactTime}
 			/>
 		</div>
@@ -597,10 +560,9 @@
 									<img src={URL.createObjectURL(image.file)} alt="" />
 								</div>
 
-								<Input
+								<InputFreeText
 									placeholder="メモ"
 									name={'image-description'}
-									inputSize={'input--lg'}
 									bind:value={image.memo}
 								/>
 								<button
@@ -645,6 +607,10 @@
 		flex-wrap: wrap;
 		gap: 18px;
 		margin-bottom: 20px;
+	}
+
+	.btn {
+		margin: 0;
 	}
 
 	.fieldset {

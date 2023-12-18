@@ -5,31 +5,13 @@
 	import { inputIsValid } from '@/libs/customerValidations'
 	import { toCamelCase } from '@/libs/formatters'
 
+	export let placeholder: string = ''
 	export let value: string = ''
 	export let name: string
 	export let label: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
-
-	const setPlaceholder = (name: string) => {
-		switch (name) {
-			case 'city':
-				return '〇〇市'
-			case 'address1':
-				return '〇〇区〇〇町'
-			case 'address2':
-				return '建物名・部屋番号'
-			case 'email':
-				return 'email@email.com'
-			case 'homepage':
-				return 'www.homepage.com'
-			default:
-				return ''
-		}
-	}
-
-	let placeholder: string = setPlaceholder(name)
 
 	/**
 	 * Check if the value of the input is valid, when the focus is not on the input.
@@ -51,7 +33,7 @@
 
 	<input
 		type="text"
-		class="input {name}"
+		class="input"
 		id={name}
 		{name}
 		{placeholder}
@@ -63,10 +45,6 @@
 </div>
 
 <style lang="scss">
-	@mixin responsiveInputWidth($width) {
-		width: calc((($width - 10 - 2) / 1366) * 100vw);
-	}
-
 	.input-wrapper {
 		position: relative;
 		display: flex;
@@ -80,29 +58,15 @@
 			align-items: center;
 			height: 31px;
 		}
-
 		.input {
-			@include responsiveInputWidth((359));
+			width: 130px;
 
-			height: 31px;
 			&::placeholder {
 				color: rgb(206, 205, 205);
 			}
 			&:focus {
 				border-color: var(--primary-color);
 			}
-
-			&.city {
-				width: 105px;
-			}
-		}
-
-		.font-error {
-			position: absolute;
-			right: 0;
-			bottom: -14px;
-			font-size: 10px;
-			opacity: 0;
 		}
 	}
 

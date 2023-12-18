@@ -19,6 +19,7 @@
 
 	const handleChange = (e: any) => {
 		const input = e.target.value
+
 		isValid = inputIsValid(toCamelCase(name), input)
 	}
 
@@ -96,7 +97,7 @@
 	}
 
 	.error {
-		.select {
+		.input {
 			transition: border 300ms;
 			border-color: var(--error);
 			animation: buzz 100ms;

@@ -63,7 +63,7 @@ export interface CustomerEntriesErrors {
 	mobile: boolean
 	year: boolean
 	month: boolean
-	foundationDate: string
+	foundationDate: boolean
 	founder: boolean
 	departments: boolean
 	numberOfEmployees: boolean

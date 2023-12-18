@@ -1,6 +1,7 @@
 import { prefectures } from '@/data/data'
 import { isValidPhoneNumber } from 'libphonenumber-js'
 import type { CustomerEntries, CustomerEntriesErrors } from './customerTypes'
+import type { Department } from '@/models/CustomerAPI'
 
 /**
  * We want to check if the user only use katakana
@@ -11,6 +12,22 @@ import type { CustomerEntries, CustomerEntriesErrors } from './customerTypes'
 export const kanaValidation = (kanaString: string) => {
 	const regex = /^[ァ-ン ー]+$/
 	return regex.test(kanaString)
+}
+
+const checkDepartmentIsValid = (department: Department) => {
+	return department.departmentId !== 0
+}
+
+const checkAllDepartmentsAreValid = (departments: Department[]) => {
+	let isValid = true
+
+	departments.map(department => {
+		if (department.departmentId === 0) {
+			return (isValid = false)
+		}
+	})
+
+	return isValid
 }
 
 /**
@@ -54,7 +71,7 @@ export const checkIfMonthIsValid = (input: string): boolean => {
  * @param input : string
  * @returns boolean
  */
-export const numberOFCharacterValidation = (input: string, maxCharacter: number): boolean => {
+export const numberOfCharacterValidation = (input: string, maxCharacter: number): boolean => {
 	const lengthOfInput = input.length
 
 	return lengthOfInput <= maxCharacter && lengthOfInput > 0
@@ -96,16 +113,16 @@ export const checkIfInputIsNumber = (input: string | number): boolean => {
 export const inputIsValid = (name: string, input: any): boolean => {
 	switch (name) {
 		case 'branchNumber':
-			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 4)
+			return checkIfInputIsNumber(input) && numberOfCharacterValidation(input, 4)
 
 		case 'customerName':
-			return numberOFCharacterValidation(input, 128)
+			return numberOfCharacterValidation(input, 128)
 
 		case 'kana':
-			return kanaValidation(input)
+			return kanaValidation(input) && numberOfCharacterValidation(input, 128)
 
 		case 'facilityNumber':
-			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 10)
+			return checkIfInputIsNumber(input) && input.length === 10
 
 		case 'postalCode':
 			return postalCodeValidation(input)
@@ -114,25 +131,23 @@ export const inputIsValid = (name: string, input: any): boolean => {
 			return checkIfPrefectureIsValid(input)
 
 		case 'city':
-			return numberOFCharacterValidation(input, 20)
+			return numberOfCharacterValidation(input, 20)
 
 		case 'address1':
 		case 'address2':
-			return numberOFCharacterValidation(input, 200)
+			return numberOfCharacterValidation(input, 200)
 
 		case 'founder':
 		case 'homepage':
-			return numberOFCharacterValidation(input, 128) || input === ''
+			return numberOfCharacterValidation(input, 128)
 
 		case 'phoneNumber':
 		case 'fax':
+		case 'mobile':
 			return phoneNumberValidation(input)
 
-		case 'mobile':
-			return phoneNumberValidation(input) || input === ''
-
 		case 'month':
-			return input === '' || checkIfMonthIsValid(input)
+			return checkIfMonthIsValid(input)
 
 		case 'quantity':
 		case 'numberOfEmployees':
@@ -141,6 +156,20 @@ export const inputIsValid = (name: string, input: any): boolean => {
 
 		case 'businessType':
 			return input.length > 0
+
+		case 'department':
+			return checkDepartmentIsValid(input)
+
+		case 'departments':
+			const errorArray: string[] = []
+
+			input.map((department: Department) => {
+				if (!inputIsValid('department', department)) {
+					errorArray.push('error')
+				}
+			})
+
+			return errorArray.length === 0
 
 		default:
 			return true
@@ -160,11 +189,52 @@ export const validationOnSubmit = (
 	let errorArray: boolean[] = []
 	let isValid = true
 
+	const requiredField = {
+		branchNumber: true,
+		customerName: true,
+		kana: true,
+		facilityNumber: true,
+		businessType: true,
+		postalCode: true,
+		prefecture: true,
+		city: true,
+		address1: true,
+		address2: true,
+		phoneNumber: true,
+		fax: true,
+		email: false,
+		mobile: false,
+		year: false,
+		month: false,
+		founder: false,
+		departments: false,
+		numberOfEmployees: false,
+		homepage: false,
+		numberOfFacilities: false,
+		isActive: false,
+		googleReview: false,
+		reviews: false,
+		businessContent: false,
+		closingMonth: false,
+		personInCharge: false,
+		personInChargeRole: false,
+		personInChargeMemo: false,
+		approver: false,
+		contactTime: false,
+		pictures: false,
+		miscellaneous: false,
+		foundationDate: false
+	}
+
 	Object.keys(formEntries).map(key => {
 		const input = formEntries[key as keyof CustomerEntries]
 
-		formValidation[key as keyof CustomerEntriesErrors] = inputIsValid(key, input)
-		errorArray.push(!inputIsValid(key, input))
+		formValidation[key as keyof CustomerEntriesErrors] = !requiredField[
+			key as keyof CustomerEntriesErrors
+		]
+			? input === '' || inputIsValid(key, input)
+			: inputIsValid(key, input)
+		errorArray.push(!formValidation[key as keyof CustomerEntriesErrors])
 	})
 
 	errorArray.forEach(error => {

@@ -1,14 +1,15 @@
-<script lang="ts">
-	import { checkIfInputIsNumber } from '@/libs/customerValidations'
+<script context="module">
+</script>
 
-	export let placeholder: string = ''
-	export let value: number = 0
+<script lang="ts">
+	import { inputIsValid } from '@/libs/customerValidations'
+	import { toCamelCase } from '@/libs/formatters'
+
+	export let value: string = ''
 	export let name: string
 	export let label: string = ''
-	export let unit: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
-	export let errorMsg: string = ''
 
 	/**
 	 * Check if the value of the input is valid, when the focus is not on the input.
@@ -16,31 +17,29 @@
 	 */
 	const handleBlurInput = (e: any) => {
 		const input = e.target.value
-
-		if (required) {
-			isValid = checkIfInputIsNumber(input)
-		}
+		isValid = inputIsValid(toCamelCase(name), input)
 	}
 </script>
 
 <div class="input-wrapper {isValid ? '' : 'error'}">
-	<label class="label" for={name}>
-		{label}
-		<span class="required-mark">{required ? '*' : ''}</span>
-	</label>
+	{#if label}
+		<label class="label" for={name}>
+			{label}
+			<span class="required-mark">{required ? '*' : ''}</span>
+		</label>
+	{/if}
+
 	<input
-		type="number"
+		type="text"
 		class="input"
+		placeholder="山田　太郎"
 		id={name}
 		{name}
-		{required}
-		min="0"
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
 	/>
-	<span class="unit">{unit}</span>
-	<span class="font-error">{errorMsg}</span>
+	<span class="font-error">正しい名前を入力して下さい</span>
 </div>
 
 <style lang="scss">
@@ -49,7 +48,11 @@
 	}
 
 	.input-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
 		width: fit-content;
+		gap: 10px;
 
 		.label {
 			align-self: flex-start;
@@ -57,9 +60,29 @@
 			align-items: center;
 			height: 31px;
 		}
-
 		.input {
-			width: 100px;
+			width: 150px;
+			height: 31px;
+			&::placeholder {
+				color: rgb(206, 205, 205);
+			}
+			&:focus {
+				border-color: var(--primary-color);
+			}
+		}
+	}
+
+	.error {
+		.input {
+			transition: border 300ms;
+			border-color: var(--error);
+			animation: buzz 100ms;
+			animation-iteration-count: 3;
+		}
+
+		.font-error {
+			opacity: 1;
+			transition: all 300ms;
 		}
 	}
 

@@ -31,13 +31,55 @@
 	export let formType: string
 	export let confirmationPageIsShown: boolean
 	export let initialState: CustomerEntries
-	export let formIsValid: CustomerEntriesErrors
+	// export let formIsValid: CustomerEntriesErrors
 	export let isShown: boolean = false
 	export let isSucceeded: boolean = false
 	export let departmentsList: { id: number; cd1: string; cd2: string; name: string }[]
-	export let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
+	// export let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
+
+	$: isShown
+	$: isSucceeded
 
 	let uploadModalIsShown = false
+
+	let formIsValid: CustomerEntriesErrors = {
+		branchNumber: true,
+		customerName: true,
+		kana: true,
+		facilityNumber: true,
+		businessType: true,
+		postalCode: true,
+		prefecture: true,
+		city: true,
+		address1: true,
+		address2: true,
+		phoneNumber: true,
+		fax: true,
+		email: true,
+		mobile: true,
+		year: true,
+		month: true,
+		founder: true,
+		departments: true,
+		numberOfEmployees: true,
+		homepage: true,
+		numberOfFacilities: true,
+		isActive: true,
+		googleReview: true,
+		reviews: true,
+		businessContent: true,
+		closingMonth: true,
+		personInCharge: true,
+		personInChargeRole: true,
+		personInChargeMemo: true,
+		approver: true,
+		contactTime: true,
+		pictures: true,
+		miscellaneous: true,
+		foundationDate: true
+	}
+
+	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 
 	// ADDRESS AUTO FILL
 
@@ -95,10 +137,54 @@
 	 * If the user is in the entry verification page, then, we submit the form.
 	 *
 	 */
-	const handleSubmit = (): void => {
-		if (confirmationPageIsShown) {
-			isShown = true
-			isSucceeded = true
+	// const handleSubmit = (): void => {
+	// 	if (confirmationPageIsShown) {
+	// 		isShown = true
+	// 		isSucceeded = true
+	// 	}
+	// }
+
+	$: console.log(isShown)
+
+	const handleSubmit = (e: Event): void => {
+		// const form = document.getElementById('registration-form') as HTMLFormElement
+		// form.addEventListener('submit', e => {
+		// 	console.log('hi')
+
+		// 	e.preventDefault()
+		// 	isShown = true
+		// 	isSucceeded = true
+		// })
+		// if (confirmationPageIsShown) {
+		// 	// form.submit()
+		// 	// e.preventDefault()
+		// 	console.log('ho')
+
+		// 	isShown = true
+		// 	isSucceeded = true
+		// }
+
+		isShown = true
+		isSucceeded = true
+
+		// e.preventDefault()
+
+		if (!confirmationPageIsShown) {
+			console.log('hello')
+			console.log(initialState)
+			e.preventDefault()
+			departmentsError = []
+			const submitResult = validationOnSubmit(initialState, formIsValid)
+			initialState.departments.map(department => {
+				departmentsError.push({
+					department: inputIsValid('department', department),
+					numberOfBeds: !isNaN(department.numberOfBeds)
+				})
+			})
+			confirmationPageIsShown = submitResult.isValid
+			formIsValid = submitResult.formValidation
+
+			return
 		}
 	}
 
@@ -625,7 +711,8 @@
 	}
 
 	.hidden {
-		display: none;
+		// display: none;
+		visibility: hidden;
 	}
 
 	.container {

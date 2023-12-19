@@ -42,7 +42,11 @@ export interface CustomerEntries {
 	pictures: Picture[]
 	miscellaneous: string
 	registrationDate?: string
-	registeredBy?: string
+	registeredBy?: number
+	updateDate?: string
+	updateBy?: number
+	deleteDate?: string
+	deleteBy?: number
 }
 
 export interface CustomerEntriesErrors {

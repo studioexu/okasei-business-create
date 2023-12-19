@@ -205,11 +205,13 @@ export class CustomerAPI {
 	}
 
 	public get updateDateTime() {
+		const newupdate = new Date(this._update.updateDate)
 		const dateTime = this._update.updateDate.split('T')
 		const date = dateTime[0]
 		const time = dateTime[1]?.split('+')[0]
 
 		return {
+			newDate: newupdate,
 			date: date,
 			time: time
 		}

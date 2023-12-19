@@ -8,7 +8,6 @@ export interface Picture {
 
 export class CustomerNewApi {
 	id?: number
-	// cd?: number
 	branch_cd: string
 	name: string
 	kana: string
@@ -35,10 +34,14 @@ export class CustomerNewApi {
 	delete_at: string
 	delete_by: number
 
-	constructor(data: any, registration?: any, update?: any, deleted?: any) {
+	constructor(
+		data: any,
+		registration?: { registDate: string; registBy: number },
+		update?: { updateDate: string; updateBy: number },
+		deleted?: { deleteDate: string; deleteBy: number }
+	) {
 		if (data.id) {
 			this.id = data.id
-			// this.cd = data.custCd === 0 || data.custCd === undefined ? 1 : data.custCd
 		}
 		this.branch_cd = data.branchNumber
 		this.name = data.customerName

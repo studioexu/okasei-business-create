@@ -42,12 +42,15 @@ export const actions = {
 			registBy: initialState.registeredBy
 		}
 
-		const updatedCustomer = formatCustomer('update', initialState, registration)
+		// const updatedCustomer = formatCustomer('update', initialState, registration)
+
+		const updatedCustomer = formatCustomer('update', initialState)
 
 		console.log(updatedCustomer)
 
 		if (initialState.id) {
 			updateCustomer(updatedCustomer, currentApi, initialState.id)
 		}
+		return false
 	}, 200)
 }

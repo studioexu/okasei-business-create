@@ -7,6 +7,7 @@
 	import { goto } from '$app/navigation'
 	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations.js'
 	import { fade } from 'svelte/transition'
+	import FormBis from '@/views/customersViews/FormBis.svelte'
 	export let data
 
 	let customer = new CustomerFactory(data.customer, 'newApi')
@@ -48,7 +49,13 @@
 		approver: customer.approver,
 		contactTime: customer.contactTime,
 		pictures: customer.pictures,
-		miscellaneous: customer.miscellaneous
+		miscellaneous: customer.miscellaneous,
+		registrationDate: customer.registration.registDate,
+		registeredBy: customer.registration.registDateTime,
+		updateDate: customer.update.updateDate,
+		updateBy: customer.update.updateBy,
+		deleteDate: customer.delete.deleteDate,
+		deleteBy: customer.delete.deleteBy
 	}
 
 	let isSucceeded: boolean = false
@@ -100,7 +107,6 @@
 
 	const handleSubmitForm = () => {
 		departmentsError = []
-
 		const submitResult = validationOnSubmit(initialState, formIsValid)
 		initialState.departments.map(department => {
 			departmentsError.push({
@@ -129,14 +135,13 @@
 			<Confirmation bind:initialState />
 		{/if}
 		<Form
+			formType={'update'}
 			bind:confirmationPageIsShown
 			bind:departmentsList
 			bind:initialState
-			formType={'update'}
 			bind:isShown
 			bind:isSucceeded
 			bind:formIsValid
-			bind:departmentsError
 		/>
 	</div>
 
@@ -157,18 +162,6 @@
 			{:else}
 				<button type="button" class="btn primary" on:click={handleSubmitForm}>登録</button>
 			{/if}
-
-			<!-- <div in:fade>
-				<button
-					class="btn secondary"
-					on:click={() => {
-						confirmationPageIsShown = false
-					}}
-				>
-					修正
-				</button>
-			</div>
-			<button type="submit" class="btn primary" form="registration-form">登録</button> -->
 		</footer>
 	{/if}
 </section>

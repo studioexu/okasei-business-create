@@ -2,31 +2,35 @@
 	import { createEventDispatcher } from 'svelte'
 	import Icon from '@/components/Icon.svelte'
 
-	const templateMenus: { path: string; hasNew?: boolean; text: string }[] = [
+	const templateMenus: { path: string; hasNew?: boolean; subs?: string[]; text: string }[] = [
 		{ path: 'users', hasNew: true, text: '社員一覧' },
 		{ path: 'customers', hasNew: true, text: '顧客一覧' },
 		{ path: 'purchases', hasNew: true, text: '買取一覧' },
 		{ path: 'negotiations', hasNew: true, text: '商談一覧' },
 		{ path: 'sales', text: '営業支援' },
 		{ path: 'history', text: '変更履歴' },
-		{ path: 'settings', text: '設定' }
+		{ path: 'settings', subs: ['notification'], text: '設定' }
 	]
-</script>
-
-<script lang="ts">
-	export let path: string
 
 	const menus: { path: string; routes: string[]; regexp?: RegExp; text: string }[] =
 		templateMenus.map(menu => {
-			const { path, hasNew, text } = menu
+			const { path, hasNew, subs, text } = menu
+
 			return {
 				path,
-				routes: [`/${path}`, ...(hasNew ? [`/${path}/new`] : [])],
+				routes: [
+					`/${path}`,
+					...(hasNew ? [`/${path}/new`] : []),
+					...(subs?.map(sub => `/${path}/${sub}`) ?? [])
+				],
 				regexp: hasNew ? new RegExp(`^\/${path}\/[1-9]\d?$`) : undefined,
 				text
 			}
 		})
+</script>
 
+<script lang="ts">
+	export let path: string
 	const dispatch = createEventDispatcher()
 </script>
 

@@ -1,10 +1,11 @@
 <script lang="ts" context="module">
 	import { page } from '$app/stores'
+	import { user } from '@/stores/users'
 	import Icon from '@/components/Icon.svelte'
 
-	const settings: { path: string; icon: string; text: string }[] = [
-		{ path: 'notification', icon: 'notification', text: 'お知らせ' }
-	].map(({ path, icon, text }) => ({ path: '/settings/' + path, icon, text }))
+	const settings: { id: string; path: string; text: string }[] = [
+		{ id: 'notification', path: 'notification', text: 'お知らせ' }
+	].map(({ id, path, text }) => ({ id, path: '/settings/' + path, text }))
 </script>
 
 <script lang="ts">
@@ -15,17 +16,19 @@
 	<nav class="side-menu">
 		<ul>
 			{#each settings as setting}
-				<li class:active={path.includes(setting.path)}>
-					<a href={setting.path}>
-						<span class:invisible={!path.includes(setting.path)}>
-							<Icon icon={{ path: setting.icon, color: '#fff' }} />
-						</span>
-						<span class:invisible={path.includes(setting.path)}>
-							<Icon icon={{ path: setting.icon, color: 'black' }} />
-						</span>
-						{setting.text}
-					</a>
-				</li>
+				{#if setting.id === 'notification' && $user.role === 'システム管理者'}
+					<li class:active={path.includes(setting.path)}>
+						<a href={setting.path}>
+							<span class:invisible={!path.includes(setting.path)}>
+								<Icon icon={{ path: setting.id, color: '#fff' }} />
+							</span>
+							<span class:invisible={path.includes(setting.path)}>
+								<Icon icon={{ path: setting.id, color: 'black' }} />
+							</span>
+							{setting.text}
+						</a>
+					</li>
+				{/if}
 			{/each}
 		</ul>
 	</nav>

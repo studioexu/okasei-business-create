@@ -158,6 +158,10 @@
 		border-color: #fff;
 	}
 
+	:global(.invisible) {
+		display: none !important;
+	}
+
 	.main {
 		position: absolute;
 		top: 64px;

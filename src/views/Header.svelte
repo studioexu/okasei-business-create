@@ -15,6 +15,7 @@
 		{ path: '/sales', title: '営業支援' },
 		{ path: '/history', title: '変更履歴' },
 		{ path: '/settings', title: '設定' },
+		{ path: '/settings/notification', title: 'お知らせ設定' },
 		{ path: '/kanban', title: 'Kanbanテスト' }
 	]
 </script>

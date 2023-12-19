@@ -97,48 +97,6 @@ export const getDateTime = (time?: string): string => {
  * @param registration: registration information (date and the person)
  * @returns Object with the right format for the backend
  */
-// export const formatCustomer = (
-// 	action: 'update' | 'create' | 'delete',
-// 	customer: CustomerEntries | CustomerNewApi,
-// 	registration?: any,
-// 	update?: any
-// ): CustomerNewApi => {
-// 	const timeArray = getDateTime()
-
-// 	switch (action) {
-// 		case 'create':
-// 			const create = {
-// 				registDate: timeArray,
-// 				registBy: 1
-// 			}
-
-// 			return new CustomerNewApi(customer, create)
-
-// 		case 'update':
-// 			const updated = {
-// 				updateBy: 1,
-// 				updateDate: timeArray
-// 			}
-
-// 			return new CustomerNewApi(customer, registration)
-
-// 		case 'delete':
-// 			const deleted = {
-// 				deleteDate: timeArray,
-// 				deleteBy: 1
-// 			}
-
-// 			return new CustomerNewApi(customer, registration, update)
-
-// 		default:
-// 			if (customer instanceof CustomerNewApi) {
-// 				return customer
-// 			} else {
-// 				return new CustomerNewApi(customer, registration, update)
-// 			}
-// 	}
-// }
-
 export const formatCustomer = (
 	action: 'update' | 'create' | 'delete',
 	customer: CustomerEntries

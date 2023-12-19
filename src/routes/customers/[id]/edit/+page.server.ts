@@ -37,16 +37,8 @@ export const actions = {
 		const initialStateString = data.get('initialState')
 
 		let initialState: CustomerEntries = JSON.parse(initialStateString)
-		const registration = {
-			registDate: initialState.registrationDate,
-			registBy: initialState.registeredBy
-		}
-
-		// const updatedCustomer = formatCustomer('update', initialState, registration)
 
 		const updatedCustomer = formatCustomer('update', initialState)
-
-		console.log(updatedCustomer)
 
 		if (initialState.id) {
 			updateCustomer(updatedCustomer, currentApi, initialState.id)

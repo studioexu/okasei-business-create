@@ -1,13 +1,17 @@
 <script lang="ts">
 	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes.js'
-	import Confirmation from '@/views/customersViews/Confirmation.svelte'
-	import Form from '@/views/customersViews/Form.svelte'
+
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
-	import ResultModal from '@/views/modals/ResultModal.svelte'
+
+	import { fade } from 'svelte/transition'
 	import { goto } from '$app/navigation'
 	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations.js'
-	import { fade } from 'svelte/transition'
+
+	import Confirmation from '@/views/customersViews/Confirmation.svelte'
+	import Form from '@/views/customersViews/Form.svelte'
+	import ResultModal from '@/views/modals/ResultModal.svelte'
 	import FormBis from '@/views/customersViews/FormBis.svelte'
+
 	export let data
 
 	let customer = new CustomerFactory(data.customer, 'newApi')
@@ -66,44 +70,11 @@
 		goto('/customers')
 	}
 
-	let formIsValid: CustomerEntriesErrors = {
-		branchNumber: true,
-		customerName: true,
-		kana: true,
-		facilityNumber: true,
-		businessType: true,
-		postalCode: true,
-		prefecture: true,
-		city: true,
-		address1: true,
-		address2: true,
-		phoneNumber: true,
-		fax: true,
-		email: true,
-		mobile: true,
-		year: true,
-		month: true,
-		founder: true,
-		departments: true,
-		numberOfEmployees: true,
-		homepage: true,
-		numberOfFacilities: true,
-		isActive: true,
-		googleReview: true,
-		reviews: true,
-		businessContent: true,
-		closingMonth: true,
-		personInCharge: true,
-		personInChargeRole: true,
-		personInChargeMemo: true,
-		approver: true,
-		contactTime: true,
-		pictures: true,
-		miscellaneous: true,
-		foundationDate: true
-	}
-
+	// FORM VALIDATIONS
+	let formIsValid: CustomerEntriesErrors
 	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
+
+	Object.keys(initialState).map(key => (formIsValid = { ...formIsValid, [key]: true }))
 
 	const handleSubmitForm = () => {
 		departmentsError = []
@@ -142,6 +113,7 @@
 			bind:isShown
 			bind:isSucceeded
 			bind:formIsValid
+			bind:departmentsError
 		/>
 	</div>
 

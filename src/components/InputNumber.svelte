@@ -8,7 +8,6 @@
 	export let unit: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
-	export let errorMsg: string = ''
 	export let disabled: boolean = false
 
 	/**
@@ -44,7 +43,7 @@
 		on:focus={() => (isValid = true)}
 	/>
 	<span class="unit">{unit}</span>
-	<span class="font-error">{errorMsg}</span>
+	<span class="font-error">数字で入力して下さい</span>
 </div>
 
 <style lang="scss">

@@ -27,19 +27,14 @@ export class CustomerNewApi {
 	establish_by: string
 	is_active: boolean
 	departments: { department_id: number; number_of_beds: number }[]
-	register_at: string
-	register_by: number
-	update_at: string
-	update_by: number
-	delete_at: string
-	delete_by: number
+	register_at?: string
+	register_by?: number
+	update_at?: string
+	update_by?: number
+	delete_at?: string
+	delete_by?: number
 
-	constructor(
-		data: any,
-		registration?: { registDate: string; registBy: number },
-		update?: { updateDate: string; updateBy: number },
-		deleted?: { deleteDate: string; deleteBy: number }
-	) {
+	constructor(data: CustomerEntries) {
 		if (data.id) {
 			this.id = data.id
 		}
@@ -67,11 +62,11 @@ export class CustomerNewApi {
 				number_of_beds: department.numberOfBeds
 			}
 		})
-		this.register_at = registration?.registDate || data.register_at
-		this.register_by = registration?.registBy || data.register_by
-		this.update_at = update?.updateDate || data.update_at
-		this.update_by = update?.updateBy || data.update_by
-		this.delete_at = deleted?.deleteDate || data.delete_at
-		this.delete_by = deleted?.deleteBy || data.delete_by
+		this.register_at = data.registrationDate
+		this.register_by = data.registeredBy
+		this.update_at = data.updateDate
+		this.update_by = data.updateBy
+		this.delete_at = data.deleteDate
+		this.delete_by = data.deleteBy
 	}
 }

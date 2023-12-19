@@ -61,42 +61,9 @@
 		foundationDate: ''
 	}
 
-	let formIsValid: CustomerEntriesErrors = {
-		branchNumber: true,
-		customerName: true,
-		kana: true,
-		facilityNumber: true,
-		businessType: true,
-		postalCode: true,
-		prefecture: true,
-		city: true,
-		address1: true,
-		address2: true,
-		phoneNumber: true,
-		fax: true,
-		email: true,
-		mobile: true,
-		year: true,
-		month: true,
-		founder: true,
-		departments: true,
-		numberOfEmployees: true,
-		homepage: true,
-		numberOfFacilities: true,
-		isActive: true,
-		googleReview: true,
-		reviews: true,
-		businessContent: true,
-		closingMonth: true,
-		personInCharge: true,
-		personInChargeRole: true,
-		personInChargeMemo: true,
-		approver: true,
-		contactTime: true,
-		pictures: true,
-		miscellaneous: true,
-		foundationDate: true
-	}
+	let formIsValid: CustomerEntriesErrors
+
+	Object.keys(initialState).map(key => (formIsValid = { ...formIsValid, [key]: true }))
 
 	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 

@@ -519,7 +519,6 @@
 			<InputNumber
 				name={'number-of-employees'}
 				label={'従業員数'}
-				errorMsg={'入力してください'}
 				required={true}
 				bind:value={initialState.numberOfEmployees}
 				bind:isValid={formIsValid.numberOfEmployees}
@@ -572,7 +571,6 @@
 			<InputNumber
 				name={'number-of-branches'}
 				label={'関連施設拠点数'}
-				errorMsg={'入力してください'}
 				required={true}
 				bind:value={initialState.numberOfFacilities}
 				bind:isValid={formIsValid.numberOfFacilities}

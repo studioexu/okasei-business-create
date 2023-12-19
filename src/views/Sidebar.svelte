@@ -31,7 +31,7 @@
 </script>
 
 <nav class="nav">
-	<ul class="nav-menu">
+	<ul>
 		{#each menus as menu}
 			<li class:active={menu.routes.includes(path) || menu.regexp?.test(path)}>
 				<a href={menu.path}>
@@ -49,7 +49,7 @@
 	<!-- svelte-ignore a11y-click-events-have-key-events -->
 	<!-- svelte-ignore a11y-no-static-element-interactions -->
 	<span class="logout" on:click={() => dispatch('click')}>
-		<Icon icon={{ path: 'logout', color: '#fff' }} />ログアウト
+		<Icon icon={{ path: 'logout', color: '#fff' }} /><span>ログアウト</span>
 	</span>
 </nav>
 
@@ -62,12 +62,11 @@
 		background: var(--primary);
 		padding-top: 16px;
 
-		> .nav-menu {
+		> ul {
 			list-style: none;
 
 			> li {
 				color: #fff;
-				padding: 8px 24px;
 				margin-bottom: 16px;
 
 				&:last-of-type {
@@ -87,40 +86,34 @@
 					opacity: 1;
 				}
 			}
-
-			.invisible {
-				display: none;
-			}
 		}
 
 		.logout {
+			display: flex;
+			align-items: center;
 			position: absolute;
 			bottom: 64px;
-			color: #fff;
 			padding: 0 24px;
+			cursor: pointer;
 
 			&:hover {
 				opacity: 0.5;
+			}
+
+			> span {
+				color: #fff;
+				margin-left: 8px;
 			}
 		}
 
 		a {
 			display: flex;
 			align-items: center;
+			padding: 8px 24px;
 
 			span {
 				display: flex;
 				align-items: center;
-				margin-right: 8px;
-			}
-		}
-
-		span {
-			display: flex;
-			align-items: center;
-			cursor: pointer;
-
-			:global(.svg-icon) {
 				margin-right: 8px;
 			}
 		}

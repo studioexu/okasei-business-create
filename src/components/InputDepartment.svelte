@@ -1,5 +1,5 @@
 <script lang="ts">
-	import type { Department } from '@/models/CustomerAPI'
+	import type { Department } from '@/models/Customer'
 	import InputNumber from './InputNumber.svelte'
 	import Icon from './Icon.svelte'
 	import InputSelect from './InputSelect.svelte'
@@ -10,7 +10,10 @@
 	export let departments: Department[]
 
 	const departementNameList = departmentsList.map((department: any) => department.name)
-	let isValid = true
+	export let isValid: { department: boolean; numberOfBeds: boolean } = {
+		department: true,
+		numberOfBeds: true
+	}
 
 	/**
 	 * Delete one department with the corresponding index in the "departments" array.
@@ -37,11 +40,11 @@
 			)
 
 			if (selectedDepartment) {
-				isValid = true
+				isValid.department = true
 				departments[index].departmentId = selectedDepartment.id
 				departments[index].departmentName = selectedDepartment.name
 			} else {
-				isValid = false
+				isValid.department = false
 				departments[index].departmentId = 0
 			}
 		}
@@ -57,10 +60,15 @@
 		errorMsg={'正しい科目を選択して下さい。'}
 		bind:value={department.departmentName}
 		on:select={e => handleSelectDepartment(e, index)}
-		bind:isValid
+		bind:isValid={isValid.department}
 	/>
 
-	<InputNumber name={'bed-quantity'} label={'病床数'} bind:value={department.numberOfBeds} />
+	<InputNumber
+		name={'bed-quantity'}
+		label={'病床数'}
+		bind:value={department.numberOfBeds}
+		bind:isValid={isValid.numberOfBeds}
+	/>
 
 	{#if departments.length > 1}
 		<button

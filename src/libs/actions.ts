@@ -50,7 +50,7 @@ export const createCustomer = async (newCustomer: Object, url: string) => {
  * @param url : string, corresponding to url of the database
  * @param customerId : string, corresponding to the id of the customer we want to update.
  */
-export const updateCustomer = (updatedCustomer: Object, url: string, customerId: string) => {
+export const updateCustomer = (updatedCustomer: Object, url: string, customerId: number) => {
 	fetch(url + '/customer/update/' + customerId, {
 		method: 'PUT',
 		headers: {

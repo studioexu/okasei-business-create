@@ -12,7 +12,7 @@
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
 
 	let initialState: CustomerEntries = {
-		id: customer.custCD,
+		id: customer.id,
 		branchNumber: customer.custBranchCD,
 		customerName: customer.custName,
 		kana: customer.custKana,
@@ -95,7 +95,7 @@
 				<button
 					class="primary"
 					on:click={() => {
-						window.location.href = '/customers/' + customer.custCD + '/edit'
+						window.location.href = '/customers/' + customer.id + '/edit'
 					}}
 				>
 					編集

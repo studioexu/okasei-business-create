@@ -119,6 +119,9 @@ export const formatCustomer = (
 				updateBy: 1,
 				updateDate: timeArray
 			}
+
+			console.log(new CustomerNewApi(customer, registration, updated))
+
 			return new CustomerNewApi(customer, registration, updated)
 
 		case 'delete':
@@ -126,6 +129,8 @@ export const formatCustomer = (
 				deleteDate: timeArray,
 				deleteBy: 1
 			}
+
+			console.log(new CustomerNewApi(customer, registration, update, deleted))
 
 			return new CustomerNewApi(customer, registration, update, deleted)
 

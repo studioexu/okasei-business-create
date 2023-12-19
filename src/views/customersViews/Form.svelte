@@ -25,7 +25,8 @@
 	import InputTextNumber from '@/components/InputTextNumber.svelte'
 	import InputName from '@/components/InputName.svelte'
 	import InputFreeText from '@/components/InputFreeText.svelte'
-	import type { Department } from '@/models/CustomerAPI'
+	import type { Department } from '@/models/Customer'
+	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -34,8 +35,48 @@
 	export let isShown: boolean = false
 	export let isSucceeded: boolean = false
 	export let departmentsList: { id: number; cd1: string; cd2: string; name: string }[]
+	export let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 
 	let uploadModalIsShown = false
+
+	// let formIsValid: CustomerEntriesErrors = {
+	// 	branchNumber: true,
+	// 	customerName: true,
+	// 	kana: true,
+	// 	facilityNumber: true,
+	// 	businessType: true,
+	// 	postalCode: true,
+	// 	prefecture: true,
+	// 	city: true,
+	// 	address1: true,
+	// 	address2: true,
+	// 	phoneNumber: true,
+	// 	fax: true,
+	// 	email: true,
+	// 	mobile: true,
+	// 	year: true,
+	// 	month: true,
+	// 	founder: true,
+	// 	departments: true,
+	// 	numberOfEmployees: true,
+	// 	homepage: true,
+	// 	numberOfFacilities: true,
+	// 	isActive: true,
+	// 	googleReview: true,
+	// 	reviews: true,
+	// 	businessContent: true,
+	// 	closingMonth: true,
+	// 	personInCharge: true,
+	// 	personInChargeRole: true,
+	// 	personInChargeMemo: true,
+	// 	approver: true,
+	// 	contactTime: true,
+	// 	pictures: true,
+	// 	miscellaneous: true,
+	// 	foundationDate: true
+	// }
+
+	// let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 
 	// ADDRESS AUTO FILL
 
@@ -99,6 +140,33 @@
 			isSucceeded = true
 		}
 	}
+
+	// const handleSubmit = (): void => {
+	// 	if (confirmationPageIsShown) {
+	// 		const form = document.getElementById('registration-form') as HTMLFormElement
+	// 		form.submit()
+	// 		isShown = true
+	// 		isSucceeded = true
+	// 	}
+
+	// 	if (!confirmationPageIsShown) {
+	// 		console.log('hello')
+	// 		console.log(initialState)
+
+	// 		// confirmationPageIsShown = true
+
+	// 		departmentsError = []
+	// 		const submitResult = validationOnSubmit(initialState, formIsValid)
+	// 		initialState.departments.map(department => {
+	// 			departmentsError.push({
+	// 				department: inputIsValid('department', department),
+	// 				numberOfBeds: !isNaN(department.numberOfBeds)
+	// 			})
+	// 		})
+	// 		confirmationPageIsShown = submitResult.isValid
+	// 		formIsValid = submitResult.formValidation
+	// 	}
+	// }
 
 	// UPLOAD PICTURES
 
@@ -405,6 +473,7 @@
 							bind:department
 							{index}
 							{departmentsList}
+							bind:isValid={departmentsError[index]}
 						/>
 					{/each}
 				</div>

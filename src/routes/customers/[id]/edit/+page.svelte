@@ -5,7 +5,7 @@
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 	import { goto } from '$app/navigation'
-	import { validationOnSubmit } from '@/libs/customerValidations.js'
+	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations.js'
 	import { fade } from 'svelte/transition'
 	export let data
 
@@ -14,7 +14,7 @@
 	let departmentsList = data.departmentsList
 
 	let initialState: CustomerEntries = {
-		id: customer.custCD,
+		id: customer.id,
 		branchNumber: customer.custBranchCD,
 		customerName: customer.custName,
 		kana: customer.custKana,
@@ -51,6 +51,14 @@
 		miscellaneous: customer.miscellaneous
 	}
 
+	let isSucceeded: boolean = false
+	let isShown: boolean = false
+	let isNavigating: boolean = false
+
+	const goBack = () => {
+		goto('/customers')
+	}
+
 	let formIsValid: CustomerEntriesErrors = {
 		branchNumber: true,
 		customerName: true,
@@ -85,19 +93,21 @@
 		contactTime: true,
 		pictures: true,
 		miscellaneous: true,
-		foundationDate: ''
+		foundationDate: true
 	}
 
-	let isSucceeded: boolean = false
-	let isShown: boolean = false
-	let isNavigating: boolean = false
-
-	const goBack = () => {
-		goto('/customers')
-	}
+	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 
 	const handleSubmitForm = () => {
+		departmentsError = []
+
 		const submitResult = validationOnSubmit(initialState, formIsValid)
+		initialState.departments.map(department => {
+			departmentsError.push({
+				department: inputIsValid('department', department),
+				numberOfBeds: !isNaN(department.numberOfBeds)
+			})
+		})
 		confirmationPageIsShown = submitResult.isValid
 		formIsValid = submitResult.formValidation
 	}
@@ -123,9 +133,10 @@
 			bind:departmentsList
 			bind:initialState
 			formType={'update'}
-			bind:formIsValid
 			bind:isShown
 			bind:isSucceeded
+			bind:formIsValid
+			bind:departmentsError
 		/>
 	</div>
 
@@ -144,8 +155,20 @@
 				</div>
 				<button type="submit" class="btn primary" form="registration-form">登録</button>
 			{:else}
-				<button type="button" class="btn primary" on:click={handleSubmitForm}> 登録 </button>
+				<button type="button" class="btn primary" on:click={handleSubmitForm}>登録</button>
 			{/if}
+
+			<!-- <div in:fade>
+				<button
+					class="btn secondary"
+					on:click={() => {
+						confirmationPageIsShown = false
+					}}
+				>
+					修正
+				</button>
+			</div>
+			<button type="submit" class="btn primary" form="registration-form">登録</button> -->
 		</footer>
 	{/if}
 </section>

@@ -41,7 +41,10 @@ export const actions = {
 			registDate: initialState.registrationDate,
 			registBy: initialState.registeredBy
 		}
+
 		const updatedCustomer = formatCustomer('update', initialState, registration)
+
+		console.log(updatedCustomer)
 
 		if (initialState.id) {
 			updateCustomer(updatedCustomer, currentApi, initialState.id)

@@ -37,7 +37,6 @@
 		id={name}
 		min="0"
 		{name}
-		{required}
 		{disabled}
 		{placeholder}
 		bind:value

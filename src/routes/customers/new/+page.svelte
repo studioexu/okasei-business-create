@@ -6,7 +6,7 @@
 	import Form from '@/views/customersViews/Form.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
-	import { validationOnSubmit } from '@/libs/customerValidations'
+	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
 	import { fade } from 'svelte/transition'
 
 	let confirmationPageIsShown = false
@@ -24,7 +24,7 @@
 	let departmentsList = data.departmentsList
 
 	let initialState: CustomerEntries = {
-		custCd: '',
+		id: 0,
 		branchNumber: '',
 		customerName: '',
 		kana: '',
@@ -98,8 +98,18 @@
 		foundationDate: true
 	}
 
+	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
+
 	const handleSubmitForm = () => {
+		departmentsError = []
+
 		const submitResult = validationOnSubmit(initialState, formIsValid)
+		initialState.departments.map(department => {
+			departmentsError.push({
+				department: inputIsValid('department', department),
+				numberOfBeds: !isNaN(department.numberOfBeds)
+			})
+		})
 		confirmationPageIsShown = submitResult.isValid
 		formIsValid = submitResult.formValidation
 	}
@@ -130,6 +140,7 @@
 			bind:isShown
 			bind:isSucceeded
 			{departmentsList}
+			bind:departmentsError
 		/>
 	</div>
 

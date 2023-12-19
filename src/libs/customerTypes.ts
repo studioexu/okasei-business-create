@@ -1,4 +1,4 @@
-import type { Department } from '@/models/CustomerAPI'
+import type { Department } from '@/models/Customer'
 
 export interface Picture {
 	file: File
@@ -6,8 +6,7 @@ export interface Picture {
 }
 
 export interface CustomerEntries {
-	custCd?: string
-	id?: string
+	id?: number
 	branchNumber: string
 	customerName: string
 	kana: string

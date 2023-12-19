@@ -1,7 +1,7 @@
 import { prefectures } from '@/data/data'
 import { isValidPhoneNumber } from 'libphonenumber-js'
 import type { CustomerEntries, CustomerEntriesErrors } from './customerTypes'
-import type { Department } from '@/models/CustomerAPI'
+import type { Department } from '@/models/Customer'
 
 /**
  * We want to check if the user only use katakana
@@ -99,10 +99,6 @@ export const checkIfInputIsNumber = (input: string | number): boolean => {
 
 	return false
 }
-
-// export const checkIfInputIsDate = (input: string): boolean => {
-// 	return !isNaN(new Date(input))
-// }
 
 /**
  * This function groups all the validators to check if the input is valid according to their type

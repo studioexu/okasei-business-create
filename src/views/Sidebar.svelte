@@ -2,28 +2,41 @@
 	import { createEventDispatcher } from 'svelte'
 	import Icon from '@/components/Icon.svelte'
 
-	const templateMenus: { path: string; hasNew?: boolean; subs?: string[]; text: string }[] = [
+	const templateMenus: {
+		path: string
+		hasNew?: boolean
+		subs?: string[]
+		hasSubNew?: boolean
+		text: string
+	}[] = [
 		{ path: 'users', hasNew: true, text: '社員一覧' },
 		{ path: 'customers', hasNew: true, text: '顧客一覧' },
 		{ path: 'purchases', hasNew: true, text: '買取一覧' },
 		{ path: 'negotiations', hasNew: true, text: '商談一覧' },
 		{ path: 'sales', text: '営業支援' },
 		{ path: 'history', text: '変更履歴' },
-		{ path: 'settings', subs: ['notification'], text: '設定' }
+		{ path: 'settings', subs: ['notification'], hasSubNew: true, text: '設定' }
 	]
 
 	const menus: { path: string; routes: string[]; regexp?: RegExp; text: string }[] =
 		templateMenus.map(menu => {
-			const { path, hasNew, subs, text } = menu
+			const path = `/${menu.path}`
+			const { hasNew, subs, hasSubNew, text } = menu
+
+			let regexp: RegExp | undefined = undefined
+
+			if (hasNew) regexp = new RegExp(`^${path}\/[1-9]\d?$`)
+			else if (hasSubNew) regexp = new RegExp(`^${path}\/.+\/[1-9]\d?$`)
 
 			return {
 				path,
 				routes: [
-					`/${path}`,
-					...(hasNew ? [`/${path}/new`] : []),
-					...(subs?.map(sub => `/${path}/${sub}`) ?? [])
+					path,
+					...(hasNew ? [`${path}/new`] : []),
+					...(subs?.map(sub => `${path}/${sub}`) ?? []),
+					...(subs && hasSubNew ? subs?.map(sub => `${path}/${sub}/new`) : [])
 				],
-				regexp: hasNew ? new RegExp(`^\/${path}\/[1-9]\d?$`) : undefined,
+				regexp,
 				text
 			}
 		})

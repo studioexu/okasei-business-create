@@ -56,17 +56,17 @@
 				</tr>
 			</thead>
 			<tbody>
-				{#each customersToDisplayOnPage as customer (customer.custCD)}
+				{#each customersToDisplayOnPage as customer (customer.id)}
 					<tr
 						class="row {customer.isActive ? '' : 'deleted'}"
-						data-id={customer.custCD}
-						id={customer.custCD}
-						in:receive={{ key: customer.custCD }}
-						out:send={{ key: customer.custCD }}
+						data-id={customer.id}
+						id={customer.id}
+						in:receive={{ key: customer.id }}
+						out:send={{ key: customer.id }}
 						animate:flip={{ duration: 1000, easing: quintOut }}
 						on:click={handleRowClick}
 					>
-						<td class="data customer-number">{customer.custCD}</td>
+						<td class="data customer-number">{customer.id}</td>
 
 						<td class="data facility-name">{customer.custName}</td>
 
@@ -112,6 +112,10 @@
 		background-color: #fff;
 		border-radius: 16px;
 		overflow: hidden;
+	}
+
+	.table-header {
+		display: none;
 	}
 
 	.customer-list {

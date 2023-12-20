@@ -1,4 +1,5 @@
 import { currentKey } from '@/data/api'
+import type { CustomerNewApi } from '@/models/BackendCustomer'
 
 /**
  * Load the data from the server.
@@ -26,7 +27,7 @@ export const loadData = async (url: string, key: string) => {
  * 新しいカスタマーを登録する。
  * @param customerEntry : Object corresponding to the inputs entered by the user.
  */
-export const createCustomer = async (newCustomer: Object, url: string) => {
+export const createCustomer = async (newCustomer: CustomerNewApi, url: string) => {
 	await fetch(url + '/customer/register', {
 		method: 'POST',
 		headers: {
@@ -50,7 +51,11 @@ export const createCustomer = async (newCustomer: Object, url: string) => {
  * @param url : string, corresponding to url of the database
  * @param customerId : string, corresponding to the id of the customer we want to update.
  */
-export const updateCustomer = (updatedCustomer: Object, url: string, customerId: string) => {
+export const updateCustomer = (
+	updatedCustomer: CustomerNewApi,
+	url: string,
+	customerId: number
+) => {
 	fetch(url + '/customer/update/' + customerId, {
 		method: 'PUT',
 		headers: {
@@ -103,7 +108,7 @@ export const reactivateCustomer = (id: number, url: string) => {
 		.then(res => res.json())
 		.then(data => {
 			console.log(data)
-			console.log('Successfully deleted')
+			console.log('Successfully reactivated')
 		})
 		.catch(err => console.log(err))
 }

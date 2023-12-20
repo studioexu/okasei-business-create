@@ -1,11 +1,14 @@
+<script context="module">
+</script>
+
 <script lang="ts">
-	import { checkIfInputIsNumber } from '@/libs/customerValidations'
+	import { inputIsValid } from '@/libs/customerValidations'
+	import { toCamelCase } from '@/libs/formatters'
 
 	export let placeholder: string = ''
-	export let value: number = 0
+	export let value: string = ''
 	export let name: string
 	export let label: string = ''
-	export let unit: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
@@ -16,40 +19,38 @@
 	 */
 	const handleBlurInput = (e: any) => {
 		const input = e.target.value
-
-		if (required) {
-			isValid = checkIfInputIsNumber(input)
-		}
+		isValid = inputIsValid(toCamelCase(name), input)
 	}
 </script>
 
 <div class="input-wrapper {isValid ? '' : 'error'}">
-	<label class="label" for={name}>
-		{label}
-		<span class="required-mark">{required ? '*' : ''}</span>
-	</label>
+	{#if label}
+		<label class="label" for={name}>
+			{label}
+			<span class="required-mark">{required ? '*' : ''}</span>
+		</label>
+	{/if}
+
 	<input
-		type="number"
+		type="text"
 		class="input"
 		id={name}
 		{name}
-		{required}
-		min="0"
+		{placeholder}
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
 	/>
-	<span class="unit">{unit}</span>
 	<span class="font-error">{errorMsg}</span>
 </div>
 
 <style lang="scss">
-	@mixin responsiveInputWidth($width) {
-		width: calc((($width - 10 - 2) / 1366) * 100vw);
-	}
-
 	.input-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
 		width: fit-content;
+		gap: 10px;
 
 		.label {
 			align-self: flex-start;
@@ -57,9 +58,37 @@
 			align-items: center;
 			height: 31px;
 		}
-
 		.input {
-			width: 100px;
+			width: 130px;
+
+			&::placeholder {
+				color: var(--placeholder);
+			}
+			&:focus {
+				border-color: var(--primary-color);
+			}
+		}
+
+		.font-error {
+			position: absolute;
+			right: 0;
+			bottom: -14px;
+			font-size: 10px;
+			opacity: 0;
+		}
+	}
+
+	.error {
+		.input {
+			transition: border 300ms;
+			border-color: var(--error);
+			animation: buzz 100ms;
+			animation-iteration-count: 3;
+		}
+
+		.font-error {
+			opacity: 1;
+			transition: all 300ms;
 		}
 	}
 

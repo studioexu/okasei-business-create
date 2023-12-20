@@ -19,7 +19,11 @@
 			case 'address1':
 				return '〇〇区〇〇町'
 			case 'address2':
-				return '1-1-1'
+				return '建物名・部屋番号'
+			case 'email':
+				return 'email@email.com'
+			case 'homepage':
+				return 'www.homepage.com'
 			default:
 				return ''
 		}
@@ -80,10 +84,10 @@
 		.input {
 			@include responsiveInputWidth((359));
 
-			height: 31px;
 			&::placeholder {
-				color: rgb(206, 205, 205);
+				color: var(--placeholder);
 			}
+
 			&:focus {
 				border-color: var(--primary-color);
 			}

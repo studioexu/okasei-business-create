@@ -1,14 +1,15 @@
-<script lang="ts">
-	import { checkIfInputIsNumber } from '@/libs/customerValidations'
+<script context="module">
+</script>
 
-	export let placeholder: string = ''
-	export let value: number = 0
+<script lang="ts">
+	import { inputIsValid } from '@/libs/customerValidations'
+	import { toCamelCase } from '@/libs/formatters'
+
+	export let value: string = ''
 	export let name: string
 	export let label: string = ''
-	export let unit: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
-	export let disabled: boolean = false
 
 	/**
 	 * Check if the value of the input is valid, when the focus is not on the input.
@@ -16,37 +17,36 @@
 	 */
 	const handleBlurInput = (e: any) => {
 		const input = e.target.value
-
-		if (required) {
-			isValid = checkIfInputIsNumber(input)
-		}
+		isValid = inputIsValid(toCamelCase(name), input)
 	}
 </script>
 
 <div class="input-wrapper {isValid ? '' : 'error'}">
-	{#if label !== ''}
+	{#if label}
 		<label class="label" for={name}>
 			{label}
 			<span class="required-mark">{required ? '*' : ''}</span>
 		</label>
 	{/if}
+
 	<input
-		type="number"
+		type="text"
 		class="input"
+		placeholder="山田　太郎"
 		id={name}
-		min="0"
 		{name}
-		{disabled}
-		{placeholder}
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
 	/>
-	<span class="unit">{unit}</span>
-	<span class="font-error">数字で入力して下さい</span>
+	<span class="font-error">正しい名前を入力して下さい</span>
 </div>
 
 <style lang="scss">
+	@mixin responsiveInputWidth($width) {
+		width: calc((($width - 10 - 2) / 1366) * 100vw);
+	}
+
 	.input-wrapper {
 		position: relative;
 		display: flex;
@@ -60,10 +60,8 @@
 			align-items: center;
 			height: 31px;
 		}
-
 		.input {
-			width: 105px;
-			text-align: right;
+			width: 150px;
 			&::placeholder {
 				color: var(--placeholder);
 			}

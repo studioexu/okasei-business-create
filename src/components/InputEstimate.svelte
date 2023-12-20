@@ -37,8 +37,6 @@
 		}
 	]
 
-	$: console.log(estimate)
-
 	/**
 	 * When the user chooses an item,
 	 * it will update the right items array with the selected item and the corresponding price.

@@ -1,12 +1,19 @@
 <script lang="ts">
-	import type { Department } from '@/models/CustomerAPI'
-	import NumberInput from './NumberInput.svelte'
+	import type { Department } from '@/models/Customer'
+	import InputNumber from './InputNumber.svelte'
 	import Icon from './Icon.svelte'
+	import InputSelect from './InputSelect.svelte'
 
 	export let index: number
 	export let department: Department
 	export let departmentsList: any
 	export let departments: Department[]
+
+	const departementNameList = departmentsList.map((department: any) => department.name)
+	export let isValid: { department: boolean; numberOfBeds: boolean } = {
+		department: true,
+		numberOfBeds: true
+	}
 
 	/**
 	 * Delete one department with the corresponding index in the "departments" array.
@@ -24,44 +31,42 @@
 	 * @param e: event, form the event, we will get the name of the department. イベントから、から分科名を貰う。
 	 * @param index：number, index of the department in the departments array. DepartmentsのArrayで分科のインデックスである。
 	 */
-	const handleSelectDepartment = (e: Event, index: number): void => {
-		const departmentName: string = (e.target as HTMLOptionElement).value
+	const handleSelectDepartment = (e: { detail: { value: string } }, index: number): void => {
+		const departmentName: string = e.detail.value
 
 		if (departmentName) {
-			const departmentId = (
-				document.querySelector(
-					"#departments option[value='" + departmentName + "']"
-				) as HTMLOptionElement
-			)?.dataset.value
-
 			const selectedDepartment = departmentsList.find(
-				(department: any) => departmentId && department.id === parseInt(departmentId)
+				(department: any) => department.name === departmentName
 			)
 
 			if (selectedDepartment) {
+				isValid.department = true
 				departments[index].departmentId = selectedDepartment.id
 				departments[index].departmentName = selectedDepartment.name
+			} else {
+				isValid.department = false
+				departments[index].departmentId = 0
 			}
 		}
 	}
 </script>
 
-<div class="department-wrapper" id={'department-' + index}>
-	<div class="input-wrapper">
-		<input
-			list="departments"
-			bind:value={department.departmentName}
-			on:input={e => handleSelectDepartment(e, index)}
-		/>
+<article class="department-wrapper" id={'department-' + index}>
+	<InputSelect
+		name={'department'}
+		list={departementNameList}
+		errorMsg={'正しい科目を選択して下さい。'}
+		bind:value={department.departmentName}
+		on:select={e => handleSelectDepartment(e, index)}
+		bind:isValid={isValid.department}
+	/>
 
-		<datalist id="departments">
-			{#each departmentsList as department}
-				<option class="department-option" data-value={department.id} value={department.name} />
-			{/each}
-		</datalist>
-	</div>
-
-	<NumberInput name={'bed-quantity'} label={'病床数'} bind:value={department.numberOfBeds} />
+	<InputNumber
+		name={'bed-quantity'}
+		label={'病床数'}
+		bind:value={department.numberOfBeds}
+		bind:isValid={isValid.numberOfBeds}
+	/>
 
 	{#if departments.length > 1}
 		<button
@@ -72,7 +77,7 @@
 			<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
 		</button>
 	{/if}
-</div>
+</article>
 
 <style lang="scss">
 	.department-wrapper {

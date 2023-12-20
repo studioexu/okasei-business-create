@@ -1,18 +1,18 @@
 <script lang="ts" context="module">
 	import { onMount } from 'svelte'
 
-	const loadSvg = async ({
-		path,
-		color
-	}: {
+	interface Icon {
 		path: string
-		color: string
-	}): Promise<HTMLElement> => {
+		color?: string
+	}
+
+	const loadSvg = async ({ path, color = 'black' }: Icon): Promise<HTMLElement> => {
 		try {
 			const res = await fetch(`icons/${path}.svg`)
 			const text = await res.text()
 			const svg = new DOMParser().parseFromString(text, 'image/svg+xml').documentElement
 			svg.classList.add('svg-icon')
+
 			switch (color) {
 				case 'black':
 					svg.setAttribute('fill', '#595857')
@@ -33,7 +33,7 @@
 </script>
 
 <script lang="ts">
-	export let icon: { path: string; color: string }
+	export let icon: Icon
 
 	let svg: HTMLElement
 

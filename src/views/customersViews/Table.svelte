@@ -83,7 +83,7 @@
 						<td class="data update">
 							<button class="btn {customer.isActive ? '' : 'disabled'}" on:click={handleEditItem}>
 								{#if customer.isActive}
-									<Icon icon={{ path: 'edit', color: '#0093d0' }} />
+									<Icon icon={{ path: 'edit', color: 'primary' }} />
 								{:else}
 									<Icon icon={{ path: 'edit', color: 'rgb(200, 200, 200)' }} />
 								{/if}
@@ -93,7 +93,7 @@
 						<td class="data erase">
 							<button class="btn {customer.isActive ? '' : 'disabled'}" on:click={handleDeleteItem}>
 								{#if customer.isActive}
-									<Icon icon={{ path: 'delete', color: '#0093d0' }} />
+									<Icon icon={{ path: 'delete', color: 'primary' }} />
 								{:else}
 									<Icon icon={{ path: 'delete', color: 'rgb(200, 200, 200)' }} />
 								{/if}

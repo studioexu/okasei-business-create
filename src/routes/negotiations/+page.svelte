@@ -305,7 +305,7 @@
 								<!-- svelte-ignore missing-declaration -->
 								<!-- svelte-ignore a11y-no-static-element-interactions -->
 								<span on:click={() => openModal(negociation.negociationId)}>
-									<Icon icon={{ path: 'delete', color: '#0093d0' }} />
+									<Icon icon={{ path: 'delete', color: 'primary' }} />
 								</span>
 							</td>
 						</tr>

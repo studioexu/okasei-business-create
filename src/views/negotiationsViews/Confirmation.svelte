@@ -1,13 +1,13 @@
 <script lang="ts">
-	import type { NegociationEntries } from '@/libs/negociationTypes'
+	import type { NegotiationEntries } from '@/libs/negotiationTypes'
 
 	import Icon from '@/components/Icon.svelte'
 	import Wrapper from '@/components/DetailWrapper.svelte'
 
-	export let initialState: NegociationEntries
+	export let initialState: NegotiationEntries
 </script>
 
-<div class="negociation-confirmation">
+<div class="negotiation-confirmation">
 	<div class="form-row">
 		<Wrapper label={'ステータス'} content={initialState.status} />
 	</div>
@@ -55,13 +55,8 @@
 	</div>
 
 	<div class="form-row">
-		<div class="wrapper">
-			<h3 class="label">{'距離'}</h3>
-			<p class="content">{initialState.distanceKm}</p>
-			<span>Km</span>
-			<p class="content">{initialState.distanceTime}</p>
-			<span>時間</span>
-		</div>
+		<Wrapper label={'距離'} content={initialState.distanceKm.toString()} unit={'Km'} />
+		<Wrapper content={initialState.distanceTime.toString()} unit={'時間'} />
 	</div>
 
 	<div class="form-row">
@@ -75,14 +70,18 @@
 							<Wrapper label={'見積期日'} content={estimate.dueDate} />
 						</div>
 						<div class="form-row">
-							<Wrapper label={'税抜価格'} content={estimate.estimateWithoutTax.toString()} />
-							<Wrapper label={'消費税'} content={estimate.estimateTax.toString()} />
+							<Wrapper
+								label={'税抜価格'}
+								content={estimate.estimateWithoutTax.toString()}
+								unit={'円'}
+							/>
+							<Wrapper label={'消費税'} content={estimate.estimateTax.toString()} unit={'円'} />
 						</div>
 
 						{#each estimate.items as item}
 							<div class="form-row">
 								<Wrapper label={'商品'} content={item.name} />
-								<Wrapper content={item.quantity.toString()} />
+								<Wrapper content={item.quantity.toString()} unit={'台'} />
 							</div>
 						{/each}
 					</div>

@@ -6,19 +6,19 @@
 	import Input from '@/components/Input.svelte'
 	import Icon from '@/components/Icon.svelte'
 	import SelectDate from '@/components/SelectDate.svelte'
-	import { negociation, negociations } from '@/stores/negociations'
+	import { negotiation, negotiations } from '@/stores/negotiations'
 	import { goto } from '$app/navigation'
 	import { onMount } from 'svelte'
 	import InputCheckbox from '@/components/InputCheckbox.svelte'
-	import { NegociationFactory } from '@/Factories/NegociationFactory'
+	import { NegotiationFactory } from '@/Factories/NegotiationFactory'
 
 	let searchIsShown = false
 	let displayMenuIsShown = false
 
-	const allNegociations: NegociationFactory[] = $negociations.map(
-		negociation => new NegociationFactory(negociation, 'local')
+	const allnegotiations: NegotiationFactory[] = $negotiations.map(
+		negotiation => new NegotiationFactory(negotiation, 'local')
 	)
-	let filteredNegociations = allNegociations
+	let filterednegotiations = allnegotiations
 
 	const tableHeaders: { label: string; id: keyof NegotiationDataIsShown }[] = [
 		{ label: '施設名', id: 'customerName' },
@@ -76,18 +76,18 @@
 		name: string
 		year: string
 		month: string
-	}): NegociationFactory[] => {
-		let filtered = allNegociations
+	}): NegotiationFactory[] => {
+		let filtered = allnegotiations
 
 		Object.keys(searchInput).map(key => {
 			if (searchInput[key as keyof { name: string; year: string; month: string }] !== '') {
-				filtered = filtered.filter(negociation => {
+				filtered = filtered.filter(negotiation => {
 					if (key === 'name') {
-						return negociation.customerName.includes(searchInput.name)
+						return negotiation.customerName.includes(searchInput.name)
 					} else {
 						let date
-						if (key === 'month') date = new Date(negociation.startingDate).getMonth() + 1
-						if (key === 'year') date = new Date(negociation.startingDate).getFullYear()
+						if (key === 'month') date = new Date(negotiation.startingDate).getMonth() + 1
+						if (key === 'year') date = new Date(negotiation.startingDate).getFullYear()
 
 						return (
 							date ===
@@ -100,12 +100,12 @@
 		return filtered
 	}
 
-	$: filteredNegociations = handleSearch(searchInput)
+	$: filterednegotiations = handleSearch(searchInput)
 
 	//NEGOTIATION DATA TO DISPLAY
 
 	interface NegotiationDataIsShown {
-		negociationId: boolean
+		negotiationId: boolean
 		custCd: boolean
 		customerName: boolean
 		status: boolean
@@ -144,7 +144,7 @@
 		memo: true,
 		dm: true,
 		video: true,
-		negociationId: false,
+		negotiationId: false,
 		custCd: false
 	}
 
@@ -192,7 +192,7 @@
 		deleteModalIsShown = true
 	}
 
-	$: console.log(filteredNegociations)
+	$: console.log(filterednegotiations)
 
 	/**
 	 * On click on the delete modal.
@@ -206,12 +206,12 @@
 
 			case 'delete':
 				try {
-					negociations.set(
-						$negociations.filter(negociation => negociation.negociationId !== currentUser)
+					negotiations.set(
+						$negotiations.filter(negotiation => negotiation.negotiationId !== currentUser)
 					)
 
-					if ($negociation.negociationId === currentUser) {
-						negociation.set({
+					if ($negotiation.negotiationId === currentUser) {
+						negotiation.set({
 							customerName: '',
 							status: '',
 							startingDate: '',
@@ -235,7 +235,7 @@
 							memo: [],
 							dm: '',
 							video: '',
-							negociationId: 0,
+							negotiationId: 0,
 							custCd: 0,
 							checkboxes: [],
 							bottleneck: '',
@@ -347,45 +347,45 @@
 				</thead>
 
 				<tbody class="tbody">
-					{#each filteredNegociations as negociation, index}
+					{#each filterednegotiations as negotiation, index}
 						<tr class="trow">
 							{#each tableHeaders as header}
 								{#if negotiationDataIsShown[header.id]}
 									<td
 										class="tdata {header.id} {header.id === 'condition' &&
-											header.id + '--' + negociation[header.id]}"
+											header.id + '--' + negotiation[header.id]}"
 									>
 										{#if header.id === 'customerName'}
-											<a href={'/negotiations/' + negociation.negociationId}>
-												{negociation[header.id]}
+											<a href={'/negotiations/' + negotiation.negotiationId}>
+												{negotiation[header.id]}
 											</a>
 										{:else if header.id === 'billingAddress'}
 											{'〒' +
-												negociation.postalCode +
-												negociation.prefecture +
-												negociation.city +
-												negociation.address1 +
-												negociation.address2}
+												negotiation.postalCode +
+												negotiation.prefecture +
+												negotiation.city +
+												negotiation.address1 +
+												negotiation.address2}
 										{:else if header.id === 'memo'}
-											{negociation.memo[negociation.memo.length - 1].memo}
+											{negotiation.memo[negotiation.memo.length - 1].memo}
 										{:else if header.id === 'numberOfBeds'}
-											{negociation.minMaxBed.min === negociation.minMaxBed.max
-												? negociation.minMaxBed.min + '台'
-												: negociation.minMaxBed.min + '-' + negociation.minMaxBed.max + '台'}
+											{negotiation.minMaxBed.min === negotiation.minMaxBed.max
+												? negotiation.minMaxBed.min + '台'
+												: negotiation.minMaxBed.min + '-' + negotiation.minMaxBed.max + '台'}
 										{:else if header.id === 'billingEstimation'}
-											{negociation.minMaxEstimate.min === negociation.minMaxEstimate.max
-												? negociation.minMaxEstimate.min + '円'
-												: negociation.minMaxEstimate.min +
+											{negotiation.minMaxEstimate.min === negotiation.minMaxEstimate.max
+												? negotiation.minMaxEstimate.min + '円'
+												: negotiation.minMaxEstimate.min +
 												  '-' +
-												  negociation.minMaxEstimate.max +
+												  negotiation.minMaxEstimate.max +
 												  '円'}
 										{:else if header.id === 'nextContact'}
-											{negociation.nextContactDate !== '' ? negociation.nextContactDate : 'ー'}
-											{negociation.nextContactTime !== '' ? negociation.nextContactTime : 'ー'}
+											{negotiation.nextContactDate !== '' ? negotiation.nextContactDate : 'ー'}
+											{negotiation.nextContactTime !== '' ? negotiation.nextContactTime : 'ー'}
 										{:else if header.id === 'outcome' || header.id === 'billingDate'}
-											{negociation[header.id] !== '' ? negociation[header.id] : '未定'}
+											{negotiation[header.id] !== '' ? negotiation[header.id] : '未定'}
 										{:else}
-											{negociation[header.id]}
+											{negotiation[header.id]}
 										{/if}
 									</td>
 								{/if}
@@ -394,7 +394,7 @@
 								<button
 									class="delete"
 									type="button"
-									on:click={() => openModal(negociation.negociationId)}
+									on:click={() => openModal(negotiation.negotiationId)}
 								>
 									<Icon icon={{ path: 'delete', color: '#0093d0' }} />
 								</button>

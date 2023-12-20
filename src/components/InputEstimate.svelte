@@ -1,12 +1,12 @@
 <script lang="ts">
-	import type { Estimate, Item } from '@/libs/negociationTypes'
+	import type { Estimate, Item } from '@/libs/negotiationTypes'
 	import InputDate from './InputDate.svelte'
 	import InputNumber from './InputNumber.svelte'
 	import InputCheckbox from './InputCheckbox.svelte'
 	import InputSelect from './InputSelect.svelte'
 	import Icon from './Icon.svelte'
 	import { tax } from '@/data/data'
-	import type { NegociationFactory } from '@/Factories/NegociationFactory'
+	import type { NegociationFactory } from '@/Factories/NegotiationFactory'
 	import { createEventDispatcher } from 'svelte'
 
 	const dispatch = createEventDispatcher()

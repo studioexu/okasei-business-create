@@ -32,6 +32,7 @@
 
 <style lang="scss">
 	.checkbox-container {
+		cursor: pointer;
 		position: relative;
 		display: flex;
 		justify-content: flex-end;
@@ -40,10 +41,6 @@
 		height: 31px;
 		gap: 18px;
 		font-size: 18px;
-		cursor: pointer;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
 		user-select: none;
 
 		& :hover {

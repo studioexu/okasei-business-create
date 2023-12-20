@@ -1,8 +1,8 @@
 import { readable, writable, type Writable } from 'svelte/store'
 import type { Readable } from 'svelte/motion'
-import type { NegociationBackend } from '@/libs/negociationTypes'
+import type { negotiationBackend } from '@/libs/negotiationTypes'
 
-export const negociation: Writable<NegociationBackend> = writable({
+export const negotiation: Writable<negotiationBackend> = writable({
 	customerName: '',
 	status: '',
 	startingDate: '',
@@ -26,7 +26,7 @@ export const negociation: Writable<NegociationBackend> = writable({
 	memo: [],
 	dm: '',
 	video: '',
-	negociationId: 0,
+	negotiationId: 0,
 	custCd: 0,
 	checkboxes: [
 		{ title: '動画視聴　依頼', isChecked: false },
@@ -55,7 +55,7 @@ export const negociation: Writable<NegociationBackend> = writable({
 	billingEstimation: 0
 })
 
-export const negociations: Writable<NegociationBackend[]> = writable([
+export const negotiations: Writable<negotiationBackend[]> = writable([
 	{
 		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
@@ -79,7 +79,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 1,
+		negotiationId: 1,
 		custCd: 1,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -153,7 +153,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 2,
+		negotiationId: 2,
 		custCd: 1,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -230,7 +230,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 3,
+		negotiationId: 3,
 		custCd: 2,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -282,7 +282,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 4,
+		negotiationId: 4,
 		custCd: 1,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -334,7 +334,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 5,
+		negotiationId: 5,
 		custCd: 1,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -386,7 +386,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 6,
+		negotiationId: 6,
 		custCd: 1,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -438,7 +438,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 7,
+		negotiationId: 7,
 		custCd: 1,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -490,7 +490,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 8,
+		negotiationId: 8,
 		custCd: 3,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -542,7 +542,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 9,
+		negotiationId: 9,
 		custCd: 1,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -594,7 +594,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 10,
+		negotiationId: 10,
 		custCd: 1,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -646,7 +646,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 11,
+		negotiationId: 11,
 		custCd: 1,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -698,7 +698,7 @@ export const negociations: Writable<NegociationBackend[]> = writable([
 		memo: [{ date: '2023-05-30', memo: 'KA-9800　83Ｒセンターロック' }],
 		dm: '郵送済み',
 		video: '2023-05-30',
-		negociationId: 12,
+		negotiationId: 12,
 		custCd: 1,
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },

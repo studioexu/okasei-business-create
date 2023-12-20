@@ -1,70 +1,76 @@
 <script lang="ts">
-	import Form from '@/views/negocitationsViews/Form.svelte'
-	import Confirmation from '@/views/negocitationsViews/Confirmation.svelte'
+	import Form from '@/views/negotiationsViews/Form.svelte'
+	import Confirmation from '@/views/negotiationsViews/Confirmation.svelte'
 
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 	import { goto } from '$app/navigation'
 	import { fade } from 'svelte/transition'
 	export let data
 
-	import { negociations } from '@/stores/negociations'
+	import { negotiations } from '@/stores/negotiations'
 	import { page } from '$app/stores'
 	import { CustomerFactory } from '@/Factories/CustomerFactory.js'
-	import type { NegociationEntries } from '@/libs/negociationTypes.js'
+	import type { NegotiationEntries, NegotiationErrors } from '@/libs/negotiationTypes.js'
 
-	const negociation = $negociations.find(
-		negociation => negociation.negociationId.toString() === $page.params.id
+	const negotiation = $negotiations.find(
+		negotiation => negotiation.negotiationId.toString() === $page.params.id
 	)
 
 	let confirmationPageIsShown = false
 	let customers = data.data.map(customer => new CustomerFactory(customer, 'newApi'))
-	let initialState: NegociationEntries
+	let initialState: NegotiationEntries
 
-	if (negociation !== undefined) {
+	if (negotiation !== undefined) {
 		initialState = {
-			negociationId: negociation?.negociationId,
-			custCd: negociation?.custCd,
-			customerName: negociation?.customerName,
-			status: negociation?.status,
-			startingDate: negociation?.startingDate,
-			condition: negociation?.condition,
-			inflow: negociation?.inflow,
-			preference: negociation?.preference,
-			billingDate: negociation?.billingDate,
-			scheduledDeposit: negociation?.scheduledDeposit,
-			outcome: negociation?.outcome,
-			nextContactDate: negociation.nextContactDate,
-			nextContactTime: negociation.nextContactTime,
-			lastContact: negociation?.lastContact,
-			postalCode: negociation?.postalCode,
-			prefecture: negociation?.prefecture,
-			city: negociation?.city,
-			address1: negociation?.address1,
-			address2: negociation?.address2,
-			distanceKm: negociation?.distanceKm,
-			distanceTime: negociation?.distanceTime,
-			estimate: negociation?.estimate,
-			memo: negociation?.memo,
-			personInCharge: negociation?.personInCharge,
-			responsiblePerson: negociation?.responsiblePerson,
-			communication: negociation?.communication,
-			dm: negociation?.dm,
-			video: negociation?.video,
-			checkboxes: negociation?.checkboxes,
-			checkBottleneck: negociation?.checkBottleneck,
-			occasion: negociation?.occasion,
-			risk: negociation?.risk,
-			outcomeHistory: negociation?.outcomeHistory,
-			numberOfBeds: negociation?.numberOfBeds,
-			billingEstimation: negociation.billingEstimation,
-			registerBy: negociation.register_by,
-			registerAt: negociation.register_at,
-			updateBy: negociation.update_by,
-			updateAt: negociation.update_at,
-			deleteBy: negociation.delete_by,
-			deleteAt: negociation.delete_at
+			negotiationId: negotiation?.negotiationId,
+			custCd: negotiation?.custCd,
+			customerName: negotiation?.customerName,
+			status: negotiation?.status,
+			startingDate: negotiation?.startingDate,
+			condition: negotiation?.condition,
+			inflow: negotiation?.inflow,
+			preference: negotiation?.preference,
+			billingDate: negotiation?.billingDate,
+			scheduledDeposit: negotiation?.scheduledDeposit,
+			outcome: negotiation?.outcome,
+			nextContactDate: negotiation.nextContactDate,
+			nextContactTime: negotiation.nextContactTime,
+			lastContact: negotiation?.lastContact,
+			postalCode: negotiation?.postalCode,
+			prefecture: negotiation?.prefecture,
+			city: negotiation?.city,
+			address1: negotiation?.address1,
+			address2: negotiation?.address2,
+			distanceKm: negotiation?.distanceKm,
+			distanceTime: negotiation?.distanceTime,
+			estimate: negotiation?.estimate,
+			memo: negotiation?.memo,
+			personInCharge: negotiation?.personInCharge,
+			responsiblePerson: negotiation?.responsiblePerson,
+			communication: negotiation?.communication,
+			dm: negotiation?.dm,
+			video: negotiation?.video,
+			checkboxes: negotiation?.checkboxes,
+			bottleneck: negotiation?.bottleneck,
+			occasion: negotiation?.occasion,
+			risk: negotiation?.risk,
+			outcomeHistory: negotiation?.outcomeHistory,
+			numberOfBeds: negotiation?.numberOfBeds,
+			billingEstimation: negotiation.billingEstimation,
+			registerBy: negotiation.register_by,
+			registerAt: negotiation.register_at,
+			updateBy: negotiation.update_by,
+			updateAt: negotiation.update_at,
+			deleteBy: negotiation.delete_by,
+			deleteAt: negotiation.delete_at
 		}
 	}
+
+	let formIsValid: NegotiationErrors
+
+	// Object.keys(initialState).map(key => {
+	// 	formIsValid = { ...formIsValid, [key]: true }
+	// })
 
 	let isSucceeded: boolean = false
 	let isShown: boolean = false
@@ -98,6 +104,7 @@
 			bind:currentCustomerId={initialState.custCd}
 			formType={'update'}
 			{customers}
+			bind:formIsValid
 		/>
 	</div>
 
@@ -114,7 +121,7 @@
 						修正
 					</button>
 				</div>
-				<button type="submit" class="btn primary" form="negociation-form">登録</button>
+				<button type="submit" class="btn primary" form="negotiation-form">登録</button>
 			{:else}
 				<button
 					type="button"

@@ -1,4 +1,4 @@
-import type { Item, Estimate, OutcomeHistory, Checkbox, Memo } from '@/libs/negociationTypes'
+import type { Item, Estimate, OutcomeHistory, Checkbox, Memo } from '@/libs/negotiationTypes'
 
 const getTotalBedsByEstimate = (items: Item[]) => {
 	let total = 0
@@ -11,8 +11,8 @@ const formateNumberCompact = (number: number) => {
 	return new Intl.NumberFormat('ja-JP', { notation: 'compact' }).format(BigInt(number))
 }
 
-export class Negociation {
-	private _negociationId: number
+export class Negotiation {
+	private _negotiationId: number
 	private _customerName: string
 	private _status: string
 	private _startingDate: string
@@ -56,7 +56,7 @@ export class Negociation {
 	private _deleteAt?: string
 
 	constructor(data: any) {
-		this._negociationId = data.negociationId
+		this._negotiationId = data.negotiationId
 		this._customerName = data.customerName
 		this._status = data.status
 		this._startingDate = data.startingDate
@@ -100,8 +100,8 @@ export class Negociation {
 		this._deleteAt = data.delete_at
 	}
 
-	public get negociationId() {
-		return this._negociationId
+	public get negotiationId() {
+		return this._negotiationId
 	}
 	public get customerName() {
 		return this._customerName

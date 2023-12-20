@@ -28,9 +28,9 @@ export interface Checkbox {
 	isChecked: boolean
 }
 
-export interface NegociationEntries {
+export interface NegotiationEntries {
 	custCd: number
-	negociationId: number
+	negotiationId: number
 	status: string
 	startingDate: string
 	condition: string
@@ -72,8 +72,52 @@ export interface NegociationEntries {
 	deleteAt?: string
 }
 
-export class NegociationBackend {
-	negociationId: number
+export interface NegotiationErrors {
+	custCd: boolean
+	negotiationId: boolean
+	startingDate: string
+	status: string
+	condition: boolean
+	inflow: boolean
+	preference: boolean
+	billingDate: boolean
+	scheduledDeposit: boolean
+	outcome: boolean
+	nextContactDate: boolean
+	nextContactTime: boolean
+	lastContact: boolean
+	postalCode: boolean
+	prefecture: boolean
+	city: boolean
+	address1: boolean
+	address2: boolean
+	distanceKm: boolean
+	distanceTime: boolean
+	estimate: boolean
+	memo: boolean
+	personInCharge: boolean
+	responsiblePerson: boolean
+	communication: boolean
+	dm: boolean
+	video: string
+	checkboxes: boolean
+	bottleneck: boolean
+	occasion: boolean
+	risk: boolean
+	outcomeHistory: boolean
+	customerName: boolean
+	numberOfBeds: boolean
+	billingEstimation: boolean
+	registerBy?: boolean
+	registerAt?: boolean
+	updateBy?: boolean
+	updateAt?: boolean
+	deleteBy?: boolean
+	deleteAt?: boolean
+}
+
+export class negotiationBackend {
+	negotiationId: number
 	customerName: string
 	status: string
 	startingDate: string
@@ -116,8 +160,8 @@ export class NegociationBackend {
 	delete_by?: number | null
 	delete_at?: string
 
-	constructor(data: NegociationEntries) {
-		this.negociationId = data.negociationId
+	constructor(data: NegotiationEntries) {
+		this.negotiationId = data.negotiationId
 		this.customerName = data.customerName
 		this.status = data.status
 		this.startingDate = data.startingDate

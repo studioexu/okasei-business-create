@@ -3,36 +3,45 @@
 	import Select from '@/components/Select.svelte'
 	import InputCheckbox from '@/components/InputCheckbox.svelte'
 	import InputDate from '@/components/InputDate.svelte'
-	import Icon from '@/components/Icon.svelte'
 	import InputNumber from '@/components/InputNumber.svelte'
 	import InputAddress from '@/components/InputAddress.svelte'
 	import InputSelect from '@/components/InputSelect.svelte'
+	import InputTextNumber from '@/components/InputTextNumber.svelte'
+	import InputName from '@/components/InputName.svelte'
+	import InputFreeText from '@/components/InputFreeText.svelte'
+	import InputEstimate from '@/components/InputEstimate.svelte'
 
 	import type { CustomerFactory } from '@/Factories/CustomerFactory'
-	import { negociations } from '@/stores/negociations'
-	import { NegociationBackend, type Estimate } from '@/libs/negociationTypes'
-	import type { Item, Memo, NegociationEntries, OutcomeHistory } from '@/libs/negociationTypes'
+	import type {
+		Memo,
+		NegotiationEntries,
+		NegotiationErrors,
+		OutcomeHistory
+	} from '@/libs/negotiationTypes'
 
-	import { prefectures, tax } from '@/data/data'
-	import InputEstimate from '@/components/InputEstimate.svelte'
-	import { NegociationFactory } from '@/Factories/NegociationFactory'
+	import { negotiations } from '@/stores/negotiations'
+	import { negotiationBackend, type Estimate } from '@/libs/negotiationTypes'
+	import { prefectures } from '@/data/data'
 
-	export let initialState: NegociationEntries
+	export let initialState: NegotiationEntries
 	export let customers: CustomerFactory[]
 	export let isSucceeded: boolean
 	export let isShown: boolean
 	export let confirmationPageIsShown: boolean
 	export let formType: string
 	export let currentCustomerId: number
+	export let formIsValid: NegotiationErrors
 
 	let currentCustomer: CustomerFactory | undefined
 
+	console.log(negotiations)
+
 	const customersOptions: { value: number; text: string }[] = customers.map(customer => ({
-		value: customer.custCD,
+		value: customer.id,
 		text: customer.custName
 	}))
 
-	const textareaFieldsets: { id: keyof NegociationEntries; label: string }[] = [
+	const textareaFieldsets: { id: keyof NegotiationEntries; label: string }[] = [
 		{
 			id: 'bottleneck',
 			label: 'ボトルネック確認'
@@ -48,7 +57,7 @@
 	]
 
 	$: currentCustomer = customers.filter(customer => {
-		if (customer.custCD === currentCustomerId) {
+		if (customer.id === currentCustomerId) {
 			return customer
 		}
 	})
@@ -217,20 +226,20 @@
 			initialState.numberOfBeds = getTotalBeds()
 
 			if (formType === 'create') {
-				let customer = customers.find(customer => customer.custCD === currentCustomerId)
+				let customer = customers.find(customer => customer.id === currentCustomerId)
 				initialState.customerName = customer?.custName
-				negociations.set([...$negociations, new NegociationBackend(initialState)])
+				negotiations.set([...$negotiations, new negotiationBackend(initialState)])
 			}
 
 			if (formType === 'update') {
-				let newArray = $negociations.map(negociation => {
-					if (negociation.negociationId === initialState.negociationId) {
-						return new NegociationBackend(initialState)
+				let newArray = $negotiations.map(negotiation => {
+					if (negotiation.negotiationId === initialState.negotiationId) {
+						return new negotiationBackend(initialState)
 					} else {
-						return negociation
+						return negotiation
 					}
 				})
-				negociations.set(newArray)
+				negotiations.set(newArray)
 			}
 		}
 	}
@@ -239,7 +248,7 @@
 <form
 	class="form {confirmationPageIsShown && 'hidden'}"
 	action="/negotiations"
-	id="negociation-form"
+	id="negotiation-form"
 	on:submit={handleSubmit}
 >
 	<h3 class="form__header">商談情報</h3>
@@ -335,7 +344,7 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputFreeText
 				label={'入金予定'}
 				placeholder={'前払い'}
 				name={'scheduled-deposit'}
@@ -372,9 +381,8 @@
 	<fieldset class="fieldset">
 		<legend class="legend hidden">納期先</legend>
 		<div class="form-row">
-			<Input
+			<InputTextNumber
 				name={'postal-code'}
-				inputSize={'input--sm'}
 				label={'納期先'}
 				placeholder={'0000000'}
 				bind:value={initialState.postalCode}
@@ -489,17 +497,15 @@
 	<fieldset class="fieldset">
 		<legend class="legend hidden">コミュニケーション</legend>
 		<div class="form-row">
-			<Input
+			<InputName
 				name={'person-in-charge'}
-				placeholder={'未入力'}
 				label={'自社担当者'}
 				bind:value={initialState.personInCharge}
 			/>
 		</div>
 		<div class="form-row">
-			<Input
+			<InputName
 				name={'responsible-person'}
-				placeholder={'未入力'}
 				label={'責任者'}
 				bind:value={initialState.responsiblePerson}
 			/>
@@ -565,10 +571,9 @@
 							<div class="form-row">
 								<InputDate name={'history-date'} bind:value={memo.date} />
 
-								<Input
+								<InputFreeText
 									name={'history-memo'}
 									placeholder={'未入力'}
-									inputSize={'input--xl'}
 									bind:value={memo.memo}
 								/>
 								{#if initialState.outcomeHistory.length > 1}

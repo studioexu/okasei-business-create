@@ -2,6 +2,7 @@ import { prefectures } from '@/data/data'
 import { isValidPhoneNumber } from 'libphonenumber-js'
 import type { CustomerEntries, CustomerEntriesErrors } from './customerTypes'
 import type { Department } from '@/models/Customer'
+import type { NegotiationEntries, NegotiationErrors } from './negotiationTypes'
 
 /**
  * We want to check if the user only use katakana
@@ -232,3 +233,43 @@ export const validationOnSubmit = (
 	})
 	return { isValid, formValidation }
 }
+
+/**
+ * Take the form and check if all the entries are valid.
+ * If there is one error, the function will return false.
+ * @param formEntries: Object of entries
+ * @returns boolean
+ */
+// export const validationOnSubmitNegotiation = (
+// 	formEntries: negotiationEntries,
+// 	formValidation: negotiationErrors
+// ): { isValid: boolean; formValidation: negotiationErrors } => {
+// 	let errorArray: boolean[] = []
+// 	let isValid = true
+
+// 	let requiredField: any
+
+// 	Object.keys(formEntries).map(key => {
+// 		if (key === 'customerName' || key === 'status' || key === 'startingDate') {
+// 			requiredField = { ...requiredField, [key]: true }
+// 		} else {
+// 			requiredField = { ...requiredField, [key]: false }
+// 		}
+// 	})
+
+// 	Object.keys(formEntries).map(key => {
+// 		const input = formEntries[key as keyof negotiationEntries]
+
+// 		formValidation[key as keyof negotiationErrors] = !requiredField[key as keyof negotiationErrors]
+// 			? input === '' || inputIsValid(key, input)
+// 			: inputIsValid(key, input)
+// 		errorArray.push(!formValidation[key as keyof negotiationErrors])
+// 	})
+
+// 	errorArray.forEach(error => {
+// 		if (error) {
+// 			isValid = false
+// 		}
+// 	})
+// 	return { isValid, formValidation }
+// }

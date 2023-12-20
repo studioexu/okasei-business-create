@@ -6,7 +6,18 @@ export interface Picture {
 	memo: string
 }
 
+export interface DepartmentBackend {
+	department: {
+		id: number
+		cd1: string
+		cd2: string
+		name: string
+	}
+	number_of_beds: number
+}
+
 export class CustomerNewApi {
+	[x: string]: any
 	id?: number
 	branch_cd: string
 	name: string
@@ -26,7 +37,7 @@ export class CustomerNewApi {
 	establish_date: string
 	establish_by: string
 	is_active: boolean
-	departments: { department_id: number; number_of_beds: number }[]
+	departments: { department_id: number; number_of_beds: number }[] | DepartmentBackend[]
 	register_at?: string
 	register_by?: number
 	update_at?: string

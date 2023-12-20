@@ -49,11 +49,9 @@
 			}
 		}
 	}
-
-	$: console.log(isValid)
 </script>
 
-<div class="department-wrapper" id={'department-' + index}>
+<article class="department-wrapper" id={'department-' + index}>
 	<InputSelect
 		name={'department'}
 		list={departementNameList}
@@ -79,7 +77,7 @@
 			<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
 		</button>
 	{/if}
-</div>
+</article>
 
 <style lang="scss">
 	.department-wrapper {

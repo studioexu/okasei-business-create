@@ -61,13 +61,20 @@
 		.input {
 			width: calc(((534 - 10 - 2) / 1366) * 100vw);
 
-			height: 31px;
 			&::placeholder {
-				color: rgb(206, 205, 205);
+				color: var(--placeholder);
 			}
 			&:focus {
 				border-color: var(--primary-color);
 			}
+		}
+
+		.font-error {
+			position: absolute;
+			right: 0;
+			bottom: -14px;
+			font-size: 10px;
+			opacity: 0;
 		}
 	}
 

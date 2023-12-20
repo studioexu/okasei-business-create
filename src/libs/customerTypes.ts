@@ -85,9 +85,3 @@ export interface CustomerEntriesErrors {
 	pictures: boolean
 	miscellaneous: boolean
 }
-
-export interface AddressAutoInfo {
-	prefecture: string
-	city: string
-	address1: string
-}

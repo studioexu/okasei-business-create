@@ -1,3 +1,17 @@
+import type { CustomerNewApi } from './BackendCustomer'
+
+const splitDateTime = (timeString: string) => {
+	const dateTime = timeString.split('T')
+
+	const date = dateTime[0]
+	const time = dateTime[1]?.split('+')[0]
+
+	return {
+		date: date,
+		time: time
+	}
+}
+
 export interface DepartmentBackend {
 	department: {
 		id: number
@@ -48,16 +62,16 @@ export class Customer {
 
 	private _departments: Department[]
 	private _registration: {
-		registDate: string
-		registBy: string
+		registDate?: string
+		registBy?: number
 	}
 	private _update: {
-		updateDate: string
-		updateBy: string
+		updateDate?: string
+		updateBy?: number
 	}
 	private _delete: {
-		deleteDate: string
-		deleteBy: string
+		deleteDate?: string
+		deleteBy?: number
 	}
 
 	private _googleReview: boolean
@@ -72,7 +86,7 @@ export class Customer {
 	private _contactTime: string
 	private _miscellaneous: string
 
-	constructor(data: any, registration?: any, update?: any, deleted?: any) {
+	constructor(data: CustomerNewApi) {
 		if (data.id) {
 			this._id = data.id
 		}
@@ -102,24 +116,24 @@ export class Customer {
 
 		this._isActive = data?.is_active
 
-		this._departments = data.departments.map((department: DepartmentBackend) => {
+		this._departments = data.departments.map(department => {
 			return {
-				departmentId: department.department.id,
-				departmentName: department.department.name,
-				numberOfBeds: department.number_of_beds
+				departmentId: (department as DepartmentBackend).department.id,
+				departmentName: (department as DepartmentBackend).department.name,
+				numberOfBeds: (department as DepartmentBackend).number_of_beds
 			}
 		})
 		this._registration = {
-			registDate: registration?.registDate || data.register_at,
-			registBy: registration?.registBy || data.register_by
+			registDate: data.register_at,
+			registBy: data.register_by
 		}
 		this._update = {
-			updateDate: update?.updateDate || data.update_at,
-			updateBy: update?.updateBy || data.update_by
+			updateDate: data.update_at,
+			updateBy: data.update_by
 		}
 		;(this._delete = {
-			deleteDate: deleted?.deleteDate || data.delete_at,
-			deleteBy: deleted?.deleteBy || data.delete_by
+			deleteDate: data.delete_at,
+			deleteBy: data.delete_by
 		}),
 			(this._googleReview = data.googleReview ? data.googleReview : false),
 			(this._reviews = data.reviews ? data.reviews : ''),
@@ -183,36 +197,15 @@ export class Customer {
 	}
 
 	public get registDateTime() {
-		const dateTime = this._registration.registDate.split('T')
-		const date = dateTime[0]
-		const time = dateTime[1]?.split('+')[0]
-
-		return {
-			date: date,
-			time: time
-		}
+		return this._registration.registDate && splitDateTime(this._registration.registDate)
 	}
 
 	public get deleteDateTime() {
-		const dateTime = this._delete.deleteDate.split('T')
-		const date = dateTime[0]
-		const time = dateTime[1]?.split('+')[0]
-
-		return {
-			date: date,
-			time: time
-		}
+		return this._delete.deleteDate && splitDateTime(this._delete.deleteDate)
 	}
 
 	public get updateDateTime() {
-		const dateTime = this._update.updateDate.split('T')
-		const date = dateTime[0]
-		const time = dateTime[1]?.split('+')[0]
-
-		return {
-			date: date,
-			time: time
-		}
+		return this._update.updateDate && splitDateTime(this._update.updateDate)
 	}
 
 	public get foundationDate() {

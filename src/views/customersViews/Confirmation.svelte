@@ -3,6 +3,7 @@
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
 	import type { CustomerEntries } from '@/libs/customerTypes'
 	import { getTotalOfBeds } from '@/libs/utils'
+	import Row from '@/components/Row.svelte'
 	export let initialState: CustomerEntries
 
 	let bedTotal: number = 0
@@ -11,105 +12,105 @@
 </script>
 
 <div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
-	<div class="form-row">
+	<Row>
 		<DetailWrapper
-			areaClass="customer-number"
+			id="customer-number"
 			content={initialState.id !== undefined ? initialState.id.toString() : ''}
 			label={'顧客番号'}
 		/>
-		<DetailWrapper areaClass="branch-number" content={initialState.branchNumber} label={'枝番'} />
-		<DetailWrapper areaClass="closing-month" content={initialState.closingMonth} label={'決算月'} />
-	</div>
-	<div class="form-row">
-		<DetailWrapper areaClass="customer-name" content={initialState.customerName} label={'施設名'} />
-	</div>
+		<DetailWrapper id="branch-number" content={initialState.branchNumber} label={'枝番'} />
+		<DetailWrapper id="closing-month" content={initialState.closingMonth} label={'決算月'} />
+	</Row>
+	<Row>
+		<DetailWrapper id="customer-name" content={initialState.customerName} label={'施設名'} />
+	</Row>
 
-	<div class="form-row">
-		<DetailWrapper areaClass="kana" content={initialState.kana} label={'カナ'} />
-	</div>
+	<Row>
+		<DetailWrapper id="kana" content={initialState.kana} label={'カナ'} />
+	</Row>
 
-	<div class="form-row">
+	<Row>
 		<DetailWrapper
-			areaClass="facility-number"
+			id="facility-number"
 			content={initialState.facilityNumber}
 			label={'医療機関番号'}
 		/>
 
 		<DetailWrapper
-			areaClass="business-type"
+			id="business-type"
 			content={initialState.businessType === 'C' ? '法人' : '個人'}
 			label={'区分'}
 		/>
-	</div>
-	<div class="form-row">
-		<DetailWrapper areaClass="postal-code" content={initialState.postalCode} label={'郵便番号'} />
-	</div>
-	<div class="form-row">
-		<DetailWrapper areaClass="prefecture" content={initialState.prefecture} label={'都道府県'} />
-		<DetailWrapper areaClass="city" content={initialState.city} label={'市区町村'} />
-	</div>
-	<div class="form-row">
-		<DetailWrapper areaClass="address1" content={initialState.address1} label={'住所１'} />
-	</div>
-	<div class="form-row">
-		<DetailWrapper areaClass="address2" content={initialState.address2} label={'住所2'} />
-	</div>
-	<div class="form-row">
-		<DetailWrapper areaClass="phone-number" content={initialState.phoneNumber} label={'電話番号'} />
-		<DetailWrapper areaClass="phone-number" content={initialState.mobile} label={'携帯電話'} />
-		<DetailWrapper areaClass="fax" content={initialState.fax} label={'FAX番号'} />
-	</div>
-	<div class="form-row">
-		<DetailWrapper areaClass="email" content={initialState.email} label={'メール'} />
-	</div>
-	<div class="form-row">
-		<DetailWrapper areaClass="homepage" content={initialState.homepage} label={'ホームページ'} />
-	</div>
-	<div class="form-row">
+	</Row>
+	<Row>
+		<DetailWrapper id="postal-code" content={initialState.postalCode} label={'郵便番号'} />
+	</Row>
+	<Row>
+		<DetailWrapper id="prefecture" content={initialState.prefecture} label={'都道府県'} />
+		<DetailWrapper id="city" content={initialState.city} label={'市区町村'} />
+	</Row>
+	<Row>
+		<DetailWrapper id="address1" content={initialState.address1} label={'住所１'} />
+	</Row>
+	<Row>
+		<DetailWrapper id="address2" content={initialState.address2} label={'住所2'} />
+	</Row>
+	<Row>
+		<DetailWrapper id="phone-number" content={initialState.phoneNumber} label={'電話番号'} />
+		<DetailWrapper id="phone-number" content={initialState.mobile} label={'携帯電話'} />
+		<DetailWrapper id="fax" content={initialState.fax} label={'FAX番号'} />
+	</Row>
+	<Row>
+		<DetailWrapper id="email" content={initialState.email} label={'メール'} />
+	</Row>
+	<Row>
+		<DetailWrapper id="homepage" content={initialState.homepage} label={'ホームページ'} />
+	</Row>
+	<Row>
 		<DetailWrapper
-			areaClass="number-of-employees"
+			id="number-of-employees"
 			content={initialState.numberOfEmployees.toString()}
 			label={'従業員数'}
 			unit={'名'}
 		/>
-	</div>
-	<div class="form-row">
+	</Row>
+	<Row>
 		<DetailWrapper
-			areaClass="number-of-facilities"
+			id="number-of-facilities"
 			content={initialState.numberOfFacilities.toString()}
 			label={'関連施設拠点数'}
 			unit={'軒'}
 		/>
-	</div>
+	</Row>
 
-	<div class="form-row">
+	<Row>
 		<DetailWrapper
-			areaClass="google-review"
+			id="google-review"
 			content={initialState.reviews !== undefined ? initialState.reviews : ''}
 			label={'口コミ'}
 		/>
-	</div>
+	</Row>
 
-	<div class="form-row">
+	<Row>
 		<DetailWrapper
-			areaClass="business-list"
+			id="business-list"
 			content={initialState.business !== undefined ? initialState.business : ''}
 			label={'事業一覧'}
 		/>
-	</div>
+	</Row>
 
-	<div class="form-row">
+	<Row>
 		<DetailWrapper content={initialState.year} label={'設立年月日'} unit={'年'} />
 		<DetailWrapper content={initialState.month} unit={'月'} />
 		<DetailWrapper content={initialState.founder} label={'設立者'} />
-	</div>
+	</Row>
 
-	<div class="form-row">
+	<Row>
 		<div class="detail-wrapper bedding">
 			<h3 class="label">診療科目</h3>
 			<div class="container">
 				{#each initialState.departments as department}
-					<div class="bed-wrapper">
+					<article class="bed-wrapper">
 						<h3 class="label">{department.departmentName}</h3>
 						<div class="quantity">
 							<h3 class="quantity__label">病床数</h3>
@@ -117,52 +118,48 @@
 								{department.numberOfBeds ? department.numberOfBeds : 0}
 							</p>
 						</div>
-					</div>
+					</article>
 				{/each}
-
-				<div class="total">
-					<h3 class="total__label">病床数合計</h3>
-					<p class="total__content">{bedTotal}</p>
-				</div>
+				<DetailWrapper id={'total'} label={'病床数合計'} content={bedTotal.toString()} />
 			</div>
 		</div>
-	</div>
+	</Row>
 
-	<div class="form-row">
+	<Row>
 		<DetailWrapper content={initialState.personInCharge} label={'ご担当者名'} />
 
 		<DetailWrapper content={initialState.personInChargeRole} label={'役職'} />
-	</div>
+	</Row>
 
-	<div class="form-row">
+	<Row>
 		<DetailWrapper content={initialState.personInChargeMemo} label={'ご担当メモ'} />
-	</div>
+	</Row>
 
-	<div class="form-row">
+	<Row>
 		<DetailWrapper content={initialState.approver} label={'決裁者'} />
-	</div>
+	</Row>
 
-	<div class="form-row">
+	<Row>
 		<DetailWrapper content={initialState.miscellaneous} label={'その他'} />
-	</div>
+	</Row>
 
-	<div class="form-row">
+	<Row>
 		<div class="detail-wrapper">
 			<h3 class="label">{'参考書類など 画像データ'}</h3>
 			<div class="container container--horizontal">
 				{#if initialState.pictures !== undefined}
 					{#each initialState.pictures as image}
-						<div class="card">
+						<article class="card">
 							<div class="image-wrapper">
 								<img src={URL.createObjectURL(image.file)} alt={image.memo} />
 							</div>
-							<p class="label">{image.memo}</p>
-						</div>
+							<h3 class="label">{image.memo}</h3>
+						</article>
 					{/each}
 				{/if}
 			</div>
 		</div>
-	</div>
+	</Row>
 </div>
 
 <style lang="scss">
@@ -179,10 +176,8 @@
 		box-shadow: 0px 8px 8px rgb(200, 200, 200);
 	}
 
-	.form-row {
-		display: flex;
-		gap: 50px;
-		border-bottom: 1px solid rgb(206, 205, 205);
+	:global(.confirmation > .form-row) {
+		border-bottom: 1px solid var(--placeholder);
 
 		&:last-child {
 			border: none;
@@ -215,11 +210,19 @@
 		}
 	}
 
-	:global(.detail-wrapper) {
+	.detail-wrapper {
 		position: relative;
 		display: flex;
-		padding: 11px 0;
-		column-gap: 18px;
+		align-items: center;
+		width: fit-content;
+		gap: 18px;
+
+		.label {
+			align-self: flex-start;
+			display: flex;
+			align-items: center;
+			height: 31px;
+		}
 	}
 
 	:global(.detail-wrapper .label) {
@@ -231,14 +234,6 @@
 
 	:global(.detail-wrapper:first-child .label) {
 		width: 130px;
-	}
-
-	.detail-wrapper {
-		.total {
-			display: flex;
-			justify-content: space-between;
-			align-items: center;
-		}
 	}
 
 	.bed-wrapper {

@@ -84,10 +84,10 @@
 		.input {
 			@include responsiveInputWidth((359));
 
-			height: 31px;
 			&::placeholder {
-				color: rgb(206, 205, 205);
+				color: var(--placeholder);
 			}
+
 			&:focus {
 				border-color: var(--primary-color);
 			}

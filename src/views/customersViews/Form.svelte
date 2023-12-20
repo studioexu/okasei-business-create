@@ -3,11 +3,7 @@
 
 <script lang="ts">
 	import type { Picture } from '@/libs/customerTypes'
-	import type {
-		CustomerEntries,
-		CustomerEntriesErrors,
-		AddressAutoInfo
-	} from '@/libs/customerTypes'
+	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes'
 
 	import { enhance } from '$app/forms'
 	import { prefectures, months } from '@/data/data'
@@ -25,8 +21,8 @@
 	import InputTextNumber from '@/components/InputTextNumber.svelte'
 	import InputName from '@/components/InputName.svelte'
 	import InputFreeText from '@/components/InputFreeText.svelte'
-	import type { Department } from '@/models/Customer'
-	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
+	import Row from '@/components/Row.svelte'
+	import DetailWrapper from '@/components/DetailWrapper.svelte'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -49,12 +45,6 @@
 	const handlePostalCodeSearchSubmit = async (e: Event): Promise<void> => {
 		e.preventDefault()
 
-		let address: { prefecture: string; city: string; address1: string } = {
-			prefecture: '',
-			city: '',
-			address1: ''
-		}
-
 		if (formIsValid.postalCode) {
 			const api = 'https://zipcloud.ibsnet.co.jp/api/search?zipcode='
 			const postalCode = initialState.postalCode
@@ -65,32 +55,18 @@
 				.then(data => {
 					const results = data.results[0]
 
-					address.prefecture = results.address1
-					address.city = results.address2
-					address.address1 = results.address3
+					initialState.prefecture = results.address1
+					initialState.city = results.address2
+					initialState.address1 = results.address3
+
+					initialState.address2 = ''
 				})
 				.catch(err => console.log(err))
 		}
-
-		assignAddressInfo(address)
 	}
 
 	/**
-	 * This will assign the address information in the address object in InitialState.
-	 * @param address: corresponding to an address object with the prefecture, the city and the street
-	 */
-	const assignAddressInfo = (address: AddressAutoInfo): void => {
-		Object.keys(address).map(key => {
-			if (address[key as keyof AddressAutoInfo].length !== 0) {
-				initialState[key as keyof AddressAutoInfo] = address[key as keyof AddressAutoInfo]
-			}
-		})
-
-		initialState.address2 = ''
-	}
-
-	/**
-	 * Triggered when the form is submit.
+	 * Triggered when the form is submitted by the user (when the confirmation page is displayed).
 	 * If the form is still on the entry page, then, it will preventDefault, and displayed the entry verification page.
 	 * If the user is in the entry verification page, then, we submit the form.
 	 *
@@ -212,7 +188,7 @@
 
 	<fieldset class="fieldset fieldset--info1">
 		<legend class="legend">情報１</legend>
-		<div class="form-row">
+		<Row>
 			<InputTextNumber
 				label={'枝番'}
 				name={'branch-number'}
@@ -229,9 +205,9 @@
 				unit="月"
 				bind:value={initialState.closingMonth}
 			/>
-		</div>
+		</Row>
 
-		<div class="form-row">
+		<Row>
 			<InputFreeText
 				label="施設名"
 				name="customer-name"
@@ -241,9 +217,9 @@
 				bind:value={initialState.customerName}
 				bind:isValid={formIsValid.customerName}
 			/>
-		</div>
+		</Row>
 
-		<div class="form-row">
+		<Row>
 			<InputFreeText
 				label="カナ"
 				name="kana"
@@ -253,9 +229,9 @@
 				bind:value={initialState.kana}
 				bind:isValid={formIsValid.kana}
 			/>
-		</div>
+		</Row>
 
-		<div class="form-row">
+		<Row>
 			<InputTextNumber
 				label="医療機関番号"
 				name="facility-number"
@@ -277,13 +253,13 @@
 				bind:value={initialState.businessType}
 				bind:isValid={formIsValid.businessType}
 			/>
-		</div>
+		</Row>
 	</fieldset>
 
 	<fieldset class="fieldset fieldset--address">
 		<legend class="legend">住所</legend>
 
-		<div class="form-row">
+		<Row>
 			<InputTextNumber
 				label="郵便番号"
 				name="postal-code"
@@ -295,9 +271,9 @@
 			/>
 
 			<button class="btn primary inline" on:click={handlePostalCodeSearchSubmit}>自動検索</button>
-		</div>
+		</Row>
 
-		<div class="form-row">
+		<Row>
 			<InputSelect
 				label={'都道府県'}
 				name="prefecture"
@@ -317,9 +293,9 @@
 				bind:value={initialState.city}
 				bind:isValid={formIsValid.city}
 			/>
-		</div>
+		</Row>
 
-		<div class="form-row">
+		<Row>
 			<InputAddress
 				label={'住所１'}
 				name="address1"
@@ -328,9 +304,9 @@
 				bind:value={initialState.address1}
 				bind:isValid={formIsValid.address1}
 			/>
-		</div>
+		</Row>
 
-		<div class="form-row">
+		<Row>
 			<InputAddress
 				label={'住所２'}
 				name="address2"
@@ -339,9 +315,9 @@
 				bind:value={initialState.address2}
 				bind:isValid={formIsValid.address2}
 			/>
-		</div>
+		</Row>
 
-		<div class="form-row">
+		<Row>
 			<InputTextNumber
 				label="電話番号"
 				name="phone-number"
@@ -369,16 +345,16 @@
 				bind:value={initialState.fax}
 				bind:isValid={formIsValid.fax}
 			/>
-		</div>
+		</Row>
 
-		<div class="form-row">
+		<Row>
 			<InputAddress name={'email'} label={'メール'} bind:value={initialState.email} />
-		</div>
+		</Row>
 	</fieldset>
 
 	<fieldset class="fieldset fieldset--foundation">
 		<legend class="legend">創立</legend>
-		<div class="form-row">
+		<Row>
 			<InputDate
 				label={'設立年月日'}
 				name={'foundation-date'}
@@ -391,13 +367,12 @@
 				bind:value={initialState.founder}
 				bind:isValid={formIsValid.founder}
 			/>
-		</div>
+		</Row>
 	</fieldset>
 
 	<fieldset class="fieldset fieldset--bed">
 		<legend class="legend">病床設定</legend>
-
-		<div class="form-row bed">
+		<Row>
 			<div class="input-wrapper">
 				<h3 class="label">診療科目</h3>
 				<div class="container">
@@ -411,25 +386,23 @@
 						/>
 					{/each}
 				</div>
-				<div class="input-wrapper bed-total">
-					<h3 class="label">病床数合計</h3>
-					<span class="content">{bedTotal}</span>
-				</div>
-			</div>
-		</div>
 
-		<div class="form-row">
+				<DetailWrapper id={'bed-total'} content={bedTotal.toString()} label={'病床数合計'} />
+			</div>
+		</Row>
+
+		<Row>
 			<div class="input-wrapper">
 				<span class="label" />
 				<button class="btn primary" on:click={handleAddDepartment}>+新規追加</button>
 			</div>
-		</div>
+		</Row>
 	</fieldset>
 
 	<fieldset class="fieldset fieldset--info2">
 		<legend class="legend">情報２</legend>
 
-		<div class="form-row">
+		<Row>
 			<InputNumber
 				name={'number-of-employees'}
 				label={'従業員数'}
@@ -437,9 +410,8 @@
 				bind:value={initialState.numberOfEmployees}
 				bind:isValid={formIsValid.numberOfEmployees}
 			/>
-		</div>
-
-		<div class="form-row">
+		</Row>
+		<Row>
 			<InputFreeText
 				label="事業内容"
 				name="business-content"
@@ -447,9 +419,8 @@
 				errorMsg={'200文字以内で入力してください'}
 				bind:value={initialState.business}
 			/>
-		</div>
-
-		<div class="form-row">
+		</Row>
+		<Row>
 			<InputAddress
 				label="ホームページ"
 				name="homepage"
@@ -457,9 +428,8 @@
 				bind:value={initialState.homepage}
 				bind:isValid={formIsValid.homepage}
 			/>
-		</div>
-
-		<div class="form-row">
+		</Row>
+		<Row>
 			<Select
 				label={'Google評価'}
 				name={'"google-review"'}
@@ -479,9 +449,8 @@
 					bind:value={initialState.reviews}
 				/>
 			{/if}
-		</div>
-
-		<div class="form-row">
+		</Row>
+		<Row>
 			<InputNumber
 				name={'number-of-branches'}
 				label={'関連施設拠点数'}
@@ -489,21 +458,20 @@
 				bind:value={initialState.numberOfFacilities}
 				bind:isValid={formIsValid.numberOfFacilities}
 			/>
-		</div>
-
-		<div class="form-row">
+		</Row>
+		<Row>
 			<InputFreeText
 				name={'miscellaneous'}
 				label={'その他'}
 				placeholder={'未入力'}
 				bind:value={initialState.miscellaneous}
 			/>
-		</div>
+		</Row>
 	</fieldset>
 
 	<fieldset class="fieldset">
 		<legend class="legend">担当者</legend>
-		<div class="form-row">
+		<Row>
 			<InputName
 				name={'person-in-charge'}
 				label={'ご担当者名'}
@@ -516,47 +484,46 @@
 				inputSize={'input--sm'}
 				bind:value={initialState.personInChargeRole}
 			/>
-		</div>
-
-		<div class="form-row">
+		</Row>
+		<Row>
 			<InputFreeText
 				name={'person-in-charge-memo'}
 				label={'ご担当メモ'}
 				placeholder={'未入力'}
 				bind:value={initialState.personInChargeMemo}
 			/>
-		</div>
-		<div class="form-row">
+		</Row>
+		<Row>
 			<InputName name={'approver'} label={'決裁者'} bind:value={initialState.approver} />
-		</div>
-		<div class="form-row">
+		</Row>
+		<Row>
 			<InputFreeText
 				name={'prefered-contact-time'}
 				label={'連絡の取りやすい時間'}
 				placeholder={'未入力'}
 				bind:value={initialState.contactTime}
 			/>
-		</div>
+		</Row>
 	</fieldset>
 
 	<fieldset class="fieldset">
 		<legend class="legend">画像</legend>
 
-		<div class="form-row">
+		<Row>
 			<div class="input-wrapper">
 				<h3 class="label">参考書類など画像データ</h3>
 
 				<div class="container">
 					{#if initialState.pictures === undefined || initialState.pictures.length === 0}
-						<div class="card">
+						<article class="card">
 							<button class="image-empty" on:click={() => (uploadModalIsShown = true)}>
 								<span>+</span>
 							</button>
 							<p class="image-description">画像がアップロードされていません。</p>
-						</div>
+						</article>
 					{:else}
 						{#each initialState.pictures as image, index}
-							<div class="card" id={image.file.name}>
+							<article class="card" id={image.file.name}>
 								<div class="image-wrapper">
 									<img src={URL.createObjectURL(image.file)} alt="" />
 								</div>
@@ -573,20 +540,20 @@
 								>
 									削除
 								</button>
-							</div>
+							</article>
 						{/each}
 					{/if}
 				</div>
 			</div>
-		</div>
-		<div class="form-row">
+		</Row>
+		<Row>
 			<div class="input-wrapper">
 				<span class="label" />
 				<button type="button" class="btn add primary" on:click={() => (uploadModalIsShown = true)}>
 					＋画像追加
 				</button>
 			</div>
-		</div>
+		</Row>
 	</fieldset>
 </form>
 
@@ -599,15 +566,6 @@
 		background-color: #fff;
 		border-radius: 16px;
 		box-shadow: 0px 8px 8px rgb(200, 200, 200);
-	}
-
-	.form-row {
-		display: flex;
-		align-items: flex-start;
-		justify-content: flex-start;
-		flex-wrap: wrap;
-		gap: 18px;
-		margin-bottom: 20px;
 	}
 
 	.btn {
@@ -637,63 +595,24 @@
 		font-size: 14px;
 	}
 
-	:global(.required-mark) {
-		color: var(--error);
-	}
-
-	:global(.input-wrapper) {
-		position: relative;
-		display: flex;
-		gap: 10px;
-		align-items: flex-start;
-	}
-
-	:global(.input-wrapper > .label) {
-		width: fit-content;
-		font-size: 18px;
-		font-weight: 400;
-	}
-
 	:global(.input-wrapper:first-child > .label) {
 		width: 140px;
 	}
 
-	:global(.input-wrapper .input::placeholder) {
-		color: rgb(206, 205, 205);
-	}
-	:global(.input-wrapper .input:focus) {
-		border-color: var(--primary-color);
-	}
-
-	:global(.input-wrapper .font-error) {
-		position: absolute;
-		right: 0;
-		bottom: -14px;
-		font-size: 10px;
-		opacity: 0;
-	}
-
-	:global(.error .input) {
-		transition: border 300ms;
-		border-color: var(--error);
-		animation: buzz 100ms;
-		animation-iteration-count: 3;
-	}
-
-	:global(.error .font-error) {
-		opacity: 1;
-		transition: all 300ms;
-	}
-
-	:global(.input-wrapper .unit) {
-		height: 31px;
+	.input-wrapper {
+		position: relative;
 		display: flex;
 		align-items: center;
-	}
+		width: fit-content;
+		gap: 10px;
 
-	.input-wrapper {
-		.input {
-			max-height: 31px;
+		.label {
+			align-self: flex-start;
+			display: flex;
+			align-items: center;
+			height: 31px;
+			font-weight: 400;
+			font-size: 18px;
 		}
 	}
 

@@ -19,15 +19,15 @@ const checkDepartmentIsValid = (department: Department) => {
 }
 
 const checkAllDepartmentsAreValid = (departments: Department[]) => {
-	let isValid = true
+	const errorArray: string[] = []
 
-	departments.map(department => {
-		if (department.departmentId === 0) {
-			return (isValid = false)
+	departments.map((department: Department) => {
+		if (!inputIsValid('department', department)) {
+			errorArray.push('error')
 		}
 	})
 
-	return isValid
+	return errorArray.length === 0
 }
 
 /**
@@ -111,20 +111,36 @@ export const inputIsValid = (name: string, input: any): boolean => {
 		case 'branchNumber':
 			return checkIfInputIsNumber(input) && numberOfCharacterValidation(input, 4)
 
+		case 'facilityNumber':
+			return checkIfInputIsNumber(input) && input.length === 10
+
+		case 'quantity':
+		case 'numberOfEmployees':
+		case 'numberOfFacilities':
+			return checkIfInputIsNumber(input)
+
+		case 'postalCode':
+			return postalCodeValidation(input)
+
+		case 'phoneNumber':
+		case 'fax':
+		case 'mobile':
+			return phoneNumberValidation(input)
+
+		case 'prefecture':
+			return checkIfPrefectureIsValid(input)
+
+		case 'businessType':
+			return input === 'I' || input === 'C' || input === '法人' || input === '個人'
+
+		case 'month':
+			return checkIfMonthIsValid(input)
+
 		case 'customerName':
 			return numberOfCharacterValidation(input, 128)
 
 		case 'kana':
 			return kanaValidation(input) && numberOfCharacterValidation(input, 128)
-
-		case 'facilityNumber':
-			return checkIfInputIsNumber(input) && input.length === 10
-
-		case 'postalCode':
-			return postalCodeValidation(input)
-
-		case 'prefecture':
-			return checkIfPrefectureIsValid(input)
 
 		case 'city':
 			return numberOfCharacterValidation(input, 20)
@@ -137,35 +153,11 @@ export const inputIsValid = (name: string, input: any): boolean => {
 		case 'homepage':
 			return numberOfCharacterValidation(input, 128)
 
-		case 'phoneNumber':
-		case 'fax':
-		case 'mobile':
-			return phoneNumberValidation(input)
-
-		case 'month':
-			return checkIfMonthIsValid(input)
-
-		case 'quantity':
-		case 'numberOfEmployees':
-		case 'numberOfFacilities':
-			return checkIfInputIsNumber(input)
-
-		case 'businessType':
-			return input.length > 0
-
 		case 'department':
 			return checkDepartmentIsValid(input)
 
 		case 'departments':
-			const errorArray: string[] = []
-
-			input.map((department: Department) => {
-				if (!inputIsValid('department', department)) {
-					errorArray.push('error')
-				}
-			})
-
-			return errorArray.length === 0
+			return checkAllDepartmentsAreValid(input)
 
 		default:
 			return true

@@ -3,11 +3,7 @@
 
 <script lang="ts">
 	import type { Picture } from '@/libs/customerTypes'
-	import type {
-		CustomerEntries,
-		CustomerEntriesErrors,
-		AddressAutoInfo
-	} from '@/libs/customerTypes'
+	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes'
 
 	import { enhance } from '$app/forms'
 	import { prefectures, months } from '@/data/data'
@@ -39,6 +35,12 @@
 
 	$: isShown
 	$: isSucceeded
+
+	interface AddressAutoInfo {
+		prefecture: string
+		city: string
+		address1: string
+	}
 
 	let uploadModalIsShown = false
 

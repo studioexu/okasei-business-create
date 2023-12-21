@@ -70,7 +70,7 @@
 	/>
 
 	{#if departments.length > 1}
-		<ButtonDelete on:delete={() => deleteDepartment(index)} />
+		<ButtonDelete addClass={'margin-left-0'} on:delete={() => deleteDepartment(index)} />
 	{/if}
 </article>
 

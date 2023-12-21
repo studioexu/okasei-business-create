@@ -22,6 +22,7 @@
 	import InputName from '@/components/InputName.svelte'
 	import InputFreeText from '@/components/InputFreeText.svelte'
 	import Row from '@/components/Row.svelte'
+	import ButtonDelete from '@/components/ButtonDelete.svelte'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
 
 	export let formType: string
@@ -394,7 +395,7 @@
 		<Row>
 			<div class="input-wrapper">
 				<span class="label" />
-				<button class="btn primary" on:click={handleAddDepartment}>+新規追加</button>
+				<button class="btn primary inline" on:click={handleAddDepartment}>+新規追加</button>
 			</div>
 		</Row>
 	</fieldset>
@@ -533,13 +534,7 @@
 									name={'image-description'}
 									bind:value={image.memo}
 								/>
-								<button
-									type="button"
-									class="btn primary inline"
-									on:click={() => handleDeleteImage(index)}
-								>
-									削除
-								</button>
+								<ButtonDelete on:delete={() => handleDeleteImage(index)} />
 							</article>
 						{/each}
 					{/if}
@@ -549,7 +544,11 @@
 		<Row>
 			<div class="input-wrapper">
 				<span class="label" />
-				<button type="button" class="btn add primary" on:click={() => (uploadModalIsShown = true)}>
+				<button
+					type="button"
+					class="btn primary inline"
+					on:click={() => (uploadModalIsShown = true)}
+				>
 					＋画像追加
 				</button>
 			</div>

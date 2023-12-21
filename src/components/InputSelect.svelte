@@ -74,6 +74,10 @@
 		position: relative;
 		align-self: center;
 
+		.input::placeholder {
+			color: var(--placeholder);
+		}
+
 		.label {
 			align-self: flex-start;
 			display: flex;

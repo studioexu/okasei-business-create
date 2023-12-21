@@ -151,6 +151,12 @@
 		}
 	}
 
+	:global(.no-data-message) {
+		color: var(--black);
+		font-size: 18px;
+		text-align: center;
+	}
+
 	:global(button.inline) {
 		padding: 4px 8px;
 		max-height: 31px;

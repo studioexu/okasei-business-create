@@ -41,7 +41,7 @@
 </script>
 
 {#if customersToDisplayOnPage === undefined}
-	<p class="no-data">データがございません。</p>
+	<h2 class="no-data-message">データがありません。</h2>
 {:else}
 	<div class="table-wrapper">
 		<table class="customer-list">

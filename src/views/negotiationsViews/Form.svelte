@@ -35,6 +35,8 @@
 
 	let currentCustomer: CustomerFactory | undefined
 
+	const currentDate = new Date().toLocaleDateString().split('/').join('-')
+
 	const customersOptions: { value: number; text: string }[] = customers.map(customer => ({
 		value: customer.id,
 		text: customer.custName
@@ -89,10 +91,12 @@
 			: initialState.outcomeHistory
 	$: initialState.memo =
 		initialState.memo.length === 0
-			? [...initialState.memo, { date: '', memo: '' }]
+			? [...initialState.memo, { date: currentDate, memo: '' }]
 			: initialState.memo
 
 	//// REMOVE OR ADD ELEMENT IN ESTIMATE / MEMO / OUTCOMEHISTORY ARRAYS
+
+	$: console.log(initialState)
 
 	/**
 	 * Remove one object from the corresponding array.
@@ -122,7 +126,7 @@
 		switch (arrayType) {
 			case 'memo':
 				newObject = {
-					date: '',
+					date: currentDate,
 					memo: ''
 				}
 				break

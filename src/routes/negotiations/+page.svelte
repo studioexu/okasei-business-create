@@ -333,77 +333,81 @@
 	</header>
 
 	<div class="section__main">
-		<div class="table-wrapper">
-			<table class="table">
-				<thead>
-					<tr>
-						{#each tableHeaders as header}
-							{#if negotiationDataIsShown[header.id]}
-								<th class="theader">{header.label}</th>
-							{/if}
-						{/each}
-						<th class="theader" />
-					</tr>
-				</thead>
-
-				<tbody class="tbody">
-					{#each filterednegotiations as negotiation, index}
-						<tr class="trow">
+		{#if filterednegotiations.length === 0}
+			<h2 class="no-data-message">データがありません。</h2>
+		{:else}
+			<div class="table-wrapper">
+				<table class="table">
+					<thead>
+						<tr>
 							{#each tableHeaders as header}
 								{#if negotiationDataIsShown[header.id]}
-									<td
-										class="tdata {header.id} {header.id === 'condition' &&
-											header.id + '--' + negotiation[header.id]}"
-									>
-										{#if header.id === 'customerName'}
-											<a href={'/negotiations/' + negotiation.negotiationId}>
-												{negotiation[header.id]}
-											</a>
-										{:else if header.id === 'billingAddress'}
-											{'〒' +
-												negotiation.postalCode +
-												negotiation.prefecture +
-												negotiation.city +
-												negotiation.address1 +
-												negotiation.address2}
-										{:else if header.id === 'memo'}
-											{negotiation.memo[negotiation.memo.length - 1].memo}
-										{:else if header.id === 'numberOfBeds'}
-											{negotiation.minMaxBed.min === negotiation.minMaxBed.max
-												? negotiation.minMaxBed.min + '台'
-												: negotiation.minMaxBed.min + '-' + negotiation.minMaxBed.max + '台'}
-										{:else if header.id === 'billingEstimation'}
-											{negotiation.minMaxEstimate.min === negotiation.minMaxEstimate.max
-												? negotiation.minMaxEstimate.min + '円'
-												: negotiation.minMaxEstimate.min +
-												  '-' +
-												  negotiation.minMaxEstimate.max +
-												  '円'}
-										{:else if header.id === 'nextContact'}
-											{negotiation.nextContactDate !== '' ? negotiation.nextContactDate : 'ー'}
-											{negotiation.nextContactTime !== '' ? negotiation.nextContactTime : 'ー'}
-										{:else if header.id === 'outcome' || header.id === 'billingDate'}
-											{negotiation[header.id] !== '' ? negotiation[header.id] : '未定'}
-										{:else}
-											{negotiation[header.id]}
-										{/if}
-									</td>
+									<th class="theader">{header.label}</th>
 								{/if}
 							{/each}
-							<td class="tdata icon">
-								<button
-									class="delete"
-									type="button"
-									on:click={() => openModal(negotiation.negotiationId)}
-								>
-									<Icon icon={{ path: 'delete', color: '#0093d0' }} />
-								</button>
-							</td>
+							<th class="theader" />
 						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
+					</thead>
+
+					<tbody class="tbody">
+						{#each filterednegotiations as negotiation, index}
+							<tr class="trow">
+								{#each tableHeaders as header}
+									{#if negotiationDataIsShown[header.id]}
+										<td
+											class="tdata {header.id} {header.id === 'condition' &&
+												header.id + '--' + negotiation[header.id]}"
+										>
+											{#if header.id === 'customerName'}
+												<a href={'/negotiations/' + negotiation.negotiationId}>
+													{negotiation[header.id]}
+												</a>
+											{:else if header.id === 'billingAddress'}
+												{'〒' +
+													negotiation.postalCode +
+													negotiation.prefecture +
+													negotiation.city +
+													negotiation.address1 +
+													negotiation.address2}
+											{:else if header.id === 'memo'}
+												{negotiation.memo[negotiation.memo.length - 1].memo}
+											{:else if header.id === 'numberOfBeds'}
+												{negotiation.minMaxBed.min === negotiation.minMaxBed.max
+													? negotiation.minMaxBed.min + '台'
+													: negotiation.minMaxBed.min + '台 - ' + negotiation.minMaxBed.max + '台'}
+											{:else if header.id === 'billingEstimation'}
+												{negotiation.minMaxEstimate.min === negotiation.minMaxEstimate.max
+													? negotiation.minMaxEstimate.min + '円'
+													: negotiation.minMaxEstimate.min +
+													  '円 - ' +
+													  negotiation.minMaxEstimate.max +
+													  '円'}
+											{:else if header.id === 'nextContact'}
+												{negotiation.nextContactDate !== '' ? negotiation.nextContactDate : 'ー'}
+												{negotiation.nextContactTime !== '' ? negotiation.nextContactTime : 'ー'}
+											{:else if header.id === 'outcome' || header.id === 'billingDate'}
+												{negotiation[header.id] !== '' ? negotiation[header.id] : '未定'}
+											{:else}
+												{negotiation[header.id]}
+											{/if}
+										</td>
+									{/if}
+								{/each}
+								<td class="tdata icon">
+									<button
+										class="delete"
+										type="button"
+										on:click={() => openModal(negotiation.negotiationId)}
+									>
+										<Icon icon={{ path: 'delete', color: '#0093d0' }} />
+									</button>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
 	</div>
 </section>
 

@@ -93,7 +93,7 @@
 	 * @param index: corresponding to the index of the right estimate object.
 	 */
 	const addItem = (): void => {
-		estimate.items = [...estimate.items, { name: '', quantity: 0, price: 0 }]
+		estimate.items = [...estimate.items, { name: '', quantity: 1, price: 0 }]
 	}
 
 	/**

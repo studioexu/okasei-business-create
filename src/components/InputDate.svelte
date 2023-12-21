@@ -31,15 +31,11 @@
 		}
 
 		.input {
-			height: 31px;
-			&::placeholder {
-				color: rgb(206, 205, 205);
-			}
 			&:focus {
 				border-color: var(--primary-color);
 			}
 			&.empty {
-				color: #d0cfcf;
+				color: var(--placeholder);
 			}
 		}
 

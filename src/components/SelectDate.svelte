@@ -1,13 +1,13 @@
 <script lang="ts">
 	export let name: string
 	export let label: string = ''
-	export let options: string[] = []
+	export let options: string[]
 	export let value: string = ''
 </script>
 
 <div class="input-wrapper">
 	<select {name} id={name} class="select {value === '' && 'empty'}" bind:value>
-		<option value="" selected disabled class="placeholder">未選択</option>
+		<option value=" " selected disabled class="placeholder">未選択</option>
 		{#each options as option}
 			<option value={option}>{option}</option>
 		{/each}
@@ -30,7 +30,6 @@
 			align-self: flex-start;
 			display: flex;
 			align-items: center;
-			height: 31px;
 		}
 
 		.select {

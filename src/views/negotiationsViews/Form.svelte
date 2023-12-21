@@ -6,32 +6,59 @@
 	import InputNumber from '@/components/InputNumber.svelte'
 	import InputAddress from '@/components/InputAddress.svelte'
 	import InputSelect from '@/components/InputSelect.svelte'
-
-	import type { CustomerFactory } from '@/Factories/CustomerFactory'
-	import { negociations } from '@/stores/negociations'
-	import { NegociationBackend, type Estimate } from '@/libs/negociationTypes'
-	import type { Memo, NegociationEntries, OutcomeHistory } from '@/libs/negociationTypes'
-
-	import { prefectures } from '@/data/data'
+	import InputTextNumber from '@/components/InputTextNumber.svelte'
+	import InputName from '@/components/InputName.svelte'
+	import InputFreeText from '@/components/InputFreeText.svelte'
 	import InputEstimate from '@/components/InputEstimate.svelte'
 
-	export let initialState: NegociationEntries
+	import type { CustomerFactory } from '@/Factories/CustomerFactory'
+	import type {
+		Memo,
+		NegotiationEntries,
+		NegotiationErrors,
+		OutcomeHistory
+	} from '@/libs/negotiationTypes'
+
+	import { negotiations } from '@/stores/negotiations'
+	import { negotiationBackend, type Estimate } from '@/libs/negotiationTypes'
+	import { prefectures } from '@/data/data'
+	import ButtonDelete from '@/components/ButtonDelete.svelte'
+
+	export let initialState: NegotiationEntries
 	export let customers: CustomerFactory[]
 	export let isSucceeded: boolean
 	export let isShown: boolean
 	export let confirmationPageIsShown: boolean
 	export let formType: string
 	export let currentCustomerId: number
+	export let formIsValid: NegotiationErrors
 
 	let currentCustomer: CustomerFactory | undefined
 
+	const currentDate = new Date().toLocaleDateString().split('/').join('-')
+
 	const customersOptions: { value: number; text: string }[] = customers.map(customer => ({
-		value: customer.custCD,
+		value: customer.id,
 		text: customer.custName
 	}))
 
+	const textareaFieldsets: { id: keyof NegotiationEntries; label: string }[] = [
+		{
+			id: 'bottleneck',
+			label: 'ボトルネック確認'
+		},
+		{
+			id: 'occasion',
+			label: '機会（チャンス）'
+		},
+		{
+			id: 'risk',
+			label: '脅威（リスク）'
+		}
+	]
+
 	$: currentCustomer = customers.filter(customer => {
-		if (customer.custCD === currentCustomerId) {
+		if (customer.id === currentCustomerId) {
 			return customer
 		}
 	})
@@ -64,10 +91,12 @@
 			: initialState.outcomeHistory
 	$: initialState.memo =
 		initialState.memo.length === 0
-			? [...initialState.memo, { date: '', memo: '' }]
+			? [...initialState.memo, { date: currentDate, memo: '' }]
 			: initialState.memo
 
 	//// REMOVE OR ADD ELEMENT IN ESTIMATE / MEMO / OUTCOMEHISTORY ARRAYS
+
+	$: console.log(initialState)
 
 	/**
 	 * Remove one object from the corresponding array.
@@ -97,7 +126,7 @@
 		switch (arrayType) {
 			case 'memo':
 				newObject = {
-					date: '',
+					date: currentDate,
 					memo: ''
 				}
 				break
@@ -200,20 +229,20 @@
 			initialState.numberOfBeds = getTotalBeds()
 
 			if (formType === 'create') {
-				let customer = customers.find(customer => customer.custCD === currentCustomerId)
+				let customer = customers.find(customer => customer.id === currentCustomerId)
 				initialState.customerName = customer?.custName
-				negociations.set([...$negociations, new NegociationBackend(initialState)])
+				negotiations.set([...$negotiations, new negotiationBackend(initialState)])
 			}
 
 			if (formType === 'update') {
-				let newArray = $negociations.map(negociation => {
-					if (negociation.negociationId === initialState.negociationId) {
-						return new NegociationBackend(initialState)
+				let newArray = $negotiations.map(negotiation => {
+					if (negotiation.negotiationId === initialState.negotiationId) {
+						return new negotiationBackend(initialState)
 					} else {
-						return negociation
+						return negotiation
 					}
 				})
-				negociations.set(newArray)
+				negotiations.set(newArray)
 			}
 		}
 	}
@@ -222,7 +251,7 @@
 <form
 	class="form {confirmationPageIsShown && 'hidden'}"
 	action="/negotiations"
-	id="negociation-form"
+	id="negotiation-form"
 	on:submit={handleSubmit}
 >
 	<h3 class="form__header">商談情報</h3>
@@ -318,7 +347,7 @@
 		</div>
 
 		<div class="form-row">
-			<Input
+			<InputFreeText
 				label={'入金予定'}
 				placeholder={'前払い'}
 				name={'scheduled-deposit'}
@@ -355,9 +384,8 @@
 	<fieldset class="fieldset">
 		<legend class="legend hidden">納期先</legend>
 		<div class="form-row">
-			<Input
+			<InputTextNumber
 				name={'postal-code'}
-				inputSize={'input--sm'}
 				label={'納期先'}
 				placeholder={'0000000'}
 				bind:value={initialState.postalCode}
@@ -441,13 +469,9 @@
 						</div>
 						{#if initialState.memo.length > 1}
 							<div class="form-row">
-								<button
-									type="button"
-									class="btn primary delete"
-									on:click={() => handleDeleteItemFromArray(index, initialState.memo, 'memo')}
-								>
-									削除
-								</button>
+								<ButtonDelete
+									on:delete={() => handleDeleteItemFromArray(index, initialState.memo, 'memo')}
+								/>
 							</div>
 						{/if}
 					</div>
@@ -472,17 +496,15 @@
 	<fieldset class="fieldset">
 		<legend class="legend hidden">コミュニケーション</legend>
 		<div class="form-row">
-			<Input
+			<InputName
 				name={'person-in-charge'}
-				placeholder={'未入力'}
 				label={'自社担当者'}
 				bind:value={initialState.personInCharge}
 			/>
 		</div>
 		<div class="form-row">
-			<Input
+			<InputName
 				name={'responsible-person'}
-				placeholder={'未入力'}
 				label={'責任者'}
 				bind:value={initialState.responsiblePerson}
 			/>
@@ -527,24 +549,15 @@
 
 	<fieldset class="fieldset">
 		<legend class="legend hidden">コメント</legend>
-		<div class="form-row">
-			<div class="textarea-wrapper">
-				<label class="label" for="bottleneck">ボトルネック確認</label>
-				<textarea name="bottleneck" id="bottleneck" bind:value={initialState.bottleneck} />
+
+		{#each textareaFieldsets as fieldset}
+			<div class="form-row">
+				<div class="textarea-wrapper">
+					<label class="label" for={fieldset.id}>{fieldset.label}</label>
+					<textarea name={fieldset.id} id={fieldset.id} bind:value={initialState[fieldset.id]} />
+				</div>
 			</div>
-		</div>
-		<div class="form-row">
-			<div class="textarea-wrapper">
-				<label class="label" for="chance">機会（チャンス）</label>
-				<textarea name="chance" id="chance" bind:value={initialState.occasion} />
-			</div>
-		</div>
-		<div class="form-row">
-			<div class="textarea-wrapper">
-				<label class="label" for="risk">脅威（リスク）</label>
-				<textarea name="risk" id="risk" bind:value={initialState.risk} />
-			</div>
-		</div>
+		{/each}
 	</fieldset>
 
 	<fieldset class="fieldset">
@@ -557,25 +570,23 @@
 							<div class="form-row">
 								<InputDate name={'history-date'} bind:value={memo.date} />
 
-								<Input
+								<InputFreeText
 									name={'history-memo'}
 									placeholder={'未入力'}
-									inputSize={'input--xl'}
 									bind:value={memo.memo}
 								/>
+
 								{#if initialState.outcomeHistory.length > 1}
-									<button
-										type="button"
-										class="primary btn delete"
-										on:click={() =>
+									<!-- <div class="btn-wrapper"> -->
+									<ButtonDelete
+										on:delete={() =>
 											handleDeleteItemFromArray(
 												index,
 												initialState.outcomeHistory,
 												'outcomeHistory'
 											)}
-									>
-										削除
-									</button>
+									/>
+									<!-- </div> -->
 								{/if}
 							</div>
 						</div>
@@ -642,11 +653,28 @@
 			align-items: center;
 			justify-content: center;
 			padding: 0;
-			height: 32px;
-			width: 70px;
+			height: 31px;
+			width: 31px;
 			min-width: 0;
 			margin-left: auto;
+
+			cursor: pointer;
+			background-color: transparent;
+			margin: auto;
+
+			&:hover {
+				opacity: 0.5;
+			}
+
+			> :global(.svg-icon) {
+				height: 18px * 1.2;
+			}
 		}
+	}
+
+	.label {
+		font-size: 18px;
+		font-weight: 400;
 	}
 
 	.wrapper {

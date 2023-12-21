@@ -1,19 +1,19 @@
 <script lang="ts">
-	import type { Estimate, Item } from '@/libs/negociationTypes'
+	import type { Estimate, Item } from '@/libs/negotiationTypes'
 	import InputDate from './InputDate.svelte'
 	import InputNumber from './InputNumber.svelte'
 	import InputCheckbox from './InputCheckbox.svelte'
 	import InputSelect from './InputSelect.svelte'
-	import Icon from './Icon.svelte'
 	import { tax } from '@/data/data'
-	import type { NegociationFactory } from '@/Factories/NegociationFactory'
+	import type { NegotiationFactory } from '@/Factories/NegotiationFactory'
 	import { createEventDispatcher } from 'svelte'
+	import ButtonDelete from './ButtonDelete.svelte'
 
 	const dispatch = createEventDispatcher()
 
 	export let estimate: Estimate
 	export let index: number
-	export let initialState: NegociationFactory
+	export let initialState: NegotiationFactory
 
 	const deleteEstimateFromArray = () => {
 		dispatch('deleteEstimate', index)
@@ -36,8 +36,6 @@
 			price: 20000
 		}
 	]
-
-	$: console.log(estimate)
 
 	/**
 	 * When the user chooses an item,
@@ -95,7 +93,7 @@
 	 * @param index: corresponding to the index of the right estimate object.
 	 */
 	const addItem = (): void => {
-		estimate.items = [...estimate.items, { name: '', quantity: 0, price: 0 }]
+		estimate.items = [...estimate.items, { name: '', quantity: 1, price: 0 }]
 	}
 
 	/**
@@ -158,9 +156,7 @@
 			<InputNumber unit={'円'} name={'price'} bind:value={item.price} />
 			<InputNumber unit={'台'} name={'quantity'} bind:value={item.quantity} />
 			{#if estimate.items.length > 1}
-				<button type="button" class="btn secondary" on:click={() => removeItem(indexItem)}>
-					<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
-				</button>
+				<ButtonDelete addClass={'margin-left-0'} on:delete={() => removeItem(indexItem)} />
 			{/if}
 		</div>
 	{/each}
@@ -168,9 +164,7 @@
 	<div class="form-row">
 		<button type="button" class="btn add primary" on:click={addItem}>＋商品追加</button>
 		{#if initialState.estimate.length > 1}
-			<button type="button" class="btn primary delete" on:click={deleteEstimateFromArray}
-				>削除</button
-			>
+			<ButtonDelete on:delete={deleteEstimateFromArray} />
 		{/if}
 	</div>
 </div>
@@ -181,6 +175,10 @@
 		border-radius: 8px;
 		gap: 18px;
 		background-color: #f4f4f4;
+
+		// .form-row {
+		// 	width: fit-content;
+		// }
 
 		.form-row:last-child {
 			margin-bottom: 0;

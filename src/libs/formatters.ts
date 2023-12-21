@@ -99,41 +99,28 @@ export const getDateTime = (time?: string): string => {
  */
 export const formatCustomer = (
 	action: 'update' | 'create' | 'delete',
-	customer: CustomerEntries | CustomerNewApi,
-	registration?: any,
-	update?: any
+	customer: CustomerEntries
 ): CustomerNewApi => {
 	const timeArray = getDateTime()
 
 	switch (action) {
 		case 'create':
-			const create = {
-				registDate: timeArray,
-				registBy: 1
-			}
+			customer.registrationDate = timeArray
+			customer.registeredBy = 1
 
-			return new CustomerNewApi(customer, create)
+			return new CustomerNewApi(customer)
 
 		case 'update':
-			const updated = {
-				updateBy: 1,
-				updateDate: timeArray
-			}
-			return new CustomerNewApi(customer, registration, updated)
+			customer.updateDate = timeArray
+			customer.updateBy = 1
+			return new CustomerNewApi(customer)
 
 		case 'delete':
-			const deleted = {
-				deleteDate: timeArray,
-				deleteBy: 1
-			}
-
-			return new CustomerNewApi(customer, registration, update, deleted)
+			customer.deleteDate = timeArray
+			customer.deleteBy = 1
+			return new CustomerNewApi(customer)
 
 		default:
-			if (customer instanceof CustomerNewApi) {
-				return customer
-			} else {
-				return new CustomerNewApi(customer, registration, update)
-			}
+			return new CustomerNewApi(customer)
 	}
 }

@@ -1,17 +1,12 @@
+import type { Department } from '@/models/Customer'
+
 export interface Picture {
 	file: File
 	memo: string
 }
 
-export interface Department {
-	index: number
-	department: string
-	bedQuantity: string
-}
-
 export interface CustomerEntries {
-	custCd?: string
-	id?: string
+	id?: number
 	branchNumber: string
 	customerName: string
 	kana: string
@@ -28,11 +23,12 @@ export interface CustomerEntries {
 	mobile: string
 	year: string
 	month: string
+	foundationDate: string
 	founder: string
 	departments: Department[]
-	numberOfEmployees: string
+	numberOfEmployees: number
 	homepage: string
-	numberOfFacilities: string
+	numberOfFacilities: number
 	isActive: true
 	googleReview: false
 	reviews: string
@@ -46,7 +42,11 @@ export interface CustomerEntries {
 	pictures: Picture[]
 	miscellaneous: string
 	registrationDate?: string
-	registeredBy?: string
+	registeredBy?: number
+	updateDate?: string
+	updateBy?: number
+	deleteDate?: string
+	deleteBy?: number
 }
 
 export interface CustomerEntriesErrors {
@@ -66,6 +66,7 @@ export interface CustomerEntriesErrors {
 	mobile: boolean
 	year: boolean
 	month: boolean
+	foundationDate: boolean
 	founder: boolean
 	departments: boolean
 	numberOfEmployees: boolean
@@ -83,10 +84,4 @@ export interface CustomerEntriesErrors {
 	contactTime: boolean
 	pictures: boolean
 	miscellaneous: boolean
-}
-
-export interface AddressAutoInfo {
-	prefecture: string
-	city: string
-	address1: string
 }

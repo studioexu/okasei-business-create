@@ -51,7 +51,7 @@ export const prefectures: string[] = [
 export const tax = 0.1
 
 export const years: string[] = []
-export const months: string[] = ['']
+export const months: string[] = []
 const minYear = 1800
 const currentYear = new Date().getFullYear()
 

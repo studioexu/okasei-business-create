@@ -53,7 +53,6 @@
 		}
 
 		.select {
-			height: 31px;
 			color: var(--black);
 
 			&:focus {

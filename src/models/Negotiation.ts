@@ -1,4 +1,4 @@
-import type { Item, Estimate, OutcomeHistory, Checkbox, Memo } from '@/libs/negociationTypes'
+import type { Item, Estimate, OutcomeHistory, Checkbox, Memo } from '@/libs/negotiationTypes'
 
 const getTotalBedsByEstimate = (items: Item[]) => {
 	let total = 0
@@ -7,12 +7,18 @@ const getTotalBedsByEstimate = (items: Item[]) => {
 	return total
 }
 
-const formateNumberCompact = (number: number) => {
-	return new Intl.NumberFormat('ja-JP', { notation: 'compact' }).format(BigInt(number))
+const formatNumberCompact = (number: number) => {
+	if (number.toString().length === 4) {
+		return number.toString().split('')[0] + '千'
+	}
+
+	return new Intl.NumberFormat('ja-JP', {
+		notation: 'compact'
+	}).format(number)
 }
 
-export class Negociation {
-	private _negociationId: number
+export class Negotiation {
+	private _negotiationId: number
 	private _customerName: string
 	private _status: string
 	private _startingDate: string
@@ -56,7 +62,7 @@ export class Negociation {
 	private _deleteAt?: string
 
 	constructor(data: any) {
-		this._negociationId = data.negociationId
+		this._negotiationId = data.negotiationId
 		this._customerName = data.customerName
 		this._status = data.status
 		this._startingDate = data.startingDate
@@ -100,8 +106,8 @@ export class Negociation {
 		this._deleteAt = data.delete_at
 	}
 
-	public get negociationId() {
-		return this._negociationId
+	public get negotiationId() {
+		return this._negotiationId
 	}
 	public get customerName() {
 		return this._customerName
@@ -242,8 +248,8 @@ export class Negociation {
 	public get minMaxEstimate() {
 		const estimates: number[] = this._estimate.map(estimate => estimate.estimateWithoutTax)
 
-		const min = estimates.length === 0 ? 0 : formateNumberCompact(Math.min(...estimates))
-		const max = estimates.length === 0 ? 0 : formateNumberCompact(Math.max(...estimates))
+		const min = estimates.length === 0 ? 0 : formatNumberCompact(Math.min(...estimates))
+		const max = estimates.length === 0 ? 0 : formatNumberCompact(Math.max(...estimates))
 
 		return {
 			min: min,

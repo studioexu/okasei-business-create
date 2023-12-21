@@ -43,6 +43,7 @@
 		--modal-back: rgba(89, 88, 87, 0.8);
 		--gray: #7b7c7d;
 		--error: #eb3c3c;
+		--placeholder: #d0cfcf;
 	}
 
 	:global(*) {
@@ -93,6 +94,7 @@
 	:global(input),
 	:global(select) {
 		padding: 4px 8px;
+		max-height: 31px;
 		outline: none;
 		border: 1px solid var(--gray);
 		border-radius: 8px;
@@ -112,6 +114,10 @@
 	:global(.font-large) {
 		font-size: 21px;
 		font-weight: bold;
+	}
+
+	:global(.required-mark) {
+		color: var(--error);
 	}
 
 	:global(.font-error) {
@@ -143,6 +149,12 @@
 		&:hover {
 			opacity: 1;
 		}
+	}
+
+	:global(.no-data-message) {
+		color: var(--black);
+		font-size: 18px;
+		text-align: center;
 	}
 
 	:global(button.inline) {

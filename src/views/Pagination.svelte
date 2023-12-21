@@ -29,12 +29,12 @@
 	<div class="pagination-container">
 		{#if current > 1 && pages.length > max}
 			<button on:click={() => onClick(0)}>
-				<Icon icon={{ path: 'to-first', color: 'black' }} />
+				<Icon icon={{ path: 'to-first' }} />
 			</button>
 		{/if}
 		{#if current > 0}
 			<button on:click={() => onClick(current - 1)}>
-				<Icon icon={{ path: 'to-prev', color: 'black' }} />
+				<Icon icon={{ path: 'to-prev' }} />
 			</button>
 		{/if}
 		{#each generatePagination() as page}
@@ -44,12 +44,12 @@
 		{/each}
 		{#if current < pages.length - 1}
 			<button on:click={() => onClick(current + 1)}>
-				<Icon icon={{ path: 'to-next', color: 'black' }} />
+				<Icon icon={{ path: 'to-next' }} />
 			</button>
 		{/if}
 		{#if current < pages.length - 2 && pages.length > max}
 			<button on:click={() => onClick(pages.length - 1)}>
-				<Icon icon={{ path: 'to-last', color: 'black' }} />
+				<Icon icon={{ path: 'to-last' }} />
 			</button>
 		{/if}
 	</div>

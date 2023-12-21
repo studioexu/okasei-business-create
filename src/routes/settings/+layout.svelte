@@ -23,7 +23,7 @@
 								<Icon icon={{ path: setting.id, color: '#fff' }} />
 							</span>
 							<span class:invisible={path.includes(setting.path)}>
-								<Icon icon={{ path: setting.id, color: 'black' }} />
+								<Icon icon={{ path: setting.id }} />
 							</span>
 							{setting.text}
 						</a>

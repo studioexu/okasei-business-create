@@ -79,48 +79,6 @@
 	const goBack = () => {
 		goto('/negotiations')
 	}
-
-	// /**
-	//  * Take the form and check if all the entries are valid.
-	//  * If there is one error, the function will return false.
-	//  * @param formEntries: Object of entries
-	//  * @returns boolean
-	//  */
-	// export const validationOnSubmitNegotiation = (
-	// 	formEntries: NegotiationEntries,
-	// 	formValidation: NegotiationErrors
-	// ): { isValid: boolean; formValidation: NegotiationErrors } => {
-	// 	let errorArray: boolean[] = []
-	// 	let isValid = true
-
-	// 	let requiredField: any
-
-	// 	Object.keys(formEntries).map(key => {
-	// 		if (key === 'customerName' || key === 'status' || key === 'startingDate') {
-	// 			requiredField = { ...requiredField, [key]: true }
-	// 		} else {
-	// 			requiredField = { ...requiredField, [key]: false }
-	// 		}
-	// 	})
-
-	// 	Object.keys(formEntries).map(key => {
-	// 		const input = formEntries[key as keyof NegotiationEntries]
-
-	// 		formValidation[key] = !requiredField[
-	// 			key as keyof NegotiationErrors
-	// 		]
-	// 			? input === '' || inputIsValid(key, input)
-	// 			: inputIsValid(key, input)
-	// 		errorArray.push(!formValidation[key as keyof NegotiationErrors])
-	// 	})
-
-	// 	errorArray.forEach(error => {
-	// 		if (error) {
-	// 			isValid = false
-	// 		}
-	// 	})
-	// 	return { isValid, formValidation }
-	// }
 </script>
 
 <section class="section section--form">

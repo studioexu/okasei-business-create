@@ -22,6 +22,7 @@
 	import { negotiations } from '@/stores/negotiations'
 	import { negotiationBackend, type Estimate } from '@/libs/negotiationTypes'
 	import { prefectures } from '@/data/data'
+	import ButtonDelete from '@/components/ButtonDelete.svelte'
 
 	export let initialState: NegotiationEntries
 	export let customers: CustomerFactory[]
@@ -33,8 +34,6 @@
 	export let formIsValid: NegotiationErrors
 
 	let currentCustomer: CustomerFactory | undefined
-
-	console.log(negotiations)
 
 	const customersOptions: { value: number; text: string }[] = customers.map(customer => ({
 		value: customer.id,
@@ -466,13 +465,9 @@
 						</div>
 						{#if initialState.memo.length > 1}
 							<div class="form-row">
-								<button
-									type="button"
-									class="btn primary delete"
-									on:click={() => handleDeleteItemFromArray(index, initialState.memo, 'memo')}
-								>
-									削除
-								</button>
+								<ButtonDelete
+									on:delete={() => handleDeleteItemFromArray(index, initialState.memo, 'memo')}
+								/>
 							</div>
 						{/if}
 					</div>
@@ -576,19 +571,18 @@
 									placeholder={'未入力'}
 									bind:value={memo.memo}
 								/>
+
 								{#if initialState.outcomeHistory.length > 1}
-									<button
-										type="button"
-										class="primary btn delete"
-										on:click={() =>
+									<!-- <div class="btn-wrapper"> -->
+									<ButtonDelete
+										on:delete={() =>
 											handleDeleteItemFromArray(
 												index,
 												initialState.outcomeHistory,
 												'outcomeHistory'
 											)}
-									>
-										削除
-									</button>
+									/>
+									<!-- </div> -->
 								{/if}
 							</div>
 						</div>
@@ -655,11 +649,28 @@
 			align-items: center;
 			justify-content: center;
 			padding: 0;
-			height: 32px;
-			width: 70px;
+			height: 31px;
+			width: 31px;
 			min-width: 0;
 			margin-left: auto;
+
+			cursor: pointer;
+			background-color: transparent;
+			margin: auto;
+
+			&:hover {
+				opacity: 0.5;
+			}
+
+			> :global(.svg-icon) {
+				height: 18px * 1.2;
+			}
 		}
+	}
+
+	.label {
+		font-size: 18px;
+		font-weight: 400;
 	}
 
 	.wrapper {

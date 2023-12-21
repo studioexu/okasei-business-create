@@ -3,6 +3,7 @@
 	import InputNumber from './InputNumber.svelte'
 	import Icon from './Icon.svelte'
 	import InputSelect from './InputSelect.svelte'
+	import ButtonDelete from './ButtonDelete.svelte'
 
 	export let index: number
 	export let department: Department
@@ -69,13 +70,7 @@
 	/>
 
 	{#if departments.length > 1}
-		<button
-			type="button"
-			class="btn secondary delete inline"
-			on:click={() => deleteDepartment(index)}
-		>
-			<Icon icon={{ path: 'close-btn', color: '#2FA8E1' }} />
-		</button>
+		<ButtonDelete on:delete={() => deleteDepartment(index)} />
 	{/if}
 </article>
 

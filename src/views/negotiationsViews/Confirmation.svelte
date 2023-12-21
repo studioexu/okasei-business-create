@@ -2,86 +2,94 @@
 	import type { NegotiationEntries } from '@/libs/negotiationTypes'
 
 	import Icon from '@/components/Icon.svelte'
-	import Wrapper from '@/components/DetailWrapper.svelte'
+	import DetailWrapper from '@/components/DetailWrapper.svelte'
 
 	export let initialState: NegotiationEntries
+
+	const formatNumber = (number: number) => {
+		return new Intl.NumberFormat('ja-JP').format(number)
+	}
 </script>
 
 <div class="negotiation-confirmation">
 	<div class="form-row">
-		<Wrapper label={'ステータス'} content={initialState.status} />
+		<DetailWrapper label={'ステータス'} content={initialState.status} />
 	</div>
 
 	<div class="form-row">
-		<Wrapper label={'商談開始日'} content={initialState.startingDate} />
+		<DetailWrapper label={'商談開始日'} content={initialState.startingDate} />
 	</div>
 
 	<div class="form-row">
-		<Wrapper label={'可能性'} content={initialState.condition} />
-		<Wrapper label={'流入'} content={initialState.inflow} />
+		<DetailWrapper label={'可能性'} content={initialState.condition} />
+		<DetailWrapper label={'流入'} content={initialState.inflow} />
 	</div>
 
 	<div class="form-row">
-		<Wrapper label={'相見積'} content={initialState.preference} />
+		<DetailWrapper label={'相見積'} content={initialState.preference} />
 	</div>
 	<div class="form-row">
-		<Wrapper label={'納期'} content={initialState.billingDate} />
+		<DetailWrapper label={'納期'} content={initialState.billingDate} />
 	</div>
 	<div class="form-row">
-		<Wrapper label={'入金予定'} content={initialState.scheduledDeposit} />
+		<DetailWrapper label={'入金予定'} content={initialState.scheduledDeposit} />
 	</div>
 	<div class="form-row">
-		<Wrapper label={'成否日'} content={initialState.outcome} />
+		<DetailWrapper label={'成否日'} content={initialState.outcome} />
 	</div>
 	<div class="form-row">
-		<Wrapper
+		<DetailWrapper
 			label={'次回連絡日時'}
 			content={initialState.nextContactDate + ' ' + initialState.nextContactTime}
 		/>
 	</div>
 	<div class="form-row">
-		<Wrapper label={'最終連絡'} content={initialState.lastContact} />
+		<DetailWrapper label={'最終連絡'} content={initialState.lastContact} />
 	</div>
 	<div class="form-row">
-		<Wrapper label={'納品先'} content={initialState.postalCode} />
+		<DetailWrapper label={'納品先'} content={initialState.postalCode} />
 	</div>
 	<div class="form-row">
-		<Wrapper label={'都道府県'} content={initialState.prefecture} />
-		<Wrapper label={'市区町村'} content={initialState.city} />
+		<DetailWrapper label={'都道府県'} content={initialState.prefecture} />
+		<DetailWrapper label={'市区町村'} content={initialState.city} />
 	</div>
 	<div class="form-row">
-		<Wrapper label={'住所1'} content={initialState.address1} />
-		<Wrapper label={'住所2'} content={initialState.address2} />
-	</div>
-
-	<div class="form-row">
-		<Wrapper label={'距離'} content={initialState.distanceKm.toString()} unit={'Km'} />
-		<Wrapper content={initialState.distanceTime.toString()} unit={'時間'} />
+		<DetailWrapper label={'住所1'} content={initialState.address1} />
+		<DetailWrapper label={'住所2'} content={initialState.address2} />
 	</div>
 
 	<div class="form-row">
-		<div class="wrapper">
+		<DetailWrapper label={'距離'} content={initialState.distanceKm.toString()} unit={'Km'} />
+		<DetailWrapper content={initialState.distanceTime.toString()} unit={'時間'} />
+	</div>
+
+	<div class="form-row">
+		<div class="detail-wrapper">
 			<h3 class="label">見積もり金額</h3>
 			<div class="container">
 				{#each initialState.estimate as estimate, index}
-					<div class="wrapper-data">
+					<div class="detail-wrapper-data">
 						<div class="form-row">
-							<Wrapper label={'発行日'} content={estimate.issueDate} />
-							<Wrapper label={'見積期日'} content={estimate.dueDate} />
+							<DetailWrapper label={'発行日'} content={estimate.issueDate} />
+							<DetailWrapper label={'見積期日'} content={estimate.dueDate} />
 						</div>
 						<div class="form-row">
-							<Wrapper
+							<DetailWrapper
 								label={'税抜価格'}
-								content={estimate.estimateWithoutTax.toString()}
+								content={formatNumber(estimate.estimateWithoutTax)}
 								unit={'円'}
 							/>
-							<Wrapper label={'消費税'} content={estimate.estimateTax.toString()} unit={'円'} />
+							<DetailWrapper
+								label={'消費税'}
+								content={formatNumber(estimate.estimateTax)}
+								unit={'円'}
+							/>
 						</div>
 
 						{#each estimate.items as item}
 							<div class="form-row">
-								<Wrapper label={'商品'} content={item.name} />
-								<Wrapper content={item.quantity.toString()} unit={'台'} />
+								<DetailWrapper label={'商品'} content={item.name} />
+								<DetailWrapper content={item.quantity.toString()} unit={'台'} />
 							</div>
 						{/each}
 					</div>
@@ -90,33 +98,33 @@
 		</div>
 	</div>
 	<div class="form-row">
-		<div class="wrapper">
+		<div class="detail-wrapper">
 			<h3 class="label">{'重要メモ'}</h3>
 			<div class="container">
 				{#each initialState.memo as memo}
 					<div class="form-row">
-						<Wrapper label={memo.date} content={memo.memo} />
+						<DetailWrapper label={memo.date} content={memo.memo} />
 					</div>
 				{/each}
 			</div>
 		</div>
 	</div>
 	<div class="form-row">
-		<Wrapper label={'自社担当者'} content={initialState.personInCharge} />
+		<DetailWrapper label={'自社担当者'} content={initialState.personInCharge} />
 	</div>
 	<div class="form-row">
-		<Wrapper label={'責任者'} content={initialState.responsiblePerson} />
+		<DetailWrapper label={'責任者'} content={initialState.responsiblePerson} />
 	</div>
 	<div class="form-row">
-		<Wrapper label={'オカセイ便り'} content={initialState.communication} />
-		<Wrapper label={'DM発送'} content={initialState.dm} />
-		<Wrapper label={'PR動画'} content={initialState.video} />
+		<DetailWrapper label={'オカセイ便り'} content={initialState.communication} />
+		<DetailWrapper label={'DM発送'} content={initialState.dm} />
+		<DetailWrapper label={'PR動画'} content={initialState.video} />
 	</div>
 
 	<div class="form-row">
 		<div class="container">
 			{#each initialState.checkboxes as checkbox}
-				<div class="wrapper">
+				<div class="detail-wrapper">
 					<div class="checkbox-wrapper">
 						{#if !checkbox.isChecked}
 							<Icon icon={{ path: 'checkbox-empty', color: 'var(--gray)' }} />
@@ -132,24 +140,24 @@
 	</div>
 
 	<div class="form-row">
-		<Wrapper label={'ボトルネック確認'} content={initialState.bottleneck} />
+		<DetailWrapper label={'ボトルネック確認'} content={initialState.bottleneck} />
 	</div>
 
 	<div class="form-row">
-		<Wrapper label={'機会（チャンス）'} content={initialState.occasion} />
+		<DetailWrapper label={'機会（チャンス）'} content={initialState.occasion} />
 	</div>
 
 	<div class="form-row">
-		<Wrapper label={'脅威（リスク）'} content={initialState.risk} />
+		<DetailWrapper label={'脅威（リスク）'} content={initialState.risk} />
 	</div>
 
 	<div class="form-row">
-		<div class="wrapper">
+		<div class="detail-wrapper">
 			<h3 class="label">商談経緯</h3>
 			<div class="container">
 				{#each initialState.outcomeHistory as outcome}
 					<div class="form-row">
-						<Wrapper label={outcome.date} content={outcome.memo} />
+						<DetailWrapper label={outcome.date} content={outcome.memo} />
 					</div>
 				{/each}
 			</div>
@@ -175,6 +183,7 @@
 		align-items: flex-start;
 		gap: 50px;
 		border-bottom: 1px solid rgb(206, 205, 205);
+		padding: 10px 0;
 
 		&:last-child {
 			border: none;
@@ -188,7 +197,11 @@
 		align-self: flex-start;
 	}
 
-	.wrapper-data {
+	.container > .form-row {
+		padding: 0;
+	}
+
+	.detail-wrapper-data {
 		width: calc((600 / 1366) * 100vw);
 		min-width: 520px;
 		margin-bottom: 18px;
@@ -212,10 +225,9 @@
 		}
 	}
 
-	.wrapper {
+	.detail-wrapper {
 		position: relative;
 		display: flex;
-		padding: 11px 0;
 		column-gap: 18px;
 		align-items: center;
 

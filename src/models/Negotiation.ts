@@ -8,7 +8,9 @@ const getTotalBedsByEstimate = (items: Item[]) => {
 }
 
 const formateNumberCompact = (number: number) => {
-	return new Intl.NumberFormat('ja-JP', { notation: 'compact' }).format(BigInt(number))
+	return new Intl.NumberFormat('ja-JP', {
+		notation: 'compact'
+	}).format(number)
 }
 
 export class Negotiation {

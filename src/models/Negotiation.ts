@@ -7,7 +7,11 @@ const getTotalBedsByEstimate = (items: Item[]) => {
 	return total
 }
 
-const formateNumberCompact = (number: number) => {
+const formatNumberCompact = (number: number) => {
+	if (number.toString().length === 4) {
+		return number.toString().split('')[0] + '千'
+	}
+
 	return new Intl.NumberFormat('ja-JP', {
 		notation: 'compact'
 	}).format(number)
@@ -244,8 +248,8 @@ export class Negotiation {
 	public get minMaxEstimate() {
 		const estimates: number[] = this._estimate.map(estimate => estimate.estimateWithoutTax)
 
-		const min = estimates.length === 0 ? 0 : formateNumberCompact(Math.min(...estimates))
-		const max = estimates.length === 0 ? 0 : formateNumberCompact(Math.max(...estimates))
+		const min = estimates.length === 0 ? 0 : formatNumberCompact(Math.min(...estimates))
+		const max = estimates.length === 0 ? 0 : formatNumberCompact(Math.max(...estimates))
 
 		return {
 			min: min,

@@ -8,7 +8,7 @@
 	import Select from '@/components/Select.svelte'
 
 	// const formFieldset = [
-	// 	{ label: '予約番号', id: 'reservationNumber', value: '' },
+	// 	{ label: '予約番号', id: 'orderNumber', value: '' },
 	// 	{ label: 'お客様名', id: 'customerName', value: '' },
 	// 	{ label: 'ステータス', id: 'status', value: '' },
 	// 	{ label: '機種', id: 'model', value: '' },

@@ -2,114 +2,23 @@
 
 <script lang="ts">
 	import ButtonDelete from '@/components/ButtonDelete.svelte'
+	import Icon from '@/components/Icon.svelte'
 	import Select from '@/components/Select.svelte'
 	import { toKebab } from '@/libs/utils'
 	import Pagination from '@/views/Pagination.svelte'
+	import DeleteModal from '@/views/modals/DeleteModal.svelte'
+	import { purchase, purchases } from '@/stores/purchases'
+	import type { Purchase, Status } from '@/libs/purchaseTypes'
+	import { goto } from '$app/navigation'
+	import { toCamelCase } from '@/libs/formatters'
 
-	interface Purchase {
-		reservationNumber: string
-		customerName: string
-		status: string
-		model: string
-		motor: string
-		size: string
-		arrivalDate: string
-		marketPrice: number
-		sellingPrice: number
-	}
+	let allPurcharses: Purchase[]
 
-	const purchases: Purchase[] = [
-		{
-			reservationNumber: '8323-0804-5840',
-			customerName: 'My company',
-			status: '未着手',
-			model: '3M',
-			motor: 'キューマ',
-			size: '83R',
-			arrivalDate: '12/11',
-			marketPrice: 8756,
-			sellingPrice: 5000
-		},
-		{
-			reservationNumber: '8323-0804-5841',
-			customerName: 'My company',
-			status: '未着手',
-			model: '3M',
-			motor: 'キューマ',
-			size: '83R',
-			arrivalDate: '2/11',
-			marketPrice: 13244,
-			sellingPrice: 3000
-		},
-		{
-			reservationNumber: '8323-0804-5842',
-			customerName: 'My company',
-			status: '到着待ち',
-			model: '3M',
-			motor: 'キューマ',
-			size: '83R',
-			arrivalDate: '12/11',
-			marketPrice: 18348,
-			sellingPrice: 5000
-		},
-		{
-			reservationNumber: '8323-0804-5843',
-			customerName: 'My company',
-			status: '失注',
-			model: '3M',
-			motor: 'キューマ',
-			size: '83R',
-			arrivalDate: '3/11',
-			marketPrice: 8756,
-			sellingPrice: 5000
-		},
-		{
-			reservationNumber: '8323-0804-5844',
-			customerName: '田中　太郎',
-			status: '到着待ち',
-			model: '2M',
-			motor: 'ヒューマン',
-			size: '83M',
-			arrivalDate: '12/11',
-			marketPrice: 8756,
-			sellingPrice: 5000
-		},
-		{
-			reservationNumber: '8323-0804-5845',
-			customerName: 'John Doe',
-			status: '未着手',
-			model: '3M',
-			motor: 'キューマ',
-			size: '91R',
-			arrivalDate: '12/11',
-			marketPrice: 8756,
-			sellingPrice: 5000
-		},
-		{
-			reservationNumber: '8323-0804-5846',
-			customerName: 'My company',
-			status: '未着手',
-			model: '3M',
-			motor: 'キューマ',
-			size: '83R',
-			arrivalDate: '12/11',
-			marketPrice: 8756,
-			sellingPrice: 5000
-		},
-		{
-			reservationNumber: '8323-0804-5847',
-			customerName: 'My company',
-			status: '完了',
-			model: '3M',
-			motor: 'キューマ',
-			size: '83R',
-			arrivalDate: '1/11',
-			marketPrice: 8756,
-			sellingPrice: 5000
-		}
-	]
+	allPurcharses = $purchases
 
-	const searchFieldsets = [
+	// let filteredPurchases = allPurcharses
+
+	const searchFieldsets: { id: string; label: string; value: string }[] = [
 		{
 			id: 'model',
 			label: '機種',
@@ -121,14 +30,36 @@
 			value: ''
 		},
 		{
-			id: 'customer-name',
+			id: 'customerName',
 			label: 'お客様名',
 			value: ''
 		}
 	]
 
+	const handleSearch = (
+		seacrhfields: { id: string; label: string; value: string }[]
+	): Purchase[] => {
+		let filteredData: Purchase[] = allPurcharses
+
+		seacrhfields.forEach(fieldset => {
+			if (fieldset.value !== '') {
+				filteredData = filteredData.filter(purchase => {
+					return purchase[fieldset.id as 'model' | 'size' | 'customerName']
+						.toLowerCase()
+						.includes(fieldset.value.toLowerCase())
+				})
+			}
+		})
+
+		return filteredData
+	}
+
+	$: filteredPurchases = handleSearch(searchFieldsets)
+
+	$: console.log(filteredPurchases)
+
 	const tableHeaders: { label: string; id: keyof Purchase }[] = [
-		{ label: '予約番号', id: 'reservationNumber' },
+		{ label: '予約番号', id: 'orderNumber' },
 		{ label: 'お客様名', id: 'customerName' },
 		{ label: 'ステータス', id: 'status' },
 		{ label: '機種', id: 'model' },
@@ -140,11 +71,64 @@
 	]
 
 	$: dividedPurchases =
-		purchases.length > 0
-			? purchases.flatMap((_, i, self) => (i % 5 ? [] : [self.slice(i, i + 5)]))
+		filteredPurchases.length > 0
+			? filteredPurchases.flatMap((_, i, self) => (i % 5 ? [] : [self.slice(i, i + 5)]))
 			: []
 
 	$: currentPage = 0
+
+	let isShown: boolean = false
+	let currentUser: number | undefined = undefined
+	let phase: 'shown' | 'success' | 'error' = 'shown'
+
+	/**
+	 * On click on the delete modal.
+	 * @param event
+	 */
+	const onClick = (event: { detail: { key: string } }): void => {
+		console.log(event.detail.key)
+
+		switch (event.detail.key) {
+			case 'cancel':
+				isShown = false
+				break
+
+			case 'delete':
+				try {
+					purchases.set($purchases.filter(purchase => purchase.id !== currentUser))
+
+					if ($purchase.id === currentUser) {
+						purchase.set({
+							id: 0,
+							orderNumber: '',
+							customerName: '',
+							status: <Status>'',
+							model: '',
+							motor: '',
+							size: '',
+							arrivalDate: '',
+							marketPrice: 0,
+							sellingPrice: 0
+						})
+
+						goto('/purchases')
+						phase = 'shown'
+					} else phase = 'success'
+				} catch (error) {
+					phase = 'error'
+				}
+				break
+
+			case 'success':
+				isShown = false
+				phase = 'shown'
+				break
+
+			case 'error':
+				phase = 'shown'
+				break
+		}
+	}
 
 	/**
 	 * update the current page number
@@ -153,11 +137,23 @@
 	const movePage = (event: { detail: { page: number } }): void => {
 		currentPage = event.detail.page
 	}
+
+	const handleDeleteItem = (index: number) => {
+		isShown = true
+		currentUser = index
+	}
+
+	const handleEditItem = (index: number) => {
+		window.location.href = '/purchases/' + index + '/edit'
+	}
 </script>
 
 <section class="section">
+	{#if isShown}
+		<DeleteModal {phase} on:click={onClick} />
+	{/if}
 	<header class="section__header">
-		<form class="search-form">
+		<form class="search-form" on:input={() => handleSearch(searchFieldsets)}>
 			{#each searchFieldsets as fieldset}
 				<div class="input-wrapper">
 					<label for={fieldset.id}>{fieldset.label}</label>
@@ -170,56 +166,65 @@
 	</header>
 
 	<div class="section__main">
-		<table class="table">
-			<thead class="theader">
-				<tr class="trow">
-					{#each tableHeaders as header}
-						<th class="theader {toKebab(header.id)}">{header.label}</th>
-					{/each}
-					<th class="theader" />
-					<th class="theader" />
-				</tr>
-			</thead>
-
-			<tbody class="tbody">
-				{#each dividedPurchases[currentPage] as purchase}
+		{#if filteredPurchases.length === 0}
+			<h2 class="no-data-message">データがありません。</h2>
+		{:else}
+			<table class="table">
+				<thead class="theader">
 					<tr class="trow">
 						{#each tableHeaders as header}
-							{#if header.id === 'status'}
-								<td class="tdata">
-									<Select
-										options={['未着手', '進行中', '到着待ち', '完了', '失注']}
-										bind:value={purchase.status}
-									/>
-
-									<div
-										class="progress-bar {(purchase.status === '未着手' ||
-											purchase.status === '失注') &&
-											'hidden'}"
-									>
-										<div
-											class="fill {purchase.status === '進行中'
-												? 'fill--50'
-												: purchase.status === '到着待ち'
-												? 'fill--75'
-												: 'fill--full'}"
-										/>
-									</div>
-								</td>
-							{:else}
-								<td class="tdata">{purchase[header.id]}</td>
-							{/if}
+							<th class="theader {toKebab(header.id)}">{header.label}</th>
 						{/each}
-						<td class="tdata">
-							<ButtonDelete />
-						</td>
-						<td class="tdata">
-							<ButtonDelete />
-						</td>
+						<th class="theader" />
+						<th class="theader" />
 					</tr>
-				{/each}
-			</tbody>
-		</table>
+				</thead>
+
+				<tbody class="tbody">
+					{#each dividedPurchases[currentPage] as purchase}
+						<tr class="trow">
+							{#each tableHeaders as header}
+								{#if header.id === 'status'}
+									<td class="tdata">
+										<Select
+											options={['未着手', '進行中', '到着待ち', '完了', '失注']}
+											bind:value={purchase.status}
+										/>
+
+										<div
+											class="progress-bar {(purchase.status === '未着手' ||
+												purchase.status === '失注') &&
+												'hidden'}"
+										>
+											<div
+												class="fill {purchase.status === '進行中'
+													? 'fill--50'
+													: purchase.status === '到着待ち'
+													? 'fill--75'
+													: 'fill--full'}"
+											/>
+										</div>
+									</td>
+								{:else}
+									<td class="tdata">{purchase[header.id]}</td>
+								{/if}
+							{/each}
+							<td class="data update">
+								<button class="btn" on:click={() => handleEditItem(purchase.id)}>
+									<Icon icon={{ path: 'edit', color: '#0093d0' }} />
+								</button>
+							</td>
+
+							<td class="data erase">
+								<button class="btn" on:click={() => handleDeleteItem(purchase.id)}>
+									<Icon icon={{ path: 'delete', color: '#0093d0' }} />
+								</button>
+							</td>
+						</tr>
+					{/each}
+				</tbody>
+			</table>
+		{/if}
 	</div>
 
 	<footer class="section__footer">
@@ -235,6 +240,25 @@
 
 		&__footer {
 			margin-top: 18px;
+		}
+	}
+
+	.btn {
+		background-color: transparent;
+		transition: transform 300ms;
+		z-index: 99;
+
+		&:hover {
+			cursor: pointer;
+			transform: scale(1.2);
+		}
+
+		&.disabled {
+			pointer-events: none;
+		}
+
+		> :global(.svg-icon) {
+			height: 18px * 1.2;
 		}
 	}
 

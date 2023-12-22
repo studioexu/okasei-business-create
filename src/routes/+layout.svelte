@@ -1,14 +1,19 @@
 <script lang="ts" context="module">
+	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
-	import { user } from '@/stores/users'
+	import type { Notifications } from '@/libs/notificationTypes'
 	import type { Role } from '@/libs/types'
+	import { user } from '@/stores/users'
 	import Header from '@/views/Header.svelte'
 	import Sidebar from '@/views/Sidebar.svelte'
+	import NotificationList from '@/views/NotificationList.svelte'
 </script>
 
 <script lang="ts">
 	$: path = $page.url.pathname
+	let isShown = false
+	const notifications: Notifications = [{ hasRead: false }] as Notifications
 
 	const onClick = () => {
 		user.set({
@@ -20,15 +25,24 @@
 		})
 		goto('/')
 	}
+
+	onMount(() => {
+		console.log('notifications')
+	})
 </script>
 
 {#if path !== '/'}
 	<Header
 		{path}
+		{notifications}
 		isAdmin={$user.role === 'システム管理者'}
 		id={`${$user.employeeNumber}`}
 		name={$user.name}
+		on:click={event => (isShown = event.detail.isShown)}
 	/>
+	{#if isShown}
+		<NotificationList {notifications} />
+	{/if}
 	<Sidebar {path} on:click={onClick} />
 {/if}
 <main class:main={path !== '/'}>

@@ -1,4 +1,4 @@
-import type { Department } from '@/models/CustomerAPI'
+import type { Department } from '@/models/Customer'
 
 export const debounce = <F extends (...args: any[]) => void>(
 	func: F,

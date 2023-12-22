@@ -1,71 +1,36 @@
 export interface Item {
 	name: string
-	quantity: string
+	quantity: number
+	price: number
 }
 
 export interface Estimate {
 	issueDate: string
 	dueDate: string
-	estimateWithoutTax: string
-	tax: string
+	estimateWithoutTax: number
+	withTax: boolean
+	estimateTax: number
 	items: Item[]
 }
 
-interface Memo {
+export interface Memo {
 	date: string
 	memo: string
 }
 
-interface OutcomeHistory {
+export interface OutcomeHistory {
 	date: string
 	memo: string
 }
 
-interface Checkbox {
+export interface Checkbox {
 	title: string
 	isChecked: boolean
 }
 
-export interface Negociation {
-	negociationId: number
-	customerName: string
-	status: string
-	firstTransaction: string
-	condition: string
-	contact: string
-	billingDate: string
-	scheduledDeposit: string
-	outcome: string
-	nextContact: string
-	lastContact: string
-	postalCode: string
-	prefecture: string
-	city: string
-	address1: string
-	address2: string
-	distanceKm: string
-	distanceTime: string
-	estimate: Estimate[]
-	personInCharge: string
-	memo: Memo[]
-	dm: string
-	video: string
+export interface NegotiationEntries {
 	custCd: number
-	inflow: string
-	preference: string
-	checkboxes: Checkbox[]
-	checkBottleneck: string
-	occasion: string
-	risk: string
-	outcomeHistory: OutcomeHistory[]
-	responsiblePerson: string
-	communication: string
-	paymentMethod: string
-	numberOfBeds: string
-	billingEstimation: string
-}
-
-export interface NegociationEntries {
+	negotiationId: number
 	status: string
 	startingDate: string
 	condition: string
@@ -73,7 +38,6 @@ export interface NegociationEntries {
 	preference: string
 	billingDate: string
 	scheduledDeposit: string
-	paymentMethod: string
 	outcome: string
 	nextContactDate: string
 	nextContactTime: string
@@ -83,8 +47,8 @@ export interface NegociationEntries {
 	city: string
 	address1: string
 	address2: string
-	distanceKm: string
-	distanceTime: string
+	distanceKm: number
+	distanceTime: number
 	estimate: Estimate[]
 	memo: Memo[]
 	personInCharge: string
@@ -93,37 +57,85 @@ export interface NegociationEntries {
 	dm: string
 	video: string
 	checkboxes: Checkbox[]
-	checkBottleneck: string
+	bottleneck: string
 	occasion: string
 	risk: string
 	outcomeHistory: OutcomeHistory[]
-	custCd: number
-	negociationId: number
 	customerName: string
-	numberOfBeds: string
-	billingEstimation: string
+	numberOfBeds: number
+	billingEstimation: number
+	registerBy?: number | null
+	registerAt?: string
+	updateBy?: number | null
+	updateAt?: string
+	deleteBy?: number | null
+	deleteAt?: string
 }
 
-export class NegociationBackend {
-	negociationId: number
+export interface NegotiationErrors {
+	custCd: boolean
+	negotiationId: boolean
+	startingDate: string
+	status: string
+	condition: boolean
+	inflow: boolean
+	preference: boolean
+	billingDate: boolean
+	scheduledDeposit: boolean
+	outcome: boolean
+	nextContactDate: boolean
+	nextContactTime: boolean
+	lastContact: boolean
+	postalCode: boolean
+	prefecture: boolean
+	city: boolean
+	address1: boolean
+	address2: boolean
+	distanceKm: boolean
+	distanceTime: boolean
+	estimate: boolean
+	memo: boolean
+	personInCharge: boolean
+	responsiblePerson: boolean
+	communication: boolean
+	dm: boolean
+	video: string
+	checkboxes: boolean
+	bottleneck: boolean
+	occasion: boolean
+	risk: boolean
+	outcomeHistory: boolean
+	customerName: boolean
+	numberOfBeds: boolean
+	billingEstimation: boolean
+	registerBy?: boolean
+	registerAt?: boolean
+	updateBy?: boolean
+	updateAt?: boolean
+	deleteBy?: boolean
+	deleteAt?: boolean
+}
+
+export class negotiationBackend {
+	negotiationId: number
 	customerName: string
 	status: string
-	firstTransaction: string
+	startingDate: string
 	condition: string
 	contact: string
 	billingDate: string
-	scheduledDeposit: string
 	outcome: string
-	nextContact: string
+	nextContactDate: string
+	nextContactTime: string
 	lastContact: string
 	postalCode: string
 	prefecture: string
 	city: string
 	address1: string
 	address2: string
-	distanceKm: string
-	distanceTime: string
-	numberOfBeds: string
+	distanceKm: number
+	distanceTime: number
+	numberOfBeds: number
 	estimate: Estimate[]
 	personInCharge: string
 	memo: Memo[]
@@ -133,26 +145,32 @@ export class NegociationBackend {
 	inflow: string
 	preference: string
 	checkboxes: Checkbox[]
-	checkBottleneck: string
+	bottleneck: string
 	occasion: string
 	risk: string
 	outcomeHistory: OutcomeHistory[]
 	responsiblePerson: string
 	communication: string
-	paymentMethod: string
-	billingEstimation: string
+	scheduledDeposit: string
+	billingEstimation: number
+	register_by?: number | null
+	register_at?: string
+	update_by?: number | null
+	update_at?: string
+	delete_by?: number | null
+	delete_at?: string
 
-	constructor(data: NegociationEntries) {
-		this.negociationId = data.negociationId
+	constructor(data: NegotiationEntries) {
+		this.negotiationId = data.negotiationId
 		this.customerName = data.customerName
 		this.status = data.status
-		this.firstTransaction = data.startingDate
+		this.startingDate = data.startingDate
 		this.condition = data.condition
 		this.contact = data.inflow
 		this.billingDate = data.billingDate
-		this.scheduledDeposit = data.scheduledDeposit
 		this.outcome = data.outcome
-		this.nextContact = data.nextContactDate + ' ' + data.nextContactTime
+		this.nextContactDate = data.nextContactDate
+		this.nextContactTime = data.nextContactTime
 		this.lastContact = data.lastContact
 		this.postalCode = data.postalCode
 		this.prefecture = data.prefecture
@@ -171,13 +189,19 @@ export class NegociationBackend {
 		this.inflow = data.inflow
 		this.preference = data.preference
 		this.checkboxes = data.checkboxes
-		this.checkBottleneck = data.checkBottleneck
+		this.bottleneck = data.bottleneck
 		this.occasion = data.occasion
 		this.risk = data.risk
 		this.outcomeHistory = data.outcomeHistory
 		this.responsiblePerson = data.responsiblePerson
 		this.communication = data.communication
-		this.paymentMethod = data.paymentMethod
+		this.scheduledDeposit = data.scheduledDeposit
 		this.billingEstimation = data.billingEstimation
+		this.register_by = data.registerBy
+		this.register_at = data.registerAt
+		this.update_by = data.updateBy
+		this.update_at = data.updateAt
+		this.delete_by = data.deleteBy
+		this.delete_at = data.deleteAt
 	}
 }

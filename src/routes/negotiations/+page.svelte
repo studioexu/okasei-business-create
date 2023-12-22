@@ -1,50 +1,29 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
+	import type { MouseEventHandler } from 'svelte/elements'
+	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import Input from '@/components/Input.svelte'
 	import Icon from '@/components/Icon.svelte'
-	import Select from '@/components/Select.svelte'
-	import { negociation, negociations } from '@/stores/negociations'
-
-	import DeleteModal from '@/views/modals/DeleteModal.svelte'
+	import SelectDate from '@/components/SelectDate.svelte'
+	import { negotiation, negotiations } from '@/stores/negotiations'
 	import { goto } from '$app/navigation'
-	import type { Negociation } from '@/libs/negociationTypes'
+	import { onMount } from 'svelte'
+	import InputCheckbox from '@/components/InputCheckbox.svelte'
+	import { NegotiationFactory } from '@/Factories/NegotiationFactory'
 
 	let searchIsShown = false
 	let displayMenuIsShown = false
-	let deleteModalIsShown = false
 
-	let filteredNegociations: Negociation[] = $negociations
+	const allnegotiations: NegotiationFactory[] = $negotiations.map(
+		negotiation => new NegotiationFactory(negotiation, 'local')
+	)
+	let filterednegotiations = allnegotiations
 
-	let research = {
-		name: '',
-		year: '',
-		month: ''
-	}
-
-	const years: string[] = ['']
-	const months: string[] = ['']
-	const currentYear = new Date().getFullYear()
-	const minYear = 2000
-
-	for (let i = minYear; i < currentYear; i++) {
-		years.push(i.toString())
-	}
-
-	for (let i = 1; i <= 12; i++) {
-		months.push(i.toString())
-	}
-
-	let searchInput = {
-		text: '',
-		year: '',
-		month: ''
-	}
-
-	const tableHeaders: { label: string; id: keyof DataIsShown }[] = [
+	const tableHeaders: { label: string; id: keyof NegotiationDataIsShown }[] = [
 		{ label: '施設名', id: 'customerName' },
 		{ label: 'ステータス', id: 'status' },
-		{ label: '商談開始日', id: 'firstTransaction' },
+		{ label: '商談開始日', id: 'startingDate' },
 		{ label: '可能性', id: 'condition' },
 		{ label: '流入', id: 'inflow' },
 		{ label: '納期', id: 'billingDate' },
@@ -61,12 +40,76 @@
 		{ label: 'PR動画', id: 'video' }
 	]
 
-	interface DataIsShown {
-		negociationId: boolean
+	const headerButtons: { text: string; action: MouseEventHandler<HTMLButtonElement> }[] = [
+		{ text: '＋新規追加', action: () => (window.location.href = '/negotiations/new') },
+		{ text: '表示・非表示', action: () => (displayMenuIsShown = !displayMenuIsShown) },
+		{ text: '絞り込み検索', action: () => (searchIsShown = !searchIsShown) }
+	]
+
+	// SEARCH FEATURE
+
+	const years: string[] = ['']
+	const months: string[] = ['']
+	const currentYear = new Date().getFullYear() + 1
+	const minYear = 2000
+
+	for (let i = minYear; i <= currentYear; i++) {
+		years.push(i.toString())
+	}
+
+	for (let i = 1; i <= 12; i++) {
+		months.push(i.toString())
+	}
+
+	$: searchInput = {
+		name: '',
+		year: '',
+		month: ''
+	}
+
+	/**
+	 * The function filters the data when the user enters new input
+	 * @param searchInput: Object composed of the name, year and month
+	 * @returns new array with the filtered negotiations
+	 */
+	const handleSearch = (searchInput: {
+		name: string
+		year: string
+		month: string
+	}): NegotiationFactory[] => {
+		let filtered = allnegotiations
+
+		Object.keys(searchInput).map(key => {
+			if (searchInput[key as keyof { name: string; year: string; month: string }] !== '') {
+				filtered = filtered.filter(negotiation => {
+					if (key === 'name') {
+						return negotiation.customerName.includes(searchInput.name)
+					} else {
+						let date
+						if (key === 'month') date = new Date(negotiation.startingDate).getMonth() + 1
+						if (key === 'year') date = new Date(negotiation.startingDate).getFullYear()
+
+						return (
+							date ===
+							parseInt(searchInput[key as keyof { name: string; year: string; month: string }])
+						)
+					}
+				})
+			}
+		})
+		return filtered
+	}
+
+	$: filterednegotiations = handleSearch(searchInput)
+
+	//NEGOTIATION DATA TO DISPLAY
+
+	interface NegotiationDataIsShown {
+		negotiationId: boolean
 		custCd: boolean
 		customerName: boolean
 		status: boolean
-		firstTransaction: boolean
+		startingDate: boolean
 		condition: boolean
 		inflow: boolean
 		billingDate: boolean
@@ -83,10 +126,10 @@
 		video: boolean
 	}
 
-	const dataIsShown: DataIsShown = {
+	const negotiationDataIsShown: NegotiationDataIsShown = {
 		customerName: true,
 		status: true,
-		firstTransaction: true,
+		startingDate: true,
 		condition: true,
 		inflow: true,
 		billingDate: true,
@@ -101,24 +144,61 @@
 		memo: true,
 		dm: true,
 		video: true,
-		negociationId: false,
+		negotiationId: false,
 		custCd: false
 	}
 
-	const handleChange = (e: any) => {
-		const id: keyof DataIsShown = e.target.id
-		dataIsShown[id] = e.target.checked
+	/**
+	 * It is Called when the user check/uncheck the column to display.
+	 * It will save the settings in the localStorage.
+	 *
+	 */
+	const handleChange = (): void => {
+		localStorage.setItem('negotiation-table-column-to-show', JSON.stringify(negotiationDataIsShown))
 	}
 
-	const openModal = (index: number) => {
+	/**
+	 * get the file on the local storage and update the object of the columns to display.
+	 * If there isn't any data in the local storage, it will do nothing.
+	 */
+	const setColumnToDisplay = (): void => {
+		const setColumnToDisplay = localStorage.getItem('negotiation-table-column-to-show')
+
+		if (setColumnToDisplay) {
+			const columns: NegotiationDataIsShown = JSON.parse(setColumnToDisplay)
+			for (const key in columns) {
+				negotiationDataIsShown[key as keyof NegotiationDataIsShown] =
+					columns[key as keyof NegotiationDataIsShown]
+			}
+		}
+	}
+
+	onMount(() => {
+		setColumnToDisplay()
+	})
+
+	// DELETE MODAL
+
+	let phase: 'shown' | 'success' | 'error' = 'shown'
+	let currentUser: number
+	let deleteModalIsShown = false
+
+	/**
+	 * The function opens the delete modal and pass the index.
+	 * @param index: index of the element to delete
+	 */
+	const openModal = (index: number): void => {
 		currentUser = index
 		deleteModalIsShown = true
 	}
 
-	let phase: 'shown' | 'success' | 'error' = 'shown'
-	let currentUser: number
+	$: console.log(filterednegotiations)
 
-	const onClick = (event: { detail: { key: string } }) => {
+	/**
+	 * On click on the delete modal.
+	 * @param event
+	 */
+	const onClick = (event: { detail: { key: string } }): void => {
 		switch (event.detail.key) {
 			case 'cancel':
 				deleteModalIsShown = false
@@ -126,48 +206,48 @@
 
 			case 'delete':
 				try {
-					negociations.set(
-						$negociations.filter(negociation => negociation.negociationId !== currentUser)
+					negotiations.set(
+						$negotiations.filter(negotiation => negotiation.negotiationId !== currentUser)
 					)
 
-					if ($negociation.negociationId === currentUser) {
-						negociation.set({
+					if ($negotiation.negotiationId === currentUser) {
+						negotiation.set({
 							customerName: '',
 							status: '',
-							firstTransaction: '',
+							startingDate: '',
 							condition: '',
 							inflow: '',
 							billingDate: '',
 							scheduledDeposit: '',
 							outcome: '',
-							nextContact: '',
+							nextContactDate: '',
+							nextContactTime: '',
 							lastContact: '',
 							postalCode: '',
 							prefecture: '',
 							city: '',
 							address1: '',
 							address2: '',
-							numberOfBeds: '',
+							numberOfBeds: 0,
 							estimate: [],
 							personInCharge: '',
 							responsiblePerson: '',
 							memo: [],
 							dm: '',
 							video: '',
-							negociationId: 0,
+							negotiationId: 0,
 							custCd: 0,
 							checkboxes: [],
-							checkBottleneck: '',
+							bottleneck: '',
 							occasion: '',
 							risk: '',
 							outcomeHistory: [],
-							paymentMethod: '',
 							communication: '',
-							distanceKm: '',
-							distanceTime: '',
+							distanceKm: 0,
+							distanceTime: 0,
 							preference: '',
 							contact: '',
-							billingEstimation: ''
+							billingEstimation: 0
 						})
 						goto('/negotiations')
 						phase = 'shown'
@@ -203,123 +283,136 @@
 	{/if}
 	<header class="section__header">
 		<div class="container">
-			<button
-				type="button"
-				class="primary"
-				on:click={() => (window.location.href = '/negotiations/new')}>＋新規追加</button
-			>
-			<button
-				type="button"
-				class="primary"
-				on:click={() => (displayMenuIsShown = !displayMenuIsShown)}
-			>
-				表示・非表示
-			</button>
-			<button type="button" class="primary" on:click={() => (searchIsShown = !searchIsShown)}>
-				絞り込み検索
-			</button>
+			{#each headerButtons as button}
+				<button type="button" class="primary" on:click={button.action}>
+					{button.text}
+				</button>
+			{/each}
 		</div>
 
 		{#if displayMenuIsShown}
 			<div class="container data-to-display">
 				{#each tableHeaders as header}
 					{#if header.id !== 'customerName'}
-						<label class="checkbox-container" for={header.id}>
-							<input
-								class="checkbox"
-								type="checkbox"
-								name={header.id}
-								id={header.id}
-								checked
-								on:change={handleChange}
-							/>{header.label}
-							<span class="checkmark" />
-						</label>
+						<InputCheckbox
+							name={header.id}
+							label={header.label}
+							bind:isChecked={negotiationDataIsShown[header.id]}
+							on:checked={handleChange}
+						/>
 					{/if}
 				{/each}
 			</div>
 		{/if}
 
 		{#if searchIsShown}
-			<div class="search-menu">
+			<div class="search-menu" on:input={() => handleSearch(searchInput)}>
 				<Input
 					label={'施設名'}
 					inputSize={'input--lg'}
 					name={'name-search'}
-					bind:value={searchInput.text}
+					bind:value={searchInput.name}
 				/>
 
 				<div class="container">
-					<Select label={'商談開始月'} options={years} unit={'年'} bind:value={searchInput.year} />
-					<Select options={months} unit={'月'} bind:value={searchInput.month} />
+					<SelectDate
+						name={'search-year'}
+						label={'年'}
+						options={years}
+						bind:value={searchInput.year}
+					/>
+					<SelectDate
+						name={'search-month'}
+						label={'月'}
+						options={months}
+						bind:value={searchInput.month}
+					/>
 				</div>
 			</div>
 		{/if}
 	</header>
 
 	<div class="section__main">
-		<div class="table-wrapper">
-			<table class="table">
-				<thead>
-					<tr>
-						{#each tableHeaders as header}
-							{#if dataIsShown[header.id]}
-								<th class="theader">{header.label}</th>
-							{/if}
-						{/each}
-						<th class="theader" />
-					</tr>
-				</thead>
-
-				<tbody class="tbody">
-					{#each filteredNegociations as negociation, index}
-						<tr class="trow">
+		{#if filterednegotiations.length === 0}
+			<h2 class="no-data-message">データがありません。</h2>
+		{:else}
+			<div class="table-wrapper">
+				<table class="table">
+					<thead>
+						<tr>
 							{#each tableHeaders as header}
-								{#if dataIsShown[header.id]}
-									<td
-										class="tdata {header.id} {header.id === 'condition'
-											? header.id + '--' + negociation[header.id]
-											: ''}"
-									>
-										{#if header.id === 'customerName'}
-											<a href={'/negotiations/' + negociation.negociationId}>
-												{negociation[header.id]}
-											</a>
-										{:else if header.id === 'billingAddress'}
-											{'〒' +
-												negociation.postalCode +
-												negociation.prefecture +
-												negociation.city +
-												negociation.address1 +
-												negociation.address2}
-										{:else if header.id === 'memo'}
-											{negociation.memo[negociation.memo.length - 1].memo}
-										{:else}
-											{negociation[header.id]}
-										{/if}
-									</td>
+								{#if negotiationDataIsShown[header.id]}
+									<th class="theader">{header.label}</th>
 								{/if}
 							{/each}
-							<td class="tdata icon">
-								<!-- svelte-ignore a11y-click-events-have-key-events -->
-								<!-- svelte-ignore missing-declaration -->
-								<!-- svelte-ignore a11y-no-static-element-interactions -->
-								<span on:click={() => openModal(negociation.negociationId)}>
-									<Icon icon={{ path: 'delete', color: '#0093d0' }} />
-								</span>
-							</td>
+							<th class="theader" />
 						</tr>
-					{/each}
-				</tbody>
-			</table>
-		</div>
+					</thead>
+
+					<tbody class="tbody">
+						{#each filterednegotiations as negotiation, index}
+							<tr class="trow">
+								{#each tableHeaders as header}
+									{#if negotiationDataIsShown[header.id]}
+										<td
+											class="tdata {header.id} {header.id === 'condition' &&
+												header.id + '--' + negotiation[header.id]}"
+										>
+											{#if header.id === 'customerName'}
+												<a href={'/negotiations/' + negotiation.negotiationId}>
+													{negotiation[header.id]}
+												</a>
+											{:else if header.id === 'billingAddress'}
+												{'〒' +
+													negotiation.postalCode +
+													negotiation.prefecture +
+													negotiation.city +
+													negotiation.address1 +
+													negotiation.address2}
+											{:else if header.id === 'memo'}
+												{negotiation.memo[negotiation.memo.length - 1].memo}
+											{:else if header.id === 'numberOfBeds'}
+												{negotiation.minMaxBed.min === negotiation.minMaxBed.max
+													? negotiation.minMaxBed.min + '台'
+													: negotiation.minMaxBed.min + '台 - ' + negotiation.minMaxBed.max + '台'}
+											{:else if header.id === 'billingEstimation'}
+												{negotiation.minMaxEstimate.min === negotiation.minMaxEstimate.max
+													? negotiation.minMaxEstimate.min + '円'
+													: negotiation.minMaxEstimate.min +
+													  '円 - ' +
+													  negotiation.minMaxEstimate.max +
+													  '円'}
+											{:else if header.id === 'nextContact'}
+												{negotiation.nextContactDate !== '' ? negotiation.nextContactDate : 'ー'}
+												{negotiation.nextContactTime !== '' ? negotiation.nextContactTime : 'ー'}
+											{:else if header.id === 'outcome' || header.id === 'billingDate'}
+												{negotiation[header.id] !== '' ? negotiation[header.id] : '未定'}
+											{:else}
+												{negotiation[header.id]}
+											{/if}
+										</td>
+									{/if}
+								{/each}
+								<td class="tdata icon">
+									<button
+										class="delete"
+										type="button"
+										on:click={() => openModal(negotiation.negotiationId)}
+									>
+										<Icon icon={{ path: 'delete', color: '#0093d0' }} />
+									</button>
+								</td>
+							</tr>
+						{/each}
+					</tbody>
+				</table>
+			</div>
+		{/if}
 	</div>
 </section>
 
 <style lang="scss">
-	@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700;900&display=swap');
 	.section {
-		font-family: 'Noto Sans JP', sans-serif;
 		color: var(--black);
 
 		&__header {
@@ -349,6 +442,29 @@
 		}
 	}
 
+	.search-menu {
+		display: flex;
+		justify-content: flex-start;
+		align-items: center;
+		margin-top: 20px;
+		padding: 16px 12px;
+		gap: 24px;
+		background-color: #fff;
+		border-radius: 16px;
+
+		.container {
+			display: flex;
+			justify-content: flex-start;
+			align-items: center;
+			gap: 18px;
+		}
+	}
+
+	.btn {
+		height: fit-content;
+		width: fit-content;
+	}
+
 	.table-wrapper {
 		height: calc((558 / 768) * 100vh);
 		overflow-y: scroll;
@@ -371,23 +487,20 @@
 	.table {
 		width: max-content;
 		border-collapse: collapse;
-
-		.tbody {
-			background-color: #fff;
-		}
+		background-color: #fff;
 
 		.theader {
 			position: sticky;
 			top: 0;
 			height: 42px;
 			font-weight: bold;
-			font-family: 'Noto Sans JP';
-			background-color: var(--back);
 			color: var(--primary);
+			background-color: var(--back);
 		}
 
 		.trow {
-			border-bottom: 1px solid var(--primary);
+			height: fit-content;
+			border-bottom: 1px solid var(--gray);
 
 			&:last-child {
 				border: none;
@@ -395,8 +508,8 @@
 		}
 
 		.tdata {
-			padding: 11px 22px;
 			width: fit-content;
+			padding: 11px 22px;
 			text-align: center;
 			&.customerName {
 				max-width: 200px;
@@ -420,68 +533,18 @@
 					color: var(--primary);
 				}
 			}
-		}
 
-		.tdata:nth-child(2n) {
-			background-color: rgb(244, 244, 244);
-		}
-	}
-
-	.checkbox {
-		margin-right: 11px;
-	}
-
-	.search-menu {
-		display: flex;
-		justify-content: flex-start;
-		align-items: center;
-		margin-top: 20px;
-		padding: 16px 12px;
-		gap: 24px;
-		background-color: rgb(196, 227, 247);
-		background-color: #fff;
-		border-radius: 16px;
-
-		.container {
-			display: flex;
-			justify-content: flex-start;
-			align-items: center;
-			gap: 18px;
-
-			.label {
-				font-size: 18px;
-				font-weight: 400;
+			&:nth-child(2n) {
+				background-color: rgb(244, 244, 244);
 			}
 		}
 	}
 
-	.btn {
-		height: fit-content;
-		width: fit-content;
-	}
-
-	// .btn ~ .icon {
-	// 	span {
-	// 		cursor: pointer;
-
-	// 		&:hover {
-	// 			opacity: 0.5;
-	// 		}
-	// 	}
-
-	// 	> :global(.svg-icon) {
-	// 		height: 18px * 1.2;
-	// 	}
-	// }
-
 	.icon {
-		display: inline-flex;
-		align-items: center;
-		justify-content: center;
-		width: 64px;
-
-		span {
+		button {
 			cursor: pointer;
+			background-color: transparent;
+			margin: auto;
 
 			&:hover {
 				opacity: 0.5;
@@ -489,73 +552,6 @@
 
 			> :global(.svg-icon) {
 				height: 18px * 1.2;
-			}
-		}
-	}
-	// }
-
-	.checkbox-container {
-		position: relative;
-		display: flex;
-		justify-content: flex-end;
-		flex-direction: row-reverse;
-		align-items: center;
-		width: 160px;
-		margin-bottom: 12px;
-		gap: 18px;
-		font-size: 18px;
-		cursor: pointer;
-		-webkit-user-select: none;
-		-moz-user-select: none;
-		-ms-user-select: none;
-		user-select: none;
-
-		& :hover {
-			.checkbox ~ .checkmark {
-				background-color: #ccc;
-			}
-		}
-
-		& :after {
-			content: '';
-			display: none;
-		}
-
-		.checkmark {
-			display: flex;
-			align-items: center;
-			justify-content: center;
-			top: 0;
-			left: 0;
-			height: 20px;
-			width: 20px;
-			border: 1px solid var(--black);
-			border-radius: 3px;
-
-			&:after {
-				width: 3px;
-				height: 8px;
-				border: solid white;
-				border-width: 0 3px 3px 0;
-				-webkit-transform: rotate(45deg);
-				-ms-transform: rotate(45deg);
-				transform: rotate(45deg);
-			}
-		}
-
-		.checkbox {
-			position: absolute;
-			height: 0;
-			width: 0;
-			opacity: 0;
-			cursor: pointer;
-
-			&:checked ~ .checkmark {
-				background-color: var(--primary);
-
-				&:after {
-					display: block;
-				}
 			}
 		}
 	}

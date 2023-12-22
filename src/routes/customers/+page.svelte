@@ -70,9 +70,7 @@
 			case 'delete':
 				try {
 					if (currentUser !== undefined) {
-						const customer = allCustomers.find(
-							customer => customer.custCD.toString() === currentUser
-						)
+						const customer = allCustomers.find(customer => customer.id.toString() === currentUser)
 
 						if (customer) {
 							customer.isActive = false

@@ -11,8 +11,10 @@
 
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
 
+	console.log(customer)
+
 	let initialState: CustomerEntries = {
-		id: customer.custCD,
+		id: customer.id,
 		branchNumber: customer.custBranchCD,
 		customerName: customer.custName,
 		kana: customer.custKana,
@@ -46,7 +48,13 @@
 		approver: customer.approver,
 		contactTime: customer.contactTime,
 		pictures: customer.pictures,
-		miscellaneous: customer.miscellaneous
+		miscellaneous: customer.miscellaneous,
+		registrationDate: customer.registration.registDate,
+		registeredBy: customer.registration.registDateTime,
+		updateDate: customer.update.updateDate,
+		updateBy: customer.update.updateBy,
+		deleteDate: customer.delete.deleteDate,
+		deleteBy: customer.delete.deleteBy
 	}
 </script>
 
@@ -95,7 +103,7 @@
 				<button
 					class="primary"
 					on:click={() => {
-						window.location.href = '/customers/' + customer.custCD + '/edit'
+						window.location.href = '/customers/' + customer.id + '/edit'
 					}}
 				>
 					編集

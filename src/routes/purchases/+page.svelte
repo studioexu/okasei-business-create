@@ -1,8 +1,10 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
+	import ButtonDelete from '@/components/ButtonDelete.svelte'
 	import Select from '@/components/Select.svelte'
 	import { toKebab } from '@/libs/utils'
+	import Pagination from '@/views/Pagination.svelte'
 
 	interface Purchase {
 		reservationNumber: string
@@ -11,7 +13,7 @@
 		model: string
 		motor: string
 		size: string
-		arrivalDay: string
+		arrivalDate: string
 		marketPrice: number
 		sellingPrice: number
 	}
@@ -24,7 +26,7 @@
 			model: '3M',
 			motor: 'キューマ',
 			size: '83R',
-			arrivalDay: '12/11',
+			arrivalDate: '12/11',
 			marketPrice: 8756,
 			sellingPrice: 5000
 		},
@@ -35,40 +37,40 @@
 			model: '3M',
 			motor: 'キューマ',
 			size: '83R',
-			arrivalDay: '2/11',
+			arrivalDate: '2/11',
 			marketPrice: 13244,
 			sellingPrice: 3000
 		},
 		{
 			reservationNumber: '8323-0804-5842',
 			customerName: 'My company',
-			status: '未着手',
+			status: '到着待ち',
 			model: '3M',
 			motor: 'キューマ',
 			size: '83R',
-			arrivalDay: '12/11',
+			arrivalDate: '12/11',
 			marketPrice: 18348,
 			sellingPrice: 5000
 		},
 		{
 			reservationNumber: '8323-0804-5843',
 			customerName: 'My company',
-			status: '未着手',
+			status: '失注',
 			model: '3M',
 			motor: 'キューマ',
 			size: '83R',
-			arrivalDay: '3/11',
+			arrivalDate: '3/11',
 			marketPrice: 8756,
 			sellingPrice: 5000
 		},
 		{
 			reservationNumber: '8323-0804-5844',
 			customerName: '田中　太郎',
-			status: '未着手',
+			status: '到着待ち',
 			model: '2M',
 			motor: 'ヒューマン',
 			size: '83M',
-			arrivalDay: '12/11',
+			arrivalDate: '12/11',
 			marketPrice: 8756,
 			sellingPrice: 5000
 		},
@@ -79,7 +81,7 @@
 			model: '3M',
 			motor: 'キューマ',
 			size: '91R',
-			arrivalDay: '12/11',
+			arrivalDate: '12/11',
 			marketPrice: 8756,
 			sellingPrice: 5000
 		},
@@ -90,18 +92,18 @@
 			model: '3M',
 			motor: 'キューマ',
 			size: '83R',
-			arrivalDay: '12/11',
+			arrivalDate: '12/11',
 			marketPrice: 8756,
 			sellingPrice: 5000
 		},
 		{
 			reservationNumber: '8323-0804-5847',
 			customerName: 'My company',
-			status: '未着手',
+			status: '完了',
 			model: '3M',
 			motor: 'キューマ',
 			size: '83R',
-			arrivalDay: '1/11',
+			arrivalDate: '1/11',
 			marketPrice: 8756,
 			sellingPrice: 5000
 		}
@@ -132,10 +134,25 @@
 		{ label: '機種', id: 'model' },
 		{ label: 'モーター', id: 'motor' },
 		{ label: 'サイズ', id: 'size' },
-		{ label: '入荷日', id: 'arrivalDay' },
+		{ label: '入荷日', id: 'arrivalDate' },
 		{ label: '相場', id: 'marketPrice' },
 		{ label: '買取額', id: 'sellingPrice' }
 	]
+
+	$: dividedPurchases =
+		purchases.length > 0
+			? purchases.flatMap((_, i, self) => (i % 5 ? [] : [self.slice(i, i + 5)]))
+			: []
+
+	$: currentPage = 0
+
+	/**
+	 * update the current page number
+	 * @param event: get the current number of the page
+	 */
+	const movePage = (event: { detail: { page: number } }): void => {
+		currentPage = event.detail.page
+	}
 </script>
 
 <section class="section">
@@ -159,39 +176,77 @@
 					{#each tableHeaders as header}
 						<th class="theader {toKebab(header.id)}">{header.label}</th>
 					{/each}
+					<th class="theader" />
+					<th class="theader" />
 				</tr>
 			</thead>
 
 			<tbody class="tbody">
-				{#each purchases as purchase}
+				{#each dividedPurchases[currentPage] as purchase}
 					<tr class="trow">
 						{#each tableHeaders as header}
 							{#if header.id === 'status'}
 								<td class="tdata">
 									<Select
-										options={['未着手', '進行中', '完了', '到着待ち', '失注']}
+										options={['未着手', '進行中', '到着待ち', '完了', '失注']}
 										bind:value={purchase.status}
 									/>
+
+									<div
+										class="progress-bar {(purchase.status === '未着手' ||
+											purchase.status === '失注') &&
+											'hidden'}"
+									>
+										<div
+											class="fill {purchase.status === '進行中'
+												? 'fill--50'
+												: purchase.status === '到着待ち'
+												? 'fill--75'
+												: 'fill--full'}"
+										/>
+									</div>
 								</td>
 							{:else}
 								<td class="tdata">{purchase[header.id]}</td>
 							{/if}
 						{/each}
+						<td class="tdata">
+							<ButtonDelete />
+						</td>
+						<td class="tdata">
+							<ButtonDelete />
+						</td>
 					</tr>
 				{/each}
 			</tbody>
 		</table>
 	</div>
 
-	<footer class="section__footer">hello</footer>
+	<footer class="section__footer">
+		<Pagination bind:current={currentPage} bind:pages={dividedPurchases} on:click={movePage} />
+	</footer>
 </section>
 
 <style lang="scss">
+	.section {
+		&__header {
+			margin-bottom: 36px;
+		}
+
+		&__footer {
+			margin-top: 18px;
+		}
+	}
+
 	.search-form {
 		display: flex;
 		justify-content: center;
 		gap: 18px;
 		margin-bottom: 20px;
+	}
+
+	.hidden {
+		visibility: hidden;
 	}
 
 	.table {
@@ -252,6 +307,38 @@
 
 		.tdata:nth-child(2n) {
 			background-color: rgb(244, 244, 244);
+		}
+	}
+
+	.progress-bar {
+		content: ' ';
+		margin-top: 11px;
+		width: 100%;
+		height: 20px;
+		border-radius: 8px;
+		overflow: hidden;
+		border: 1px solid var(--gray);
+
+		.fill {
+			content: '';
+			height: 100%;
+			width: 100%;
+			background-color: var(--primary);
+			transform: scaleX(0);
+			transform-origin: 0;
+			transition: transform 300ms;
+
+			&--50 {
+				transform: scaleX(0.5);
+			}
+
+			&--75 {
+				transform: scaleX(0.75);
+			}
+
+			&--full {
+				transform: scaleX(1);
+			}
 		}
 	}
 </style>

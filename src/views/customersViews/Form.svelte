@@ -206,8 +206,12 @@
 		? '/customers/new?/create'
 		: '/customers/' + initialState.id + '/edit?/update'}
 	id="registration-form"
-	on:submit={handleSubmit}
-	use:enhance={() => {
+	on:submit|preventDefault={handleSubmit}
+	use:enhance={({ formElement, formData, action, cancel, submitter }) => {
+		//submit the form, only once it succeeded.
+		isSucceeded ? submitter : cancel()
+
+		//Don't reset the form, if there are any errors during the validation.
 		return async ({ update }) => {
 			await update({ reset: false })
 		}

@@ -37,6 +37,7 @@ export const actions = {
 		const initialStateString = data.get('initialState')
 
 		let initialState: CustomerEntries = JSON.parse(initialStateString)
+		console.log(initialState)
 
 		const updatedCustomer = formatCustomer('update', initialState)
 

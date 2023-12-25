@@ -3,6 +3,7 @@ import type { Department } from '@/models/Customer'
 export interface Picture {
 	file: File
 	memo: string
+	base64: string
 }
 
 export interface CustomerEntries {

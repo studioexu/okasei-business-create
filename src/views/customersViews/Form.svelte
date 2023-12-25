@@ -23,6 +23,8 @@
 	import InputFreeText from '@/components/InputFreeText.svelte'
 	import Row from '@/components/Row.svelte'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
+	import { convertDataToBase64 } from '@/libs/actions'
+	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -71,10 +73,32 @@
 	 * If the user is in the entry verification page, then, we submit the form.
 	 *
 	 */
-	const handleSubmit = (): void => {
+	const handleSubmit = (e: Event): void => {
 		if (confirmationPageIsShown) {
 			isShown = true
 			isSucceeded = true
+		}
+
+		if (!confirmationPageIsShown) {
+			e.preventDefault()
+
+			departmentsError = []
+
+			// const convertedURL = convertDataToBase64(initialState.pictures[0].file)
+
+			// console.log(initialState)
+			// const updatedCustomer = formatCustomer('update', initialState)
+			// console.log(updatedCustomer)
+
+			const submitResult = validationOnSubmit(initialState, formIsValid)
+			initialState.departments.map(department => {
+				departmentsError.push({
+					department: inputIsValid('department', department),
+					numberOfBeds: !isNaN(department.numberOfBeds)
+				})
+			})
+			confirmationPageIsShown = submitResult.isValid
+			formIsValid = submitResult.formValidation
 		}
 	}
 
@@ -82,7 +106,7 @@
 
 	let phase: 'shown' | 'success' | 'error' = 'shown'
 
-	const onClick = (event: { detail: { key: string; fileToUpload: File } }) => {
+	const onClick = async (event: { detail: { key: string; fileToUpload: File } }) => {
 		switch (event.detail.key) {
 			case 'cancel':
 				uploadModalIsShown = false
@@ -92,7 +116,9 @@
 				try {
 					if (event.detail.fileToUpload !== undefined) {
 						let newArray = initialState.pictures
-						newArray.push({ file: event.detail.fileToUpload, memo: '' })
+
+						const convertedFile = await convertDataToBase64(event.detail.fileToUpload)
+						newArray.push({ file: event.detail.fileToUpload, memo: '', base64: convertedFile })
 						initialState.pictures = newArray
 						phase = 'success'
 					} else {
@@ -181,7 +207,11 @@
 		: '/customers/' + initialState.id + '/edit?/update'}
 	id="registration-form"
 	on:submit={handleSubmit}
-	use:enhance
+	use:enhance={() => {
+		return async ({ update }) => {
+			await update({ reset: false })
+		}
+	}}
 >
 	<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
 	<p class="required-legend"><span class="required-mark">*</span> 必須</p>
@@ -516,7 +546,11 @@
 				<div class="container">
 					{#if initialState.pictures === undefined || initialState.pictures.length === 0}
 						<article class="card">
-							<button class="image-empty" on:click={() => (uploadModalIsShown = true)}>
+							<button
+								type="button"
+								class="image-empty"
+								on:click={() => (uploadModalIsShown = true)}
+							>
 								<span>+</span>
 							</button>
 							<p class="image-description">画像がアップロードされていません。</p>

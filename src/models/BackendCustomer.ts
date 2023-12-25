@@ -44,6 +44,7 @@ export class CustomerNewApi {
 	update_by?: number
 	delete_at?: string
 	delete_by?: number
+	images: { image_data: string; image_memo: string }[]
 
 	constructor(data: CustomerEntries) {
 		if (data.id) {
@@ -79,5 +80,12 @@ export class CustomerNewApi {
 		this.update_by = data.updateBy
 		this.delete_at = data.deleteDate
 		this.delete_by = data.deleteBy
+
+		this.images = data.pictures.map(picture => {
+			return {
+				image_data: picture.base64,
+				image_memo: picture.memo
+			}
+		})
 	}
 }

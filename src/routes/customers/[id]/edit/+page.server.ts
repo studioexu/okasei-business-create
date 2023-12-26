@@ -18,6 +18,8 @@ export const load = async ({ params }) => {
 		(customer: CustomerNewApi) => customer.id?.toString() === params.id.toString()
 	)
 
+	// console.log(customer)
+
 	if (!customer) throw error(404)
 	if (!departmentsList) throw error(404)
 
@@ -40,6 +42,8 @@ export const actions = {
 		console.log(initialState)
 
 		const updatedCustomer = formatCustomer('update', initialState)
+		// console.log(updatedCustomer.images)
+		// console.log(JSON.parse(JSON.stringify(updatedCustomer)))
 
 		if (initialState.id) {
 			updateCustomer(updatedCustomer, currentApi, initialState.id)

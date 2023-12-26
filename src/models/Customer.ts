@@ -29,8 +29,9 @@ export interface Department {
 }
 
 export interface Picture {
-	file: File
-	memo: string
+	// file: File
+	memo?: string
+	base64: string
 }
 
 export class Customer {
@@ -75,16 +76,16 @@ export class Customer {
 	}
 
 	private _googleReview: boolean
-	private _reviews: string
-	private _business: string
-	private _closingMonth: string
-	private _pictures: Picture[]
-	private _personInCharge: string
-	private _personInChargeMemo: string
-	private _personInChargeRole: string
-	private _approver: string
-	private _contactTime: string
-	private _miscellaneous: string
+	private _reviews?: string
+	private _business?: string
+	private _closingMonth?: string
+	private _pictures?: Picture[]
+	private _personInCharge?: string
+	private _personInChargeMemo?: string
+	private _personInChargeRole?: string
+	private _approver?: string
+	private _contactTime?: string
+	private _miscellaneous?: string
 
 	constructor(data: CustomerNewApi) {
 		if (data.id) {
@@ -123,29 +124,36 @@ export class Customer {
 				numberOfBeds: (department as DepartmentBackend).number_of_beds
 			}
 		})
-		this._registration = {
+		;(this._registration = {
 			registDate: data.register_at,
 			registBy: data.register_by
-		}
-		this._update = {
-			updateDate: data.update_at,
-			updateBy: data.update_by
-		}
-		;(this._delete = {
-			deleteDate: data.delete_at,
-			deleteBy: data.delete_by
 		}),
-			(this._googleReview = data.googleReview ? data.googleReview : false),
-			(this._reviews = data.reviews ? data.reviews : ''),
-			(this._business = data.business ? data.business : ''),
-			(this._closingMonth = data.closingMonth ? data.closingMonth : ''),
-			(this._pictures = data.pictures ? data.pictures : []),
-			(this._personInCharge = data.personInCharge),
-			(this._personInChargeMemo = data.personInChargeMemo),
-			(this._personInChargeRole = data.personInChargeRole),
-			(this._approver = data.approver),
-			(this._contactTime = data.contactTime),
-			(this._miscellaneous = data.miscellaneous)
+			(this._update = {
+				updateDate: data.update_at,
+				updateBy: data.update_by
+			}),
+			(this._delete = {
+				deleteDate: data.delete_at,
+				deleteBy: data.delete_by
+			}),
+			(this._pictures = data.images
+				? data.images.map(image => {
+						return {
+							base64: image.image_data,
+							memo: image.image_memo
+						}
+				  })
+				: []),
+			(this._googleReview = data.google_review)
+		this._reviews = data.reviews
+		this._business = data.business
+		this._closingMonth = data.close_month?.toString()
+		this._personInCharge = data.personincharge
+		this._personInChargeMemo = data.personinchargememo
+		this._personInChargeRole = data.personinchargerole
+		this._approver = data.approver
+		this._contactTime = data.contacttime
+		this._miscellaneous = data.miscellaneous
 	}
 
 	public get id() {

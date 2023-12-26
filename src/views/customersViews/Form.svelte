@@ -25,6 +25,7 @@
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
 	import { convertDataToBase64 } from '@/libs/actions'
 	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
+	import { formatCustomer } from '@/libs/formatters'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -87,8 +88,8 @@
 			// const convertedURL = convertDataToBase64(initialState.pictures[0].file)
 
 			// console.log(initialState)
-			// const updatedCustomer = formatCustomer('update', initialState)
-			// console.log(updatedCustomer)
+			const updatedCustomer = formatCustomer('update', initialState)
+			// console.log(updatedCustomer.images[0].image_data)
 
 			const submitResult = validationOnSubmit(initialState, formIsValid)
 			initialState.departments.map(department => {
@@ -118,7 +119,16 @@
 						let newArray = initialState.pictures
 
 						const convertedFile = await convertDataToBase64(event.detail.fileToUpload)
-						newArray.push({ file: event.detail.fileToUpload, memo: '', base64: convertedFile })
+						const base64json = JSON.stringify(convertedFile)
+
+						// const convertedFile = JSON.parse(base64)
+						console.log(base64json)
+
+						newArray.push({
+							file: event.detail.fileToUpload,
+							memo: '',
+							base64: convertedFile
+						})
 						initialState.pictures = newArray
 						phase = 'success'
 					} else {
@@ -189,6 +199,8 @@
 	}
 
 	$: bedTotal = getTotalOfBeds(initialState.departments)
+
+	console.log(initialState.closingMonth)
 </script>
 
 {#if uploadModalIsShown}
@@ -561,9 +573,10 @@
 						</article>
 					{:else}
 						{#each initialState.pictures as image, index}
-							<article class="card" id={image.file.name}>
+							<article class="card">
 								<div class="image-wrapper">
-									<img src={URL.createObjectURL(image.file)} alt="" />
+									<!-- <img src={URL.createObjectURL(image.file)} alt="" /> -->
+									<img src={image.base64} alt="" />
 								</div>
 
 								<InputFreeText

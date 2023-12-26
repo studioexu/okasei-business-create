@@ -17,6 +17,8 @@ export const loadData = async (url: string, key: string) => {
 	})
 		.then(res => res.json())
 		.then(data => {
+			// console.log(data.results)
+
 			return data.results
 		})
 		.catch(error => error)
@@ -51,20 +53,28 @@ export const createCustomer = async (newCustomer: CustomerNewApi, url: string) =
  * @param url : string, corresponding to url of the database
  * @param customerId : string, corresponding to the id of the customer we want to update.
  */
-export const updateCustomer = (
+export const updateCustomer = async (
 	updatedCustomer: CustomerNewApi,
 	url: string,
 	customerId: number
 ) => {
-	fetch(url + '/customer/update/' + customerId, {
+	await fetch(url + '/customer/update/' + customerId, {
 		method: 'PUT',
 		headers: {
 			Authorization: 'Token ' + currentKey,
-			'Content-type': 'application/json;charset=UTF-8'
+			'Content-type': 'application/json',
+			Accept: 'application/json'
 		},
 		body: JSON.stringify(updatedCustomer)
 	})
-		.then(res => res.json())
+		.then(res => {
+			console.log('hello')
+
+			// console.log(res)
+			// console.log(res.json())
+
+			return res.json()
+		})
 		.then(data => {
 			console.log('Customer successfully updated')
 			console.log(data)
@@ -152,7 +162,6 @@ export const login = async (url: string) => {
 export const convertDataToBase64 = (file: File): Promise<string> => {
 	return new Promise<string>((resolve, reject) => {
 		const fileReader = new FileReader()
-		fileReader.readAsDataURL(file)
 
 		fileReader.onload = () => {
 			if (typeof fileReader.result === 'string') resolve(fileReader.result)
@@ -161,5 +170,31 @@ export const convertDataToBase64 = (file: File): Promise<string> => {
 		fileReader.onerror = error => {
 			reject(error)
 		}
+
+		fileReader.readAsDataURL(file)
+
+		// fileReader.onload = () => {
+		// 	base64String = fileReader.result.replace('data:', '').replace(/^.+,/, '')
+
+		// 	imageBase64Stringsep = base64String
+
+		// 	// alert(imageBase64Stringsep);
+		// 	console.log(base64String)
+		// }
+		// reader.readAsDataURL(file)
 	})
+
+	// const fileReader = new FileReader()
+
+	// fileReader.onload = () => {
+	// 	console.log(fileReader.result)
+
+	// 	if (typeof fileReader.result === 'string') fileReader.result
+	// }
+
+	// fileReader.onerror = error => {
+	// 	return error
+	// }
+
+	// fileReader.readAsDataURL(file)
 }

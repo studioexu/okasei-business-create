@@ -1,7 +1,6 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
-	import ButtonDelete from '@/components/ButtonDelete.svelte'
 	import Icon from '@/components/Icon.svelte'
 	import Select from '@/components/Select.svelte'
 	import { toKebab } from '@/libs/utils'
@@ -10,7 +9,6 @@
 	import { purchase, purchases } from '@/stores/purchases'
 	import type { Purchase, Status } from '@/libs/purchaseTypes'
 	import { goto } from '$app/navigation'
-	import { toCamelCase } from '@/libs/formatters'
 
 	let allPurcharses: Purchase[]
 
@@ -162,7 +160,7 @@
 			{/each}
 		</form>
 
-		<button class="primary"> ＋　新規追加 </button>
+		<button on:click={() => goto('/purchases/new')} class="primary"> ＋　新規追加 </button>
 	</header>
 
 	<div class="section__main">

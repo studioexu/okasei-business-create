@@ -5,12 +5,10 @@
 
 	import { fade } from 'svelte/transition'
 	import { goto } from '$app/navigation'
-	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations.js'
 
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
-	import { formatCustomer } from '@/libs/formatters.js'
 
 	export let data
 

@@ -17,8 +17,6 @@
 		goto('/customers')
 	}
 
-	$: console.log(initialState)
-
 	export let data
 
 	let departmentsList = data.departmentsList
@@ -67,19 +65,19 @@
 
 	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 
-	const handleSubmitForm = () => {
-		departmentsError = []
+	// const handleSubmitForm = () => {
+	// 	departmentsError = []
 
-		const submitResult = validationOnSubmit(initialState, formIsValid)
-		initialState.departments.map(department => {
-			departmentsError.push({
-				department: inputIsValid('department', department),
-				numberOfBeds: !isNaN(department.numberOfBeds)
-			})
-		})
-		confirmationPageIsShown = submitResult.isValid
-		formIsValid = submitResult.formValidation
-	}
+	// 	const submitResult = validationOnSubmit(initialState, formIsValid)
+	// 	initialState.departments.map(department => {
+	// 		departmentsError.push({
+	// 			department: inputIsValid('department', department),
+	// 			numberOfBeds: !isNaN(department.numberOfBeds)
+	// 		})
+	// 	})
+	// 	confirmationPageIsShown = submitResult.isValid
+	// 	formIsValid = submitResult.formValidation
+	// }
 </script>
 
 <section class="section section--form">
@@ -124,10 +122,8 @@
 						修正
 					</button>
 				</div>
-				<button type="submit" class="btn primary" form="registration-form">登録</button>
-			{:else}
-				<button type="button" class="btn primary" on:click={handleSubmitForm}> 登録 </button>
 			{/if}
+			<button type={'submit'} class="btn primary" form="registration-form">登録</button>
 		</footer>
 	{/if}
 </section>

@@ -67,14 +67,7 @@ export const updateCustomer = async (
 		},
 		body: JSON.stringify(updatedCustomer)
 	})
-		.then(res => {
-			console.log('hello')
-
-			// console.log(res)
-			// console.log(res.json())
-
-			return res.json()
-		})
+		.then(res => res.json())
 		.then(data => {
 			console.log('Customer successfully updated')
 			console.log(data)

@@ -42,7 +42,7 @@ export const actions = {
 		console.log(initialState)
 
 		const updatedCustomer = formatCustomer('update', initialState)
-		// console.log(updatedCustomer.images)
+		console.log(updatedCustomer)
 		// console.log(JSON.parse(JSON.stringify(updatedCustomer)))
 
 		if (initialState.id) {

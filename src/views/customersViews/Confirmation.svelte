@@ -140,6 +140,10 @@
 	</Row>
 
 	<Row>
+		<DetailWrapper content={initialState.contactTime} label={'連絡の取りやすい時間'} />
+	</Row>
+
+	<Row>
 		<DetailWrapper content={initialState.miscellaneous} label={'その他'} />
 	</Row>
 

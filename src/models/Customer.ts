@@ -75,17 +75,17 @@ export class Customer {
 		deleteBy?: number
 	}
 
-	private _googleReview: boolean
-	private _reviews?: string
-	private _business?: string
-	private _closingMonth?: string
-	private _pictures?: Picture[]
-	private _personInCharge?: string
-	private _personInChargeMemo?: string
-	private _personInChargeRole?: string
-	private _approver?: string
-	private _contactTime?: string
-	private _miscellaneous?: string
+	// private _googleReview: boolean
+	// private _reviews?: string
+	// private _business?: string
+	// private _closingMonth?: string
+	// private _pictures?: Picture[]
+	// private _personInCharge?: string
+	// private _personInChargeMemo?: string
+	// private _personInChargeRole?: string
+	// private _approver?: string
+	// private _contactTime?: string
+	// private _miscellaneous?: string
 
 	constructor(data: CustomerNewApi) {
 		if (data.id) {
@@ -135,25 +135,25 @@ export class Customer {
 			(this._delete = {
 				deleteDate: data.delete_at,
 				deleteBy: data.delete_by
-			}),
-			(this._pictures = data.images
-				? data.images.map(image => {
-						return {
-							base64: image.image_data,
-							memo: image.image_memo
-						}
-				  })
-				: []),
-			(this._googleReview = data.google_review)
-		this._reviews = data.reviews
-		this._business = data.business
-		this._closingMonth = data.close_month?.toString()
-		this._personInCharge = data.personincharge
-		this._personInChargeMemo = data.personinchargememo
-		this._personInChargeRole = data.personinchargerole
-		this._approver = data.approver
-		this._contactTime = data.contacttime
-		this._miscellaneous = data.miscellaneous
+			})
+		// (this._pictures = data.images
+		// 	? data.images.map(image => {
+		// 			return {
+		// 				base64: image.image_data,
+		// 				memo: image.image_memo
+		// 			}
+		// 	  })
+		// 	: []),
+		// 	(this._googleReview = data.google_review)
+		// this._reviews = data.reviews
+		// this._business = data.business
+		// this._closingMonth = data.close_month?.toString()
+		// this._personInCharge = data.personincharge
+		// this._personInChargeMemo = data.personinchargememo
+		// this._personInChargeRole = data.personinchargerole
+		// this._approver = data.approver
+		// this._contactTime = data.contacttime
+		// this._miscellaneous = data.miscellaneous
 	}
 
 	public get id() {
@@ -247,40 +247,40 @@ export class Customer {
 		this._isActive = active
 	}
 
-	public get googleReview() {
-		return this._googleReview
-	}
-	public get reviews() {
-		return this._reviews
-	}
-	public get business() {
-		return this._business
-	}
-	public get closingMonth() {
-		return this._closingMonth
-	}
-	public get pictures() {
-		return this._pictures
-	}
-	public get personInCharge() {
-		return this._personInCharge
-	}
-	public get personInChargeMemo() {
-		return this._personInChargeMemo
-	}
-	public get personInChargeRole() {
-		return this._personInChargeRole
-	}
+	// public get googleReview() {
+	// 	return this._googleReview
+	// }
+	// public get reviews() {
+	// 	return this._reviews
+	// }
+	// public get business() {
+	// 	return this._business
+	// }
+	// public get closingMonth() {
+	// 	return this._closingMonth
+	// }
+	// public get pictures() {
+	// 	return this._pictures
+	// }
+	// public get personInCharge() {
+	// 	return this._personInCharge
+	// }
+	// public get personInChargeMemo() {
+	// 	return this._personInChargeMemo
+	// }
+	// public get personInChargeRole() {
+	// 	return this._personInChargeRole
+	// }
 
-	public get approver() {
-		return this._approver
-	}
+	// public get approver() {
+	// 	return this._approver
+	// }
 
-	public get contactTime() {
-		return this._contactTime
-	}
+	// public get contactTime() {
+	// 	return this._contactTime
+	// }
 
-	public get miscellaneous() {
-		return this._miscellaneous
-	}
+	// public get miscellaneous() {
+	// 	return this._miscellaneous
+	// }
 }

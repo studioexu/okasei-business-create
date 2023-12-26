@@ -2,8 +2,9 @@
 	import { onMount } from 'svelte'
 	import { goto } from '$app/navigation'
 	import { page } from '$app/stores'
-	import type { Notifications } from '@/libs/notificationTypes'
+	import type { Notification } from '@/libs/notificationTypes'
 	import type { Role } from '@/libs/types'
+	import { notifications } from '@/stores/notifications'
 	import { user } from '@/stores/users'
 	import Header from '@/views/Header.svelte'
 	import Sidebar from '@/views/Sidebar.svelte'
@@ -12,8 +13,11 @@
 
 <script lang="ts">
 	$: path = $page.url.pathname
+	const isAdmin = $user.role === 'システム管理者'
+	const sortedNotifications: Notification[] = isAdmin
+		? $notifications
+		: $notifications.filter(notification => notification.roles.includes($user.role))
 	let isShown = false
-	const notifications: Notifications = [{ hasRead: false }] as Notifications
 
 	const onClick = () => {
 		user.set({
@@ -34,14 +38,14 @@
 {#if path !== '/'}
 	<Header
 		{path}
-		{notifications}
-		isAdmin={$user.role === 'システム管理者'}
+		notifications={sortedNotifications}
+		{isAdmin}
 		id={`${$user.employeeNumber}`}
 		name={$user.name}
 		on:click={event => (isShown = event.detail.isShown)}
 	/>
 	{#if isShown}
-		<NotificationList {notifications} />
+		<NotificationList notifications={sortedNotifications} />
 	{/if}
 	<Sidebar {path} on:click={onClick} />
 {/if}

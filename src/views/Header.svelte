@@ -1,7 +1,7 @@
 <script lang="ts" context="module">
 	import { createEventDispatcher } from 'svelte'
 	import Icon from '@/components/Icon.svelte'
-	import type { Notifications } from '@/libs/notificationTypes'
+	import type { Notification } from '@/libs/notificationTypes'
 
 	const titles: { path: string | RegExp; title: string }[] = [
 		{ path: '/users', title: '社員一覧' },
@@ -27,7 +27,7 @@
 
 <script lang="ts">
 	export let path: string
-	export let notifications: Notifications
+	export let notifications: Notification[]
 	export let isAdmin: boolean
 	export let id: string
 	export let name: string
@@ -40,10 +40,11 @@
 		)?.title ?? ''
 
 	$: numberOfUnread = notifications
-		.map(notification => (notification.hasRead ? notification : undefined))
+		.map(notification => (notification.hasRead ? undefined : notification))
 		.filter(notification => notification)
 
 	let isShown = false
+
 	const dispatch = createEventDispatcher()
 	const onClick = () => {
 		isShown = !isShown

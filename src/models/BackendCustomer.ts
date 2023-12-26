@@ -44,19 +44,19 @@ export class CustomerNewApi {
 	update_by?: number
 	delete_at?: string
 	delete_by?: number
-	// email: string
-	// // images?: { image_data: string; image_memo?: string }[]
-	// mobile: string
-	// close_month?: number
-	// business?: string
-	// google_review: boolean
-	// reviews?: string
-	// miscellaneous?: string
-	// personincharge?: string
-	// personinchargerole?: string
-	// personinchargememo?: string
-	// approver?: string
-	// contacttime?: string
+	email: string
+	images?: { image_data: string; image_memo?: string }[]
+	mobile: string
+	close_month?: number
+	business?: string
+	google_review: boolean
+	reviews?: string
+	miscellaneous?: string
+	personincharge?: string
+	personinchargerole?: string
+	personinchargememo?: string
+	approver?: string
+	contacttime?: string
 
 	constructor(data: CustomerEntries) {
 		if (data.id) {
@@ -92,27 +92,23 @@ export class CustomerNewApi {
 		this.update_by = data.updateBy
 		this.delete_at = data.deleteDate
 		this.delete_by = data.deleteBy
-
-		// this.images =
-		// 	data.pictures.length > 0
-		// 		? data.pictures.map(picture => {
-		// 				return {
-		// 					image_data: picture.base64 || '',
-		// 					image_memo: picture.memo || undefined
-		// 				}
-		// 		  })
-		// 		: undefined
-		// this.email = data.email
-		// this.mobile = data.mobile
-		// this.close_month = parseInt(data.closingMonth) || undefined
-		// this.business = data.business || undefined
-		// this.google_review = data.googleReview
-		// this.reviews = data.reviews || undefined
-		// this.miscellaneous = data.miscellaneous || undefined
-		// this.personincharge = data.personInCharge || undefined
-		// this.personinchargerole = data.personInChargeRole || undefined
-		// this.personinchargememo = data.personInChargeMemo || undefined
-		// this.approver = data.approver || undefined
-		// this.contacttime = data.contactTime || undefined
+		this.images = data.pictures.map(picture => {
+			return {
+				image_data: picture.base64 || '',
+				image_memo: picture.memo || undefined
+			}
+		})
+		this.email = data.email
+		this.mobile = data.mobile
+		this.close_month = parseInt(data.closingMonth) || undefined
+		this.business = data.business || undefined
+		this.google_review = data.googleReview
+		this.reviews = data.reviews || undefined
+		this.miscellaneous = data.miscellaneous || undefined
+		this.personincharge = data.personInCharge || undefined
+		this.personinchargerole = data.personInChargeRole || undefined
+		this.personinchargememo = data.personInChargeMemo || undefined
+		this.approver = data.approver || undefined
+		this.contacttime = data.contactTime || undefined
 	}
 }

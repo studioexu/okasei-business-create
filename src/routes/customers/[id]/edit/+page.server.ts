@@ -39,11 +39,8 @@ export const actions = {
 		const initialStateString = data.get('initialState')
 
 		let initialState: CustomerEntries = JSON.parse(initialStateString)
-		console.log(initialState)
 
 		const updatedCustomer = formatCustomer('update', initialState)
-		console.log(updatedCustomer)
-		// console.log(JSON.parse(JSON.stringify(updatedCustomer)))
 
 		if (initialState.id) {
 			updateCustomer(updatedCustomer, currentApi, initialState.id)

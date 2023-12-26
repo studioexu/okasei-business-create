@@ -88,7 +88,7 @@
 			// const convertedURL = convertDataToBase64(initialState.pictures[0].file)
 
 			// console.log(initialState)
-			const updatedCustomer = formatCustomer('update', initialState)
+			// const updatedCustomer = formatCustomer('update', initialState)
 			// console.log(updatedCustomer.images[0].image_data)
 
 			const submitResult = validationOnSubmit(initialState, formIsValid)
@@ -121,8 +121,7 @@
 						const convertedFile = await convertDataToBase64(event.detail.fileToUpload)
 						const base64json = JSON.stringify(convertedFile)
 
-						// const convertedFile = JSON.parse(base64)
-						console.log(base64json)
+						console.log(convertedFile)
 
 						newArray.push({
 							file: event.detail.fileToUpload,
@@ -199,8 +198,6 @@
 	}
 
 	$: bedTotal = getTotalOfBeds(initialState.departments)
-
-	console.log(initialState.closingMonth)
 </script>
 
 {#if uploadModalIsShown}

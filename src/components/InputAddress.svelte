@@ -5,16 +5,31 @@
 	import { inputIsValid } from '@/libs/customerValidations'
 	import { toCamelCase } from '@/libs/formatters'
 
-	export let placeholder: string = ''
 	export let value: string = ''
 	export let name: string
 	export let label: string = ''
-	export let unit: string = ''
-	export let inputSize: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
 	export let errorMsg: string = ''
-	export let functionOnBlur: Function | null = null
+
+	const setPlaceholder = (name: string) => {
+		switch (name) {
+			case 'city':
+				return '〇〇市'
+			case 'address1':
+				return '〇〇区〇〇町'
+			case 'address2':
+				return '建物名・部屋番号'
+			case 'email':
+				return 'email@email.com'
+			case 'homepage':
+				return 'www.homepage.com'
+			default:
+				return ''
+		}
+	}
+
+	let placeholder: string = setPlaceholder(name)
 
 	/**
 	 * Check if the value of the input is valid, when the focus is not on the input.
@@ -23,10 +38,6 @@
 	const handleBlurInput = (e: any) => {
 		const input = e.target.value
 		isValid = inputIsValid(toCamelCase(name), input)
-
-		if (functionOnBlur) {
-			value = functionOnBlur(input)
-		}
 	}
 </script>
 
@@ -40,7 +51,7 @@
 
 	<input
 		type="text"
-		class="input {inputSize}"
+		class="input {name}"
 		id={name}
 		{name}
 		{placeholder}
@@ -49,10 +60,6 @@
 		on:focus={() => (isValid = true)}
 	/>
 	<span class="font-error">{errorMsg}</span>
-
-	{#if unit !== ''}
-		<span class="unit">{unit}</span>
-	{/if}
 </div>
 
 <style lang="scss">
@@ -73,26 +80,20 @@
 			align-items: center;
 			height: 31px;
 		}
+
 		.input {
-			&--sm {
-				@include responsiveInputWidth((103));
-				width: 103px;
-			}
-			&--md {
-				@include responsiveInputWidth((152));
-			}
-			&--lg {
-				@include responsiveInputWidth((359));
-			}
-			&--xl {
-				@include responsiveInputWidth((534));
-			}
+			@include responsiveInputWidth((359));
 
 			&::placeholder {
 				color: var(--placeholder);
 			}
+
 			&:focus {
 				border-color: var(--primary-color);
+			}
+
+			&.city {
+				width: 105px;
 			}
 		}
 

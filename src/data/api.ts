@@ -6,4 +6,4 @@ const newDjangoApi = 'https://test.okaseiexu.net'
 
 export const currentApi: string = demoApi
 
-export let currentKey: string = 'cfdf5711c73b1d51f563935ebf8728d16415b79f'
+export let currentKey: string = 'e34e69fd4f03c599d6600d0766b53f460e040c3d'

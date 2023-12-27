@@ -1,6 +1,8 @@
 import { prefectures } from '@/data/data'
 import { isValidPhoneNumber } from 'libphonenumber-js'
 import type { CustomerEntries, CustomerEntriesErrors } from './customerTypes'
+import type { Department } from '@/models/Customer'
+import type { NegotiationEntries, NegotiationErrors } from './negotiationTypes'
 
 /**
  * We want to check if the user only use katakana
@@ -11,6 +13,22 @@ import type { CustomerEntries, CustomerEntriesErrors } from './customerTypes'
 export const kanaValidation = (kanaString: string) => {
 	const regex = /^[ァ-ン ー]+$/
 	return regex.test(kanaString)
+}
+
+const checkDepartmentIsValid = (department: Department) => {
+	return department.departmentId !== 0
+}
+
+const checkAllDepartmentsAreValid = (departments: Department[]) => {
+	const errorArray: string[] = []
+
+	departments.map((department: Department) => {
+		if (!inputIsValid('department', department)) {
+			errorArray.push('error')
+		}
+	})
+
+	return errorArray.length === 0
 }
 
 /**
@@ -54,7 +72,7 @@ export const checkIfMonthIsValid = (input: string): boolean => {
  * @param input : string
  * @returns boolean
  */
-export const numberOFCharacterValidation = (input: string, maxCharacter: number): boolean => {
+export const numberOfCharacterValidation = (input: string, maxCharacter: number): boolean => {
 	const lengthOfInput = input.length
 
 	return lengthOfInput <= maxCharacter && lengthOfInput > 0
@@ -83,10 +101,6 @@ export const checkIfInputIsNumber = (input: string | number): boolean => {
 	return false
 }
 
-// export const checkIfInputIsDate = (input: string): boolean => {
-// 	return !isNaN(new Date(input))
-// }
-
 /**
  * This function groups all the validators to check if the input is valid according to their type
  * @param name : string, is the type of the input
@@ -96,51 +110,55 @@ export const checkIfInputIsNumber = (input: string | number): boolean => {
 export const inputIsValid = (name: string, input: any): boolean => {
 	switch (name) {
 		case 'branchNumber':
-			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 4)
-
-		case 'customerName':
-			return numberOFCharacterValidation(input, 128)
-
-		case 'kana':
-			return kanaValidation(input)
+			return checkIfInputIsNumber(input) && numberOfCharacterValidation(input, 4)
 
 		case 'facilityNumber':
-			return checkIfInputIsNumber(input) && numberOFCharacterValidation(input, 10)
-
-		case 'postalCode':
-			return postalCodeValidation(input)
-
-		case 'prefecture':
-			return checkIfPrefectureIsValid(input)
-
-		case 'city':
-			return numberOFCharacterValidation(input, 20)
-
-		case 'address1':
-		case 'address2':
-			return numberOFCharacterValidation(input, 200)
-
-		case 'founder':
-		case 'homepage':
-			return numberOFCharacterValidation(input, 128) || input === ''
-
-		case 'phoneNumber':
-		case 'fax':
-			return phoneNumberValidation(input)
-
-		case 'mobile':
-			return phoneNumberValidation(input) || input === ''
-
-		case 'month':
-			return input === '' || checkIfMonthIsValid(input)
+			return checkIfInputIsNumber(input) && input.length === 10
 
 		case 'quantity':
 		case 'numberOfEmployees':
 		case 'numberOfFacilities':
 			return checkIfInputIsNumber(input)
 
+		case 'postalCode':
+			return postalCodeValidation(input)
+
+		case 'phoneNumber':
+		case 'fax':
+		case 'mobile':
+			return phoneNumberValidation(input)
+
+		case 'prefecture':
+			return checkIfPrefectureIsValid(input)
+
 		case 'businessType':
-			return input.length > 0
+			return input === 'I' || input === 'C' || input === '法人' || input === '個人'
+
+		case 'month':
+			return checkIfMonthIsValid(input)
+
+		case 'customerName':
+			return numberOfCharacterValidation(input, 128)
+
+		case 'kana':
+			return kanaValidation(input) && numberOfCharacterValidation(input, 128)
+
+		case 'city':
+			return numberOfCharacterValidation(input, 20)
+
+		case 'address1':
+		case 'address2':
+			return numberOfCharacterValidation(input, 200)
+
+		case 'founder':
+		case 'homepage':
+			return numberOfCharacterValidation(input, 128)
+
+		case 'department':
+			return checkDepartmentIsValid(input)
+
+		case 'departments':
+			return checkAllDepartmentsAreValid(input)
 
 		default:
 			return true
@@ -160,11 +178,52 @@ export const validationOnSubmit = (
 	let errorArray: boolean[] = []
 	let isValid = true
 
+	const requiredField = {
+		branchNumber: true,
+		customerName: true,
+		kana: true,
+		facilityNumber: true,
+		businessType: true,
+		postalCode: true,
+		prefecture: true,
+		city: true,
+		address1: true,
+		address2: true,
+		phoneNumber: true,
+		fax: true,
+		email: false,
+		mobile: false,
+		year: false,
+		month: false,
+		founder: false,
+		departments: false,
+		numberOfEmployees: false,
+		homepage: false,
+		numberOfFacilities: false,
+		isActive: false,
+		googleReview: false,
+		reviews: false,
+		businessContent: false,
+		closingMonth: false,
+		personInCharge: false,
+		personInChargeRole: false,
+		personInChargeMemo: false,
+		approver: false,
+		contactTime: false,
+		pictures: false,
+		miscellaneous: false,
+		foundationDate: false
+	}
+
 	Object.keys(formEntries).map(key => {
 		const input = formEntries[key as keyof CustomerEntries]
 
-		formValidation[key as keyof CustomerEntriesErrors] = inputIsValid(key, input)
-		errorArray.push(!inputIsValid(key, input))
+		formValidation[key as keyof CustomerEntriesErrors] = !requiredField[
+			key as keyof CustomerEntriesErrors
+		]
+			? input === '' || inputIsValid(key, input)
+			: inputIsValid(key, input)
+		errorArray.push(!formValidation[key as keyof CustomerEntriesErrors])
 	})
 
 	errorArray.forEach(error => {

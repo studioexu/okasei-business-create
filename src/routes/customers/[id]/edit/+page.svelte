@@ -1,12 +1,17 @@
 <script lang="ts">
 	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes.js'
+
+	import { CustomerFactory } from '@/Factories/CustomerFactory'
+
+	import { fade } from 'svelte/transition'
+	import { goto } from '$app/navigation'
+	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations.js'
+
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form.svelte'
-	import { CustomerFactory } from '@/Factories/CustomerFactory'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
-	import { goto } from '$app/navigation'
-	import { validationOnSubmit } from '@/libs/customerValidations.js'
-	import { fade } from 'svelte/transition'
+	import FormBis from '@/views/customersViews/FormBis.svelte'
+
 	export let data
 
 	let customer = new CustomerFactory(data.customer, 'newApi')
@@ -14,7 +19,7 @@
 	let departmentsList = data.departmentsList
 
 	let initialState: CustomerEntries = {
-		id: customer.custCD,
+		id: customer.id,
 		branchNumber: customer.custBranchCD,
 		customerName: customer.custName,
 		kana: customer.custKana,
@@ -48,43 +53,13 @@
 		approver: customer.approver,
 		contactTime: customer.contactTime,
 		pictures: customer.pictures,
-		miscellaneous: customer.miscellaneous
-	}
-
-	let formIsValid: CustomerEntriesErrors = {
-		branchNumber: true,
-		customerName: true,
-		kana: true,
-		facilityNumber: true,
-		businessType: true,
-		postalCode: true,
-		prefecture: true,
-		city: true,
-		address1: true,
-		address2: true,
-		phoneNumber: true,
-		fax: true,
-		email: true,
-		mobile: true,
-		year: true,
-		month: true,
-		founder: true,
-		departments: true,
-		numberOfEmployees: true,
-		homepage: true,
-		numberOfFacilities: true,
-		isActive: true,
-		googleReview: true,
-		reviews: true,
-		businessContent: true,
-		closingMonth: true,
-		personInCharge: true,
-		personInChargeRole: true,
-		personInChargeMemo: true,
-		approver: true,
-		contactTime: true,
-		pictures: true,
-		miscellaneous: true
+		miscellaneous: customer.miscellaneous,
+		registrationDate: customer.registration.registDate,
+		registeredBy: customer.registration.registDateTime,
+		updateDate: customer.update.updateDate,
+		updateBy: customer.update.updateBy,
+		deleteDate: customer.delete.deleteDate,
+		deleteBy: customer.delete.deleteBy
 	}
 
 	let isSucceeded: boolean = false
@@ -95,8 +70,21 @@
 		goto('/customers')
 	}
 
+	// FORM VALIDATIONS
+	let formIsValid: CustomerEntriesErrors
+	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
+
+	Object.keys(initialState).map(key => (formIsValid = { ...formIsValid, [key]: true }))
+
 	const handleSubmitForm = () => {
+		departmentsError = []
 		const submitResult = validationOnSubmit(initialState, formIsValid)
+		initialState.departments.map(department => {
+			departmentsError.push({
+				department: inputIsValid('department', department),
+				numberOfBeds: !isNaN(department.numberOfBeds)
+			})
+		})
 		confirmationPageIsShown = submitResult.isValid
 		formIsValid = submitResult.formValidation
 	}
@@ -118,13 +106,14 @@
 			<Confirmation bind:initialState />
 		{/if}
 		<Form
+			formType={'update'}
 			bind:confirmationPageIsShown
 			bind:departmentsList
 			bind:initialState
-			formType={'update'}
-			bind:formIsValid
 			bind:isShown
 			bind:isSucceeded
+			bind:formIsValid
+			bind:departmentsError
 		/>
 	</div>
 
@@ -143,7 +132,7 @@
 				</div>
 				<button type="submit" class="btn primary" form="registration-form">登録</button>
 			{:else}
-				<button type="button" class="btn primary" on:click={handleSubmitForm}> 登録 </button>
+				<button type="button" class="btn primary" on:click={handleSubmitForm}>登録</button>
 			{/if}
 		</footer>
 	{/if}

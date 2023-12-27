@@ -6,7 +6,7 @@
 	import Form from '@/views/customersViews/Form.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
-	import { validationOnSubmit } from '@/libs/customerValidations'
+	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
 	import { fade } from 'svelte/transition'
 
 	let confirmationPageIsShown = false
@@ -17,8 +17,14 @@
 		goto('/customers')
 	}
 
+	$: console.log(initialState)
+
+	export let data
+
+	let departmentsList = data.departmentsList
+
 	let initialState: CustomerEntries = {
-		custCd: '',
+		id: 0,
 		branchNumber: '',
 		customerName: '',
 		kana: '',
@@ -37,9 +43,9 @@
 		month: '',
 		founder: '',
 		departments: [],
-		numberOfEmployees: '',
+		numberOfEmployees: 0,
 		homepage: '',
-		numberOfFacilities: '',
+		numberOfFacilities: 0,
 		isActive: true,
 		googleReview: false,
 		reviews: '',
@@ -51,47 +57,26 @@
 		approver: '',
 		contactTime: '',
 		pictures: [],
-		miscellaneous: ''
+		miscellaneous: '',
+		foundationDate: ''
 	}
 
-	let formIsValid: CustomerEntriesErrors = {
-		branchNumber: true,
-		customerName: true,
-		kana: true,
-		facilityNumber: true,
-		businessType: true,
-		postalCode: true,
-		prefecture: true,
-		city: true,
-		address1: true,
-		address2: true,
-		phoneNumber: true,
-		fax: true,
-		email: true,
-		mobile: true,
-		year: true,
-		month: true,
-		founder: true,
-		departments: true,
-		numberOfEmployees: true,
-		homepage: true,
-		numberOfFacilities: true,
-		isActive: true,
-		googleReview: true,
-		reviews: true,
-		businessContent: true,
-		closingMonth: true,
-		personInCharge: true,
-		personInChargeRole: true,
-		personInChargeMemo: true,
-		approver: true,
-		contactTime: true,
-		pictures: true,
-		miscellaneous: true
-	}
+	let formIsValid: CustomerEntriesErrors
+
+	Object.keys(initialState).map(key => (formIsValid = { ...formIsValid, [key]: true }))
+
+	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 
 	const handleSubmitForm = () => {
+		departmentsError = []
+
 		const submitResult = validationOnSubmit(initialState, formIsValid)
+		initialState.departments.map(department => {
+			departmentsError.push({
+				department: inputIsValid('department', department),
+				numberOfBeds: !isNaN(department.numberOfBeds)
+			})
+		})
 		confirmationPageIsShown = submitResult.isValid
 		formIsValid = submitResult.formValidation
 	}
@@ -121,6 +106,8 @@
 			bind:formIsValid
 			bind:isShown
 			bind:isSucceeded
+			{departmentsList}
+			bind:departmentsError
 		/>
 	</div>
 

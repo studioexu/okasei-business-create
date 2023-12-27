@@ -25,7 +25,8 @@
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
 	import { convertDataToBase64 } from '@/libs/actions'
 	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
-	import { formatCustomer } from '@/libs/formatters'
+	import { formatCustomer, toCamelCase } from '@/libs/formatters'
+	import InputPhoneNumber from '@/components/InputPhoneNumber.svelte'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -91,7 +92,7 @@
 			// const updatedCustomer = formatCustomer('update', initialState)
 			// console.log(updatedCustomer.images[0].image_data)
 
-			const submitResult = validationOnSubmit(initialState, formIsValid)
+			const submitResult = validationOnSubmit(formIsValid)
 			initialState.departments.map(department => {
 				departmentsError.push({
 					department: inputIsValid('department', department),
@@ -361,7 +362,7 @@
 		</Row>
 
 		<Row>
-			<InputTextNumber
+			<InputPhoneNumber
 				label="電話番号"
 				name="phone-number"
 				placeholder={'0000000000'}
@@ -370,20 +371,20 @@
 				bind:value={initialState.phoneNumber}
 				bind:isValid={formIsValid.phoneNumber}
 			/>
-			<InputTextNumber
-				name={'mobile-phone'}
+			<InputPhoneNumber
+				name={'mobile'}
 				label={'携帯電話'}
-				placeholder={'未入力'}
-				errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
+				placeholder={'0000000000'}
+				errorMsg={'正しい携帯電話番号を入力して下さい'}
 				bind:value={initialState.mobile}
 				bind:isValid={formIsValid.mobile}
 			/>
 
-			<InputTextNumber
+			<InputPhoneNumber
 				label="FAX番号"
 				name="fax"
 				placeholder={'0000000000'}
-				errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
+				errorMsg={'正しいFAX番号を入力して下さい'}
 				required={true}
 				bind:value={initialState.fax}
 				bind:isValid={formIsValid.fax}

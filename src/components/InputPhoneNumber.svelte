@@ -1,15 +1,17 @@
+<script context="module">
+</script>
+
 <script lang="ts">
-	import { checkIfInputIsNumber, inputIsValid } from '@/libs/customerValidations'
+	import { inputIsValid } from '@/libs/customerValidations'
 	import { toCamelCase } from '@/libs/formatters'
 
 	export let placeholder: string = ''
-	export let value: number = 0
+	export let value: string = ''
 	export let name: string
 	export let label: string = ''
-	export let unit: string = ''
 	export let isValid: boolean = true
 	export let required: boolean = false
-	export let disabled: boolean = false
+	export let errorMsg: string = ''
 
 	/**
 	 * Check if the value of the input is valid, when the focus is not on the input.
@@ -18,35 +20,44 @@
 	const handleBlurInput = (e: any) => {
 		const input = e.target.value
 
-		isValid = required
-			? inputIsValid(toCamelCase(name), input)
-			: input === '' || inputIsValid(toCamelCase(name), input)
+		// console.log(required)
+
+		isValid = required ? inputIsValid('phone', input) : input === '' || inputIsValid('phone', input)
+		console.log('test')
+
+		// if (required) {
+		// 	console.log('required')
+
+		// 	isValid = inputIsValid('phone', input)
+		// } else {
+		// 	console.log('else')
+
+		// 	input.length > 0 ? (isValid = inputIsValid('phone', input)) : (isValid = true)
+		// }
 	}
 </script>
 
 <div class="input-wrapper {isValid ? '' : 'error'}">
-	{#if label !== ''}
+	{#if label}
 		<label class="label" for={name}>
 			{label}
 			<span class="required-mark">{required ? '*' : ''}</span>
 		</label>
 	{/if}
+
 	<input
-		type="number"
+		type="text"
 		class="input"
 		id={name}
-		min="0"
 		{name}
-		{disabled}
 		{placeholder}
-		data-type="number"
 		data-required={required}
+		data-type="phone"
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
 	/>
-	<span class="unit">{unit}</span>
-	<span class="font-error">数字で入力して下さい</span>
+	<span class="font-error">{errorMsg}</span>
 </div>
 
 <style lang="scss">
@@ -63,10 +74,9 @@
 			align-items: center;
 			height: 31px;
 		}
-
 		.input {
-			width: 105px;
-			text-align: right;
+			width: 130px;
+
 			&::placeholder {
 				color: var(--placeholder);
 			}

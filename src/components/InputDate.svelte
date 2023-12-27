@@ -12,7 +12,15 @@
 			<span class="required-mark">{required ? '*' : ''}</span>
 		</label>
 	{/if}
-	<input class="input {value === '' && 'empty'}" type="date" id={name} {name} bind:value />
+	<input
+		class="input {value === '' && 'empty'}"
+		type="date"
+		id={name}
+		data-type="date"
+		data-required={required}
+		{name}
+		bind:value
+	/>
 </div>
 
 <style lang="scss">

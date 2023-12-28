@@ -8,7 +8,15 @@
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
-	import type { NegotiationEntries } from '@/libs/negotiationTypes.js'
+	import type {
+		Communication,
+		Condition,
+		Dm,
+		Inflow,
+		NegotiationEntries,
+		Preference,
+		Status
+	} from '@/libs/negotiationTypes.js'
 	import { negotiations } from '@/stores/negotiations.js'
 
 	export let data
@@ -26,14 +34,14 @@
 	}
 
 	let initialState: NegotiationEntries = {
-		negociationId: 0,
+		negotiationId: 0,
 		custCd: 0,
 		customerName: '',
-		status: '',
+		status: <Status>'',
 		startingDate: '',
-		condition: '',
-		inflow: '',
-		preference: '',
+		condition: <Condition>'',
+		inflow: <Inflow>'',
+		preference: <Preference>'',
 		billingDate: '',
 		scheduledDeposit: '',
 		outcome: '',
@@ -51,8 +59,8 @@
 		memo: [],
 		personInCharge: '',
 		responsiblePerson: '',
-		communication: '',
-		dm: '',
+		communication: <Communication>'',
+		dm: <Dm>'',
 		video: '',
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -107,8 +115,8 @@
 		risk: false
 	}
 
-	const negociationIds: number[] = $negociations.map(negociation => negociation.negociationId)
-	initialState.negociationId = Math.max(...negociationIds) + 1
+	const negotiationIds: number[] = $negotiations.map(negotiation => negotiation.negotiationId)
+	initialState.negotiationId = Math.max(...negotiationIds) + 1
 
 	const initialStateIsValid = (initialStateErrors: Object) => {
 		let isValid = true
@@ -160,7 +168,7 @@
 							>修正</button
 						>
 					</div>
-					<button type="submit" class="btn primary" form="negociation-form">登録</button>
+					<button type="submit" class="btn primary" form="negotiation-form">登録</button>
 				{:else}
 					<button
 						type="button"

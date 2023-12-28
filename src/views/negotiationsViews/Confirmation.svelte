@@ -184,6 +184,7 @@
 		gap: 50px;
 		border-bottom: 1px solid rgb(206, 205, 205);
 		padding: 10px 0;
+		margin-bottom: 0;
 
 		&:last-child {
 			border: none;

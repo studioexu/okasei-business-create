@@ -13,16 +13,24 @@
 
 	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 	import type {
+		Communication,
+		Condition,
+		Dm,
+		Inflow,
 		Memo,
 		NegotiationEntries,
 		NegotiationErrors,
-		OutcomeHistory
+		OutcomeHistory,
+		Preference,
+		Status
 	} from '@/libs/negotiationTypes'
 
 	import { negotiations } from '@/stores/negotiations'
-	import { negotiationBackend, type Estimate } from '@/libs/negotiationTypes'
+	import { NegotiationBackend, type Estimate } from '@/libs/negotiationTypes'
 	import { prefectures } from '@/data/data'
 	import ButtonDelete from '@/components/ButtonDelete.svelte'
+	import { debounce, toNumber } from '@/libs/utils'
+	import type { Negotiation } from '@/models/Negotiation'
 
 	export let initialState: NegotiationEntries
 	export let customers: CustomerFactory[]
@@ -31,7 +39,7 @@
 	export let confirmationPageIsShown: boolean
 	export let formType: string
 	export let currentCustomerId: number
-	export let formIsValid: NegotiationErrors
+	// export let formIsValid: NegotiationErrors
 
 	let currentCustomer: CustomerFactory | undefined
 
@@ -220,7 +228,8 @@
 	 * @param e
 	 */
 	const handleSubmit = (e: any): void => {
-		e.preventDefault()
+		// e.preventDefault()
+		console.log('prout')
 
 		if (confirmationPageIsShown) {
 			isShown = true
@@ -229,15 +238,27 @@
 			initialState.numberOfBeds = getTotalBeds()
 
 			if (formType === 'create') {
-				let customer = customers.find(customer => customer.id === currentCustomerId)
-				initialState.customerName = customer?.custName
-				negotiations.set([...$negotiations, new negotiationBackend(initialState)])
+				console.log('prout')
+
+				try {
+					const formData = new FormData()
+
+					let customer = customers.find(customer => customer.id === currentCustomerId)
+					initialState.customerName = customer?.custName
+					negotiations.set([...$negotiations, new NegotiationBackend(initialState)])
+
+					isShown = true
+					isSucceeded = true
+				} catch (error) {
+					isShown = true
+					isSucceeded = false
+				}
 			}
 
 			if (formType === 'update') {
 				let newArray = $negotiations.map(negotiation => {
 					if (negotiation.negotiationId === initialState.negotiationId) {
-						return new negotiationBackend(initialState)
+						return new NegotiationBackend(initialState)
 					} else {
 						return negotiation
 					}
@@ -246,13 +267,145 @@
 			}
 		}
 	}
+
+	const onSubmit = debounce(async (event: Event) => {
+		event.preventDefault()
+
+		try {
+			const formData = new FormData()
+
+			for (const key in initialState)
+				formData.append(key, <string>initialState[key as keyof NegotiationEntries])
+
+			// const localNegotiation: NegotiationBackend = {
+			// 	negotiationId: 0,
+			// 	custCd: 0,
+			// 	customerName: '',
+			// 	status: <Status>'',
+			// 	startingDate: '',
+			// 	condition: <Condition>'',
+			// 	inflow: <Inflow>'',
+			// 	preference: <Preference>'',
+			// 	billingDate: '',
+			// 	scheduledDeposit: '',
+			// 	outcome: '',
+			// 	nextContactDate: '',
+			// 	nextContactTime: '',
+			// 	lastContact: '',
+			// 	postalCode: '',
+			// 	prefecture: '',
+			// 	city: '',
+			// 	address1: '',
+			// 	address2: '',
+			// 	distanceKm: 0,
+			// 	distanceTime: 0,
+			// 	estimate: [],
+			// 	memo: [],
+			// 	personInCharge: '',
+			// 	responsiblePerson: '',
+			// 	communication: <Communication>'',
+			// 	dm: <Dm>'',
+			// 	video: '',
+			// 	checkboxes: [
+			// 		{ title: '動画視聴　依頼', isChecked: false },
+			// 		{ title: '動画視聴　確認', isChecked: false },
+			// 		{ title: '新品　購入経験', isChecked: false },
+			// 		{ title: '増台提案', isChecked: false },
+			// 		{ title: '値上げ：全世界の値上げ傾向。物流・保管・電気等の徹底', isChecked: false },
+			// 		{
+			// 			title: '傷、色あせ：中古商材の為、多少の傷や色あせ有り。洗浄・メンテの徹底',
+			// 			isChecked: false
+			// 		},
+			// 		{ title: '商品確保：中古商材の為、購入契約者優先の商品確保', isChecked: false },
+			// 		{ title: '締め支払い：契約書締結による締め支払い', isChecked: false },
+			// 		{ title: '前払い（特別値引き）の説明', isChecked: false },
+			// 		{ title: '中古　購入経験', isChecked: false }
+			// 	],
+			// 	bottleneck: '',
+			// 	occasion: '',
+			// 	risk: '',
+			// 	outcomeHistory: [],
+			// 	numberOfBeds: 0,
+			// 	billingEstimation: 0
+			// }
+
+			const localNegotiation = new NegotiationBackend(initialState)
+
+			// for (let key in localNegotiation) {
+			// 	key = <keyof NegotiationEntries>key
+
+			// 	if (localNegotiation.hasOwnProperty(key)) {
+			// 		switch (key) {
+			// 			case 'checkboxes':
+			// 			case 'estimate':
+			// 			case 'memo':
+			// 			case 'outcomeHistory':
+			// 				localNegotiation[key] = initialState[key].map(el => el)
+			// 				break
+
+			// 			case 'status':
+			// 				localNegotiation[key] = <Status>initialState[key]
+			// 				break
+			// 			case 'condition':
+			// 				localNegotiation[key] = <Condition>initialState[key]
+			// 				break
+			// 			case 'inflow':
+			// 				localNegotiation[key] = <Inflow>initialState[key]
+			// 				break
+			// 			case 'communication':
+			// 				localNegotiation[key] = <Communication>initialState[key]
+			// 				break
+			// 			case 'dm':
+			// 				localNegotiation[key] = <Dm>initialState[key]
+			// 				break
+			// 			case 'negotiationId':
+			// 			case 'custCd':
+			// 			case 'distanceKm':
+			// 			case 'distanceTime':
+			// 				localNegotiation[key] = initialState[key]
+			// 				break
+
+			// 			case 'customerName':
+			// 			case 'startingDate':
+			// 			case 'billingDate':
+			// 			case 'scheduledDeposit':
+			// 			case 'outcome':
+			// 			case 'nextContactDate':
+			// 			case 'nextContactTime':
+			// 			case 'lastContact':
+			// 			case 'postalCode':
+			// 			case 'prefecture':
+			// 			case 'city':
+			// 			case 'address1':
+			// 			case 'address2':
+			// 			case 'personInCharge':
+			// 			case 'responsiblePerson':
+			// 			case 'video':
+			// 			case 'bottleneck':
+			// 			case 'occasion':
+			// 			case 'risk':
+			// 				localNegotiation[key] = initialState[key]
+			// 				break
+			// 		}
+			// 	}
+			// }
+
+			negotiations.set([...$negotiations, localNegotiation])
+			isShown = true
+			isSucceeded = true
+		} catch (error) {
+			isShown = true
+			isSucceeded = false
+		}
+	}, 200)
 </script>
 
 <form
+	method="POST"
 	class="form {confirmationPageIsShown && 'hidden'}"
 	action="/negotiations"
 	id="negotiation-form"
-	on:submit={handleSubmit}
+	on:submit|preventDefault={handleSubmit}
 >
 	<h3 class="form__header">商談情報</h3>
 

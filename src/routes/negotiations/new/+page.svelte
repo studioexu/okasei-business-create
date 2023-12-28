@@ -8,9 +8,16 @@
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
 	import { CustomerFactory } from '@/Factories/CustomerFactory'
-	import type { NegotiationEntries, NegotiationErrors } from '@/libs/negotiationTypes.js'
+	import type {
+		Communication,
+		Condition,
+		Dm,
+		Inflow,
+		NegotiationEntries,
+		Preference,
+		Status
+	} from '@/libs/negotiationTypes.js'
 	import { negotiations } from '@/stores/negotiations.js'
-	import { validationOnSubmit } from '@/libs/customerValidations.js'
 
 	export let data
 
@@ -30,11 +37,11 @@
 		negotiationId: 0,
 		custCd: 0,
 		customerName: '',
-		status: '',
+		status: <Status>'',
 		startingDate: '',
-		condition: '',
-		inflow: '',
-		preference: '',
+		condition: <Condition>'',
+		inflow: <Inflow>'',
+		preference: <Preference>'',
 		billingDate: '',
 		scheduledDeposit: '',
 		outcome: '',
@@ -52,8 +59,8 @@
 		memo: [],
 		personInCharge: '',
 		responsiblePerson: '',
-		communication: '',
-		dm: '',
+		communication: <Communication>'',
+		dm: <Dm>'',
 		video: '',
 		checkboxes: [
 			{ title: '動画視聴　依頼', isChecked: false },
@@ -78,35 +85,49 @@
 		billingEstimation: 0
 	}
 
-	let formIsValid: NegotiationErrors
-
-	Object.keys(initialState).map(key => {
-		formIsValid = { ...formIsValid, [key]: true }
-	})
-
-	$: console.log(formIsValid)
+	let initialStateErrors = {
+		status: false,
+		startingDate: false,
+		condition: false,
+		inflow: false,
+		preference: false,
+		billingDate: false,
+		scheduledDeposit: false,
+		outcome: false,
+		nextContact: false,
+		postalCode: false,
+		prefecture: false,
+		city: false,
+		address1: false,
+		address2: false,
+		distanceKm: false,
+		distanceTime: false,
+		estimate: false,
+		memo: false,
+		employeeInCharge: false,
+		responsiblePerson: false,
+		communication: false,
+		directMessage: false,
+		video: false,
+		checkboxes: false,
+		bottleneck: false,
+		occasion: false,
+		risk: false
+	}
 
 	const negotiationIds: number[] = $negotiations.map(negotiation => negotiation.negotiationId)
 	initialState.negotiationId = Math.max(...negotiationIds) + 1
 
-	const initialStateIsValid = (initialState: NegotiationEntries) => {
+	const initialStateIsValid = (initialStateErrors: Object) => {
 		let isValid = true
-
-		Object.keys(formIsValid).forEach(key => {})
-
-		Object.keys(formIsValid).forEach(key => {
-			console.log(formIsValid[key as keyof Object])
-			if (!formIsValid[key as keyof Object]) {
+		Object.keys(initialStateErrors).forEach(key => {
+			console.log(initialStateErrors[key as keyof Object])
+			if (initialStateErrors[key as keyof Object]) {
 				return (isValid = false)
 			}
 		})
 
 		return isValid
-	}
-
-	const handleSubmitForm = () => {
-		confirmationPageIsShown = true
-		// validationOnSubmitNegotiation(initialState, formIsValid).isValid
 	}
 </script>
 
@@ -132,7 +153,6 @@
 			bind:currentCustomerId={initialState.custCd}
 			customers={allCustomers}
 			formType="create"
-			bind:formIsValid
 		/>
 		{#if confirmationPageIsShown && !isShown}
 			<Confirmation {initialState} />
@@ -150,7 +170,11 @@
 					</div>
 					<button type="submit" class="btn primary" form="negotiation-form">登録</button>
 				{:else}
-					<button type="button" class="btn primary" on:click={handleSubmitForm}>登録</button>
+					<button
+						type="button"
+						class="btn primary"
+						on:click={() => (confirmationPageIsShown = true)}>登録</button
+					>
 				{/if}
 			</div>
 		</footer>

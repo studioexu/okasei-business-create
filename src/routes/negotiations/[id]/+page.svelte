@@ -5,7 +5,15 @@
 
 	import { negotiations } from '@/stores/negotiations'
 	import { page } from '$app/stores'
-	import type { NegotiationEntries } from '@/libs/negotiationTypes'
+	import type {
+		Communication,
+		Condition,
+		Dm,
+		Inflow,
+		NegotiationEntries,
+		Preference,
+		Status
+	} from '@/libs/negotiationTypes'
 
 	const negotiation = $negotiations.find(
 		negotiation => negotiation.negotiationId.toString() === $page.params.id
@@ -23,11 +31,11 @@
 		initialState = {
 			custCd: negotiation?.custCd,
 			negotiationId: negotiation?.negotiationId,
-			status: negotiation?.status,
+			status: <Status>negotiation?.status,
 			startingDate: negotiation?.startingDate,
-			condition: negotiation?.condition,
-			inflow: negotiation?.inflow,
-			preference: negotiation?.preference,
+			condition: <Condition>negotiation?.condition,
+			inflow: <Inflow>negotiation?.inflow,
+			preference: <Preference>negotiation?.preference,
 			billingDate: negotiation?.billingDate,
 			scheduledDeposit: negotiation?.scheduledDeposit,
 			outcome: negotiation?.outcome,
@@ -45,8 +53,8 @@
 			memo: negotiation?.memo,
 			personInCharge: negotiation?.personInCharge,
 			responsiblePerson: negotiation?.responsiblePerson,
-			communication: negotiation?.communication,
-			dm: negotiation?.dm,
+			communication: <Communication>negotiation?.communication,
+			dm: <Dm>negotiation?.dm,
 			video: negotiation?.video,
 			checkboxes: negotiation?.checkboxes,
 			bottleneck: negotiation?.bottleneck,

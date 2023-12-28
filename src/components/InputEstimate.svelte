@@ -47,6 +47,13 @@
 		const item = estimate.items[itemIndex]
 		const correspondingItemInProducts = products.find(product => product.name === item.name)
 		if (correspondingItemInProducts) item.price = correspondingItemInProducts.price
+		item.quantity = 1
+	}
+
+	const handleFocusItem = (itemIndex: number) => {
+		const item = estimate.items[itemIndex]
+		item.quantity = 0
+		item.price = 0
 	}
 
 	/**
@@ -93,7 +100,7 @@
 	 * @param index: corresponding to the index of the right estimate object.
 	 */
 	const addItem = (): void => {
-		estimate.items = [...estimate.items, { name: '', quantity: 1, price: 0 }]
+		estimate.items = [...estimate.items, { name: '', quantity: 0, price: 0 }]
 	}
 
 	/**
@@ -109,6 +116,17 @@
 		getEstimate()
 		updateEstimateTaxOnChange()
 	}
+
+	/**
+	 * If user is selecting an item or the item is empty, it will update the quantity and price to 0.
+	 * ユーザーがアイテムを選択もしくは選択していない場合、価額と台数を0にする。
+	 */
+	$: estimate.items.map(item => {
+		if (item.name === '') {
+			item.quantity = 0
+			item.price = 0
+		}
+	})
 </script>
 
 <div class="wrapper" on:change={() => (updateEstimateTaxOnChange(), getEstimate())}>

@@ -10,8 +10,16 @@
 	import { negotiations } from '@/stores/negotiations'
 	import { page } from '$app/stores'
 	import { CustomerFactory } from '@/Factories/CustomerFactory.js'
-	import type { NegotiationEntries, NegotiationErrors } from '@/libs/negotiationTypes.js'
-	import { inputIsValid } from '@/libs/customerValidations.js'
+	import type {
+		Communication,
+		Condition,
+		Dm,
+		Inflow,
+		NegotiationEntries,
+		NegotiationErrors,
+		Preference,
+		Status
+	} from '@/libs/negotiationTypes.js'
 
 	const negotiation = $negotiations.find(
 		negotiation => negotiation.negotiationId.toString() === $page.params.id
@@ -27,11 +35,11 @@
 			negotiationId: negotiation?.negotiationId,
 			custCd: negotiation?.custCd,
 			customerName: negotiation?.customerName,
-			status: negotiation?.status,
+			status: <Status>negotiation?.status,
 			startingDate: negotiation?.startingDate,
-			condition: negotiation?.condition,
-			inflow: negotiation?.inflow,
-			preference: negotiation?.preference,
+			condition: <Condition>negotiation?.condition,
+			inflow: <Inflow>negotiation?.inflow,
+			preference: <Preference>negotiation?.preference,
 			billingDate: negotiation?.billingDate,
 			scheduledDeposit: negotiation?.scheduledDeposit,
 			outcome: negotiation?.outcome,
@@ -49,8 +57,8 @@
 			memo: negotiation?.memo,
 			personInCharge: negotiation?.personInCharge,
 			responsiblePerson: negotiation?.responsiblePerson,
-			communication: negotiation?.communication,
-			dm: negotiation?.dm,
+			communication: <Communication>negotiation?.communication,
+			dm: <Dm>negotiation?.dm,
 			video: negotiation?.video,
 			checkboxes: negotiation?.checkboxes,
 			bottleneck: negotiation?.bottleneck,
@@ -104,7 +112,6 @@
 			bind:currentCustomerId={initialState.custCd}
 			formType={'update'}
 			{customers}
-			bind:formIsValid
 		/>
 	</div>
 

@@ -9,7 +9,8 @@ const getTotalBedsByEstimate = (items: Item[]) => {
 
 const formatNumberCompact = (number: number) => {
 	if (number.toString().length === 4) {
-		return number.toString().split('')[0] + '千'
+		const roundNumber = Math.round(number / 1000)
+		return roundNumber.toString() + '千'
 	}
 
 	return new Intl.NumberFormat('ja-JP', {

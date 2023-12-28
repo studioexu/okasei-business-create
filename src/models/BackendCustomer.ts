@@ -94,8 +94,8 @@ export class CustomerNewApi {
 		this.delete_by = data.deleteBy
 		this.images = data.pictures.map(picture => {
 			return {
-				image_data: picture.base64 || '',
-				image_memo: picture.memo || undefined
+				image_data: picture.data || '',
+				image_memo: picture.memo
 			}
 		})
 		this.email = data.email
@@ -110,5 +110,16 @@ export class CustomerNewApi {
 		this.personinchargememo = data.personInChargeMemo || undefined
 		this.approver = data.approver || undefined
 		this.contacttime = data.contactTime || undefined
+	}
+}
+
+export class customerImagesBackend {
+	public id?: number
+	public image_data: string
+	public image_memo: string
+	constructor(data: any) {
+		this.id = data.id && data.id
+		this.image_data = data.data
+		this.image_memo = data.memo
 	}
 }

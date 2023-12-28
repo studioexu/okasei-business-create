@@ -126,7 +126,6 @@ export const inputIsValid = (name: string, input: any): boolean => {
 		case 'phoneNumber':
 		case 'fax':
 		case 'mobile':
-		case 'phone':
 			return phoneNumberValidation(input)
 
 		case 'prefecture':

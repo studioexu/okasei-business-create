@@ -156,7 +156,7 @@
 						<article class="card">
 							<div class="image-wrapper">
 								<!-- <img src={URL.createObjectURL(image.file)} alt={image.memo} /> -->
-								<img src={image.base64} alt={image.memo} />
+								<img src={image.data} alt={image.memo} />
 							</div>
 							<h3 class="label">{image.memo}</h3>
 						</article>

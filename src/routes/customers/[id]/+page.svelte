@@ -4,12 +4,14 @@
 <script lang="ts">
 	import type { CustomerEntries } from '@/libs/customerTypes.js'
 
-	import { CustomerFactory } from '@/Factories/CustomerFactory'
+	import { CustomerFactory, CustomerImageFactory } from '@/Factories/CustomerFactory'
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
+	import { CustomerImage } from '@/models/Customer.js'
 
 	export let data
 
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
+	let images = data.images.map((image: any) => new CustomerImageFactory(image, 'newApi'))
 
 	console.log(customer)
 
@@ -47,7 +49,7 @@
 		personInChargeMemo: customer.personInChargeMemo,
 		approver: customer.approver,
 		contactTime: customer.contactTime,
-		pictures: customer.pictures,
+		pictures: images,
 		miscellaneous: customer.miscellaneous,
 		registrationDate: customer.registration.registDate,
 		registeredBy: customer.registration.registDateTime,

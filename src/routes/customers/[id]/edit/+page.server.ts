@@ -1,8 +1,13 @@
 import { error } from '@sveltejs/kit'
-import { loadData, updateCustomer, loadDepartments } from '@/libs/actions.js'
+import {
+	loadCustomerData,
+	updateCustomer,
+	loadDepartments,
+	loadCustomerImages
+} from '@/libs/actions.js'
 import type { CustomerEntries } from '@/libs/customerTypes.js'
 import { formatCustomer } from '@/libs/formatters.js'
-import type { CustomerNewApi } from '@/models/BackendCustomer.js'
+import { customerImagesBackend, type CustomerNewApi } from '@/models/BackendCustomer.js'
 import { currentApi, currentKey } from '@/data/api.js'
 import { debounce } from '@/libs/utils'
 
@@ -12,20 +17,21 @@ import { debounce } from '@/libs/utils'
  * @returns
  */
 export const load = async ({ params }) => {
-	const data: CustomerNewApi[] = await loadData(currentApi, currentKey)
+	const data: CustomerNewApi = await loadCustomerData(currentApi)
 	const departmentsList = await loadDepartments(currentApi)
+	const images = await loadCustomerImages(currentApi, params.id)
+
 	const customer: CustomerNewApi | undefined = data.find(
 		(customer: CustomerNewApi) => customer.id?.toString() === params.id.toString()
 	)
-
-	// console.log(customer)
 
 	if (!customer) throw error(404)
 	if (!departmentsList) throw error(404)
 
 	return {
 		customer,
-		departmentsList
+		departmentsList,
+		images
 	}
 }
 
@@ -41,6 +47,12 @@ export const actions = {
 		let initialState: CustomerEntries = JSON.parse(initialStateString)
 
 		const updatedCustomer = formatCustomer('update', initialState)
+
+		console.log('update')
+
+		console.log(updatedCustomer)
+
+		const updatedCustomerImages = new customerImagesBackend(initialState.pictures)
 
 		if (initialState.id) {
 			updateCustomer(updatedCustomer, currentApi, initialState.id)

@@ -1,9 +1,10 @@
-import type { Department } from '@/models/Customer'
+import type { CustomerImageFactory } from '@/Factories/CustomerFactory'
+import type { CustomerImage, Department } from '@/models/Customer'
 
 export interface Picture {
-	file: File
+	id: number
 	memo: string
-	base64: string
+	data: string
 }
 
 export interface CustomerEntries {
@@ -40,7 +41,7 @@ export interface CustomerEntries {
 	personInChargeMemo: string
 	approver: string
 	contactTime: string
-	pictures: Picture[]
+	pictures: CustomerImageFactory[]
 	miscellaneous: string
 	registrationDate?: string
 	registeredBy?: number

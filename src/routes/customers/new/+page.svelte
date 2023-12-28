@@ -64,20 +64,6 @@
 	Object.keys(initialState).map(key => (formIsValid = { ...formIsValid, [key]: true }))
 
 	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
-
-	// const handleSubmitForm = () => {
-	// 	departmentsError = []
-
-	// 	const submitResult = validationOnSubmit(initialState, formIsValid)
-	// 	initialState.departments.map(department => {
-	// 		departmentsError.push({
-	// 			department: inputIsValid('department', department),
-	// 			numberOfBeds: !isNaN(department.numberOfBeds)
-	// 		})
-	// 	})
-	// 	confirmationPageIsShown = submitResult.isValid
-	// 	formIsValid = submitResult.formValidation
-	// }
 </script>
 
 <section class="section section--form">

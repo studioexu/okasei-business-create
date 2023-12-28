@@ -29,9 +29,9 @@ export interface Department {
 }
 
 export interface Picture {
-	// file: File
+	id: number
 	memo?: string
-	base64: string
+	data: string
 }
 
 export class Customer {
@@ -79,7 +79,7 @@ export class Customer {
 	private _reviews?: string
 	private _business?: string
 	private _closingMonth?: string
-	private _pictures?: Picture[]
+	// private _pictures?: Picture[]
 	private _personInCharge?: string
 	private _personInChargeMemo?: string
 	private _personInChargeRole?: string
@@ -116,7 +116,6 @@ export class Customer {
 		}
 
 		this._isActive = data?.is_active
-
 		;(this._departments = data.departments.map(department => {
 			return {
 				departmentId: (department as DepartmentBackend).department.id,
@@ -136,14 +135,14 @@ export class Customer {
 				deleteDate: data.delete_at,
 				deleteBy: data.delete_by
 			}),
-			(this._pictures = data.images
-				? data.images.map(image => {
-						return {
-							base64: image.image_data,
-							memo: image.image_memo
-						}
-				  })
-				: []),
+			// (this._pictures = data.images
+			// 	? data.images.map(image => {
+			// 			return {
+			// 				base64: image.image_data,
+			// 				memo: image.image_memo
+			// 			}
+			// 	  })
+			// 	: []),
 			(this._googleReview = data.google_review)
 		this._reviews = data.reviews
 		this._business = data.business
@@ -259,9 +258,9 @@ export class Customer {
 	public get closingMonth() {
 		return this._closingMonth
 	}
-	public get pictures() {
-		return this._pictures
-	}
+	// public get pictures() {
+	// 	return this._pictures
+	// }
 	public get personInCharge() {
 		return this._personInCharge
 	}
@@ -282,5 +281,28 @@ export class Customer {
 
 	public get miscellaneous() {
 		return this._miscellaneous
+	}
+}
+
+export class CustomerImage {
+	private _id?: number
+	private _data: string
+	private _memo: string
+	constructor(data: any) {
+		this._id = data.id && data.id
+		this._data = data.image_data
+		this._memo = data.image_memo
+	}
+
+	public get id() {
+		return this._id
+	}
+
+	public get data() {
+		return this._data
+	}
+
+	public get memo() {
+		return this._memo
 	}
 }

@@ -27,6 +27,8 @@
 	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
 	import { formatCustomer, toCamelCase } from '@/libs/formatters'
 	import InputPhoneNumber from '@/components/InputPhoneNumber.svelte'
+	import type { CustomerImage } from '@/models/Customer'
+	import type { CustomerImageFactory } from '@/Factories/CustomerFactory'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -84,15 +86,10 @@
 		if (!confirmationPageIsShown) {
 			e.preventDefault()
 
+			const submitResult = validationOnSubmit(formIsValid)
+
 			departmentsError = []
 
-			// const convertedURL = convertDataToBase64(initialState.pictures[0].file)
-
-			// console.log(initialState)
-			// const updatedCustomer = formatCustomer('update', initialState)
-			// console.log(updatedCustomer.images[0].image_data)
-
-			const submitResult = validationOnSubmit(formIsValid)
 			initialState.departments.map(department => {
 				departmentsError.push({
 					department: inputIsValid('department', department),
@@ -118,17 +115,13 @@
 				try {
 					if (event.detail.fileToUpload !== undefined) {
 						let newArray = initialState.pictures
-
 						const convertedFile = await convertDataToBase64(event.detail.fileToUpload)
-						const base64json = JSON.stringify(convertedFile)
-
-						console.log(convertedFile)
-
-						newArray.push({
-							file: event.detail.fileToUpload,
+						const newPicture: CustomerImageFactory = {
 							memo: '',
-							base64: convertedFile
-						})
+							data: convertedFile
+						}
+
+						newArray.push(newPicture)
 						initialState.pictures = newArray
 						phase = 'success'
 					} else {
@@ -164,7 +157,7 @@
 	 */
 	const handleDeleteImage = (index: number): void => {
 		initialState.pictures = initialState.pictures.filter(
-			(image: Picture) => initialState.pictures.indexOf(image) !== index
+			(image: CustomerImageFactory) => initialState.pictures.indexOf(image) !== index
 		)
 	}
 
@@ -574,7 +567,7 @@
 							<article class="card">
 								<div class="image-wrapper">
 									<!-- <img src={URL.createObjectURL(image.file)} alt="" /> -->
-									<img src={image.base64} alt="" />
+									<img src={image.data} alt="" />
 								</div>
 
 								<InputFreeText

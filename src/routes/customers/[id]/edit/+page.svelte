@@ -1,7 +1,7 @@
 <script lang="ts">
 	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes.js'
 
-	import { CustomerFactory } from '@/Factories/CustomerFactory'
+	import { CustomerFactory, CustomerImageFactory } from '@/Factories/CustomerFactory'
 
 	import { fade } from 'svelte/transition'
 	import { goto } from '$app/navigation'
@@ -13,6 +13,8 @@
 	export let data
 
 	let customer = new CustomerFactory(data.customer, 'newApi')
+	let images = data.images.map((image: any) => new CustomerImageFactory(image, 'newApi'))
+
 	let confirmationPageIsShown = false
 	let departmentsList = data.departmentsList
 
@@ -50,7 +52,11 @@
 		personInChargeMemo: customer.personInChargeMemo,
 		approver: customer.approver,
 		contactTime: customer.contactTime,
-		pictures: customer.pictures,
+		pictures: images.map((image: CustomerImageFactory) => ({
+			data: image.data,
+			memo: image.memo,
+			id: image.id
+		})),
 		miscellaneous: customer.miscellaneous,
 		registrationDate: customer.registration.registDate,
 		registeredBy: customer.registration.registDateTime,

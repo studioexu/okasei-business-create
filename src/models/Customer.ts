@@ -1,5 +1,7 @@
 import type { CustomerNewApi } from './BackendCustomer'
 
+import type { Department } from '@/libs/customerTypes'
+
 const splitDateTime = (timeString: string) => {
 	const dateTime = timeString.split('T')
 
@@ -20,18 +22,6 @@ export interface DepartmentBackend {
 		name: string
 	}
 	number_of_beds: number
-}
-
-export interface Department {
-	departmentId: number
-	departmentName: string
-	numberOfBeds: number
-}
-
-export interface Picture {
-	id: number
-	memo?: string
-	data: string
 }
 
 export class Customer {

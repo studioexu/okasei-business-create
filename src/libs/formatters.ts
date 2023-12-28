@@ -124,3 +124,24 @@ export const formatCustomer = (
 			return new CustomerNewApi(customer)
 	}
 }
+
+/**
+ *
+ * @param file: uploaded file。アップロードされたファイル。
+ * @returns エラーもしくはBase64のString.Error or base64 string.
+ */
+export const convertDataToBase64 = (file: File): Promise<string> => {
+	return new Promise<string>((resolve, reject) => {
+		const fileReader = new FileReader()
+
+		fileReader.onload = () => {
+			if (typeof fileReader.result === 'string') resolve(fileReader.result)
+		}
+
+		fileReader.onerror = error => {
+			reject(error)
+		}
+
+		fileReader.readAsDataURL(file)
+	})
+}

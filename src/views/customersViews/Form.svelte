@@ -2,7 +2,6 @@
 </script>
 
 <script lang="ts">
-	import type { Picture } from '@/libs/customerTypes'
 	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes'
 
 	import { enhance } from '$app/forms'
@@ -23,11 +22,9 @@
 	import InputFreeText from '@/components/InputFreeText.svelte'
 	import Row from '@/components/Row.svelte'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
-	import { convertDataToBase64 } from '@/libs/actions'
+	import { convertDataToBase64 } from '@/libs/formatters'
 	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
-	import { formatCustomer, toCamelCase } from '@/libs/formatters'
 	import InputPhoneNumber from '@/components/InputPhoneNumber.svelte'
-	import type { CustomerImage } from '@/models/Customer'
 	import type { CustomerImageFactory } from '@/Factories/CustomerFactory'
 
 	export let formType: string
@@ -701,10 +698,6 @@
 			top: 0;
 			object-fit: contain;
 		}
-	}
-
-	.bed-total {
-		align-self: flex-end;
 	}
 
 	@keyframes buzz {

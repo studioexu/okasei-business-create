@@ -1,9 +1,14 @@
 import type { CustomerImageFactory } from '@/Factories/CustomerFactory'
-import type { CustomerImage, Department } from '@/models/Customer'
+
+export interface Department {
+	departmentId: number
+	departmentName: string
+	numberOfBeds: number
+}
 
 export interface Picture {
 	id: number
-	memo: string
+	memo?: string
 	data: string
 }
 

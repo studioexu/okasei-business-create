@@ -1,7 +1,7 @@
 import { prefectures } from '@/data/data'
 import { isValidPhoneNumber } from 'libphonenumber-js'
-import type { CustomerEntries, CustomerEntriesErrors } from './customerTypes'
-import type { Department } from '@/models/Customer'
+import type { CustomerEntriesErrors } from './customerTypes'
+import type { Department } from './customerTypes'
 import { toCamelCase } from './formatters'
 
 /**
@@ -182,7 +182,6 @@ export const validationOnSubmit = (
 		const inputId = toCamelCase(input.id)
 		const inputValue = input.value
 		const inputRequired: boolean = input.dataset.required === 'true'
-		const inputType = toCamelCase(input.dataset.type)
 
 		formValidation[inputId as keyof CustomerEntriesErrors] = inputRequired
 			? inputIsValid(inputId, inputValue)

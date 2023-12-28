@@ -149,6 +149,11 @@ export const reactivateCustomer = (id: number, url: string) => {
 		.catch(err => console.log(err))
 }
 
+/**
+ *
+ *@param url:string, corresponding to URL of the API. APIのURLである。
+ *@returns departments array. 診療科目のArray
+ */
 export const loadDepartments = async (url: string) => {
 	return await fetch(url + '/customer/list/department', {
 		headers: {
@@ -183,20 +188,4 @@ export const login = async (url: string) => {
 		.catch(err => err)
 
 	return key
-}
-
-export const convertDataToBase64 = (file: File): Promise<string> => {
-	return new Promise<string>((resolve, reject) => {
-		const fileReader = new FileReader()
-
-		fileReader.onload = () => {
-			if (typeof fileReader.result === 'string') resolve(fileReader.result)
-		}
-
-		fileReader.onerror = error => {
-			reject(error)
-		}
-
-		fileReader.readAsDataURL(file)
-	})
 }

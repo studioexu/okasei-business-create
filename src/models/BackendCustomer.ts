@@ -1,5 +1,5 @@
 import type { CustomerEntries } from '@/libs/customerTypes'
-import type { Department } from './Customer'
+import type { Department } from '@/libs/customerTypes'
 
 export interface Picture {
 	file: File

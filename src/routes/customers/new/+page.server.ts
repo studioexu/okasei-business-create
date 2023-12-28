@@ -20,6 +20,9 @@ export const actions = {
 	create: debounce(async ({ request }) => {
 		const data = await request.formData()
 		const initialStateString = data.get('initialState')
+		console.log(data)
+		console.log(initialStateString)
+
 		let initialState: CustomerEntries = JSON.parse(initialStateString)
 		let newCustomer: CustomerNewApi = formatCustomer('create', initialState)
 

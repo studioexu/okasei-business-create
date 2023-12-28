@@ -12,6 +12,10 @@
 
 	let allPurcharses: Purchase[]
 
+	export let data
+
+	console.log(data)
+
 	allPurcharses = $purchases
 
 	// let filteredPurchases = allPurcharses

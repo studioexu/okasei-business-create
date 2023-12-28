@@ -1,25 +1,35 @@
 <script lang="ts" context="module"></script>
 
 <script lang="ts">
+	import { enhance } from '$app/forms'
+	import { goto } from '$app/navigation'
+	import Input from '@/components/Input.svelte'
+
 	import InputDate from '@/components/InputDate.svelte'
 	import InputName from '@/components/InputName.svelte'
 	import InputNumber from '@/components/InputNumber.svelte'
 	import Row from '@/components/Row.svelte'
 	import Select from '@/components/Select.svelte'
+	import type { Purchase, Status } from '@/libs/purchaseTypes'
+	import { debounce, toNumber } from '@/libs/utils'
+	import { purchases } from '@/stores/purchases'
+	import Form from '@/views/customersViews/Form.svelte'
+	import ResultModal from '@/views/modals/ResultModal.svelte'
 
-	// const formFieldset = [
-	// 	{ label: '予約番号', id: 'orderNumber', value: '' },
-	// 	{ label: 'お客様名', id: 'customerName', value: '' },
-	// 	{ label: 'ステータス', id: 'status', value: '' },
-	// 	{ label: '機種', id: 'model', value: '' },
-	// 	{ label: 'モーター', id: 'motor', value: '' },
-	// 	{ label: 'サイズ', id: 'size', value: '' },
-	// 	{ label: '入荷日', id: 'arrivalDay', value: '' },
-	// 	{ label: '相場', id: 'marketPrice', value: 0 },
-	// 	{ label: '買取額', id: 'sellingPrice', value: 0 }
-	// ]
+	interface InitialStatePurchase {
+		orderNumber: string
+		customerName: string
+		status: string
+		model: string
+		motor: string
+		size: string
+		arrivalDate: string
+		marketPrice: number
+		sellingPrice: number
+	}
 
-	let initialState = {
+	let initialState: InitialStatePurchase = {
+		orderNumber: '',
 		customerName: '',
 		status: '',
 		model: '',
@@ -29,6 +39,86 @@
 		marketPrice: 0,
 		sellingPrice: 0
 	}
+
+	const goBack = () => goto('/purchases')
+
+	const formFieldsets = [
+		{
+			label: '予約番号',
+			id: 'orderNumber',
+			value: '',
+			error: false,
+			errorMsg: '',
+			type: ''
+		},
+		{
+			label: 'お客様名',
+			id: 'customerName',
+			value: '',
+			error: false,
+			errorMsg: '',
+			type: 'name'
+		},
+		{
+			label: '機種',
+			id: 'model',
+			value: '',
+			error: false,
+			errorMsg: '',
+			type: 'select',
+			list: ['キューマ', 'クオラ', 'アウラ21', '楽匠Z']
+		},
+		{
+			label: 'モーター',
+			id: 'motor',
+			value: '',
+			error: false,
+			errorMsg: '',
+			type: 'select',
+			list: ['3M', '2M', '3Mらくらく']
+		},
+		{
+			label: 'サイズ',
+			id: 'size',
+			value: '',
+			error: false,
+			errorMsg: '',
+			type: 'select',
+			list: ['不明', '83M', '83R', '91R']
+		},
+		{
+			label: '入荷日',
+			id: 'arrivalDay',
+			value: '',
+			error: false,
+			errorMsg: '',
+			type: 'date'
+		},
+		{
+			label: '相場',
+			id: 'marketPrice',
+			value: 0,
+			error: false,
+			errorMsg: '',
+			type: 'number'
+		},
+		{
+			label: '買取額',
+			id: 'sellingPrice',
+			value: 0,
+			error: false,
+			errorMsg: '',
+			type: 'number'
+		}
+	] as {
+		label: string
+		id: keyof InitialStatePurchase
+		value: string | number
+		error: boolean
+		errorMsg: string
+		type: string
+		list?: string[]
+	}[]
 
 	let fileToUpload: File
 
@@ -44,72 +134,141 @@
 			if (inputFile.files !== null) fileToUpload = inputFile.files[0]
 		}
 	}
+
+	let isShown = false
+	let isSucceeded = false
+
+	/**
+	 * Triggered when the form is submit.
+	 * If the form is still on the entry page, then, it will preventDefault, and displayed the entry verification page.
+	 * If the user is in the entry verification page, then, we submit the form.
+	 * @param e
+	 */
+	const handleSubmit = debounce(async (event: Event) => {
+		event.preventDefault()
+		try {
+			const formData = new FormData()
+
+			for (const key in initialState)
+				formData.append(key, <string>initialState[key as keyof InitialStatePurchase])
+
+			const localPurcharse: Purchase = {
+				id: 0,
+				orderNumber: '',
+				customerName: '',
+				status: <Status>'',
+				model: '',
+				motor: '',
+				size: '',
+				arrivalDate: '',
+				marketPrice: 0,
+				sellingPrice: 0
+			}
+
+			for (let key in localPurcharse) {
+				key = <keyof InitialStatePurchase>key
+
+				if (localPurcharse.hasOwnProperty(key)) {
+					switch (key) {
+						case 'orderNumber':
+							localPurcharse[key] = initialState[key]
+							break
+
+						case 'status':
+							localPurcharse[key] = <Status>initialState[key]
+							break
+
+						case 'model':
+						case 'motor':
+						case 'customerName':
+						case 'size':
+						case 'arrivalDate':
+							localPurcharse[key] = initialState[key]
+							break
+
+						case 'marketPrice':
+						case 'sellingPrice':
+							localPurcharse[key] = initialState[key]
+					}
+				}
+			}
+			Object.keys(initialState).map(key => console.log(key))
+			// console.log()
+
+			console.log(localPurcharse)
+
+			purchases.set([...$purchases, localPurcharse])
+			isShown = true
+			isSucceeded = true
+		} catch (error) {
+			isShown = true
+			isSucceeded = false
+		}
+	}, 200)
 </script>
 
 <section class="section">
 	<div class="section__main">
-		<form class="form" action="">
+		<form
+			class="form"
+			method="POST"
+			action="/purchases/new?/create"
+			id="purchase-form"
+			use:enhance
+			on:submit={handleSubmit}
+		>
+			<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
+
 			<div class="container">
 				<fieldset class="fieldset fieldset--info">
-					<Row>
-						<InputName
-							label="お客様名"
-							bind:value={initialState.customerName}
-							name={'customer-name'}
-						/>
-					</Row>
+					{#each formFieldsets as fieldset}
+						<Row>
+							{#if fieldset.list}
+								<Select
+									label={fieldset.label}
+									name={fieldset.id}
+									options={fieldset.list}
+									bind:value={initialState[fieldset.id]}
+								/>
+							{:else}
+								<div class="input-wrapper">
+									<label class="label" for={fieldset.id}>{fieldset.label}</label>
+									<input
+										class="input"
+										type={fieldset.type}
+										name={fieldset.id}
+										id={fieldset.id}
+										value={initialState[fieldset.id]}
+									/>
+								</div>
+							{/if}
 
-					<Row>
-						<Select
-							label="機種"
-							name={'model'}
-							options={['キューマ', 'クオラ', 'アウラ21', '楽匠Z']}
-							bind:value={initialState.model}
-						/>
-					</Row>
-					<Row>
-						<Select
-							label="モーター"
-							name={'motor'}
-							options={['3M', '2M', '3Mらくらく']}
-							bind:value={initialState.motor}
-						/>
-					</Row>
-					<Row>
-						<Select
-							label="サイズ"
-							name={'size'}
-							options={['不明', '83M', '83R', '91R']}
-							bind:value={initialState.size}
-						/>
-					</Row>
-					<Row>
-						<InputDate
-							label={'入荷日'}
-							name={'arrival-date'}
-							bind:value={initialState.arrivalDate}
-						/>
-					</Row>
-					<Row>
-						<InputNumber
-							label={'相場'}
-							name={'market-price'}
-							bind:value={initialState.marketPrice}
-						/>
-					</Row>
-					<Row>
-						<InputNumber
-							label={'買取額'}
-							name={'selling-price'}
-							bind:value={initialState.sellingPrice}
-						/>
-					</Row>
+							<!-- {#if fieldset.type === 'number' && typeof initialState[fieldset.id] === 'number'}
+								<InputNumber
+									label={fieldset.label}
+									name={fieldset.id}
+									bind:value={initialState[fieldset.id]}
+								/>
+							{/if}
+
+							{#if fieldset.type === 'date'}
+								<InputDate
+									label={fieldset.label}
+									name={fieldset.id}
+									bind:value={initialState[fieldset.id]}
+								/>{/if}
+
+							{#if fieldset.type === 'name'}
+								<InputName label={fieldset.label} name={fieldset.id} bind:value={fieldset.value} />
+							{/if} -->
+						</Row>
+					{/each}
 				</fieldset>
 
 				<fieldset class="fieldset fieldset--picture">
 					<div class="wrapper">
 						<!-- svelte-ignore a11y-no-static-element-interactions -->
-						<div class="modal-main" on:dragover|preventDefault on:drop|preventDefault={handleDrop}>
+						<div class="upload-zone" on:dragover|preventDefault on:drop|preventDefault={handleDrop}>
 							{#if fileToUpload === undefined}
 								<p>ここにファイルをドラッグ&ドロップ</p>
 								<p>または</p>
@@ -135,10 +294,14 @@
 				</fieldset>
 			</div>
 		</form>
+
+		{#if isShown}
+			<ResultModal {isSucceeded} on:click={() => (isSucceeded ? goBack() : (isShown = false))} />
+		{/if}
 	</div>
 
 	<footer class="section__footer">
-		<button class="primary">登録</button>
+		<button type="submit" class="primary" form="purchase-form">登録</button>
 	</footer>
 </section>
 
@@ -146,6 +309,21 @@
 	.section {
 		&__footer {
 			margin-top: 18px;
+		}
+	}
+
+	.input-wrapper {
+		position: relative;
+		display: flex;
+		align-items: center;
+		width: fit-content;
+		gap: 10px;
+
+		.label {
+			align-self: flex-start;
+			display: flex;
+			align-items: center;
+			height: 31px;
 		}
 	}
 
@@ -176,14 +354,12 @@
 		box-shadow: 0px 8px 8px rgb(200, 200, 200);
 	}
 
-	.modal-main {
+	.upload-zone {
 		position: relative;
 		display: flex;
 		align-items: center;
 		justify-content: center;
 		flex-direction: column;
-
-		// width: calc((898 / 1366) * 100vw);
 		min-height: 260px;
 		padding: 30px 18%;
 
@@ -202,16 +378,6 @@
 		.modal-btn {
 			margin: 20px auto;
 		}
-
-		&::backdrop {
-			border-color: red;
-		}
-	}
-
-	.modal-footer {
-		display: flex;
-		justify-content: center;
-		margin-top: 26px;
 	}
 
 	.modal-btn {
@@ -222,11 +388,6 @@
 		border-radius: 8px;
 		background-color: #fff;
 		color: var(--black);
-	}
-
-	.secondary {
-		color: #fff;
-		border-color: #fff;
 	}
 
 	.image-wrapper {

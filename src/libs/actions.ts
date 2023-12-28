@@ -17,7 +17,7 @@ export const loadData = async (url: string, key: string) => {
 	})
 		.then(res => res.json())
 		.then(data => {
-			console.log(data)
+			// console.log(data)
 			return data.results
 		})
 		.catch(error => {

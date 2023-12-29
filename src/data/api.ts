@@ -4,6 +4,6 @@ const apiIp = 'http://18.182.209.227'
 
 const apiV1Test = 'https://test.okaseiexu.net'
 
-export const currentApi: string = localApi
+export const currentApi: string = demoApi
 
 export let currentKey: string = '4ba2f4eaf909d0301b96b44950b40aa6eafdee87'

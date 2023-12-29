@@ -1,7 +1,6 @@
 <script lang="ts">
-	import type { Department } from '@/models/Customer'
+	import type { Department } from '@/libs/customerTypes'
 	import InputNumber from './InputNumber.svelte'
-	import Icon from './Icon.svelte'
 	import InputSelect from './InputSelect.svelte'
 	import ButtonDelete from './ButtonDelete.svelte'
 

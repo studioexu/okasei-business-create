@@ -41,7 +41,7 @@
 </script>
 
 {#if customersToDisplayOnPage === undefined}
-	<h2 class="no-data-message">データがありません。</h2>
+	<p class="no-data">データがございません。</p>
 {:else}
 	<div class="table-wrapper">
 		<table class="customer-list">
@@ -83,7 +83,7 @@
 						<td class="data update">
 							<button class="btn {customer.isActive ? '' : 'disabled'}" on:click={handleEditItem}>
 								{#if customer.isActive}
-									<Icon icon={{ path: 'edit', color: 'primary' }} />
+									<Icon icon={{ path: 'edit', color: '#0093d0' }} />
 								{:else}
 									<Icon icon={{ path: 'edit', color: 'rgb(200, 200, 200)' }} />
 								{/if}
@@ -93,7 +93,7 @@
 						<td class="data erase">
 							<button class="btn {customer.isActive ? '' : 'disabled'}" on:click={handleDeleteItem}>
 								{#if customer.isActive}
-									<Icon icon={{ path: 'delete', color: 'primary' }} />
+									<Icon icon={{ path: 'delete', color: '#0093d0' }} />
 								{:else}
 									<Icon icon={{ path: 'delete', color: 'rgb(200, 200, 200)' }} />
 								{/if}

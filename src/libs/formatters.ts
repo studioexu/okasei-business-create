@@ -1,5 +1,5 @@
 import { parsePhoneNumber } from 'libphonenumber-js'
-import { CustomerNewApi } from '@/models/BackendCustomer'
+import { CustomerApi } from '@/models/CustomerApi'
 import type { CustomerEntries } from './customerTypes'
 
 /**
@@ -100,7 +100,7 @@ export const getDateTime = (time?: string): string => {
 export const formatCustomer = (
 	action: 'update' | 'create' | 'delete',
 	customer: CustomerEntries
-): CustomerNewApi => {
+): CustomerApi => {
 	const timeArray = getDateTime()
 
 	switch (action) {
@@ -108,19 +108,40 @@ export const formatCustomer = (
 			customer.registrationDate = timeArray
 			customer.registeredBy = 1
 
-			return new CustomerNewApi(customer)
+			return new CustomerApi(customer)
 
 		case 'update':
 			customer.updateDate = timeArray
 			customer.updateBy = 1
-			return new CustomerNewApi(customer)
+			return new CustomerApi(customer)
 
 		case 'delete':
 			customer.deleteDate = timeArray
 			customer.deleteBy = 1
-			return new CustomerNewApi(customer)
+			return new CustomerApi(customer)
 
 		default:
-			return new CustomerNewApi(customer)
+			return new CustomerApi(customer)
 	}
+}
+
+/**
+ *
+ * @param file: uploaded file。アップロードされたファイル。
+ * @returns エラーもしくはBase64のString.Error or base64 string.
+ */
+export const convertDataToBase64 = (file: File): Promise<string> => {
+	return new Promise<string>((resolve, reject) => {
+		const fileReader = new FileReader()
+
+		fileReader.onload = () => {
+			if (typeof fileReader.result === 'string') resolve(fileReader.result)
+		}
+
+		fileReader.onerror = error => {
+			reject(error)
+		}
+
+		fileReader.readAsDataURL(file)
+	})
 }

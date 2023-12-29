@@ -20,7 +20,9 @@
 	const handleChange = (e: any) => {
 		const input = e.target.value
 
-		isValid = inputIsValid(toCamelCase(name), input)
+		isValid = required
+			? inputIsValid(toCamelCase(name), input)
+			: input === '' || inputIsValid(toCamelCase(name), input)
 	}
 
 	const checkValueOnChange = (value: string) => {
@@ -49,6 +51,8 @@
 		autocomplete="off"
 		{placeholder}
 		{name}
+		data-required={required}
+		data-type={name}
 		on:blur={handleChange}
 		on:click={() => (value = '')}
 		bind:value

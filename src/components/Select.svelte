@@ -19,13 +19,7 @@
 		</label>
 	{/if}
 
-	<select
-		class="select {value === '' && 'empty'}"
-		bind:value
-		id={name}
-		data-required={required}
-		data-type={name}
-	>
+	<select class="select {value === '' && 'empty'}" bind:value id={name}>
 		<option class="option" value={''} disabled selected>未選択</option>
 
 		{#each options as option}

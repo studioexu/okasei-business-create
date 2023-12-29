@@ -1,6 +1,5 @@
 <script lang="ts">
-	import { checkIfInputIsNumber, inputIsValid } from '@/libs/customerValidations'
-	import { toCamelCase } from '@/libs/formatters'
+	import { checkIfInputIsNumber } from '@/libs/customerValidations'
 
 	export let placeholder: string = ''
 	export let value: number = 0
@@ -18,9 +17,9 @@
 	const handleBlurInput = (e: any) => {
 		const input = e.target.value
 
-		isValid = required
-			? inputIsValid(toCamelCase(name), input)
-			: input === '' || inputIsValid(toCamelCase(name), input)
+		if (required) {
+			isValid = checkIfInputIsNumber(input)
+		}
 	}
 </script>
 
@@ -39,8 +38,6 @@
 		{name}
 		{disabled}
 		{placeholder}
-		data-type="number"
-		data-required={required}
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}

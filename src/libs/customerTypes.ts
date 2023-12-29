@@ -1,25 +1,8 @@
-import type { CustomerImageFactory } from '@/Factories/CustomerFactory'
-
-export interface Department {
-	departmentId: number
-	departmentName: string
-	numberOfBeds: number
-}
-
-export interface DepartmentApi {
-	department: {
-		id: number
-		cd1: string
-		cd2: string
-		name: string
-	}
-	number_of_beds: number
-}
+import type { Department } from '@/models/Customer'
 
 export interface Picture {
-	id: number
-	memo?: string
-	data: string
+	file: File
+	memo: string
 }
 
 export interface CustomerEntries {
@@ -56,7 +39,7 @@ export interface CustomerEntries {
 	personInChargeMemo: string
 	approver: string
 	contactTime: string
-	pictures: CustomerImageFactory[]
+	pictures: Picture[]
 	miscellaneous: string
 	registrationDate?: string
 	registeredBy?: number

@@ -17,9 +17,7 @@
 	 */
 	const handleBlurInput = (e: any) => {
 		const input = e.target.value
-		isValid = required
-			? inputIsValid(toCamelCase(name), input)
-			: input === '' || inputIsValid(toCamelCase(name), input)
+		isValid = inputIsValid(toCamelCase(name), input)
 	}
 </script>
 
@@ -37,8 +35,6 @@
 		placeholder="山田　太郎"
 		id={name}
 		{name}
-		data-type="name"
-		data-required={required}
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}

@@ -15,7 +15,7 @@
 	export let data
 
 	let allCustomers: CustomerFactory[] = data.data.map(
-		customer => new CustomerFactory(customer, 'APIv1')
+		customer => new CustomerFactory(customer, 'newApi')
 	)
 
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
@@ -191,6 +191,7 @@
 <style lang="scss">
 	.section {
 		padding-bottom: 24px;
+		color: var(--black);
 
 		&__header {
 			margin-bottom: 2rem;
@@ -212,7 +213,6 @@
 		display: flex;
 		gap: 10px;
 		align-items: center;
-		color: var(--black);
 
 		.checkbox {
 			margin-right: 11px;

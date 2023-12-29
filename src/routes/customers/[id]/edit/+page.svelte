@@ -13,8 +13,10 @@
 	export let data
 
 	let customer = new CustomerFactory(data.customer, 'newApi')
-	let images = data.images.map((image: any) => new CustomerImageFactory(image, 'newApi'))
-
+	let images =
+		data.images.length !== undefined
+			? data.images.map((image: any) => new CustomerImageFactory(image, 'newApi'))
+			: []
 	let confirmationPageIsShown = false
 	let departmentsList = data.departmentsList
 

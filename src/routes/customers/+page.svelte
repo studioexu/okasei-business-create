@@ -14,6 +14,8 @@
 
 	export let data
 
+	console.log(data.data)
+
 	let allCustomers: CustomerFactory[] = data.data.map(
 		customer => new CustomerFactory(customer, 'newApi')
 	)

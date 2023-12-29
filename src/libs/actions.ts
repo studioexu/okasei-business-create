@@ -17,7 +17,7 @@ export const loadCustomerData = async (url: string) => {
 	})
 		.then(res => res.json())
 		.then(data => {
-			console.log(data)
+			// console.log(data)
 
 			return data.results
 		})

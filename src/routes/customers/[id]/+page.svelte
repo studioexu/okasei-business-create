@@ -9,9 +9,13 @@
 	import { CustomerImage } from '@/models/Customer.js'
 
 	export let data
+	console.log(data.images.length === undefined)
 
 	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
-	let images = data.images.map((image: any) => new CustomerImageFactory(image, 'newApi'))
+	let images =
+		data.images.length !== undefined
+			? data.images.map((image: any) => new CustomerImageFactory(image, 'newApi'))
+			: []
 
 	console.log(customer)
 

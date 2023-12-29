@@ -1,9 +1,11 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
+	import Row from '@/components/Row.svelte'
+
 	import type { CustomerEntries } from '@/libs/customerTypes'
 	import { getTotalOfBeds } from '@/libs/utils'
-	import Row from '@/components/Row.svelte'
+
 	export let initialState: CustomerEntries
 
 	let bedTotal: number = 0
@@ -189,6 +191,17 @@
 		}
 	}
 
+	:global(.detail-wrapper .label) {
+		color: var(--gray);
+		font-size: 18px;
+		font-weight: 500;
+		width: auto;
+	}
+
+	:global(.detail-wrapper:first-child .label) {
+		width: 130px;
+	}
+
 	.container {
 		display: flex;
 		flex-direction: column;
@@ -228,17 +241,6 @@
 			align-items: center;
 			height: 31px;
 		}
-	}
-
-	:global(.detail-wrapper .label) {
-		color: var(--gray);
-		font-size: 18px;
-		font-weight: 500;
-		width: auto;
-	}
-
-	:global(.detail-wrapper:first-child .label) {
-		width: 130px;
 	}
 
 	.bed-wrapper {

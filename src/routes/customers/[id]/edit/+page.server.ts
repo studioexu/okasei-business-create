@@ -7,7 +7,7 @@ import {
 } from '@/libs/actions.js'
 import type { CustomerEntries } from '@/libs/customerTypes.js'
 import { formatCustomer } from '@/libs/formatters.js'
-import { customerImagesBackend, type CustomerNewApi } from '@/models/BackendCustomer.js'
+import type { CustomerApi } from '@/models/CustomerApi.js'
 import { currentApi, currentKey } from '@/data/api.js'
 import { debounce } from '@/libs/utils'
 
@@ -17,12 +17,12 @@ import { debounce } from '@/libs/utils'
  * @returns
  */
 export const load = async ({ params }) => {
-	const data: CustomerNewApi = await loadCustomerData(currentApi)
+	const data: CustomerApi = await loadCustomerData(currentApi)
 	const departmentsList = await loadDepartments(currentApi)
 	const images = await loadCustomerImages(currentApi, params.id)
 
-	const customer: CustomerNewApi | undefined = data.find(
-		(customer: CustomerNewApi) => customer.id?.toString() === params.id.toString()
+	const customer: CustomerApi | undefined = data.find(
+		(customer: CustomerApi) => customer.id?.toString() === params.id.toString()
 	)
 
 	if (!customer) throw error(404)
@@ -47,12 +47,6 @@ export const actions = {
 		let initialState: CustomerEntries = JSON.parse(initialStateString)
 
 		const updatedCustomer = formatCustomer('update', initialState)
-
-		console.log('update')
-
-		console.log(updatedCustomer)
-
-		const updatedCustomerImages = new customerImagesBackend(initialState.pictures)
 
 		if (initialState.id) {
 			updateCustomer(updatedCustomer, currentApi, initialState.id)

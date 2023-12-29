@@ -1,10 +1,10 @@
-import type { CustomerNewApi, customerImagesBackend } from '@/models/BackendCustomer'
+import type { CustomerApi, customerImagesBackend } from '@/models/CustomerApi'
 import { Customer, CustomerImage } from '@/models/Customer'
 
 export class CustomerFactory {
 	[x: string]: any
-	constructor(data: CustomerNewApi, type: string) {
-		if (type === 'newApi') {
+	constructor(data: CustomerApi, type: string) {
+		if (type === 'APIv1') {
 			return new Customer(data)
 		}
 	}
@@ -13,7 +13,7 @@ export class CustomerFactory {
 export class CustomerImageFactory {
 	[x: string]: any
 	constructor(data: customerImagesBackend, type: string) {
-		if (type === 'newApi') {
+		if (type === 'APIv1') {
 			return new CustomerImage(data)
 		}
 	}

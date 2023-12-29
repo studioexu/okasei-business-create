@@ -6,18 +6,14 @@
 
 	import { CustomerFactory, CustomerImageFactory } from '@/Factories/CustomerFactory'
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
-	import { CustomerImage } from '@/models/Customer.js'
 
 	export let data
-	console.log(data.images.length === undefined)
 
-	let customer: CustomerFactory = new CustomerFactory(data.customer, 'newApi')
+	let customer: CustomerFactory = new CustomerFactory(data.customer, 'APIv1')
 	let images =
 		data.images.length !== undefined
-			? data.images.map((image: any) => new CustomerImageFactory(image, 'newApi'))
+			? data.images.map((image: any) => new CustomerImageFactory(image, 'APIv1'))
 			: []
-
-	console.log(customer)
 
 	let initialState: CustomerEntries = {
 		id: customer.id,

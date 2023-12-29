@@ -1,5 +1,5 @@
 import { currentKey } from '@/data/api'
-import type { CustomerNewApi } from '@/models/BackendCustomer'
+import type { CustomerApi } from '@/models/CustomerApi'
 
 /**
  * Load the data from the server.
@@ -53,7 +53,7 @@ export const loadCustomerImages = async (url: string, customerId: string) => {
  * @param url:string, corresponding to URL of the API. APIのURLである。
  *
  */
-export const createCustomer = async (newCustomer: CustomerNewApi, url: string) => {
+export const createCustomer = async (newCustomer: CustomerApi, url: string) => {
 	await fetch(url + '/customer/register', {
 		method: 'POST',
 		headers: {
@@ -78,7 +78,7 @@ export const createCustomer = async (newCustomer: CustomerNewApi, url: string) =
  * @param customerId : string, corresponding to the id of the customer we want to update. ユーザーが更新したがる顧客のIDである。
  */
 export const updateCustomer = async (
-	updatedCustomer: CustomerNewApi,
+	updatedCustomer: CustomerApi,
 	url: string,
 	customerId: number
 ) => {

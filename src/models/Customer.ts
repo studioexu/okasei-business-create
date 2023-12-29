@@ -1,6 +1,5 @@
-import type { CustomerNewApi } from './BackendCustomer'
-
-import type { Department } from '@/libs/customerTypes'
+import type { CustomerApi } from './CustomerApi'
+import type { Department, DepartmentApi } from '@/libs/customerTypes'
 
 const splitDateTime = (timeString: string) => {
 	const dateTime = timeString.split('T')
@@ -12,16 +11,6 @@ const splitDateTime = (timeString: string) => {
 		date: date,
 		time: time
 	}
-}
-
-export interface DepartmentBackend {
-	department: {
-		id: number
-		cd1: string
-		cd2: string
-		name: string
-	}
-	number_of_beds: number
 }
 
 export class Customer {
@@ -69,7 +58,6 @@ export class Customer {
 	private _reviews?: string
 	private _business?: string
 	private _closingMonth?: string
-	// private _pictures?: Picture[]
 	private _personInCharge?: string
 	private _personInChargeMemo?: string
 	private _personInChargeRole?: string
@@ -77,7 +65,7 @@ export class Customer {
 	private _contactTime?: string
 	private _miscellaneous?: string
 
-	constructor(data: CustomerNewApi) {
+	constructor(data: CustomerApi) {
 		if (data.id) {
 			this._id = data.id
 		}
@@ -108,9 +96,9 @@ export class Customer {
 		this._isActive = data?.is_active
 		;(this._departments = data.departments.map(department => {
 			return {
-				departmentId: (department as DepartmentBackend).department.id,
-				departmentName: (department as DepartmentBackend).department.name,
-				numberOfBeds: (department as DepartmentBackend).number_of_beds
+				departmentId: (department as DepartmentApi).department.id,
+				departmentName: (department as DepartmentApi).department.name,
+				numberOfBeds: (department as DepartmentApi).number_of_beds
 			}
 		})),
 			(this._registration = {
@@ -125,14 +113,6 @@ export class Customer {
 				deleteDate: data.delete_at,
 				deleteBy: data.delete_by
 			}),
-			// (this._pictures = data.images
-			// 	? data.images.map(image => {
-			// 			return {
-			// 				base64: image.image_data,
-			// 				memo: image.image_memo
-			// 			}
-			// 	  })
-			// 	: []),
 			(this._googleReview = data.google_review)
 		this._reviews = data.reviews
 		this._business = data.business
@@ -248,9 +228,6 @@ export class Customer {
 	public get closingMonth() {
 		return this._closingMonth
 	}
-	// public get pictures() {
-	// 	return this._pictures
-	// }
 	public get personInCharge() {
 		return this._personInCharge
 	}

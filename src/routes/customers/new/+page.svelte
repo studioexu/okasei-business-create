@@ -5,8 +5,6 @@
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
-
-	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
 	import { fade } from 'svelte/transition'
 
 	let confirmationPageIsShown = false
@@ -59,11 +57,11 @@
 		foundationDate: ''
 	}
 
+	//FORM VALIDATIONS
 	let formIsValid: CustomerEntriesErrors
+	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 
 	Object.keys(initialState).map(key => (formIsValid = { ...formIsValid, [key]: true }))
-
-	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 </script>
 
 <section class="section section--form">

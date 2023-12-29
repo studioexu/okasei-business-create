@@ -6,6 +6,16 @@ export interface Department {
 	numberOfBeds: number
 }
 
+export interface DepartmentApi {
+	department: {
+		id: number
+		cd1: string
+		cd2: string
+		name: string
+	}
+	number_of_beds: number
+}
+
 export interface Picture {
 	id: number
 	memo?: string

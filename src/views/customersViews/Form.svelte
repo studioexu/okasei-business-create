@@ -3,10 +3,13 @@
 
 <script lang="ts">
 	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes'
+	import type { CustomerImageFactory } from '@/Factories/CustomerFactory'
 
 	import { enhance } from '$app/forms'
 	import { prefectures, months } from '@/data/data'
 	import { getTotalOfBeds } from '@/libs/utils'
+	import { convertDataToBase64 } from '@/libs/formatters'
+	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
 
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
@@ -22,10 +25,7 @@
 	import InputFreeText from '@/components/InputFreeText.svelte'
 	import Row from '@/components/Row.svelte'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
-	import { convertDataToBase64 } from '@/libs/formatters'
-	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
 	import InputPhoneNumber from '@/components/InputPhoneNumber.svelte'
-	import type { CustomerImageFactory } from '@/Factories/CustomerFactory'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -45,7 +45,7 @@
 	 * APIから郵便番号とマッチしている住所を読み込んで、InitialState.addressをアップデートする。
 	 * @param e
 	 */
-	const handlePostalCodeSearchSubmit = async (e: Event): Promise<void> => {
+	const getAddressWithPostalCode = async (e: Event): Promise<void> => {
 		e.preventDefault()
 
 		if (formIsValid.postalCode) {
@@ -304,7 +304,7 @@
 				bind:isValid={formIsValid.postalCode}
 			/>
 
-			<button class="btn primary inline" on:click={handlePostalCodeSearchSubmit}>自動検索</button>
+			<button class="btn primary inline" on:click={getAddressWithPostalCode}>自動検索</button>
 		</Row>
 
 		<Row>

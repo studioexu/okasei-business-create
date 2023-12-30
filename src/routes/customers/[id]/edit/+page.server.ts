@@ -40,11 +40,12 @@ export const load = async ({ params }) => {
  * Here, we will only update the customer information. So, we just have only one action.
  */
 export const actions = {
-	update: debounce(async ({ request }) => {
+	update: async ({ request }) => {
 		const data = await request.formData()
 		const initialStateString = data.get('initialState')
 
-		let initialState: CustomerEntries = JSON.parse(initialStateString)
+		let initialState: CustomerEntries =
+			typeof initialStateString === 'string' && JSON.parse(initialStateString)
 
 		const updatedCustomer = formatCustomer('update', initialState)
 
@@ -52,5 +53,5 @@ export const actions = {
 			updateCustomer(updatedCustomer, currentApi, initialState.id)
 		}
 		return false
-	}, 200)
+	}
 }

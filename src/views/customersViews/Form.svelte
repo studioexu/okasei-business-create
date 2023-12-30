@@ -38,6 +38,8 @@
 
 	let uploadModalIsShown = false
 
+	// type CustomerKeys = Object.keys(initialState).map(key => key)
+
 	// ADDRESS AUTO FILL
 
 	/**
@@ -85,6 +87,15 @@
 
 			const submitResult = validationOnSubmit(formIsValid)
 
+			const formData = new FormData()
+
+			for (let key in initialState)
+				formData.append(key, <string>initialState[key as keyof CustomerEntries])
+
+			console.log('form Data')
+
+			console.log(formData)
+
 			departmentsError = []
 
 			initialState.departments.map(department => {
@@ -113,6 +124,8 @@
 					if (event.detail.fileToUpload !== undefined) {
 						let newArray = initialState.pictures
 						const convertedFile = await convertDataToBase64(event.detail.fileToUpload)
+						console.log(event.detail.fileToUpload)
+
 						const newPicture: CustomerImageFactory = {
 							memo: '',
 							data: convertedFile
@@ -217,7 +230,7 @@
 		}
 	}}
 >
-	<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
+	<input hidden id="initial-state" name="initialState" value={JSON.stringify(initialState)} />
 	<p class="required-legend"><span class="required-mark">*</span> 必須</p>
 
 	<fieldset class="fieldset fieldset--info1">

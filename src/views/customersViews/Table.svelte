@@ -78,7 +78,7 @@
 							<td class="data corporate-name">{customer.corporateName}</td>
 						{/if}
 
-						<td class="data facility-name">{customer.custName}</td>
+						<td class="data customer-name">{customer.custName}</td>
 
 						<td class="data address">{customer.address.prefecture}{customer.address.city}</td>
 

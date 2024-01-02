@@ -124,38 +124,53 @@
 
 	$: companyIsShown = true
 
-	// const displayRightCustomers = (companyIsShown: boolean) => {
-	// 	const customers = filteredCustomers === undefined ? allCustomers : filteredCustomers
-
-	// 	allCustomers.map(customer => console.log(customer.custType))
-
-	// 	companyIsShown
-	// 		? (customersToDisplay = customers.filter(customer => customer.custType === 'C'))
-	// 		: (customersToDisplay = customers.filter(customer => customer.custType === 'I'))
-
-	// 	console.log(customersToDisplay)
-	// }
-
+	/**
+	 * Filter the customers depending on the options selected: customer's type (business or individual), show the deleted customers.
+	 * 選択したオプションによる顧客を表示する：顧客タイプ（法人もしくは個人）、削除された顧客。
+	 * @param companyIsShown:boolean
+	 * @param deletedCustomersAreShown:boolean
+	 */
 	export const getCustomersToDisplay = (
 		companyIsShown: boolean,
 		deletedCustomersAreShown: boolean
 	) => {
 		let customers = filteredCustomers === undefined ? allCustomers : filteredCustomers
 
-		// let customersToDisplay = customers
-
-		companyIsShown
-			? (customers = customers.filter(customer => customer.custType === 'C'))
-			: (customers = customers.filter(customer => customer.custType === 'I'))
-
-		deletedCustomersAreShown
-			? (customers = customers)
-			: (customers = customers.filter(customer => customer.isActive))
+		customers = getCustomersByType(customers, companyIsShown)
+		customers = getDeletedCustomers(customers, deletedCustomersAreShown)
 
 		customersToDisplay = customers
 	}
 
-	// $: displayRightCustomers(companyIsShown)
+	/**
+	 * It will filter the type of customers the user wants to display (Individual or Company)
+	 * ユーザーを選び、タイプによる顧客を表示する（法人もしくは個人）。
+	 * @param customers: CustomerFatacory[], the array of customers which is going to be filtered
+	 * @param companyIsShown: boolean
+	 */
+	const getCustomersByType = (customers: CustomerFactory[], companyIsShown: boolean) => {
+		companyIsShown
+			? (customers = customers.filter(customer => customer.custType === 'C'))
+			: (customers = customers.filter(customer => customer.custType === 'I'))
+
+		return customers
+	}
+
+	/**
+	 * The toggle is ON, we display all the customers (deleted and active).
+	 * トグルがONであれば、顧客を全員表示する。（削除された顧客もアクティブの顧客も）
+	 * The toggle is OFF, We only display the active customers.
+	 * トグルがONであれば、アクティブの顧客のみ表示する。
+	 * @param customers: CustomerFatacory[], the array of customers which is going to be filtered
+	 * @param deletedCustomersAreShown: boolean
+	 */
+	const getDeletedCustomers = (customers: CustomerFactory[], deletedCustomersAreShown: boolean) => {
+		deletedCustomersAreShown
+			? (customers = customers)
+			: (customers = customers.filter(customer => customer.isActive))
+
+		return customers
+	}
 </script>
 
 <section class="section section--customers-management" id="customers-management">
@@ -183,9 +198,8 @@
 			bind:customersToDisplay
 			bind:filteredCustomers
 			bind:currentPage
-			{deletedCustomersAreShown}
-			{companyIsShown}
-			{getCustomersToDisplay}
+			bind:deletedCustomersAreShown
+			bind:companyIsShown
 		/>
 
 		<div class="container">

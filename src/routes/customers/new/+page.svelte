@@ -22,6 +22,7 @@
 	let initialState: CustomerEntries = {
 		id: 0,
 		branchNumber: '',
+		corporateName: '',
 		customerName: '',
 		kana: '',
 		facilityNumber: '',

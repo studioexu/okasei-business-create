@@ -4,6 +4,7 @@ export class CustomerApi {
 	[x: string]: any
 	id?: number
 	branch_cd: string
+	corporate_name?: string
 	name: string
 	kana: string
 	institution_cd: string
@@ -47,6 +48,7 @@ export class CustomerApi {
 			this.id = data.id
 		}
 		this.branch_cd = data.branchNumber
+		this.corporate_name = data.corporateName
 		this.name = data.customerName
 		this.kana = data.kana
 		this.institution_cd = data.facilityNumber

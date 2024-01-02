@@ -18,6 +18,8 @@
 		customer => new CustomerFactory(customer, 'APIv1')
 	)
 
+	console.log(allCustomers)
+
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let filteredCustomers: CustomerFactory[]
 	let deletedCustomersAreShown = false
@@ -49,12 +51,13 @@
 	 * 当ページを０にして、正しい顧客を表示するためにdisplayCustomersをコールする。
 	 * @param deletedCustomersAreShown: boolean
 	 */
-	const handleCheck = (deletedCustomersAreShown: boolean) => {
-		displayCustomers(deletedCustomersAreShown)
+	const handleCheck = (deletedCustomersAreShown: boolean, companyIsShown: boolean) => {
+		// displayCustomers(deletedCustomersAreShown)
+		getCustomersToDisplay(companyIsShown, deletedCustomersAreShown)
 		currentPage = 0
 	}
 
-	$: handleCheck(deletedCustomersAreShown)
+	$: handleCheck(deletedCustomersAreShown, companyIsShown)
 
 	// DELETE MODAL
 
@@ -81,7 +84,8 @@
 							submitBtn?.click()
 						}
 
-						displayCustomers(deletedCustomersAreShown)
+						// displayCustomers(deletedCustomersAreShown)
+						getCustomersToDisplay(companyIsShown, deletedCustomersAreShown)
 
 						goto('/customers')
 						phase = 'success'
@@ -117,6 +121,41 @@
 		customersToDisplay.length > 0
 			? customersToDisplay.flatMap((_, i, self) => (i % 6 ? [] : [self.slice(i, i + 6)]))
 			: []
+
+	$: companyIsShown = true
+
+	// const displayRightCustomers = (companyIsShown: boolean) => {
+	// 	const customers = filteredCustomers === undefined ? allCustomers : filteredCustomers
+
+	// 	allCustomers.map(customer => console.log(customer.custType))
+
+	// 	companyIsShown
+	// 		? (customersToDisplay = customers.filter(customer => customer.custType === 'C'))
+	// 		: (customersToDisplay = customers.filter(customer => customer.custType === 'I'))
+
+	// 	console.log(customersToDisplay)
+	// }
+
+	export const getCustomersToDisplay = (
+		companyIsShown: boolean,
+		deletedCustomersAreShown: boolean
+	) => {
+		let customers = filteredCustomers === undefined ? allCustomers : filteredCustomers
+
+		// let customersToDisplay = customers
+
+		companyIsShown
+			? (customers = customers.filter(customer => customer.custType === 'C'))
+			: (customers = customers.filter(customer => customer.custType === 'I'))
+
+		deletedCustomersAreShown
+			? (customers = customers)
+			: (customers = customers.filter(customer => customer.isActive))
+
+		customersToDisplay = customers
+	}
+
+	// $: displayRightCustomers(companyIsShown)
 </script>
 
 <section class="section section--customers-management" id="customers-management">
@@ -145,6 +184,8 @@
 			bind:filteredCustomers
 			bind:currentPage
 			{deletedCustomersAreShown}
+			{companyIsShown}
+			{getCustomersToDisplay}
 		/>
 
 		<div class="container">
@@ -173,6 +214,16 @@
 				</button>
 			</div>
 		</div>
+
+		<label for="display-comapany">
+			<input
+				type="checkbox"
+				name="display-comapany"
+				id="display-comapany"
+				bind:checked={companyIsShown}
+			/>
+			法人表示
+		</label>
 	</header>
 
 	<div class="section__main">
@@ -180,6 +231,7 @@
 			bind:customersToDisplayOnPage={dividedCustomers[currentPage]}
 			bind:currentUser
 			bind:isShown
+			bind:companyIsShown
 		/>
 	</div>
 

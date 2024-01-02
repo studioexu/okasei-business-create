@@ -16,6 +16,7 @@ const splitDateTime = (timeString: string) => {
 export class Customer {
 	private _id?: number
 	private _custBranchCD: string
+	private _corporateName?: string
 	private _custName: string
 	private _custKana: string
 	private _instId: string
@@ -70,6 +71,7 @@ export class Customer {
 			this._id = data.id
 		}
 		this._custBranchCD = data.branch_cd
+		this._corporateName = data.corporate_name
 		this._custName = data.name
 		this._custKana = data.kana
 		this._instId = data.institution_cd
@@ -131,6 +133,10 @@ export class Customer {
 
 	public get custBranchCD() {
 		return this._custBranchCD
+	}
+
+	public get corporateName() {
+		return this._corporateName
 	}
 
 	public get custName() {

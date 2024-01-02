@@ -178,10 +178,14 @@ export const validationOnSubmit = (
 	let errorArray: boolean[] = []
 	let isValid = true
 
+	console.log('yo')
+
 	document.querySelectorAll('.input').forEach((input: any) => {
 		const inputId = toCamelCase(input.id)
 		const inputValue = input.value
 		const inputRequired: boolean = input.dataset.required === 'true'
+
+		console.log(input.dataset.required)
 
 		formValidation[inputId as keyof CustomerEntriesErrors] = inputRequired
 			? inputIsValid(inputId, inputValue)

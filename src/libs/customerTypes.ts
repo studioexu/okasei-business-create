@@ -25,6 +25,7 @@ export interface Picture {
 export interface CustomerEntries {
 	id?: number
 	branchNumber: string
+	corporateName?: string
 	customerName: string
 	kana: string
 	facilityNumber: string
@@ -68,6 +69,7 @@ export interface CustomerEntries {
 
 export interface CustomerEntriesErrors {
 	branchNumber: boolean
+	corporateName: boolean
 	customerName: boolean
 	kana: boolean
 	facilityNumber: boolean

@@ -38,8 +38,6 @@
 
 	let uploadModalIsShown = false
 
-	// type CustomerKeys = Object.keys(initialState).map(key => key)
-
 	// ADDRESS AUTO FILL
 
 	/**
@@ -86,15 +84,6 @@
 			e.preventDefault()
 
 			const submitResult = validationOnSubmit(formIsValid)
-
-			const formData = new FormData()
-
-			for (let key in initialState)
-				formData.append(key, <string>initialState[key as keyof CustomerEntries])
-
-			console.log('form Data')
-
-			console.log(formData)
 
 			departmentsError = []
 
@@ -235,15 +224,18 @@
 
 	<fieldset class="fieldset fieldset--info1">
 		<legend class="legend">情報１</legend>
+
 		<Row>
-			<InputTextNumber
-				label={'枝番'}
-				name={'branch-number'}
-				errorMsg={'数字４桁で入力して下さい'}
-				required={true}
-				bind:value={initialState.branchNumber}
-				bind:isValid={formIsValid.branchNumber}
-			/>
+			{#if initialState.businessType === 'C'}
+				<InputTextNumber
+					label={'枝番'}
+					name={'branch-number'}
+					errorMsg={'数字４桁で入力して下さい'}
+					required={true}
+					bind:value={initialState.branchNumber}
+					bind:isValid={formIsValid.branchNumber}
+				/>
+			{/if}
 
 			<Select
 				label={'決算月'}
@@ -254,12 +246,27 @@
 			/>
 		</Row>
 
+		{#if initialState.businessType === 'C'}
+			<Row>
+				<InputFreeText
+					label="法人名"
+					name="corporate-name"
+					placeholder={'○○法人'}
+					errorMsg={'法人名を入力して下さい'}
+					bind:value={initialState.corporateName}
+					bind:isValid={formIsValid.corporateName}
+				/>
+			</Row>
+		{/if}
+
 		<Row>
 			<InputFreeText
-				label="施設名"
+				label={initialState.businessType === 'C' ? '施設名' : '名前'}
 				name="customer-name"
 				placeholder={'株式会社○○'}
-				errorMsg={'施設名を入力して下さい'}
+				errorMsg={initialState.businessType === 'C'
+					? '施設名を入力して下さい'
+					: '顧客様の名前を入力して下さい'}
 				required={true}
 				bind:value={initialState.customerName}
 				bind:isValid={formIsValid.customerName}
@@ -279,14 +286,16 @@
 		</Row>
 
 		<Row>
-			<InputTextNumber
-				label="医療機関番号"
-				name="facility-number"
-				errorMsg={'正しい医療機関番号を入力して下さい'}
-				required={true}
-				bind:value={initialState.facilityNumber}
-				bind:isValid={formIsValid.facilityNumber}
-			/>
+			{#if initialState.businessType === 'C'}
+				<InputTextNumber
+					label="医療機関番号"
+					name="facility-number"
+					errorMsg={'正しい医療機関番号を入力して下さい'}
+					required={true}
+					bind:value={initialState.facilityNumber}
+					bind:isValid={formIsValid.facilityNumber}
+				/>
+			{/if}
 
 			<Select
 				label="個人／法人"
@@ -388,7 +397,6 @@
 				name="fax"
 				placeholder={'0000000000'}
 				errorMsg={'正しいFAX番号を入力して下さい'}
-				required={true}
 				bind:value={initialState.fax}
 				bind:isValid={formIsValid.fax}
 			/>
@@ -449,63 +457,66 @@
 	<fieldset class="fieldset fieldset--info2">
 		<legend class="legend">情報２</legend>
 
-		<Row>
-			<InputNumber
-				name={'number-of-employees'}
-				label={'従業員数'}
-				required={true}
-				bind:value={initialState.numberOfEmployees}
-				bind:isValid={formIsValid.numberOfEmployees}
-			/>
-		</Row>
-		<Row>
-			<InputFreeText
-				label="事業内容"
-				name="business-content"
-				placeholder={'未入力'}
-				errorMsg={'200文字以内で入力してください'}
-				bind:value={initialState.business}
-			/>
-		</Row>
-		<Row>
-			<InputAddress
-				label="ホームページ"
-				name="homepage"
-				errorMsg={'200文字以内で入力してください'}
-				bind:value={initialState.homepage}
-				bind:isValid={formIsValid.homepage}
-			/>
-		</Row>
-		<Row>
-			<Select
-				label={'Google評価'}
-				name={'"google-review"'}
-				options={[
-					{ value: false, text: '無し' },
-					{ value: true, text: '★有り' }
-				]}
-				bind:value={initialState.googleReview}
-			/>
-
-			{#if initialState.googleReview}
-				<InputFreeText
-					label="口コミ"
-					name="commnents"
-					placeholder={'件数、内容など'}
-					errorMsg={'200文字以内で入力してください'}
-					bind:value={initialState.reviews}
+		{#if initialState.businessType === 'C'}
+			<Row>
+				<InputNumber
+					name={'number-of-employees'}
+					label={'従業員数'}
+					required={true}
+					bind:value={initialState.numberOfEmployees}
+					bind:isValid={formIsValid.numberOfEmployees}
 				/>
-			{/if}
-		</Row>
-		<Row>
-			<InputNumber
-				name={'number-of-branches'}
-				label={'関連施設拠点数'}
-				required={true}
-				bind:value={initialState.numberOfFacilities}
-				bind:isValid={formIsValid.numberOfFacilities}
-			/>
-		</Row>
+			</Row>
+			<Row>
+				<InputFreeText
+					label="事業内容"
+					name="business-content"
+					placeholder={'未入力'}
+					errorMsg={'200文字以内で入力してください'}
+					bind:value={initialState.business}
+				/>
+			</Row>
+			<Row>
+				<InputAddress
+					label="ホームページ"
+					name="homepage"
+					errorMsg={'200文字以内で入力してください'}
+					bind:value={initialState.homepage}
+					bind:isValid={formIsValid.homepage}
+				/>
+			</Row>
+			<Row>
+				<Select
+					label={'Google評価'}
+					name={'"google-review"'}
+					options={[
+						{ value: false, text: '無し' },
+						{ value: true, text: '★有り' }
+					]}
+					bind:value={initialState.googleReview}
+				/>
+
+				{#if initialState.googleReview}
+					<InputFreeText
+						label="口コミ"
+						name="commnents"
+						placeholder={'件数、内容など'}
+						errorMsg={'200文字以内で入力してください'}
+						bind:value={initialState.reviews}
+					/>
+				{/if}
+			</Row>
+			<Row>
+				<InputNumber
+					name={'number-of-branches'}
+					label={'関連施設拠点数'}
+					required={true}
+					bind:value={initialState.numberOfFacilities}
+					bind:isValid={formIsValid.numberOfFacilities}
+				/>
+			</Row>
+		{/if}
+
 		<Row>
 			<InputFreeText
 				name={'miscellaneous'}

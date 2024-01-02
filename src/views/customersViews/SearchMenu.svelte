@@ -1,11 +1,15 @@
 <script lang="ts">
 	import type { CustomerFactory } from '@/Factories/CustomerFactory'
 
+	// import { getCustomersToDisplay } from '@/routes/customers/+page.svelte'
+
 	export let data: CustomerFactory[]
 	export let customersToDisplay: CustomerFactory[]
 	export let deletedCustomersAreShown: boolean
 	export let filteredCustomers: CustomerFactory[]
 	export let currentPage: number
+	export let getCustomersToDisplay: Function
+	export let companyIsShown: boolean
 
 	$: filteredCustomers
 	$: currentPage
@@ -89,6 +93,10 @@
 		customersToDisplay = deletedCustomersAreShown
 			? filteredCustomers
 			: filteredCustomers.filter(customer => customer.isActive)
+
+		customersToDisplay = companyIsShown
+			? customersToDisplay.filter(customer => customer.custType === 'C')
+			: customersToDisplay.filter(customer => customer.custType === 'I')
 	}
 </script>
 

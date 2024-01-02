@@ -23,6 +23,7 @@
 	let initialState: CustomerEntries = {
 		id: customer.id,
 		branchNumber: customer.custBranchCD,
+		corporateName: customer.corporateName,
 		customerName: customer.custName,
 		kana: customer.custKana,
 		facilityNumber: customer.instId,

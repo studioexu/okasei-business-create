@@ -9,6 +9,7 @@
 	export let currentUser: string = ''
 	export let customersToDisplayOnPage: CustomerFactory[]
 	export let isShown: boolean
+	export let companyIsShown: boolean
 
 	const [send, receive] = crossfade({})
 
@@ -45,14 +46,19 @@
 {:else}
 	<div class="table-wrapper">
 		<table class="customer-list">
-			<thead class="table-header">
+			<thead class="table-head">
 				<tr class="row">
-					<th>顧客番号</th>
-					<th>施設名</th>
-					<th>住所</th>
-					<th>登録日</th>
-					<th>編集</th>
-					<th>削除</th>
+					<th class="theader">顧客番号</th>
+					{#if companyIsShown}
+						<th class="theader">法人名</th>
+						<th class="theader">施設名</th>
+					{:else}
+						<th class="theader">顧客名</th>
+					{/if}
+					<th class="theader">住所</th>
+					<th class="theader">登録日</th>
+					<th class="theader">編集</th>
+					<th class="theader">削除</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -67,6 +73,10 @@
 						on:click={handleRowClick}
 					>
 						<td class="data customer-number">{customer.id}</td>
+
+						{#if companyIsShown}
+							<td class="data corporate-name">{customer.corporateName}</td>
+						{/if}
 
 						<td class="data facility-name">{customer.custName}</td>
 
@@ -114,8 +124,12 @@
 		overflow: hidden;
 	}
 
-	.table-header {
-		display: none;
+	.table-head {
+		.theader {
+			font-weight: bold;
+			background-color: var(--back);
+			color: var(--primary);
+		}
 	}
 
 	.customer-list {

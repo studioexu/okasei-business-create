@@ -3,6 +3,7 @@
 <script lang="ts">
 	import { enhance } from '$app/forms'
 	import { goto } from '$app/navigation'
+	import { page } from '$app/stores'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
 
 	import InputDate from '@/components/InputDate.svelte'
@@ -17,6 +18,10 @@
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 
 	let confirmationPageIsShown = false
+
+	const purchase = $purchases.find(purchase => purchase.id.toString() === $page.params.id)
+
+	console.log(purchase)
 
 	interface InitialStatePurchase {
 		orderNumber: string
@@ -44,7 +49,22 @@
 		image: ''
 	}
 
-	// $: console.log(initialState)
+	if (purchase !== undefined) {
+		initialState = {
+			orderNumber: purchase?.orderNumber,
+			customerName: purchase?.customerName,
+			status: purchase?.status,
+			model: purchase?.model,
+			motor: purchase?.motor,
+			size: purchase?.size,
+			arrivalDate: purchase?.arrivalDate,
+			marketPrice: purchase?.marketPrice,
+			sellingPrice: purchase?.sellingPrice,
+			image: purchase?.image
+		}
+	}
+
+	$: console.log(initialState)
 
 	const goBack = () => goto('/purchases')
 
@@ -152,10 +172,6 @@
 	 */
 	const handleSubmit = debounce(async (event: Event) => {
 		event.preventDefault()
-		if (!confirmationPageIsShown) {
-			confirmationPageIsShown = true
-			return
-		}
 
 		if (confirmationPageIsShown) {
 			try {
@@ -209,6 +225,11 @@
 				isSucceeded = false
 			}
 		}
+
+		if (!confirmationPageIsShown) {
+			confirmationPageIsShown = true
+			return
+		}
 	}, 200)
 </script>
 
@@ -219,7 +240,6 @@
 			method="POST"
 			action="/purchases/new?/create"
 			id="purchase-form"
-			on:submit={handleSubmit}
 			enctype="multipart/form-data"
 			use:enhance={({ formElement, formData, action, cancel, submitter }) => {
 				//submit the form, only once it succeeded.
@@ -230,6 +250,7 @@
 					await update({ reset: false })
 				}
 			}}
+			on:submit={handleSubmit}
 		>
 			<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
 
@@ -389,6 +410,7 @@
 		border: 2px dashed #fff;
 		border-radius: 12px;
 		text-align: center;
+
 		aspect-ratio: 16/9;
 
 		p {

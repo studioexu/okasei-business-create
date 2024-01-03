@@ -5,46 +5,90 @@
 	import Row from '@/components/Row.svelte'
 	import { purchases } from '@/stores/purchases'
 	import { page } from '$app/stores'
+	import { toCamelCase } from '@/libs/formatters'
+	import { goto } from '$app/navigation'
 
 	const purchase = $purchases.find(purchase => purchase.id.toString() === $page.params.id)
 
+	interface InitialStatePurchase {
+		orderNumber: string
+		customerName: string
+		status: string
+		model: string
+		motor: string
+		size: string
+		arrivalDate: string
+		marketPrice: number
+		sellingPrice: number
+		image: string
+	}
+
+	let initialState: InitialStatePurchase = {
+		orderNumber: '',
+		customerName: '',
+		status: '',
+		model: '',
+		motor: '',
+		size: '',
+		arrivalDate: '',
+		marketPrice: 0,
+		sellingPrice: 0,
+		image: ''
+	}
+
+	if (purchase !== undefined) {
+		initialState = {
+			orderNumber: purchase?.orderNumber,
+			customerName: purchase?.customerName,
+			status: purchase?.status,
+			model: purchase?.model,
+			motor: purchase?.motor,
+			size: purchase?.size,
+			arrivalDate: purchase?.arrivalDate,
+			marketPrice: purchase?.marketPrice,
+			sellingPrice: purchase?.sellingPrice,
+			image: purchase?.image
+		}
+	}
+
 	const infoFieldsets = [
 		{
-			id: 'customer-name',
-			label: 'お客様名',
-			content: purchase?.customerName
+			id: 'customerName',
+			label: 'お客様名'
 		},
 		{
 			id: 'model',
-			label: '機種',
-			content: purchase?.model
+			label: '機種'
 		},
 		{
 			id: 'motor',
-			label: 'モーター',
-			content: purchase?.motor
+			label: 'モーター'
 		},
 		{
 			id: 'size',
-			label: 'サイズ',
-			content: purchase?.size
+			label: 'サイズ'
 		},
 		{
-			id: 'arrival-date',
-			label: '入荷日',
-			content: purchase?.arrivalDate
+			id: 'arrivalDate',
+			label: '入荷日'
 		},
 		{
-			id: 'market-price',
-			label: '相場',
-			content: purchase?.marketPrice
+			id: 'marketPrice',
+			label: '運賃'
 		},
 		{
-			id: 'selling-price',
-			label: '買取額',
-			content: purchase?.sellingPrice
+			id: 'sellingPrice',
+			label: '買取額'
 		}
-	]
+	] as {
+		id: string & keyof InitialStatePurchase
+		label: string
+		content?: string | number
+	}[]
+
+	const handleEditClick = () => {
+		goto('/purchases/' + $page.params.id + '/edit')
+	}
 </script>
 
 <section class="section">
@@ -57,17 +101,23 @@
 							<DetailWrapper
 								label={fieldset.label}
 								id={fieldset.id}
-								content={fieldset.content?.toString()}
+								content={initialState[fieldset.id].toString()}
 							/>
 						</Row>
 					{/if}
 				{/each}
 			</div>
 			<div class="picture">
-				<div class="image-wrapper" />
+				<div class="image-wrapper">
+					<img src={initialState.image} alt="" />
+				</div>
 			</div>
 		</div>
 	</div>
+
+	<footer class="section__footer">
+		<button type="button" class="secondary" on:click={handleEditClick}>編集</button>
+	</footer>
 </section>
 
 <style lang="scss">

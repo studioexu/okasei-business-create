@@ -68,7 +68,7 @@
 		{ label: 'モーター', id: 'motor' },
 		{ label: 'サイズ', id: 'size' },
 		{ label: '入荷日', id: 'arrivalDate' },
-		{ label: '相場', id: 'marketPrice' },
+		{ label: '運賃', id: 'marketPrice' },
 		{ label: '買取額', id: 'sellingPrice' }
 	]
 
@@ -110,7 +110,8 @@
 							size: '',
 							arrivalDate: '',
 							marketPrice: 0,
-							sellingPrice: 0
+							sellingPrice: 0,
+							image: ''
 						})
 
 						goto('/purchases')
@@ -146,7 +147,7 @@
 	}
 
 	const handleEditItem = (index: number) => {
-		window.location.href = '/purchases/' + index + '/edit'
+		goto('/purchases/' + index + '/edit')
 	}
 </script>
 
@@ -206,6 +207,12 @@
 													: 'fill--full'}"
 											/>
 										</div>
+									</td>
+								{:else if header.id === 'orderNumber'}
+									<td class="tdata">
+										<a href={'/purchases/' + purchase.id}>
+											{purchase.orderNumber}
+										</a>
 									</td>
 								{:else}
 									<td class="tdata">{purchase[header.id]}</td>

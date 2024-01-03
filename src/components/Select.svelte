@@ -9,6 +9,8 @@
 	export let isValid: boolean = true
 	export let errorMsg: string = ''
 	export let required: boolean = false
+
+	console.log(value)
 </script>
 
 <div class="input-wrapper {isValid ? '' : 'error'}">

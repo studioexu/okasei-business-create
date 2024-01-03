@@ -11,4 +11,5 @@ export interface Purchase {
 	arrivalDate: string
 	marketPrice: number
 	sellingPrice: number
+	image: string
 }

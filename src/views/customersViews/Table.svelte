@@ -127,6 +127,8 @@
 	.table-head {
 		.theader {
 			font-weight: bold;
+			height: 42px;
+
 			background-color: var(--back);
 			color: var(--primary);
 		}

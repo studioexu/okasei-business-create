@@ -159,18 +159,19 @@
 							{#if isAdmin}
 								<!-- svelte-ignore a11y-click-events-have-key-events -->
 								<!-- svelte-ignore a11y-no-static-element-interactions -->
-								<td class="icon"
-									><span
+								<td class="icon">
+									<span
 										on:click={() => goto(`/users/${dividedUsers[current][index].employeeNumber}`)}
-										><Icon icon={{ path: 'edit', color: '#0093d0' }} /></span
-									></td
-								>
+									>
+										<Icon icon={{ path: 'edit', color: 'primary' }} /></span
+									>
+								</td>
 								<!-- svelte-ignore a11y-click-events-have-key-events -->
 								<!-- svelte-ignore a11y-no-static-element-interactions -->
 								<td class="icon">
-									<span on:click={() => openModal(index)}
-										><Icon icon={{ path: 'delete', color: '#0093d0' }} /></span
-									>
+									<span on:click={() => openModal(index)}>
+										<Icon icon={{ path: 'delete', color: 'primary' }} />
+									</span>
 								</td>
 							{/if}
 						</tr>

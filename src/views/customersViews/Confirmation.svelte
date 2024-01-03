@@ -1,14 +1,18 @@
 <script lang="ts">
 	import { fly } from 'svelte/transition'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
+	import Row from '@/components/Row.svelte'
+
 	import type { CustomerEntries } from '@/libs/customerTypes'
 	import { getTotalOfBeds } from '@/libs/utils'
-	import Row from '@/components/Row.svelte'
+
 	export let initialState: CustomerEntries
 
 	let bedTotal: number = 0
 
 	$: bedTotal = getTotalOfBeds(initialState.departments)
+
+	const isCompany: boolean = initialState.businessType === 'C'
 </script>
 
 <div class="confirmation" in:fly={{ x: 200, duration: 1000 }}>
@@ -18,11 +22,24 @@
 			content={initialState.id !== undefined ? initialState.id.toString() : ''}
 			label={'顧客番号'}
 		/>
-		<DetailWrapper id="branch-number" content={initialState.branchNumber} label={'枝番'} />
+		{#if isCompany}
+			<DetailWrapper id="branch-number" content={initialState.branchNumber} label={'枝番'} />
+		{/if}
 		<DetailWrapper id="closing-month" content={initialState.closingMonth} label={'決算月'} />
 	</Row>
+
+	{#if isCompany}
+		<Row>
+			<DetailWrapper id="corporate-name" content={initialState.corporateName} label={'法人名'} />
+		</Row>
+	{/if}
+
 	<Row>
-		<DetailWrapper id="customer-name" content={initialState.customerName} label={'施設名'} />
+		<DetailWrapper
+			id="customer-name"
+			content={initialState.customerName}
+			label={isCompany ? '施設名' : '名前'}
+		/>
 	</Row>
 
 	<Row>
@@ -30,11 +47,13 @@
 	</Row>
 
 	<Row>
-		<DetailWrapper
-			id="facility-number"
-			content={initialState.facilityNumber}
-			label={'医療機関番号'}
-		/>
+		{#if isCompany}
+			<DetailWrapper
+				id="facility-number"
+				content={initialState.facilityNumber}
+				label={'医療機関番号'}
+			/>
+		{/if}
 
 		<DetailWrapper
 			id="business-type"
@@ -63,47 +82,51 @@
 	<Row>
 		<DetailWrapper id="email" content={initialState.email} label={'メール'} />
 	</Row>
-	<Row>
-		<DetailWrapper id="homepage" content={initialState.homepage} label={'ホームページ'} />
-	</Row>
-	<Row>
-		<DetailWrapper
-			id="number-of-employees"
-			content={initialState.numberOfEmployees.toString()}
-			label={'従業員数'}
-			unit={'名'}
-		/>
-	</Row>
-	<Row>
-		<DetailWrapper
-			id="number-of-facilities"
-			content={initialState.numberOfFacilities.toString()}
-			label={'関連施設拠点数'}
-			unit={'軒'}
-		/>
-	</Row>
 
-	<Row>
-		<DetailWrapper
-			id="google-review"
-			content={initialState.reviews !== undefined ? initialState.reviews : ''}
-			label={'口コミ'}
-		/>
-	</Row>
+	{#if isCompany}
+		<Row>
+			<DetailWrapper id="homepage" content={initialState.homepage} label={'ホームページ'} />
+		</Row>
 
-	<Row>
-		<DetailWrapper
-			id="business-list"
-			content={initialState.business !== undefined ? initialState.business : ''}
-			label={'事業一覧'}
-		/>
-	</Row>
+		<Row>
+			<DetailWrapper
+				id="number-of-employees"
+				content={initialState.numberOfEmployees.toString()}
+				label={'従業員数'}
+				unit={'名'}
+			/>
+		</Row>
+		<Row>
+			<DetailWrapper
+				id="number-of-facilities"
+				content={initialState.numberOfFacilities.toString()}
+				label={'関連施設拠点数'}
+				unit={'軒'}
+			/>
+		</Row>
 
-	<Row>
-		<DetailWrapper content={initialState.year} label={'設立年月日'} unit={'年'} />
-		<DetailWrapper content={initialState.month} unit={'月'} />
-		<DetailWrapper content={initialState.founder} label={'設立者'} />
-	</Row>
+		<Row>
+			<DetailWrapper
+				id="google-review"
+				content={initialState.reviews !== undefined ? initialState.reviews : ''}
+				label={'口コミ'}
+			/>
+		</Row>
+
+		<Row>
+			<DetailWrapper
+				id="business-list"
+				content={initialState.business !== undefined ? initialState.business : ''}
+				label={'事業一覧'}
+			/>
+		</Row>
+
+		<Row>
+			<DetailWrapper content={initialState.year} label={'設立年月日'} unit={'年'} />
+			<DetailWrapper content={initialState.month} unit={'月'} />
+			<DetailWrapper content={initialState.founder} label={'設立者'} />
+		</Row>
+	{/if}
 
 	<Row>
 		<div class="detail-wrapper bedding">
@@ -140,6 +163,10 @@
 	</Row>
 
 	<Row>
+		<DetailWrapper content={initialState.contactTime} label={'連絡の取りやすい時間'} />
+	</Row>
+
+	<Row>
 		<DetailWrapper content={initialState.miscellaneous} label={'その他'} />
 	</Row>
 
@@ -151,7 +178,8 @@
 					{#each initialState.pictures as image}
 						<article class="card">
 							<div class="image-wrapper">
-								<img src={URL.createObjectURL(image.file)} alt={image.memo} />
+								<!-- <img src={URL.createObjectURL(image.file)} alt={image.memo} /> -->
+								<img src={image.data} alt={image.memo} />
 							</div>
 							<h3 class="label">{image.memo}</h3>
 						</article>
@@ -182,6 +210,17 @@
 		&:last-child {
 			border: none;
 		}
+	}
+
+	:global(.detail-wrapper .label) {
+		color: var(--gray);
+		font-size: 18px;
+		font-weight: 500;
+		width: auto;
+	}
+
+	:global(.detail-wrapper:first-child .label) {
+		width: 130px;
 	}
 
 	.container {
@@ -223,17 +262,6 @@
 			align-items: center;
 			height: 31px;
 		}
-	}
-
-	:global(.detail-wrapper .label) {
-		color: var(--gray);
-		font-size: 18px;
-		font-weight: 500;
-		width: auto;
-	}
-
-	:global(.detail-wrapper:first-child .label) {
-		width: 130px;
 	}
 
 	.bed-wrapper {

@@ -9,6 +9,7 @@
 	export let currentUser: string = ''
 	export let customersToDisplayOnPage: CustomerFactory[]
 	export let isShown: boolean
+	export let companyIsShown: boolean
 
 	const [send, receive] = crossfade({})
 
@@ -41,18 +42,23 @@
 </script>
 
 {#if customersToDisplayOnPage === undefined}
-	<h2 class="no-data-message">データがありません。</h2>
+	<p class="no-data">データがございません。</p>
 {:else}
 	<div class="table-wrapper">
 		<table class="customer-list">
-			<thead class="table-header">
+			<thead class="table-head">
 				<tr class="row">
-					<th>顧客番号</th>
-					<th>施設名</th>
-					<th>住所</th>
-					<th>登録日</th>
-					<th>編集</th>
-					<th>削除</th>
+					<th class="theader">顧客番号</th>
+					{#if companyIsShown}
+						<th class="theader">法人名</th>
+						<th class="theader">施設名</th>
+					{:else}
+						<th class="theader">顧客名</th>
+					{/if}
+					<th class="theader">住所</th>
+					<th class="theader">登録日</th>
+					<th class="theader" />
+					<th class="theader" />
 				</tr>
 			</thead>
 			<tbody>
@@ -68,7 +74,11 @@
 					>
 						<td class="data customer-number">{customer.id}</td>
 
-						<td class="data facility-name">{customer.custName}</td>
+						{#if companyIsShown}
+							<td class="data corporate-name">{customer.corporateName}</td>
+						{/if}
+
+						<td class="data customer-name">{customer.custName}</td>
 
 						<td class="data address">{customer.address.prefecture}{customer.address.city}</td>
 
@@ -114,8 +124,14 @@
 		overflow: hidden;
 	}
 
-	.table-header {
-		display: none;
+	.table-head {
+		.theader {
+			font-weight: bold;
+			height: 42px;
+
+			background-color: var(--back);
+			color: var(--primary);
+		}
 	}
 
 	.customer-list {

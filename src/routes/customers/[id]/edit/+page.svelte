@@ -1,26 +1,29 @@
 <script lang="ts">
 	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes.js'
 
-	import { CustomerFactory } from '@/Factories/CustomerFactory'
+	import { CustomerFactory, CustomerImageFactory } from '@/Factories/CustomerFactory'
 
 	import { fade } from 'svelte/transition'
 	import { goto } from '$app/navigation'
-	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations.js'
 
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
-	import FormBis from '@/views/customersViews/FormBis.svelte'
 
 	export let data
 
-	let customer = new CustomerFactory(data.customer, 'newApi')
+	let customer = new CustomerFactory(data.customer, 'APIv1')
+	let images =
+		data.images.length !== undefined
+			? data.images.map((image: any) => new CustomerImageFactory(image, 'APIv1'))
+			: []
 	let confirmationPageIsShown = false
 	let departmentsList = data.departmentsList
 
 	let initialState: CustomerEntries = {
 		id: customer.id,
 		branchNumber: customer.custBranchCD,
+		corporateName: customer.corporateName,
 		customerName: customer.custName,
 		kana: customer.custKana,
 		facilityNumber: customer.instId,
@@ -52,7 +55,11 @@
 		personInChargeMemo: customer.personInChargeMemo,
 		approver: customer.approver,
 		contactTime: customer.contactTime,
-		pictures: customer.pictures,
+		pictures: images.map((image: CustomerImageFactory) => ({
+			data: image.data,
+			memo: image.memo,
+			id: image.id
+		})),
 		miscellaneous: customer.miscellaneous,
 		registrationDate: customer.registration.registDate,
 		registeredBy: customer.registration.registDateTime,
@@ -75,19 +82,6 @@
 	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 
 	Object.keys(initialState).map(key => (formIsValid = { ...formIsValid, [key]: true }))
-
-	const handleSubmitForm = () => {
-		departmentsError = []
-		const submitResult = validationOnSubmit(initialState, formIsValid)
-		initialState.departments.map(department => {
-			departmentsError.push({
-				department: inputIsValid('department', department),
-				numberOfBeds: !isNaN(department.numberOfBeds)
-			})
-		})
-		confirmationPageIsShown = submitResult.isValid
-		formIsValid = submitResult.formValidation
-	}
 </script>
 
 <section class="section section--form">
@@ -130,10 +124,8 @@
 						修正
 					</button>
 				</div>
-				<button type="submit" class="btn primary" form="registration-form">登録</button>
-			{:else}
-				<button type="button" class="btn primary" on:click={handleSubmitForm}>登録</button>
 			{/if}
+			<button type={'submit'} class="btn primary" form="registration-form">登録</button>
 		</footer>
 	{/if}
 </section>

@@ -41,6 +41,7 @@
 		bind:value
 		on:blur={handleBlurInput}
 		on:focus={() => (isValid = true)}
+		data-required={required}
 	/>
 	<span class="unit">{unit}</span>
 	<span class="font-error">数字で入力して下さい</span>

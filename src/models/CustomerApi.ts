@@ -1,25 +1,10 @@
-import type { CustomerEntries } from '@/libs/customerTypes'
-import type { Department } from './Customer'
+import type { Department, DepartmentApi, CustomerEntries } from '@/libs/customerTypes'
 
-export interface Picture {
-	file: File
-	memo: string
-}
-
-export interface DepartmentBackend {
-	department: {
-		id: number
-		cd1: string
-		cd2: string
-		name: string
-	}
-	number_of_beds: number
-}
-
-export class CustomerNewApi {
+export class CustomerApi {
 	[x: string]: any
 	id?: number
 	branch_cd: string
+	corporate_name?: string
 	name: string
 	kana: string
 	institution_cd: string
@@ -37,19 +22,33 @@ export class CustomerNewApi {
 	establish_date: string
 	establish_by: string
 	is_active: boolean
-	departments: { department_id: number; number_of_beds: number }[] | DepartmentBackend[]
+	departments: { department_id: number; number_of_beds: number }[] | DepartmentApi[]
 	register_at?: string
 	register_by?: number
 	update_at?: string
 	update_by?: number
 	delete_at?: string
 	delete_by?: number
+	email: string
+	images?: { image_data: string; image_memo?: string }[]
+	mobile: string
+	close_month?: number
+	business?: string
+	google_review: boolean
+	reviews?: string
+	miscellaneous?: string
+	personincharge?: string
+	personinchargerole?: string
+	personinchargememo?: string
+	approver?: string
+	contacttime?: string
 
 	constructor(data: CustomerEntries) {
 		if (data.id) {
 			this.id = data.id
 		}
 		this.branch_cd = data.branchNumber
+		this.corporate_name = data.corporateName
 		this.name = data.customerName
 		this.kana = data.kana
 		this.institution_cd = data.facilityNumber
@@ -79,5 +78,34 @@ export class CustomerNewApi {
 		this.update_by = data.updateBy
 		this.delete_at = data.deleteDate
 		this.delete_by = data.deleteBy
+		this.images = data.pictures.map(picture => {
+			return {
+				image_data: picture.data || '',
+				image_memo: picture.memo
+			}
+		})
+		this.email = data.email
+		this.mobile = data.mobile
+		this.close_month = parseInt(data.closingMonth) || undefined
+		this.business = data.business || undefined
+		this.google_review = data.googleReview
+		this.reviews = data.reviews || undefined
+		this.miscellaneous = data.miscellaneous || undefined
+		this.personincharge = data.personInCharge || undefined
+		this.personinchargerole = data.personInChargeRole || undefined
+		this.personinchargememo = data.personInChargeMemo || undefined
+		this.approver = data.approver || undefined
+		this.contacttime = data.contactTime || undefined
+	}
+}
+
+export class customerImagesBackend {
+	public id?: number
+	public image_data: string
+	public image_memo: string
+	constructor(data: any) {
+		this.id = data.id && data.id
+		this.image_data = data.data
+		this.image_memo = data.memo
 	}
 }

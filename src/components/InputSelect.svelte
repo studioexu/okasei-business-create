@@ -52,6 +52,7 @@
 		on:blur={handleChange}
 		on:click={() => (value = '')}
 		bind:value
+		data-required={required}
 	/>
 
 	{#if unit !== ''}

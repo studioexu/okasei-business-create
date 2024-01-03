@@ -6,6 +6,7 @@
 	export let deletedCustomersAreShown: boolean
 	export let filteredCustomers: CustomerFactory[]
 	export let currentPage: number
+	export let companyIsShown: boolean
 
 	$: filteredCustomers
 	$: currentPage
@@ -89,6 +90,10 @@
 		customersToDisplay = deletedCustomersAreShown
 			? filteredCustomers
 			: filteredCustomers.filter(customer => customer.isActive)
+
+		customersToDisplay = companyIsShown
+			? customersToDisplay.filter(customer => customer.custType === 'C')
+			: customersToDisplay.filter(customer => customer.custType === 'I')
 	}
 </script>
 

@@ -1,5 +1,7 @@
-<script lang="ts" context="module"></script>
-<script lang="ts"></script>
+<p>設定項目を選択してください。</p>
 
-
-<style></style>
+<style>
+  p {
+    text-align: center;
+  }
+</style>

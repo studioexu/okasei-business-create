@@ -2,12 +2,14 @@
 </script>
 
 <script lang="ts">
-	import type { Picture } from '@/libs/customerTypes'
 	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes'
+	import type { CustomerImageFactory } from '@/Factories/CustomerFactory'
 
 	import { enhance } from '$app/forms'
 	import { prefectures, months } from '@/data/data'
 	import { getTotalOfBeds } from '@/libs/utils'
+	import { convertDataToBase64 } from '@/libs/formatters'
+	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
 
 	import Input from '@/components/Input.svelte'
 	import Select from '@/components/Select.svelte'
@@ -22,8 +24,8 @@
 	import InputName from '@/components/InputName.svelte'
 	import InputFreeText from '@/components/InputFreeText.svelte'
 	import Row from '@/components/Row.svelte'
-	import ButtonDelete from '@/components/ButtonDelete.svelte'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
+	import ButtonDelete from '@/components/ButtonDelete.svelte'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -43,7 +45,7 @@
 	 * APIから郵便番号とマッチしている住所を読み込んで、InitialState.addressをアップデートする。
 	 * @param e
 	 */
-	const handlePostalCodeSearchSubmit = async (e: Event): Promise<void> => {
+	const getAddressWithPostalCode = async (e: Event): Promise<void> => {
 		e.preventDefault()
 
 		if (formIsValid.postalCode) {
@@ -72,10 +74,27 @@
 	 * If the user is in the entry verification page, then, we submit the form.
 	 *
 	 */
-	const handleSubmit = (): void => {
+	const handleSubmit = (e: Event): void => {
 		if (confirmationPageIsShown) {
 			isShown = true
 			isSucceeded = true
+		}
+
+		if (!confirmationPageIsShown) {
+			e.preventDefault()
+
+			const submitResult = validationOnSubmit(formIsValid)
+
+			departmentsError = []
+
+			initialState.departments.map(department => {
+				departmentsError.push({
+					department: inputIsValid('department', department),
+					numberOfBeds: !isNaN(department.numberOfBeds)
+				})
+			})
+			confirmationPageIsShown = submitResult.isValid
+			formIsValid = submitResult.formValidation
 		}
 	}
 
@@ -83,7 +102,7 @@
 
 	let phase: 'shown' | 'success' | 'error' = 'shown'
 
-	const onClick = (event: { detail: { key: string; fileToUpload: File } }) => {
+	const onClick = async (event: { detail: { key: string; fileToUpload: File } }) => {
 		switch (event.detail.key) {
 			case 'cancel':
 				uploadModalIsShown = false
@@ -93,7 +112,15 @@
 				try {
 					if (event.detail.fileToUpload !== undefined) {
 						let newArray = initialState.pictures
-						newArray.push({ file: event.detail.fileToUpload, memo: '' })
+						const convertedFile = await convertDataToBase64(event.detail.fileToUpload)
+						console.log(event.detail.fileToUpload)
+
+						const newPicture: CustomerImageFactory = {
+							memo: '',
+							data: convertedFile
+						}
+
+						newArray.push(newPicture)
 						initialState.pictures = newArray
 						phase = 'success'
 					} else {
@@ -129,7 +156,7 @@
 	 */
 	const handleDeleteImage = (index: number): void => {
 		initialState.pictures = initialState.pictures.filter(
-			(image: Picture) => initialState.pictures.indexOf(image) !== index
+			(image: CustomerImageFactory) => initialState.pictures.indexOf(image) !== index
 		)
 	}
 
@@ -181,23 +208,34 @@
 		? '/customers/new?/create'
 		: '/customers/' + initialState.id + '/edit?/update'}
 	id="registration-form"
-	on:submit={handleSubmit}
-	use:enhance
+	on:submit|preventDefault={handleSubmit}
+	use:enhance={({ formElement, formData, action, cancel, submitter }) => {
+		//submit the form, only once it succeeded.
+		isSucceeded ? submitter : cancel()
+
+		//Don't reset the form, if there are any errors during the validation.
+		return async ({ update }) => {
+			await update({ reset: false })
+		}
+	}}
 >
-	<input type="hidden" name="initialState" value={JSON.stringify(initialState)} />
+	<input hidden id="initial-state" name="initialState" value={JSON.stringify(initialState)} />
 	<p class="required-legend"><span class="required-mark">*</span> 必須</p>
 
 	<fieldset class="fieldset fieldset--info1">
 		<legend class="legend">情報１</legend>
+
 		<Row>
-			<InputTextNumber
-				label={'枝番'}
-				name={'branch-number'}
-				errorMsg={'数字４桁で入力して下さい'}
-				required={true}
-				bind:value={initialState.branchNumber}
-				bind:isValid={formIsValid.branchNumber}
-			/>
+			{#if initialState.businessType === 'C'}
+				<InputTextNumber
+					label={'枝番'}
+					name={'branch-number'}
+					errorMsg={'数字４桁で入力して下さい'}
+					required={true}
+					bind:value={initialState.branchNumber}
+					bind:isValid={formIsValid.branchNumber}
+				/>
+			{/if}
 
 			<Select
 				label={'決算月'}
@@ -208,12 +246,27 @@
 			/>
 		</Row>
 
+		{#if initialState.businessType === 'C'}
+			<Row>
+				<InputFreeText
+					label="法人名"
+					name="corporate-name"
+					placeholder={'○○法人'}
+					errorMsg={'法人名を入力して下さい'}
+					bind:value={initialState.corporateName}
+					bind:isValid={formIsValid.corporateName}
+				/>
+			</Row>
+		{/if}
+
 		<Row>
 			<InputFreeText
-				label="施設名"
+				label={initialState.businessType === 'C' ? '施設名' : '名前'}
 				name="customer-name"
 				placeholder={'株式会社○○'}
-				errorMsg={'施設名を入力して下さい'}
+				errorMsg={initialState.businessType === 'C'
+					? '施設名を入力して下さい'
+					: '顧客様の名前を入力して下さい'}
 				required={true}
 				bind:value={initialState.customerName}
 				bind:isValid={formIsValid.customerName}
@@ -233,14 +286,16 @@
 		</Row>
 
 		<Row>
-			<InputTextNumber
-				label="医療機関番号"
-				name="facility-number"
-				errorMsg={'正しい医療機関番号を入力して下さい'}
-				required={true}
-				bind:value={initialState.facilityNumber}
-				bind:isValid={formIsValid.facilityNumber}
-			/>
+			{#if initialState.businessType === 'C'}
+				<InputTextNumber
+					label="医療機関番号"
+					name="facility-number"
+					errorMsg={'正しい医療機関番号を入力して下さい'}
+					required={true}
+					bind:value={initialState.facilityNumber}
+					bind:isValid={formIsValid.facilityNumber}
+				/>
+			{/if}
 
 			<Select
 				label="個人／法人"
@@ -271,7 +326,7 @@
 				bind:isValid={formIsValid.postalCode}
 			/>
 
-			<button class="btn primary inline" on:click={handlePostalCodeSearchSubmit}>自動検索</button>
+			<button class="btn primary inline" on:click={getAddressWithPostalCode}>自動検索</button>
 		</Row>
 
 		<Row>
@@ -329,10 +384,10 @@
 				bind:isValid={formIsValid.phoneNumber}
 			/>
 			<InputTextNumber
-				name={'mobile-phone'}
+				name={'mobile'}
 				label={'携帯電話'}
-				placeholder={'未入力'}
-				errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
+				placeholder={'0000000000'}
+				errorMsg={'正しい携帯電話番号を入力して下さい'}
 				bind:value={initialState.mobile}
 				bind:isValid={formIsValid.mobile}
 			/>
@@ -341,8 +396,7 @@
 				label="FAX番号"
 				name="fax"
 				placeholder={'0000000000'}
-				errorMsg={'正しいFAX番号を入力して下さい（「ー」なし）'}
-				required={true}
+				errorMsg={'正しいFAX番号を入力して下さい'}
 				bind:value={initialState.fax}
 				bind:isValid={formIsValid.fax}
 			/>
@@ -395,7 +449,7 @@
 		<Row>
 			<div class="input-wrapper">
 				<span class="label" />
-				<button class="btn primary inline" on:click={handleAddDepartment}>+新規追加</button>
+				<button class="btn primary" on:click={handleAddDepartment}>+新規追加</button>
 			</div>
 		</Row>
 	</fieldset>
@@ -403,63 +457,66 @@
 	<fieldset class="fieldset fieldset--info2">
 		<legend class="legend">情報２</legend>
 
-		<Row>
-			<InputNumber
-				name={'number-of-employees'}
-				label={'従業員数'}
-				required={true}
-				bind:value={initialState.numberOfEmployees}
-				bind:isValid={formIsValid.numberOfEmployees}
-			/>
-		</Row>
-		<Row>
-			<InputFreeText
-				label="事業内容"
-				name="business-content"
-				placeholder={'未入力'}
-				errorMsg={'200文字以内で入力してください'}
-				bind:value={initialState.business}
-			/>
-		</Row>
-		<Row>
-			<InputAddress
-				label="ホームページ"
-				name="homepage"
-				errorMsg={'200文字以内で入力してください'}
-				bind:value={initialState.homepage}
-				bind:isValid={formIsValid.homepage}
-			/>
-		</Row>
-		<Row>
-			<Select
-				label={'Google評価'}
-				name={'"google-review"'}
-				options={[
-					{ value: false, text: '無し' },
-					{ value: true, text: '★有り' }
-				]}
-				bind:value={initialState.googleReview}
-			/>
-
-			{#if initialState.googleReview}
-				<InputFreeText
-					label="口コミ"
-					name="commnents"
-					placeholder={'件数、内容など'}
-					errorMsg={'200文字以内で入力してください'}
-					bind:value={initialState.reviews}
+		{#if initialState.businessType === 'C'}
+			<Row>
+				<InputNumber
+					name={'number-of-employees'}
+					label={'従業員数'}
+					required={true}
+					bind:value={initialState.numberOfEmployees}
+					bind:isValid={formIsValid.numberOfEmployees}
 				/>
-			{/if}
-		</Row>
-		<Row>
-			<InputNumber
-				name={'number-of-branches'}
-				label={'関連施設拠点数'}
-				required={true}
-				bind:value={initialState.numberOfFacilities}
-				bind:isValid={formIsValid.numberOfFacilities}
-			/>
-		</Row>
+			</Row>
+			<Row>
+				<InputFreeText
+					label="事業内容"
+					name="business-content"
+					placeholder={'未入力'}
+					errorMsg={'200文字以内で入力してください'}
+					bind:value={initialState.business}
+				/>
+			</Row>
+			<Row>
+				<InputAddress
+					label="ホームページ"
+					name="homepage"
+					errorMsg={'200文字以内で入力してください'}
+					bind:value={initialState.homepage}
+					bind:isValid={formIsValid.homepage}
+				/>
+			</Row>
+			<Row>
+				<Select
+					label={'Google評価'}
+					name={'"google-review"'}
+					options={[
+						{ value: false, text: '無し' },
+						{ value: true, text: '★有り' }
+					]}
+					bind:value={initialState.googleReview}
+				/>
+
+				{#if initialState.googleReview}
+					<InputFreeText
+						label="口コミ"
+						name="commnents"
+						placeholder={'件数、内容など'}
+						errorMsg={'200文字以内で入力してください'}
+						bind:value={initialState.reviews}
+					/>
+				{/if}
+			</Row>
+			<Row>
+				<InputNumber
+					name={'number-of-branches'}
+					label={'関連施設拠点数'}
+					required={true}
+					bind:value={initialState.numberOfFacilities}
+					bind:isValid={formIsValid.numberOfFacilities}
+				/>
+			</Row>
+		{/if}
+
 		<Row>
 			<InputFreeText
 				name={'miscellaneous'}
@@ -517,16 +574,20 @@
 				<div class="container">
 					{#if initialState.pictures === undefined || initialState.pictures.length === 0}
 						<article class="card">
-							<button class="image-empty" on:click={() => (uploadModalIsShown = true)}>
+							<button
+								type="button"
+								class="image-empty"
+								on:click={() => (uploadModalIsShown = true)}
+							>
 								<span>+</span>
 							</button>
 							<p class="image-description">画像がアップロードされていません。</p>
 						</article>
 					{:else}
 						{#each initialState.pictures as image, index}
-							<article class="card" id={image.file.name}>
+							<article class="card">
 								<div class="image-wrapper">
-									<img src={URL.createObjectURL(image.file)} alt="" />
+									<img src={image.data} alt="" />
 								</div>
 
 								<InputFreeText
@@ -544,11 +605,7 @@
 		<Row>
 			<div class="input-wrapper">
 				<span class="label" />
-				<button
-					type="button"
-					class="btn primary inline"
-					on:click={() => (uploadModalIsShown = true)}
-				>
+				<button type="button" class="btn add primary" on:click={() => (uploadModalIsShown = true)}>
 					＋画像追加
 				</button>
 			</div>
@@ -658,10 +715,6 @@
 			top: 0;
 			object-fit: contain;
 		}
-	}
-
-	.bed-total {
-		align-self: flex-end;
 	}
 
 	@keyframes buzz {

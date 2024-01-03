@@ -15,8 +15,10 @@
 	export let data
 
 	let allCustomers: CustomerFactory[] = data.data.map(
-		customer => new CustomerFactory(customer, 'newApi')
+		customer => new CustomerFactory(customer, 'APIv1')
 	)
+
+	console.log(allCustomers)
 
 	let customersToDisplay = allCustomers.filter(customer => customer.isActive)
 	let filteredCustomers: CustomerFactory[]
@@ -49,12 +51,13 @@
 	 * 当ページを０にして、正しい顧客を表示するためにdisplayCustomersをコールする。
 	 * @param deletedCustomersAreShown: boolean
 	 */
-	const handleCheck = (deletedCustomersAreShown: boolean) => {
-		displayCustomers(deletedCustomersAreShown)
+	const handleCheck = (deletedCustomersAreShown: boolean, companyIsShown: boolean) => {
+		// displayCustomers(deletedCustomersAreShown)
+		getCustomersToDisplay(companyIsShown, deletedCustomersAreShown)
 		currentPage = 0
 	}
 
-	$: handleCheck(deletedCustomersAreShown)
+	$: handleCheck(deletedCustomersAreShown, companyIsShown)
 
 	// DELETE MODAL
 
@@ -81,7 +84,8 @@
 							submitBtn?.click()
 						}
 
-						displayCustomers(deletedCustomersAreShown)
+						// displayCustomers(deletedCustomersAreShown)
+						getCustomersToDisplay(companyIsShown, deletedCustomersAreShown)
 
 						goto('/customers')
 						phase = 'success'
@@ -117,6 +121,56 @@
 		customersToDisplay.length > 0
 			? customersToDisplay.flatMap((_, i, self) => (i % 6 ? [] : [self.slice(i, i + 6)]))
 			: []
+
+	$: companyIsShown = true
+
+	/**
+	 * Filter the customers depending on the options selected: customer's type (business or individual), show the deleted customers.
+	 * 選択したオプションによる顧客を表示する：顧客タイプ（法人もしくは個人）、削除された顧客。
+	 * @param companyIsShown:boolean
+	 * @param deletedCustomersAreShown:boolean
+	 */
+	export const getCustomersToDisplay = (
+		companyIsShown: boolean,
+		deletedCustomersAreShown: boolean
+	) => {
+		let customers = filteredCustomers === undefined ? allCustomers : filteredCustomers
+
+		customers = getCustomersByType(customers, companyIsShown)
+		customers = getDeletedCustomers(customers, deletedCustomersAreShown)
+
+		customersToDisplay = customers
+	}
+
+	/**
+	 * It will filter the type of customers the user wants to display (Individual or Company)
+	 * ユーザーを選び、タイプによる顧客を表示する（法人もしくは個人）。
+	 * @param customers: CustomerFatacory[], the array of customers which is going to be filtered
+	 * @param companyIsShown: boolean
+	 */
+	const getCustomersByType = (customers: CustomerFactory[], companyIsShown: boolean) => {
+		companyIsShown
+			? (customers = customers.filter(customer => customer.custType === 'C'))
+			: (customers = customers.filter(customer => customer.custType === 'I'))
+
+		return customers
+	}
+
+	/**
+	 * The toggle is ON, we display all the customers (deleted and active).
+	 * トグルがONであれば、顧客を全員表示する。（削除された顧客もアクティブの顧客も）
+	 * The toggle is OFF, We only display the active customers.
+	 * トグルがONであれば、アクティブの顧客のみ表示する。
+	 * @param customers: CustomerFatacory[], the array of customers which is going to be filtered
+	 * @param deletedCustomersAreShown: boolean
+	 */
+	const getDeletedCustomers = (customers: CustomerFactory[], deletedCustomersAreShown: boolean) => {
+		deletedCustomersAreShown
+			? (customers = customers)
+			: (customers = customers.filter(customer => customer.isActive))
+
+		return customers
+	}
 </script>
 
 <section class="section section--customers-management" id="customers-management">
@@ -144,7 +198,8 @@
 			bind:customersToDisplay
 			bind:filteredCustomers
 			bind:currentPage
-			{deletedCustomersAreShown}
+			bind:deletedCustomersAreShown
+			bind:companyIsShown
 		/>
 
 		<div class="container">
@@ -173,6 +228,16 @@
 				</button>
 			</div>
 		</div>
+
+		<label for="display-comapany">
+			<input
+				type="checkbox"
+				name="display-comapany"
+				id="display-comapany"
+				bind:checked={companyIsShown}
+			/>
+			法人表示
+		</label>
 	</header>
 
 	<div class="section__main">
@@ -180,6 +245,7 @@
 			bind:customersToDisplayOnPage={dividedCustomers[currentPage]}
 			bind:currentUser
 			bind:isShown
+			bind:companyIsShown
 		/>
 	</div>
 
@@ -191,7 +257,6 @@
 <style lang="scss">
 	.section {
 		padding-bottom: 24px;
-		color: var(--black);
 
 		&__header {
 			margin-bottom: 2rem;
@@ -213,6 +278,7 @@
 		display: flex;
 		gap: 10px;
 		align-items: center;
+		color: var(--black);
 
 		.checkbox {
 			margin-right: 11px;

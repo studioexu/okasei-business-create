@@ -1,8 +1,13 @@
 import { error } from '@sveltejs/kit'
-import { loadData, updateCustomer, loadDepartments } from '@/libs/actions.js'
+import {
+	loadCustomerData,
+	updateCustomer,
+	loadDepartments,
+	loadCustomerImages
+} from '@/libs/actions.js'
 import type { CustomerEntries } from '@/libs/customerTypes.js'
 import { formatCustomer } from '@/libs/formatters.js'
-import type { CustomerNewApi } from '@/models/BackendCustomer.js'
+import type { CustomerApi } from '@/models/CustomerApi.js'
 import { currentApi, currentKey } from '@/data/api.js'
 import { debounce } from '@/libs/utils'
 
@@ -12,10 +17,12 @@ import { debounce } from '@/libs/utils'
  * @returns
  */
 export const load = async ({ params }) => {
-	const data: CustomerNewApi[] = await loadData(currentApi, currentKey)
+	const data: CustomerApi = await loadCustomerData(currentApi)
 	const departmentsList = await loadDepartments(currentApi)
-	const customer: CustomerNewApi | undefined = data.find(
-		(customer: CustomerNewApi) => customer.id?.toString() === params.id.toString()
+	const images = await loadCustomerImages(currentApi, params.id)
+
+	const customer: CustomerApi | undefined = data.find(
+		(customer: CustomerApi) => customer.id?.toString() === params.id.toString()
 	)
 
 	if (!customer) throw error(404)
@@ -23,7 +30,8 @@ export const load = async ({ params }) => {
 
 	return {
 		customer,
-		departmentsList
+		departmentsList,
+		images
 	}
 }
 
@@ -32,11 +40,12 @@ export const load = async ({ params }) => {
  * Here, we will only update the customer information. So, we just have only one action.
  */
 export const actions = {
-	update: debounce(async ({ request }) => {
+	update: async ({ request }) => {
 		const data = await request.formData()
 		const initialStateString = data.get('initialState')
 
-		let initialState: CustomerEntries = JSON.parse(initialStateString)
+		let initialState: CustomerEntries =
+			typeof initialStateString === 'string' && JSON.parse(initialStateString)
 
 		const updatedCustomer = formatCustomer('update', initialState)
 
@@ -44,5 +53,5 @@ export const actions = {
 			updateCustomer(updatedCustomer, currentApi, initialState.id)
 		}
 		return false
-	}, 200)
+	}
 }

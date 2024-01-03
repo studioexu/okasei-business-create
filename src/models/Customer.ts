@@ -1,4 +1,5 @@
-import type { CustomerNewApi } from './BackendCustomer'
+import type { CustomerApi } from './CustomerApi'
+import type { Department, DepartmentApi } from '@/libs/customerTypes'
 
 const splitDateTime = (timeString: string) => {
 	const dateTime = timeString.split('T')
@@ -12,30 +13,10 @@ const splitDateTime = (timeString: string) => {
 	}
 }
 
-export interface DepartmentBackend {
-	department: {
-		id: number
-		cd1: string
-		cd2: string
-		name: string
-	}
-	number_of_beds: number
-}
-
-export interface Department {
-	departmentId: number
-	departmentName: string
-	numberOfBeds: number
-}
-
-export interface Picture {
-	file: File
-	memo: string
-}
-
 export class Customer {
 	private _id?: number
 	private _custBranchCD: string
+	private _corporateName?: string
 	private _custName: string
 	private _custKana: string
 	private _instId: string
@@ -75,22 +56,22 @@ export class Customer {
 	}
 
 	private _googleReview: boolean
-	private _reviews: string
-	private _business: string
-	private _closingMonth: string
-	private _pictures: Picture[]
-	private _personInCharge: string
-	private _personInChargeMemo: string
-	private _personInChargeRole: string
-	private _approver: string
-	private _contactTime: string
-	private _miscellaneous: string
+	private _reviews?: string
+	private _business?: string
+	private _closingMonth?: string
+	private _personInCharge?: string
+	private _personInChargeMemo?: string
+	private _personInChargeRole?: string
+	private _approver?: string
+	private _contactTime?: string
+	private _miscellaneous?: string
 
-	constructor(data: CustomerNewApi) {
+	constructor(data: CustomerApi) {
 		if (data.id) {
 			this._id = data.id
 		}
 		this._custBranchCD = data.branch_cd
+		this._corporateName = data.corporate_name
 		this._custName = data.name
 		this._custKana = data.kana
 		this._instId = data.institution_cd
@@ -115,37 +96,35 @@ export class Customer {
 		}
 
 		this._isActive = data?.is_active
-
-		this._departments = data.departments.map(department => {
+		;(this._departments = data.departments.map(department => {
 			return {
-				departmentId: (department as DepartmentBackend).department.id,
-				departmentName: (department as DepartmentBackend).department.name,
-				numberOfBeds: (department as DepartmentBackend).number_of_beds
+				departmentId: (department as DepartmentApi).department.id,
+				departmentName: (department as DepartmentApi).department.name,
+				numberOfBeds: (department as DepartmentApi).number_of_beds
 			}
-		})
-		this._registration = {
-			registDate: data.register_at,
-			registBy: data.register_by
-		}
-		this._update = {
-			updateDate: data.update_at,
-			updateBy: data.update_by
-		}
-		;(this._delete = {
-			deleteDate: data.delete_at,
-			deleteBy: data.delete_by
-		}),
-			(this._googleReview = data.googleReview ? data.googleReview : false),
-			(this._reviews = data.reviews ? data.reviews : ''),
-			(this._business = data.business ? data.business : ''),
-			(this._closingMonth = data.closingMonth ? data.closingMonth : ''),
-			(this._pictures = data.pictures ? data.pictures : []),
-			(this._personInCharge = data.personInCharge),
-			(this._personInChargeMemo = data.personInChargeMemo),
-			(this._personInChargeRole = data.personInChargeRole),
-			(this._approver = data.approver),
-			(this._contactTime = data.contactTime),
-			(this._miscellaneous = data.miscellaneous)
+		})),
+			(this._registration = {
+				registDate: data.register_at,
+				registBy: data.register_by
+			}),
+			(this._update = {
+				updateDate: data.update_at,
+				updateBy: data.update_by
+			}),
+			(this._delete = {
+				deleteDate: data.delete_at,
+				deleteBy: data.delete_by
+			}),
+			(this._googleReview = data.google_review)
+		this._reviews = data.reviews
+		this._business = data.business
+		this._closingMonth = data.close_month?.toString()
+		this._personInCharge = data.personincharge
+		this._personInChargeMemo = data.personinchargememo
+		this._personInChargeRole = data.personinchargerole
+		this._approver = data.approver
+		this._contactTime = data.contacttime
+		this._miscellaneous = data.miscellaneous
 	}
 
 	public get id() {
@@ -154,6 +133,10 @@ export class Customer {
 
 	public get custBranchCD() {
 		return this._custBranchCD
+	}
+
+	public get corporateName() {
+		return this._corporateName
 	}
 
 	public get custName() {
@@ -251,9 +234,6 @@ export class Customer {
 	public get closingMonth() {
 		return this._closingMonth
 	}
-	public get pictures() {
-		return this._pictures
-	}
 	public get personInCharge() {
 		return this._personInCharge
 	}
@@ -274,5 +254,28 @@ export class Customer {
 
 	public get miscellaneous() {
 		return this._miscellaneous
+	}
+}
+
+export class CustomerImage {
+	private _id?: number
+	private _data: string
+	private _memo: string
+	constructor(data: any) {
+		this._id = data.id && data.id
+		this._data = data.image_data
+		this._memo = data.image_memo
+	}
+
+	public get id() {
+		return this._id
+	}
+
+	public get data() {
+		return this._data
+	}
+
+	public get memo() {
+		return this._memo
 	}
 }

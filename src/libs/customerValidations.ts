@@ -1,8 +1,8 @@
 import { prefectures } from '@/data/data'
 import { isValidPhoneNumber } from 'libphonenumber-js'
-import type { CustomerEntries, CustomerEntriesErrors } from './customerTypes'
-import type { Department } from '@/models/Customer'
-import type { NegotiationEntries, NegotiationErrors } from './negotiationTypes'
+import type { CustomerEntriesErrors } from './customerTypes'
+import type { Department } from './customerTypes'
+import { toCamelCase } from './formatters'
 
 /**
  * We want to check if the user only use katakana
@@ -148,6 +148,7 @@ export const inputIsValid = (name: string, input: any): boolean => {
 
 		case 'address1':
 		case 'address2':
+		case 'address':
 			return numberOfCharacterValidation(input, 200)
 
 		case 'founder':
@@ -172,58 +173,25 @@ export const inputIsValid = (name: string, input: any): boolean => {
  * @returns boolean
  */
 export const validationOnSubmit = (
-	formEntries: CustomerEntries,
 	formValidation: CustomerEntriesErrors
 ): { isValid: boolean; formValidation: CustomerEntriesErrors } => {
 	let errorArray: boolean[] = []
 	let isValid = true
 
-	const requiredField = {
-		branchNumber: true,
-		customerName: true,
-		kana: true,
-		facilityNumber: true,
-		businessType: true,
-		postalCode: true,
-		prefecture: true,
-		city: true,
-		address1: true,
-		address2: true,
-		phoneNumber: true,
-		fax: true,
-		email: false,
-		mobile: false,
-		year: false,
-		month: false,
-		founder: false,
-		departments: false,
-		numberOfEmployees: false,
-		homepage: false,
-		numberOfFacilities: false,
-		isActive: false,
-		googleReview: false,
-		reviews: false,
-		businessContent: false,
-		closingMonth: false,
-		personInCharge: false,
-		personInChargeRole: false,
-		personInChargeMemo: false,
-		approver: false,
-		contactTime: false,
-		pictures: false,
-		miscellaneous: false,
-		foundationDate: false
-	}
+	console.log('yo')
 
-	Object.keys(formEntries).map(key => {
-		const input = formEntries[key as keyof CustomerEntries]
+	document.querySelectorAll('.input').forEach((input: any) => {
+		const inputId = toCamelCase(input.id)
+		const inputValue = input.value
+		const inputRequired: boolean = input.dataset.required === 'true'
 
-		formValidation[key as keyof CustomerEntriesErrors] = !requiredField[
-			key as keyof CustomerEntriesErrors
-		]
-			? input === '' || inputIsValid(key, input)
-			: inputIsValid(key, input)
-		errorArray.push(!formValidation[key as keyof CustomerEntriesErrors])
+		console.log(input.dataset.required)
+
+		formValidation[inputId as keyof CustomerEntriesErrors] = inputRequired
+			? inputIsValid(inputId, inputValue)
+			: inputValue === '' || inputIsValid(inputId, inputValue)
+
+		errorArray.push(!formValidation[inputId as keyof CustomerEntriesErrors])
 	})
 
 	errorArray.forEach(error => {

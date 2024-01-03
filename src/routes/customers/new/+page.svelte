@@ -5,8 +5,6 @@
 	import Confirmation from '@/views/customersViews/Confirmation.svelte'
 	import Form from '@/views/customersViews/Form.svelte'
 	import ResultModal from '@/views/modals/ResultModal.svelte'
-
-	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
 	import { fade } from 'svelte/transition'
 
 	let confirmationPageIsShown = false
@@ -17,8 +15,6 @@
 		goto('/customers')
 	}
 
-	$: console.log(initialState)
-
 	export let data
 
 	let departmentsList = data.departmentsList
@@ -26,6 +22,7 @@
 	let initialState: CustomerEntries = {
 		id: 0,
 		branchNumber: '',
+		corporateName: '',
 		customerName: '',
 		kana: '',
 		facilityNumber: '',
@@ -61,25 +58,11 @@
 		foundationDate: ''
 	}
 
+	//FORM VALIDATIONS
 	let formIsValid: CustomerEntriesErrors
-
-	Object.keys(initialState).map(key => (formIsValid = { ...formIsValid, [key]: true }))
-
 	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 
-	const handleSubmitForm = () => {
-		departmentsError = []
-
-		const submitResult = validationOnSubmit(initialState, formIsValid)
-		initialState.departments.map(department => {
-			departmentsError.push({
-				department: inputIsValid('department', department),
-				numberOfBeds: !isNaN(department.numberOfBeds)
-			})
-		})
-		confirmationPageIsShown = submitResult.isValid
-		formIsValid = submitResult.formValidation
-	}
+	Object.keys(initialState).map(key => (formIsValid = { ...formIsValid, [key]: true }))
 </script>
 
 <section class="section section--form">
@@ -124,10 +107,8 @@
 						修正
 					</button>
 				</div>
-				<button type="submit" class="btn primary" form="registration-form">登録</button>
-			{:else}
-				<button type="button" class="btn primary" on:click={handleSubmitForm}> 登録 </button>
 			{/if}
+			<button type={'submit'} class="btn primary" form="registration-form">登録</button>
 		</footer>
 	{/if}
 </section>

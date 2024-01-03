@@ -1,3 +1,25 @@
+export type Condition = '' | 'A' | 'B' | 'C' | 'M' | 'MM'
+export type Status = '' | '受注' | '新規受注' | '再問合せ' | '見送り' | '失注' | '在庫無し'
+export type Inflow =
+	| ''
+	| '新規FAX'
+	| '新規HP'
+	| '新規メール'
+	| '新規営業'
+	| '顧客'
+	| '顧客FAX'
+	| '顧客HP'
+	| '顧客メール'
+	| '確認中'
+	| '新規紹介'
+	| '失注顧客'
+
+export type Preference = '' | '新品・中古' | '新品' | '中古' | '不明' | '確認前' | '無し'
+
+export type Communication = '' | '新規依頼' | '新規送付済み' | '顧客登録済み'
+
+export type Dm = '' | '不要' | '要(未手配)' | '郵送済み' | '持参'
+
 export interface Item {
 	name: string
 	quantity: number
@@ -31,11 +53,11 @@ export interface Checkbox {
 export interface NegotiationEntries {
 	custCd: number
 	negotiationId: number
-	status: string
+	status: Status
 	startingDate: string
-	condition: string
-	inflow: string
-	preference: string
+	condition: Condition
+	inflow: Inflow
+	preference: Preference
 	billingDate: string
 	scheduledDeposit: string
 	outcome: string
@@ -53,8 +75,8 @@ export interface NegotiationEntries {
 	memo: Memo[]
 	personInCharge: string
 	responsiblePerson: string
-	communication: string
-	dm: string
+	communication: Communication
+	dm: Dm
 	video: string
 	checkboxes: Checkbox[]
 	bottleneck: string
@@ -116,13 +138,12 @@ export interface NegotiationErrors {
 	deleteAt?: boolean
 }
 
-export class negotiationBackend {
+export class NegotiationBackend {
 	negotiationId: number
 	customerName: string
-	status: string
+	status: Status
 	startingDate: string
-	condition: string
-	contact: string
+	condition: Condition
 	billingDate: string
 	outcome: string
 	nextContactDate: string
@@ -142,15 +163,15 @@ export class negotiationBackend {
 	dm: string
 	video: string
 	custCd: number
-	inflow: string
-	preference: string
+	inflow: Inflow
+	preference: Preference
 	checkboxes: Checkbox[]
 	bottleneck: string
 	occasion: string
 	risk: string
 	outcomeHistory: OutcomeHistory[]
 	responsiblePerson: string
-	communication: string
+	communication: Communication
 	scheduledDeposit: string
 	billingEstimation: number
 	register_by?: number | null
@@ -166,7 +187,7 @@ export class negotiationBackend {
 		this.status = data.status
 		this.startingDate = data.startingDate
 		this.condition = data.condition
-		this.contact = data.inflow
+		this.inflow = data.inflow
 		this.billingDate = data.billingDate
 		this.outcome = data.outcome
 		this.nextContactDate = data.nextContactDate

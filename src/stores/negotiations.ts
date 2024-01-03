@@ -1,13 +1,61 @@
 import { readable, writable, type Writable } from 'svelte/store'
 import type { Readable } from 'svelte/motion'
-import type { negotiationBackend } from '@/libs/negotiationTypes'
+import type {
+	Communication,
+	Condition,
+	Dm,
+	Inflow,
+	NegotiationBackend,
+	Preference,
+	Status
+} from '@/libs/negotiationTypes'
 
-export const negotiation: Writable<negotiationBackend> = writable({
+export const condition: Readable<Condition[]> = writable(['A', 'B', 'C', 'M', 'MM'])
+export const status: Readable<Status[]> = writable([
+	'受注',
+	'新規受注',
+	'再問合せ',
+	'見送り',
+	'失注',
+	'在庫無し'
+])
+export const inflow: Readable<Inflow[]> = writable([
+	'新規FAX',
+	'新規HP',
+	'新規メール',
+	'新規営業',
+	'顧客',
+	'顧客FAX',
+	'顧客HP',
+	'顧客メール',
+	'確認中',
+	'新規紹介',
+	'失注顧客'
+])
+
+export const preference: Readable<Preference[]> = writable([
+	'新品・中古',
+	'新品',
+	'中古',
+	'不明',
+	'確認前',
+	'無し'
+])
+
+export const communication: Readable<Communication[]> = writable([
+	'新規依頼',
+	'新規送付済み',
+	'顧客登録済み'
+])
+
+export const dm: Readable<Dm[]> = writable(['不要', '要(未手配)', '郵送済み', '持参'])
+
+export const negotiation: Writable<NegotiationBackend> = writable({
 	customerName: '',
-	status: '',
+	status: <Status>'',
 	startingDate: '',
-	condition: '',
-	inflow: '',
+	condition: <Condition>'',
+	inflow: <Inflow>'',
 	billingDate: '',
 	scheduledDeposit: '後払い',
 	outcome: '',
@@ -24,7 +72,7 @@ export const negotiation: Writable<negotiationBackend> = writable({
 	personInCharge: '',
 	responsiblePerson: '',
 	memo: [],
-	dm: '',
+	dm: <Dm>'',
 	video: '',
 	negotiationId: 0,
 	custCd: 0,
@@ -47,15 +95,14 @@ export const negotiation: Writable<negotiationBackend> = writable({
 	occasion: '',
 	risk: '',
 	outcomeHistory: [],
-	communication: '',
+	communication: <Communication>'',
 	distanceKm: 0,
 	distanceTime: 0,
-	preference: '',
-	contact: '',
+	preference: <Preference>'',
 	billingEstimation: 0
 })
 
-export const negotiations: Writable<negotiationBackend[]> = writable([
+export const negotiations: Writable<NegotiationBackend[]> = writable([
 	{
 		customerName: '社会営利法人 xxxxxxx 赤風荘',
 		status: '受注',
@@ -104,7 +151,6 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		distanceKm: 2,
 		distanceTime: 3,
 		preference: '新品',
-		contact: '',
 		estimate: [
 			{
 				issueDate: '2023-02-14',
@@ -178,8 +224,7 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		communication: '',
 		distanceKm: 0,
 		distanceTime: 0,
-		preference: '',
-		contact: '',
+		preference: '新品',
 		estimate: [
 			{
 				issueDate: '2023-02-14',
@@ -256,7 +301,7 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		distanceKm: 0,
 		distanceTime: 0,
 		preference: '',
-		contact: '',
+
 		estimate: [],
 		responsiblePerson: ''
 	},
@@ -308,7 +353,7 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		distanceKm: 0,
 		distanceTime: 0,
 		preference: '',
-		contact: '',
+
 		estimate: [],
 		responsiblePerson: ''
 	},
@@ -360,7 +405,7 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		distanceKm: 0,
 		distanceTime: 0,
 		preference: '',
-		contact: '',
+
 		estimate: [],
 		responsiblePerson: ''
 	},
@@ -412,7 +457,7 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		distanceKm: 0,
 		distanceTime: 0,
 		preference: '',
-		contact: '',
+
 		estimate: [],
 		responsiblePerson: ''
 	},
@@ -464,7 +509,7 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		distanceKm: 0,
 		distanceTime: 0,
 		preference: '',
-		contact: '',
+
 		estimate: [],
 		responsiblePerson: ''
 	},
@@ -516,7 +561,7 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		distanceKm: 0,
 		distanceTime: 0,
 		preference: '',
-		contact: '',
+
 		estimate: [],
 		responsiblePerson: ''
 	},
@@ -568,7 +613,7 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		distanceKm: 0,
 		distanceTime: 0,
 		preference: '',
-		contact: '',
+
 		estimate: [],
 		responsiblePerson: ''
 	},
@@ -620,7 +665,7 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		distanceKm: 0,
 		distanceTime: 0,
 		preference: '',
-		contact: '',
+
 		estimate: [],
 		responsiblePerson: ''
 	},
@@ -672,7 +717,7 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		distanceKm: 0,
 		distanceTime: 0,
 		preference: '',
-		contact: '',
+
 		estimate: [],
 		responsiblePerson: ''
 	},
@@ -724,7 +769,6 @@ export const negotiations: Writable<negotiationBackend[]> = writable([
 		distanceKm: 0,
 		distanceTime: 0,
 		preference: '',
-		contact: '',
 		estimate: [],
 		responsiblePerson: ''
 	}

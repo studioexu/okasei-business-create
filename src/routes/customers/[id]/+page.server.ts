@@ -1,19 +1,22 @@
 import { error } from '@sveltejs/kit'
-import { loadData, reactivateCustomer } from '@/libs/actions.js'
+import { loadCustomerData, loadCustomerImages, reactivateCustomer } from '@/libs/actions.js'
 import { currentApi, currentKey } from '@/data/api.js'
 
-import type { CustomerNewApi } from '@/models/BackendCustomer.js'
+import type { CustomerApi } from '@/models/CustomerApi.js'
 
 export const load = async ({ params }) => {
-	const data: CustomerNewApi[] = await loadData(currentApi, currentKey)
-	const customer: CustomerNewApi | undefined = data.find(
-		(customer: CustomerNewApi) => customer.id?.toString() === params.id.toString()
+	const data: CustomerApi[] = await loadCustomerData(currentApi)
+	const images = await loadCustomerImages(currentApi, params.id)
+	const customer: CustomerApi | undefined = data.find(
+		(customer: CustomerApi) => customer.id?.toString() === params.id.toString()
 	)
 
 	if (!customer) throw error(404)
+	if (!images) throw error(404)
 
 	return {
-		customer
+		customer,
+		images
 	}
 }
 

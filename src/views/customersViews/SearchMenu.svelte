@@ -10,15 +10,14 @@
 
 	$: filteredCustomers
 	$: currentPage
-
-	const filterInputs = [
+	$: filterInputs = [
 		{
-			name: 'facility-name',
-			label: '施設名',
+			name: 'customer-name',
+			label: companyIsShown ? '施設名' : '顧客名',
 			value: ''
 		},
 		{
-			name: 'customer-number',
+			name: 'institution-number',
 			label: '医療機関番号',
 			value: ''
 		},
@@ -44,7 +43,7 @@
 	 */
 	const filterData = (data: CustomerFactory[], filterType: string, input: string) => {
 		switch (filterType) {
-			case 'facility-name':
+			case 'customer-name':
 				return data.filter(customer => {
 					return (
 						customer.custName.toLowerCase().includes(input.toLowerCase()) ||
@@ -52,7 +51,7 @@
 					)
 				})
 
-			case 'customer-number':
+			case 'institution-number':
 				return data.filter(customer => {
 					return customer.instId.includes(input)
 				})
@@ -99,17 +98,31 @@
 
 <form class="search-menu">
 	{#each filterInputs as input}
-		<div class="input-wrapper">
-			<label class="label" for={input.name}>{input.label}</label>
-			<input
-				type="text"
-				class="input {input.name === 'facility-name' && 'input--lg'}"
-				id={input.name}
-				name={input.name}
-				bind:value={input.value}
-				on:input={handleSearch}
-			/>
-		</div>
+		{#if companyIsShown}
+			<div class="input-wrapper">
+				<label class="label" for={input.name}>{input.label}</label>
+				<input
+					type="text"
+					class="input {input.name === 'customer-name' && 'input--lg'}"
+					id={input.name}
+					name={input.name}
+					bind:value={input.value}
+					on:input={handleSearch}
+				/>
+			</div>
+		{:else if input.name !== 'institution-number'}
+			<div class="input-wrapper">
+				<label class="label" for={input.name}>{input.label}</label>
+				<input
+					type="text"
+					class="input {input.name === 'customer-name' && 'input--lg'}"
+					id={input.name}
+					name={input.name}
+					bind:value={input.value}
+					on:input={handleSearch}
+				/>
+			</div>
+		{/if}
 	{/each}
 </form>
 
@@ -121,7 +134,7 @@
 	.search-menu {
 		display: flex;
 		justify-content: space-between;
-		row-gap: 10px;
+		gap: 10px;
 		flex-wrap: wrap;
 		margin-bottom: 1.5rem;
 		padding: 0 18px;

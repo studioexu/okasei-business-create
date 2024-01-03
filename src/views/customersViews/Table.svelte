@@ -57,8 +57,8 @@
 					{/if}
 					<th class="theader">住所</th>
 					<th class="theader">登録日</th>
-					<th class="theader">編集</th>
-					<th class="theader">削除</th>
+					<th class="theader" />
+					<th class="theader" />
 				</tr>
 			</thead>
 			<tbody>

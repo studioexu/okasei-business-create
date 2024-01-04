@@ -1,6 +1,6 @@
 import { error } from '@sveltejs/kit'
-import { loadCustomerData, deleteCustomer } from '@/libs/actions.js'
-import { currentApi, currentKey } from '@/data/api.js'
+import { loadCustomerData } from '@/libs/actions.js'
+import { currentApi } from '@/data/api.js'
 
 export const load = async () => {
 	const data: any[] = await loadCustomerData(currentApi)

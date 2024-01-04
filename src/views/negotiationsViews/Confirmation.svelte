@@ -13,6 +13,9 @@
 
 <div class="negotiation-confirmation">
 	<div class="form-row">
+		<DetailWrapper label={'施設名'} content={initialState.customerName} />
+	</div>
+	<div class="form-row">
 		<DetailWrapper label={'ステータス'} content={initialState.status} />
 	</div>
 

@@ -5,7 +5,6 @@
 	import ResultModal from '@/views/modals/ResultModal.svelte'
 	import { goto } from '$app/navigation'
 	import { fade } from 'svelte/transition'
-	export let data
 
 	import { negotiations } from '@/stores/negotiations'
 	import { page } from '$app/stores'
@@ -20,13 +19,18 @@
 		Preference,
 		Status
 	} from '@/libs/negotiationTypes.js'
+	import Row from '@/components/Row.svelte'
+	import DetailWrapper from '@/components/DetailWrapper.svelte'
+
+	export let data
 
 	const negotiation = $negotiations.find(
 		negotiation => negotiation.negotiationId.toString() === $page.params.id
 	)
 
 	let confirmationPageIsShown = false
-	let customers = data.customers.map(customer => new CustomerFactory(customer, 'newApi'))
+	let customers = data.customers.map(customer => new CustomerFactory(customer, 'APIv1'))
+	let customer = customers.find(customer => customer.id === negotiation?.custCd)
 	let initialState: NegotiationEntries
 	let formIsValid: NegotiationErrors
 

@@ -9,6 +9,7 @@
 	import { purchase, purchases } from '@/stores/purchases'
 	import type { Purchase, Status } from '@/libs/purchaseTypes'
 	import { goto } from '$app/navigation'
+	import InputCheckbox from '@/components/InputCheckbox.svelte'
 
 	let allPurcharses: Purchase[]
 
@@ -35,6 +36,11 @@
 			id: 'customerName',
 			label: 'お客様名',
 			value: ''
+		},
+		{
+			id: 'orderNumber',
+			label: '予約番号',
+			value: ''
 		}
 	]
 
@@ -46,7 +52,7 @@
 		seacrhfields.forEach(fieldset => {
 			if (fieldset.value !== '') {
 				filteredData = filteredData.filter(purchase => {
-					return purchase[fieldset.id as 'model' | 'size' | 'customerName']
+					return purchase[fieldset.id as 'model' | 'size' | 'customerName' | 'orderNumber']
 						.toLowerCase()
 						.includes(fieldset.value.toLowerCase())
 				})
@@ -64,6 +70,7 @@
 		{ label: '予約番号', id: 'orderNumber' },
 		{ label: 'お客様名', id: 'customerName' },
 		{ label: 'ステータス', id: 'status' },
+		{ label: '動作・サイズチェック', id: 'behaviourSizeCheck' },
 		{ label: '機種', id: 'model' },
 		{ label: 'モーター', id: 'motor' },
 		{ label: 'サイズ', id: 'size' },
@@ -105,6 +112,7 @@
 							orderNumber: '',
 							customerName: '',
 							status: <Status>'',
+							behaviourSizeCheck: false,
 							model: '',
 							motor: '',
 							size: '',
@@ -184,7 +192,7 @@
 				</thead>
 
 				<tbody class="tbody">
-					{#each dividedPurchases[currentPage] as purchase}
+					{#each dividedPurchases[currentPage] as purchase, index}
 						<tr class="trow">
 							{#each tableHeaders as header}
 								{#if header.id === 'status'}
@@ -213,6 +221,13 @@
 										<a href={'/purchases/' + purchase.id}>
 											{purchase.orderNumber}
 										</a>
+									</td>
+								{:else if header.id === 'behaviourSizeCheck'}
+									<td class="tdata">
+										<InputCheckbox
+											name={header.id + index.toString()}
+											isChecked={purchase[header.id]}
+										/>
 									</td>
 								{:else}
 									<td class="tdata">{purchase[header.id]}</td>

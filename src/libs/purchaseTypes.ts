@@ -5,6 +5,7 @@ export interface Purchase {
 	orderNumber: string
 	customerName: string
 	status: Status
+	behaviourSizeCheck: boolean
 	model: string
 	motor: string
 	size: string

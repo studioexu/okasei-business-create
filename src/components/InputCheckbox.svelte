@@ -3,7 +3,7 @@
 
 	export let isChecked: boolean = false
 	export let name: string
-	export let label: string
+	export let label: string = ''
 
 	const dispatch = createEventDispatcher()
 

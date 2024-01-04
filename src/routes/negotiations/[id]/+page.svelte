@@ -14,16 +14,86 @@
 		Preference,
 		Status
 	} from '@/libs/negotiationTypes'
+	import { CustomerFactory } from '@/Factories/CustomerFactory.js'
+	import type { CustomerApi } from '@/models/CustomerApi'
+	import Row from '@/components/Row.svelte'
+	import DetailWrapper from '@/components/DetailWrapper.svelte'
+
+	export let data
+	console.log(data.data)
+
+	const customers = data.data.map(customer => new CustomerFactory(customer, 'APIv1'))
+	console.log(customers)
 
 	const negotiation = $negotiations.find(
 		negotiation => negotiation.negotiationId.toString() === $page.params.id
 	)
+
+	const customer = customers.find(customer => customer.id === negotiation?.custCd)
+
+	console.log(customer)
+
 	/**
 	 * On click, we redirect the user to the edit page
 	 */
 	const handleLinkClicked = () => {
 		window.location.href = '/negotiations/' + negotiation?.negotiationId + '/edit'
 	}
+
+	let customerDetails = [
+		{
+			id: 'id',
+			label: '顧客番号'
+		},
+		{
+			id: 'branchNumber',
+			label: '枝番'
+		},
+		{
+			id: 'instId',
+			label: '医療機関番号'
+		},
+		{
+			id: 'homepage',
+			label: 'HP'
+		},
+		{
+			id: 'google',
+			label: 'Google評価'
+		},
+		{
+			id: 'reviews',
+			label: '口コミ'
+		},
+		{
+			id: 'address',
+			label: '連絡'
+		},
+		{
+			id: 'departments',
+			label: '診療科目'
+		},
+		{
+			id: 'personInCharge',
+			label: 'ご担当者名'
+		},
+		{
+			id: 'personInChargeRole',
+			label: '役職'
+		},
+		{
+			id: 'personInChargeMemo',
+			label: 'ご担当メモ'
+		},
+		{
+			id: 'approver',
+			label: '決裁者'
+		},
+		{
+			id: 'contactTime',
+			label: '連絡の取りやすい時間'
+		}
+	]
 
 	let initialState: NegotiationEntries
 
@@ -73,6 +143,36 @@
 		}
 	}
 </script>
+
+<aside class="aside">
+	<h3 class="title">顧客情報</h3>
+
+	{#each customerDetails as detail}
+		{#if detail.id === 'address'}
+			<div>
+				<DetailWrapper label={detail.label} id={detail.id} content={customer.address.phone} />
+
+				<DetailWrapper label={detail.label} id={detail.id} content={customer.address.mobile} />
+			</div>
+			<div>
+				<DetailWrapper label={detail.label} id={detail.id} content={customer.address.fax} />
+
+				<DetailWrapper label={detail.label} id={detail.id} content={customer.address.mail} />
+			</div>
+		{:else if detail.id === 'departments'}
+			{#each customer.departments as department}
+				<div class="form-row">
+					<DetailWrapper label={detail.label} id={detail.id} content={department.departmentId} />
+					<DetailWrapper label={detail.label} id={detail.id} content={department.numberOfBeds} />
+				</div>
+			{/each}
+		{:else}
+			<div>
+				<DetailWrapper label={detail.label} id={detail.id} content={customer[detail.id]} />
+			</div>
+		{/if}
+	{/each}
+</aside>
 
 <section class="section section--confirmation">
 	<div class="section__main">
@@ -162,6 +262,18 @@
 					}
 				}
 			}
+		}
+	}
+
+	.aside {
+		position: absolute;
+		right: 0;
+		top: 0;
+		background-color: cyan;
+		padding: 16px;
+		max-width: fit-content;
+		p {
+			font-size: 11px;
 		}
 	}
 </style>

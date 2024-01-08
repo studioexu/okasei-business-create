@@ -50,7 +50,7 @@
 
 	const handleSearch = (
 		seacrhfields: { id: string; label: string; value: string }[],
-		purchases
+		purchases: Purchase[]
 	): Purchase[] => {
 		let filteredData: Purchase[] = purchases
 
@@ -161,10 +161,17 @@
 	}
 
 	const handleCheckboxClick = (e: any, index: number) => {
-		console.log(e.target.checked)
-
-		let isChecked = e.target.checked
 		currentPurchase = index
+		if (e.target.checked) {
+			purchases.set(
+				$purchases.filter(purchase => {
+					if (purchase.id === currentPurchase) {
+						purchase.behaviourSizeCheck = true
+						return purchase
+					} else return purchase
+				})
+			)
+		}
 
 		if (!e.target.checked) {
 			e.target.checked = true
@@ -182,51 +189,35 @@
 
 			case 'remove':
 				try {
-					purchases.set($purchases.filter(purchase => purchase.id !== currentPurchase))
-
-					if ($purchase.id === currentPurchase) {
-						console.log('hello')
-
-						purchase.set({
-							id: $purchase.id,
-							orderNumber: $purchase.orderNumber,
-							customerName: $purchase.customerName,
-							status: <Status>$purchase.status,
-							behaviourSizeCheck: false,
-							model: $purchase.model,
-							motor: $purchase.motor,
-							size: $purchase.size,
-							arrivalDate: $purchase.arrivalDate,
-							marketPrice: $purchase.marketPrice,
-							sellingPrice: $purchase.sellingPrice,
-							image: $purchase.image
+					purchases.set(
+						$purchases.filter(purchase => {
+							if (purchase.id === currentPurchase) {
+								purchase.behaviourSizeCheck = false
+								return purchase
+							} else return purchase
 						})
+					)
 
-						// purchase.set({
-						// 	id: 0,
-						// 	orderNumber: '',
-						// 	customerName: '',
-						// 	status: <Status>'',
-						// 	behaviourSizeCheck: false,
-						// 	model: '',
-						// 	motor: '',
-						// 	size: '',
-						// 	arrivalDate: '',
-						// 	marketPrice: 0,
-						// 	sellingPrice: 0,
-						// 	image: ''
-						// })
-						// $purchase[currentPurchase].behaviourSizeCheck = false
-						// purchases.set($purchases.filter(purchase => purchase))
+					// if ($purchase.id === currentPurchase) {
+					// 	console.log('hello')
 
-						console.log(purchases)
-						goto('/purchases')
-						// phase = 'shown'
-						phase = 'success'
-					} else {
-						phase = 'success'
-						console.log('hello')
-					}
+					// 	purchase.set({
+					// 		id: $purchase.id,
+					// 		orderNumber: $purchase.orderNumber,
+					// 		customerName: $purchase.customerName,
+					// 		status: <Status>$purchase.status,
+					// 		behaviourSizeCheck: false,
+					// 		model: $purchase.model,
+					// 		motor: $purchase.motor,
+					// 		size: $purchase.size,
+					// 		arrivalDate: $purchase.arrivalDate,
+					// 		marketPrice: $purchase.marketPrice,
+					// 		sellingPrice: $purchase.sellingPrice,
+					// 		image: $purchase.image
+					// 	})
+
+					goto('/purchases')
+					phase = 'success'
 				} catch (error) {
 					console.log('hi')
 
@@ -256,7 +247,7 @@
 		<RemoveCheckModal {phase} on:click={onRemoveModalClick} />
 	{/if}
 	<header class="section__header">
-		<form class="search-form" on:input={() => handleSearch(searchFieldsets)}>
+		<form class="search-form" on:input={() => handleSearch(searchFieldsets, $purchases)}>
 			{#each searchFieldsets as fieldset}
 				<div class="input-wrapper">
 					<label for={fieldset.id}>{fieldset.label}</label>

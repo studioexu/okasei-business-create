@@ -8,22 +8,23 @@
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import { purchase, purchases } from '@/stores/purchases'
 	import type { Purchase, Status } from '@/libs/purchaseTypes'
-	import { beforeNavigate, goto } from '$app/navigation'
-	import InputCheckbox from '@/components/InputCheckbox.svelte'
+	import { goto } from '$app/navigation'
 	import RemoveCheckModal from '@/views/modals/RemoveCheckModal.svelte'
-	import { findNumbers } from 'libphonenumber-js'
-
-	let isRemoveCheckModalIsShown = false
 
 	export let data
 
-	console.log(data)
-
-	$: currentPage = 0
-
-	let isShown: boolean = false
-	let currentPurchase: number | undefined = undefined
-	let phase: 'shown' | 'success' | 'error' = 'shown'
+	const tableHeaders: { label: string; id: keyof Purchase }[] = [
+		{ label: '予約番号', id: 'orderNumber' },
+		{ label: 'お客様名', id: 'customerName' },
+		{ label: 'ステータス', id: 'status' },
+		{ label: '動作・サイズチェック', id: 'behaviourSizeCheck' },
+		{ label: '機種', id: 'model' },
+		{ label: 'モーター', id: 'motor' },
+		{ label: 'サイズ', id: 'size' },
+		{ label: '入荷日', id: 'arrivalDate' },
+		{ label: '運賃', id: 'marketPrice' },
+		{ label: '買取額', id: 'sellingPrice' }
+	]
 
 	const searchFieldsets: { id: string; label: string; value: string }[] = [
 		{
@@ -48,6 +49,27 @@
 		}
 	]
 
+	//PAGINATION
+
+	$: currentPage = 0
+
+	/**
+	 * update the current page number
+	 * @param event: get the current number of the page
+	 */
+	const movePage = (event: { detail: { page: number } }): void => {
+		currentPage = event.detail.page
+	}
+
+	/**
+	 * The user enters parameters in the search fields, the displayed purchases will be updated.
+	 * It will also update the array if the array of purchases is updated.
+	 * ユーザーが検索を行うと、フィルターされた買取のArrayを表示する。
+	 * 買取のArrayがアップデートされても、表示されている買取もアップデートする。
+	 * @param seacrhfields: corresponding to the array of search fields.
+	 * @param purchases: the array of purchases from where the search will be executed.
+	 * @returns filtered array of purchases.
+	 */
 	const handleSearch = (
 		seacrhfields: { id: string; label: string; value: string }[],
 		purchases: Purchase[]
@@ -69,28 +91,22 @@
 
 	$: filteredPurchases = handleSearch(searchFieldsets, $purchases)
 
-	// $: filteredPurchases = $purchases
-
-	$: console.log(filteredPurchases)
-
-	const tableHeaders: { label: string; id: keyof Purchase }[] = [
-		{ label: '予約番号', id: 'orderNumber' },
-		{ label: 'お客様名', id: 'customerName' },
-		{ label: 'ステータス', id: 'status' },
-		{ label: '動作・サイズチェック', id: 'behaviourSizeCheck' },
-		{ label: '機種', id: 'model' },
-		{ label: 'モーター', id: 'motor' },
-		{ label: 'サイズ', id: 'size' },
-		{ label: '入荷日', id: 'arrivalDate' },
-		{ label: '運賃', id: 'marketPrice' },
-		{ label: '買取額', id: 'sellingPrice' }
-	]
-
 	$: dividedPurchases =
 		filteredPurchases.length > 0
 			? filteredPurchases.flatMap((_, i, self) => (i % 5 ? [] : [self.slice(i, i + 5)]))
 			: []
 
+	//MODALS (DELETE AND REMOVE CHECK)
+	let isShown: boolean = false
+	let currentPurchase: number | undefined = undefined
+	let isRemoveCheckModalIsShown = false
+	let phase: 'shown' | 'success' | 'error' = 'shown'
+
+	/**
+	 * Opens the delete modal and update the currentPurchase variable with the id of the purchase the user wants to delete.
+	 * 削除のモダールを開き、currentPurchaseは買取のIDに変更する。
+	 * @param index
+	 */
 	const handleDeleteItem = (index: number) => {
 		isShown = true
 		currentPurchase = index
@@ -98,9 +114,10 @@
 
 	/**
 	 * On click on the delete modal.
+	 * The user confirms before deleting the purchase item. 買取の削除を確定する。
 	 * @param event
 	 */
-	const onClick = (event: { detail: { key: string } }): void => {
+	const onDeleteModalClick = (event: { detail: { key: string } }): void => {
 		switch (event.detail.key) {
 			case 'cancel':
 				isShown = false
@@ -146,14 +163,12 @@
 	}
 
 	/**
-	 * update the current page number
-	 * @param event: get the current number of the page
+	 * The user clicks on the checkbox, if the checkbox is to change to "false", then, it will display a modal so that the user can confirm.
+	 * ユーザーがどうサザイズチェックをクリックして、Falseに変更にする場合、変更する前にモダールを表示して、ユーザーが確定できる。
+	 * @param e
+	 * @param index：id of purchase. 買取のID
 	 */
-	const movePage = (event: { detail: { page: number } }): void => {
-		currentPage = event.detail.page
-	}
-
-	const handleCheckboxClick = (e: any, index: number) => {
+	const handleCheckboxClick = (e: any, index: number): void => {
 		currentPurchase = index
 		if (e.target.checked) {
 			purchases.set(
@@ -172,9 +187,12 @@
 		}
 	}
 
-	const onRemoveModalClick = (event: { detail: { key: string } }): void => {
-		console.log(event.detail.key)
-
+	/**
+	 * It will close the modal and update the checkbox adequately.
+	 * モダールを閉じ、チェックボックスを正しくアップデートする。
+	 * @param event
+	 */
+	const onRemoveCheckModalClick = (event: { detail: { key: string } }): void => {
 		switch (event.detail.key) {
 			case 'cancel':
 				isRemoveCheckModalIsShown = false
@@ -191,29 +209,9 @@
 						})
 					)
 
-					// if ($purchase.id === currentPurchase) {
-					// 	console.log('hello')
-
-					// 	purchase.set({
-					// 		id: $purchase.id,
-					// 		orderNumber: $purchase.orderNumber,
-					// 		customerName: $purchase.customerName,
-					// 		status: <Status>$purchase.status,
-					// 		behaviourSizeCheck: false,
-					// 		model: $purchase.model,
-					// 		motor: $purchase.motor,
-					// 		size: $purchase.size,
-					// 		arrivalDate: $purchase.arrivalDate,
-					// 		marketPrice: $purchase.marketPrice,
-					// 		sellingPrice: $purchase.sellingPrice,
-					// 		image: $purchase.image
-					// 	})
-
 					goto('/purchases')
 					phase = 'success'
 				} catch (error) {
-					console.log('hi')
-
 					phase = 'error'
 				}
 				break
@@ -232,10 +230,10 @@
 
 <section class="section">
 	{#if isShown}
-		<DeleteModal {phase} on:click={onClick} />
+		<DeleteModal {phase} on:click={onDeleteModalClick} />
 	{/if}
 	{#if isRemoveCheckModalIsShown}
-		<RemoveCheckModal {phase} on:click={onRemoveModalClick} />
+		<RemoveCheckModal {phase} on:click={onRemoveCheckModalClick} />
 	{/if}
 	<header class="section__header">
 		<form class="search-form" on:input={() => handleSearch(searchFieldsets, $purchases)}>

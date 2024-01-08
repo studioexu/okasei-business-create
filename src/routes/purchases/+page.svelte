@@ -96,9 +96,6 @@
 		currentPurchase = index
 	}
 
-	$: console.log(currentPurchase)
-	console.log('hello')
-
 	/**
 	 * On click on the delete modal.
 	 * @param event
@@ -154,10 +151,6 @@
 	 */
 	const movePage = (event: { detail: { page: number } }): void => {
 		currentPage = event.detail.page
-	}
-
-	const handleEditItem = (index: number) => {
-		goto('/purchases/' + index + '/edit')
 	}
 
 	const handleCheckboxClick = (e: any, index: number) => {
@@ -235,8 +228,6 @@
 				break
 		}
 	}
-
-	console.log($purchase)
 </script>
 
 <section class="section">
@@ -306,7 +297,7 @@
 										</a>
 									</td>
 								{:else if header.id === 'behaviourSizeCheck'}
-									<td class="tdata">
+									<td class="tdata max-w">
 										<!-- <InputCheckbox
 											name={header.id + index.toString()}
 											isChecked={purchase.behaviourSizeCheck}
@@ -324,7 +315,6 @@
 												on:change={e => handleCheckboxClick(e, purchase.id)}
 												checked={purchase.behaviourSizeCheck}
 											/>
-
 											<span class="checkmark" />
 										</label>
 									</td>
@@ -333,7 +323,7 @@
 								{/if}
 							{/each}
 							<td class="data update">
-								<button class="btn" on:click={() => handleEditItem(purchase.id)}>
+								<button class="btn" on:click={() => goto('/purchases/' + purchase.id + '/edit')}>
 									<Icon icon={{ path: 'edit', color: '#0093d0' }} />
 								</button>
 							</td>
@@ -414,6 +404,10 @@
 			font-weight: bold;
 			background-color: var(--back);
 			color: var(--primary);
+
+			& .behaviour-size-check {
+				width: 110px;
+			}
 		}
 
 		.trow {
@@ -485,6 +479,70 @@
 
 			&--full {
 				transform: scaleX(1);
+			}
+		}
+	}
+
+	.checkbox-container {
+		cursor: pointer;
+		position: relative;
+		display: flex;
+		justify-content: center;
+		flex-direction: row-reverse;
+		align-items: center;
+		height: 31px;
+		width: auto;
+		gap: 18px;
+		font-size: 18px;
+		user-select: none;
+
+		& :hover {
+			.checkbox ~ .checkmark {
+				background-color: #ccc;
+			}
+		}
+
+		& :after {
+			content: '';
+			display: none;
+		}
+
+		.checkmark {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			top: 0;
+			left: 0;
+			height: 20px;
+			width: 20px;
+			border: 1px solid var(--black);
+			border-radius: 3px;
+			background-color: #fff;
+
+			&:after {
+				width: 3px;
+				height: 8px;
+				border: solid white;
+				border-width: 0 3px 3px 0;
+				-webkit-transform: rotate(45deg);
+				-ms-transform: rotate(45deg);
+				transform: rotate(45deg);
+			}
+		}
+
+		.checkbox {
+			position: absolute;
+			height: 0;
+			width: 0;
+			opacity: 0;
+			cursor: pointer;
+
+			&:checked ~ .checkmark {
+				background-color: var(--primary);
+
+				&:after {
+					display: block;
+				}
 			}
 		}
 	}

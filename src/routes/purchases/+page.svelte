@@ -8,18 +8,22 @@
 	import DeleteModal from '@/views/modals/DeleteModal.svelte'
 	import { purchase, purchases } from '@/stores/purchases'
 	import type { Purchase, Status } from '@/libs/purchaseTypes'
-	import { goto } from '$app/navigation'
+	import { beforeNavigate, goto } from '$app/navigation'
 	import InputCheckbox from '@/components/InputCheckbox.svelte'
+	import RemoveCheckModal from '@/views/modals/RemoveCheckModal.svelte'
+	import { findNumbers } from 'libphonenumber-js'
 
-	let allPurcharses: Purchase[]
+	let isRemoveCheckModalIsShown = false
 
 	export let data
 
 	console.log(data)
 
-	allPurcharses = $purchases
+	$: currentPage = 0
 
-	// let filteredPurchases = allPurcharses
+	let isShown: boolean = false
+	let currentPurchase: number | undefined = undefined
+	let phase: 'shown' | 'success' | 'error' = 'shown'
 
 	const searchFieldsets: { id: string; label: string; value: string }[] = [
 		{
@@ -45,13 +49,14 @@
 	]
 
 	const handleSearch = (
-		seacrhfields: { id: string; label: string; value: string }[]
+		seacrhfields: { id: string; label: string; value: string }[],
+		purchases
 	): Purchase[] => {
-		let filteredData: Purchase[] = allPurcharses
+		let filteredData: Purchase[] = purchases
 
 		seacrhfields.forEach(fieldset => {
 			if (fieldset.value !== '') {
-				filteredData = filteredData.filter(purchase => {
+				filteredData = filteredData?.filter(purchase => {
 					return purchase[fieldset.id as 'model' | 'size' | 'customerName' | 'orderNumber']
 						.toLowerCase()
 						.includes(fieldset.value.toLowerCase())
@@ -62,7 +67,9 @@
 		return filteredData
 	}
 
-	$: filteredPurchases = handleSearch(searchFieldsets)
+	$: filteredPurchases = handleSearch(searchFieldsets, $purchases)
+
+	// $: filteredPurchases = $purchases
 
 	$: console.log(filteredPurchases)
 
@@ -84,19 +91,19 @@
 			? filteredPurchases.flatMap((_, i, self) => (i % 5 ? [] : [self.slice(i, i + 5)]))
 			: []
 
-	$: currentPage = 0
+	const handleDeleteItem = (index: number) => {
+		isShown = true
+		currentPurchase = index
+	}
 
-	let isShown: boolean = false
-	let currentUser: number | undefined = undefined
-	let phase: 'shown' | 'success' | 'error' = 'shown'
+	$: console.log(currentPurchase)
+	console.log('hello')
 
 	/**
 	 * On click on the delete modal.
 	 * @param event
 	 */
 	const onClick = (event: { detail: { key: string } }): void => {
-		console.log(event.detail.key)
-
 		switch (event.detail.key) {
 			case 'cancel':
 				isShown = false
@@ -104,9 +111,9 @@
 
 			case 'delete':
 				try {
-					purchases.set($purchases.filter(purchase => purchase.id !== currentUser))
+					purchases.set($purchases.filter(purchase => purchase.id !== currentPurchase))
 
-					if ($purchase.id === currentUser) {
+					if ($purchase.id === currentPurchase) {
 						purchase.set({
 							id: 0,
 							orderNumber: '',
@@ -149,19 +156,104 @@
 		currentPage = event.detail.page
 	}
 
-	const handleDeleteItem = (index: number) => {
-		isShown = true
-		currentUser = index
-	}
-
 	const handleEditItem = (index: number) => {
 		goto('/purchases/' + index + '/edit')
 	}
+
+	const handleCheckboxClick = (e: any, index: number) => {
+		console.log(e.target.checked)
+
+		let isChecked = e.target.checked
+		currentPurchase = index
+
+		if (!e.target.checked) {
+			e.target.checked = true
+			isRemoveCheckModalIsShown = true
+		}
+	}
+
+	const onRemoveModalClick = (event: { detail: { key: string } }): void => {
+		console.log(event.detail.key)
+
+		switch (event.detail.key) {
+			case 'cancel':
+				isRemoveCheckModalIsShown = false
+				break
+
+			case 'remove':
+				try {
+					purchases.set($purchases.filter(purchase => purchase.id !== currentPurchase))
+
+					if ($purchase.id === currentPurchase) {
+						console.log('hello')
+
+						purchase.set({
+							id: $purchase.id,
+							orderNumber: $purchase.orderNumber,
+							customerName: $purchase.customerName,
+							status: <Status>$purchase.status,
+							behaviourSizeCheck: false,
+							model: $purchase.model,
+							motor: $purchase.motor,
+							size: $purchase.size,
+							arrivalDate: $purchase.arrivalDate,
+							marketPrice: $purchase.marketPrice,
+							sellingPrice: $purchase.sellingPrice,
+							image: $purchase.image
+						})
+
+						// purchase.set({
+						// 	id: 0,
+						// 	orderNumber: '',
+						// 	customerName: '',
+						// 	status: <Status>'',
+						// 	behaviourSizeCheck: false,
+						// 	model: '',
+						// 	motor: '',
+						// 	size: '',
+						// 	arrivalDate: '',
+						// 	marketPrice: 0,
+						// 	sellingPrice: 0,
+						// 	image: ''
+						// })
+						// $purchase[currentPurchase].behaviourSizeCheck = false
+						// purchases.set($purchases.filter(purchase => purchase))
+
+						console.log(purchases)
+						goto('/purchases')
+						// phase = 'shown'
+						phase = 'success'
+					} else {
+						phase = 'success'
+						console.log('hello')
+					}
+				} catch (error) {
+					console.log('hi')
+
+					phase = 'error'
+				}
+				break
+
+			case 'success':
+				isRemoveCheckModalIsShown = false
+				phase = 'shown'
+				break
+
+			case 'error':
+				phase = 'shown'
+				break
+		}
+	}
+
+	console.log($purchase)
 </script>
 
 <section class="section">
 	{#if isShown}
 		<DeleteModal {phase} on:click={onClick} />
+	{/if}
+	{#if isRemoveCheckModalIsShown}
+		<RemoveCheckModal {phase} on:click={onRemoveModalClick} />
 	{/if}
 	<header class="section__header">
 		<form class="search-form" on:input={() => handleSearch(searchFieldsets)}>
@@ -224,10 +316,26 @@
 									</td>
 								{:else if header.id === 'behaviourSizeCheck'}
 									<td class="tdata">
-										<InputCheckbox
+										<!-- <InputCheckbox
 											name={header.id + index.toString()}
-											isChecked={purchase[header.id]}
-										/>
+											isChecked={purchase.behaviourSizeCheck}
+											on:click={purchase.behaviourSizeCheck
+												? () => console.log('hello')
+												: () => (purchase.behaviourSizeCheck = true)}
+										/> -->
+
+										<label class="checkbox-container" for={'behaviourSizeCheck' + index.toString()}>
+											<input
+												class="checkbox"
+												type="checkbox"
+												name={'behaviourSizeCheck' + index.toString()}
+												id={'behaviourSizeCheck' + index.toString()}
+												on:change={e => handleCheckboxClick(e, purchase.id)}
+												checked={purchase.behaviourSizeCheck}
+											/>
+
+											<span class="checkmark" />
+										</label>
 									</td>
 								{:else}
 									<td class="tdata">{purchase[header.id]}</td>

@@ -2,6 +2,7 @@ import { readable, writable, type Writable } from 'svelte/store'
 import type { Readable } from 'svelte/motion'
 
 import type { Purchase, Status } from '@/libs/purchaseTypes'
+import { setContext } from 'svelte'
 
 export const purchase: Writable<Purchase> = writable({
 	id: 0,
@@ -68,7 +69,7 @@ export const purchases: Writable<Purchase[]> = writable([
 		orderNumber: '8323-0804-5843',
 		customerName: 'My company',
 		status: '失注',
-		behaviourSizeCheck: false,
+		behaviourSizeCheck: true,
 		motor: '2M',
 		model: 'キューマ',
 		size: '83R',
@@ -134,3 +135,5 @@ export const purchases: Writable<Purchase[]> = writable([
 		image: ''
 	}
 ])
+
+// setContext('purchases', purchases)

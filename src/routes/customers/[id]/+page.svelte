@@ -53,7 +53,7 @@
 		pictures: images,
 		miscellaneous: customer.miscellaneous,
 		registrationDate: customer.registration.registDate,
-		registeredBy: customer.registration.registDateTime,
+		registeredBy: customer.registration.registBy,
 		updateDate: customer.update.updateDate,
 		updateBy: customer.update.updateBy,
 		deleteDate: customer.delete.deleteDate,

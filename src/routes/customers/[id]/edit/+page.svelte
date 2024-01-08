@@ -18,6 +18,7 @@
 			? data.images.map((image: any) => new CustomerImageFactory(image, 'APIv1'))
 			: []
 	let confirmationPageIsShown = false
+	let isSubmittable = false
 	let departmentsList = data.departmentsList
 
 	let initialState: CustomerEntries = {
@@ -62,7 +63,7 @@
 		})),
 		miscellaneous: customer.miscellaneous,
 		registrationDate: customer.registration.registDate,
-		registeredBy: customer.registration.registDateTime,
+		registeredBy: customer.registration.registBy,
 		updateDate: customer.update.updateDate,
 		updateBy: customer.update.updateBy,
 		deleteDate: customer.delete.deleteDate,
@@ -82,6 +83,8 @@
 	let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
 
 	Object.keys(initialState).map(key => (formIsValid = { ...formIsValid, [key]: true }))
+
+	// $: console.log(JSON.parse(JSON.stringify(initialState)))
 </script>
 
 <section class="section section--form">
@@ -108,6 +111,7 @@
 			bind:isSucceeded
 			bind:formIsValid
 			bind:departmentsError
+			bind:isSubmittable
 		/>
 	</div>
 
@@ -125,6 +129,13 @@
 					</button>
 				</div>
 			{/if}
+			<!-- <button
+				type={'button'}
+				class="btn primary"
+				form="registration-form"
+				on:click={() => (confirmationPageIsShown = true)}>Hello</button
+			> -->
+
 			<button type={'submit'} class="btn primary" form="registration-form">登録</button>
 		</footer>
 	{/if}

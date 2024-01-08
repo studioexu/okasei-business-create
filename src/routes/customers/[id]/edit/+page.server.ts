@@ -41,17 +41,23 @@ export const load = async ({ params }) => {
  */
 export const actions = {
 	update: async ({ request }) => {
-		const data = await request.formData()
-		const initialStateString = data.get('initialState')
+		console.log('Can you update please????')
 
-		let initialState: CustomerEntries =
-			typeof initialStateString === 'string' && JSON.parse(initialStateString)
+		const req = request
+
+		const data = await request.formData()
+		console.log(data)
+		// console.log(req.formData())
+		let initialState: CustomerEntries
+
+		const initialStateString = data.get('initial-state')
+		initialState = typeof initialStateString === 'string' && JSON.parse(initialStateString)
 
 		const updatedCustomer = formatCustomer('update', initialState)
 
 		if (initialState.id) {
 			updateCustomer(updatedCustomer, currentApi, initialState.id)
 		}
-		return false
+		// return false
 	}
 }

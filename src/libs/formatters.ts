@@ -62,26 +62,30 @@ export const getDateTime = (time?: string): string => {
 		currentTime = new Date()
 	}
 
-	const day =
-		currentTime.getUTCDate() < 10 ? '0' + currentTime.getUTCDate() : currentTime.getUTCDate()
-	const month =
+	const day: string =
+		currentTime.getUTCDate() < 10
+			? '0' + currentTime.getUTCDate().toString()
+			: currentTime.getUTCDate().toString()
+	const month: string =
 		currentTime.getUTCMonth() + 1 < 10
-			? '0' + currentTime.getUTCMonth() + 1
-			: currentTime.getUTCMonth() + 1
-	const year =
+			? '0' + (currentTime.getUTCMonth() + 1).toString()
+			: (currentTime.getUTCMonth() + 1).toString()
+	const year: string =
 		currentTime.getUTCFullYear() < 10
-			? '0' + currentTime.getUTCFullYear()
-			: currentTime.getUTCFullYear()
-	const hour =
-		currentTime.getUTCHours() < 10 ? '0' + currentTime.getUTCHours() : currentTime.getUTCHours()
-	const minute =
+			? '0' + currentTime.getUTCFullYear().toString()
+			: currentTime.getUTCFullYear().toString()
+	const hour: string =
+		currentTime.getUTCHours() < 10
+			? '0' + currentTime.getUTCHours().toString()
+			: currentTime.getUTCHours().toString()
+	const minute: string =
 		currentTime.getUTCMinutes() < 10
-			? '0' + currentTime.getUTCMinutes()
-			: currentTime.getUTCMinutes()
-	const second =
+			? '0' + currentTime.getUTCMinutes().toString()
+			: currentTime.getUTCMinutes().toString()
+	const second: string =
 		currentTime.getUTCSeconds() < 10
-			? '0' + currentTime.getUTCSeconds()
-			: currentTime.getUTCSeconds()
+			? '0' + currentTime.getUTCSeconds().toString()
+			: currentTime.getUTCSeconds().toString()
 
 	const formattedCurrentTime =
 		year + '-' + month + '-' + day + 'T' + hour + ':' + minute + ':' + second + 'Z'

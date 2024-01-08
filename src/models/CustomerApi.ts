@@ -1,5 +1,10 @@
 import type { Department, DepartmentApi, CustomerEntries } from '@/libs/customerTypes'
 
+export interface DepartmentToSend {
+	number_of_beds: number
+	department_id: number
+}
+
 export class CustomerApi {
 	[x: string]: any
 	id?: number
@@ -22,7 +27,7 @@ export class CustomerApi {
 	establish_date: string
 	establish_by: string
 	is_active: boolean
-	departments: { department_id: number; number_of_beds: number }[] | DepartmentApi[]
+	departments: DepartmentToSend[] | DepartmentApi[]
 	register_at?: string
 	register_by?: number
 	update_at?: string
@@ -80,7 +85,7 @@ export class CustomerApi {
 		this.delete_by = data.deleteBy
 		this.images = data.pictures.map(picture => {
 			return {
-				image_data: picture.data || '',
+				image_data: picture.data,
 				image_memo: picture.memo
 			}
 		})

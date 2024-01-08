@@ -5,6 +5,8 @@
 
 	import type { CustomerEntries } from '@/libs/customerTypes'
 	import { getTotalOfBeds } from '@/libs/utils'
+	import ImagesModal from '../modals/ImagesModal.svelte'
+	import { testPictures } from '@/data/api'
 
 	export let initialState: CustomerEntries
 
@@ -178,7 +180,7 @@
 					{#each initialState.pictures as image}
 						<article class="card">
 							<div class="image-wrapper">
-								<!-- <img src={URL.createObjectURL(image.file)} alt={image.memo} /> -->
+								<!-- <img src={URL.createObjectURL(image.data)} alt={image.memo} /> -->
 								<img src={image.data} alt={image.memo} />
 							</div>
 							<h3 class="label">{image.memo}</h3>
@@ -192,6 +194,7 @@
 
 <style lang="scss">
 	.confirmation {
+		position: relative;
 		overflow: hidden;
 		width: auto;
 		padding: 0 37px;

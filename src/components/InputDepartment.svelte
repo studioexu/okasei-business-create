@@ -53,7 +53,7 @@
 
 <article class="department-wrapper" id={'department-' + index}>
 	<InputSelect
-		name={'department'}
+		name={'department' + index.toString()}
 		list={departementNameList}
 		errorMsg={'正しい科目を選択して下さい。'}
 		bind:value={department.departmentName}
@@ -62,7 +62,7 @@
 	/>
 
 	<InputNumber
-		name={'bed-quantity'}
+		name={'bed-quantity' + index.toString()}
 		label={'病床数'}
 		bind:value={department.numberOfBeds}
 		bind:isValid={isValid.numberOfBeds}

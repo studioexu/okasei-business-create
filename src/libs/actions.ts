@@ -1,5 +1,6 @@
 import { currentKey } from '@/data/api'
-import type { CustomerApi } from '@/models/CustomerApi'
+import type { CustomerApi, DepartmentToSend } from '@/models/CustomerApi'
+import type { DepartmentApi } from './customerTypes'
 
 /**
  * Load the data from the server.
@@ -82,17 +83,69 @@ export const updateCustomer = async (
 	url: string,
 	customerId: number
 ) => {
+	// const formData = new FormData()
+
+	// for (const key in updatedCustomer) {
+	// 	console.log(key)
+
+	// 	if (key === 'departments') {
+	// 		updatedCustomer.departments.forEach((department, index) => {
+	// 			Object.keys(department).forEach(key => {
+	// 				formData.append(`departments[${index}][${key}]`, (department as any)[key])
+	// 			})
+	// 		})
+
+	// 		// updatedCustomer.forEach((department, index) => {
+	// 		// 	Object.entries(department).forEach(([key, value]) => {
+	// 		// 		formData.append(`departments[${index}][${key}]`, value)
+	// 		// 	})
+	// 		// })
+	// 	}
+	// 	// else if (key === 'images') {
+	// 	// 	updatedCustomer.images?.forEach((image, index) => {
+	// 	// 		Object.keys(image).forEach(key => {
+	// 	// 			formData.append(`departments[${index}][${key}]`, (image as any)[key])
+	// 	// 		})
+	// 	// 	})
+	// 	// }
+	// 	else {
+	// 		formData.append(key, updatedCustomer[key])
+	// 	}
+	// }
+
+	// console.log('this is my formData')
+
+	// // const formDataToObject = formData => {
+	// // 	const object = {}
+	// // 	formData.forEach((value, key) => {
+	// // 		object[key] = value
+	// // 	})
+	// // 	return object
+	// // }
+
+	// // console.log(formData.))
+
+	// for (const value of formData.values()) {
+	// 	console.log(typeof value)
+	// }
+
 	await fetch(url + '/customer/update/' + customerId, {
 		method: 'PUT',
 		headers: {
 			Authorization: 'Token ' + currentKey,
-			'Content-type': 'application/json',
-			Accept: 'application/json'
+			'Content-Type': 'application/json',
+			'x-sveltekit-action': 'true'
+			// 'Content-Type': 'multipart/form-data'
+
+			// Accept: 'application/json;charset=UTF-8'
 		},
 		body: JSON.stringify(updatedCustomer)
+		// body: formData
+		// body: JSON.stringify(updatedCustomer.images)
 	})
 		.then(res => {
 			console.log('update customer')
+			// console.log(res)
 
 			return res.json()
 		})
@@ -111,7 +164,7 @@ export const updateCustomer = async (
  */
 export const deleteCustomer = (id: number, url: string) => {
 	fetch(url + '/customer/inactivate/' + id, {
-		method: 'PATCH',
+		method: 'PUT',
 		headers: {
 			Authorization: 'Token ' + currentKey,
 			'Content-type': 'application/json;charset=UTF-8'

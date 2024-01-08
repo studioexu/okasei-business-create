@@ -5,10 +5,10 @@
 	import type { CustomerEntries, CustomerEntriesErrors } from '@/libs/customerTypes'
 	import type { CustomerImageFactory } from '@/Factories/CustomerFactory'
 
-	import { enhance } from '$app/forms'
+	import { applyAction, enhance } from '$app/forms'
 	import { prefectures, months } from '@/data/data'
 	import { getTotalOfBeds } from '@/libs/utils'
-	import { convertDataToBase64 } from '@/libs/formatters'
+	import { convertDataToBase64, formatCustomer } from '@/libs/formatters'
 	import { inputIsValid, validationOnSubmit } from '@/libs/customerValidations'
 
 	import Input from '@/components/Input.svelte'
@@ -26,6 +26,8 @@
 	import Row from '@/components/Row.svelte'
 	import DetailWrapper from '@/components/DetailWrapper.svelte'
 	import ButtonDelete from '@/components/ButtonDelete.svelte'
+	import { updateCustomer } from '@/libs/actions'
+	import { currentApi } from '@/data/api'
 
 	export let formType: string
 	export let confirmationPageIsShown: boolean
@@ -35,6 +37,7 @@
 	export let isSucceeded: boolean = false
 	export let departmentsList: { id: number; cd1: string; cd2: string; name: string }[]
 	export let departmentsError: { department: boolean; numberOfBeds: boolean }[] = []
+	export let isSubmittable: boolean
 
 	let uploadModalIsShown = false
 
@@ -76,17 +79,29 @@
 	 */
 	const handleSubmit = (e: Event): void => {
 		if (confirmationPageIsShown) {
-			isShown = true
-			isSucceeded = true
-		}
+			// isShown = true
+			// isSucceeded = true
+			isSubmittable = true
 
+			// const updatedCustomer = formatCustomer('update', initialState)
+
+			// if (initialState.id) {
+			// 	try {
+			// 		updateCustomer(updatedCustomer, currentApi, initialState.id)
+			// 		isSucceeded = true
+			// 		isShown = true
+			// 	} catch (error) {
+			// 		console.log(error)
+			// 		isSucceeded = false
+			// 		isShown = true
+			// 	}
+			// }
+		}
 		if (!confirmationPageIsShown) {
 			e.preventDefault()
-
+			console.log('not shown')
 			const submitResult = validationOnSubmit(formIsValid)
-
 			departmentsError = []
-
 			initialState.departments.map(department => {
 				departmentsError.push({
 					department: inputIsValid('department', department),
@@ -97,6 +112,8 @@
 			formIsValid = submitResult.formValidation
 		}
 	}
+
+	$: console.log(initialState)
 
 	// UPLOAD PICTURES
 
@@ -111,13 +128,18 @@
 			case 'upload':
 				try {
 					if (event.detail.fileToUpload !== undefined) {
+						function escapeBase64String(base64String: string) {
+							// Escape double quotes in the Base64 string
+							return base64String.replace(/"/g, '\\"')
+						}
+
 						let newArray = initialState.pictures
 						const convertedFile = await convertDataToBase64(event.detail.fileToUpload)
-						console.log(event.detail.fileToUpload)
+						const escapedBase64 = escapeBase64String(convertedFile)
 
 						const newPicture: CustomerImageFactory = {
 							memo: '',
-							data: convertedFile
+							data: escapedBase64
 						}
 
 						newArray.push(newPicture)
@@ -201,7 +223,7 @@
 	{/if}
 {/if}
 
-<form
+<!-- <form
 	class="form {confirmationPageIsShown ? 'hidden' : ''}"
 	method={'POST'}
 	action={formType === 'create'
@@ -211,15 +233,60 @@
 	on:submit|preventDefault={handleSubmit}
 	use:enhance={({ formElement, formData, action, cancel, submitter }) => {
 		//submit the form, only once it succeeded.
-		isSucceeded ? submitter : cancel()
+		isSubmittable ? : cancel()
+		// //Don't reset the form, if there are any errors during the validation.
+		return async ({ result, update }) => {
+			// await update({ reset: false })
+			console.log(result)
+			if (result.type === 'success') {
+				isSucceeded = true
+				isShown = true
+			}
+			if (result.type === 'error') {
+				isSucceeded = false
+				isShown = true
+			}
+
+			await update()
+		}
+	}}
+> -->
+<!-- <form
+	class="form {confirmationPageIsShown ? 'hidden' : ''}"
+	method={'POST'}
+	on:submit|preventDefault={handleSubmit}
+	id="registration-form"
+> -->
+<form
+	class="form {confirmationPageIsShown ? 'hidden' : ''}"
+	method={'POST'}
+	action={formType === 'create'
+		? '/customers/new?/create'
+		: '/customers/' + initialState.id + '/edit?/update'}
+	id="registration-form"
+	on:submit={handleSubmit}
+	use:enhance={({ formElement, formData, action, cancel, submitter }) => {
+		//submit the form, only once it succeeded.
+		isSubmittable ? submitter?.click() : cancel()
 
 		//Don't reset the form, if there are any errors during the validation.
-		return async ({ update }) => {
+		return async ({ result, update }) => {
 			await update({ reset: false })
+
+			if (result.type === 'success') {
+				isSucceeded = true
+				isShown = true
+			}
+
+			if (result.type === 'error') {
+				isSucceeded = false
+				isShown = true
+			}
 		}
 	}}
 >
-	<input hidden id="initial-state" name="initialState" value={JSON.stringify(initialState)} />
+	<input hidden id="initial-state" name="initial-state" value={JSON.stringify(initialState)} />
+	<input hidden id="pictures" name="pictures" value={JSON.stringify(initialState.pictures)} />
 	<p class="required-legend"><span class="required-mark">*</span> 必須</p>
 
 	<fieldset class="fieldset fieldset--info1">
@@ -588,11 +655,13 @@
 							<article class="card">
 								<div class="image-wrapper">
 									<img src={image.data} alt="" />
+									<!-- svelte-ignore a11y-img-redundant-alt -->
+									<!-- <img src={URL.createObjectURL(image.data)} alt="image" /> -->
 								</div>
 
 								<InputFreeText
 									placeholder="メモ"
-									name={'image-description'}
+									name={'image-description' + index.toString()}
 									bind:value={image.memo}
 								/>
 								<ButtonDelete on:delete={() => handleDeleteImage(index)} />

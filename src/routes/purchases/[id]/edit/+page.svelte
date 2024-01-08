@@ -27,6 +27,7 @@
 		orderNumber: string
 		customerName: string
 		status: string
+		behaviourSizeCheck: boolean
 		model: string
 		motor: string
 		size: string
@@ -40,6 +41,7 @@
 		orderNumber: '',
 		customerName: '',
 		status: '',
+		behaviourSizeCheck: false,
 		model: '',
 		motor: '',
 		size: '',
@@ -54,6 +56,7 @@
 			orderNumber: purchase?.orderNumber,
 			customerName: purchase?.customerName,
 			status: purchase?.status,
+			behaviourSizeCheck: purchase?.behaviourSizeCheck,
 			model: purchase?.model,
 			motor: purchase?.motor,
 			size: purchase?.size,
@@ -180,6 +183,7 @@
 					orderNumber: '',
 					customerName: '',
 					status: <Status>'',
+					behaviourSizeCheck: false,
 					model: '',
 					motor: '',
 					size: '',
@@ -194,14 +198,11 @@
 
 					if (localPurcharse.hasOwnProperty(key)) {
 						switch (key) {
-							case 'orderNumber':
-								localPurcharse[key] = initialState[key]
-								break
-
 							case 'status':
 								localPurcharse[key] = <Status>initialState[key]
 								break
 
+							case 'orderNumber':
 							case 'model':
 							case 'motor':
 							case 'customerName':
@@ -210,9 +211,14 @@
 								localPurcharse[key] = initialState[key]
 								break
 
+							case 'behaviourSizeCheck':
+								localPurcharse[key] = initialState[key]
+								break
+
 							case 'marketPrice':
 							case 'sellingPrice':
 								localPurcharse[key] = initialState[key]
+								break
 						}
 					}
 				}
@@ -365,7 +371,13 @@
 <style lang="scss">
 	.section {
 		&__footer {
+			display: flex;
+			justify-content: flex-end;
+			gap: 18px;
 			margin-top: 18px;
+			button {
+				margin: 0;
+			}
 		}
 	}
 

@@ -1,4 +1,18 @@
-<script lang="ts" context="module"></script>
+<script lang="ts" context="module">
+	export interface InitialStatePurchase {
+		orderNumber: string
+		customerName: string
+		status: string
+		behaviourSizeCheck: boolean
+		model: string
+		motor: string
+		size: string
+		arrivalDate: string
+		marketPrice: number
+		sellingPrice: number
+		image: string
+	}
+</script>
 
 <script lang="ts">
 	import { enhance } from '$app/forms'
@@ -18,23 +32,11 @@
 
 	let confirmationPageIsShown = false
 
-	interface InitialStatePurchase {
-		orderNumber: string
-		customerName: string
-		status: string
-		model: string
-		motor: string
-		size: string
-		arrivalDate: string
-		marketPrice: number
-		sellingPrice: number
-		image: string
-	}
-
 	let initialState: InitialStatePurchase = {
 		orderNumber: '',
 		customerName: '',
 		status: '',
+		behaviourSizeCheck: false,
 		model: '',
 		motor: '',
 		size: '',
@@ -43,8 +45,6 @@
 		sellingPrice: 0,
 		image: ''
 	}
-
-	// $: console.log(initialState)
 
 	const goBack = () => goto('/purchases')
 
@@ -164,6 +164,7 @@
 					orderNumber: '',
 					customerName: '',
 					status: <Status>'',
+					behaviourSizeCheck: false,
 					model: '',
 					motor: '',
 					size: '',
@@ -217,7 +218,6 @@
 		<form
 			class="form {confirmationPageIsShown && 'hidden'}"
 			method="POST"
-			action="/purchases/new?/create"
 			id="purchase-form"
 			on:submit={handleSubmit}
 			enctype="multipart/form-data"
@@ -226,7 +226,7 @@
 				isSucceeded ? submitter : cancel()
 
 				//Don't reset the form, if there are any errors during the validation.
-				return async ({ update }) => {
+				return async ({ update, result }) => {
 					await update({ reset: false })
 				}
 			}}
@@ -344,7 +344,13 @@
 <style lang="scss">
 	.section {
 		&__footer {
+			display: flex;
+			justify-content: flex-end;
+			gap: 18px;
 			margin-top: 18px;
+			button {
+				margin: 0;
+			}
 		}
 	}
 

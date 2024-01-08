@@ -1,16 +1,16 @@
+import type { Purchase } from '@/libs/purchaseTypes.js'
 import { debounce } from '@/libs/utils.js'
-import { purchase, purchases } from '@/stores/purchases.js'
+import { purchases } from '@/stores/purchases.js'
+import type { InitialStatePurchase } from './+page.svelte'
+import type { Status } from '@/libs/negotiationTypes'
 
 export const actions = {
 	create: debounce(async ({ request }) => {
 		const data = await request.formData()
-		console.log(data)
 
 		const initialStateString = data.get('initialState')
-		console.log(initialStateString)
 
 		let initialState = JSON.parse(initialStateString)
-		console.log(initialState)
 
 		// const allPurchases = $purchases
 
@@ -24,5 +24,6 @@ export const actions = {
 		// const initialStateString = data.get('initialState')
 		// let initialState: CustomerEntries = JSON.parse(initialStateString)
 		// let newCustomer: CustomerNewApi = formatCustomer('create', initialState)
+		// try {
 	}, 200)
 }

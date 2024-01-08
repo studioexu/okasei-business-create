@@ -126,6 +126,17 @@
 		justify-content: space-between;
 		flex-wrap: wrap;
 	}
+	.section {
+		&__footer {
+			display: flex;
+			justify-content: flex-end;
+			gap: 18px;
+			margin-top: 18px;
+			button {
+				margin: 0;
+			}
+		}
+	}
 
 	.container {
 		width: auto;

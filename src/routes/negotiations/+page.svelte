@@ -15,10 +15,11 @@
 	let searchIsShown = false
 	let displayMenuIsShown = false
 
-	const allnegotiations: NegotiationFactory[] = $negotiations.map(
+	const allNegotiations: NegotiationFactory[] = $negotiations.map(
 		negotiation => new NegotiationFactory(negotiation, 'local')
 	)
-	let filterednegotiations = allnegotiations
+
+	$: filteredNegotiations = handleSearch(searchInput, allNegotiations)
 
 	const tableHeaders: { label: string; id: keyof NegotiationDataIsShown }[] = [
 		{ label: '施設名', id: 'customerName' },
@@ -72,12 +73,15 @@
 	 * @param searchInput: Object composed of the name, year and month
 	 * @returns new array with the filtered negotiations
 	 */
-	const handleSearch = (searchInput: {
-		name: string
-		year: string
-		month: string
-	}): NegotiationFactory[] => {
-		let filtered = allnegotiations
+	const handleSearch = (
+		searchInput: {
+			name: string
+			year: string
+			month: string
+		},
+		negotiations: NegotiationFactory[]
+	): NegotiationFactory[] => {
+		let filtered = negotiations
 
 		Object.keys(searchInput).map(key => {
 			if (searchInput[key as keyof { name: string; year: string; month: string }] !== '') {
@@ -99,8 +103,6 @@
 		})
 		return filtered
 	}
-
-	$: filterednegotiations = handleSearch(searchInput)
 
 	//NEGOTIATION DATA TO DISPLAY
 
@@ -180,7 +182,7 @@
 	// DELETE MODAL
 
 	let phase: 'shown' | 'success' | 'error' = 'shown'
-	let currentUser: number
+	let currentNegotiation: number
 	let deleteModalIsShown = false
 
 	/**
@@ -188,11 +190,11 @@
 	 * @param index: index of the element to delete
 	 */
 	const openModal = (index: number): void => {
-		currentUser = index
+		currentNegotiation = index
 		deleteModalIsShown = true
 	}
 
-	$: console.log(filterednegotiations)
+	$: console.log(filteredNegotiations)
 
 	/**
 	 * On click on the delete modal.
@@ -207,10 +209,10 @@
 			case 'delete':
 				try {
 					negotiations.set(
-						$negotiations.filter(negotiation => negotiation.negotiationId !== currentUser)
+						$negotiations.filter(negotiation => negotiation.negotiationId !== currentNegotiation)
 					)
 
-					if ($negotiation.negotiationId === currentUser) {
+					if ($negotiation.negotiationId === currentNegotiation) {
 						negotiation.set({
 							customerName: '',
 							status: '',
@@ -246,7 +248,6 @@
 							distanceKm: 0,
 							distanceTime: 0,
 							preference: '',
-							contact: '',
 							billingEstimation: 0
 						})
 						goto('/negotiations')
@@ -306,7 +307,7 @@
 		{/if}
 
 		{#if searchIsShown}
-			<div class="search-menu" on:input={() => handleSearch(searchInput)}>
+			<div class="search-menu" on:input={() => handleSearch(searchInput, allNegotiations)}>
 				<Input
 					label={'施設名'}
 					inputSize={'input--lg'}
@@ -333,7 +334,7 @@
 	</header>
 
 	<div class="section__main">
-		{#if filterednegotiations.length === 0}
+		{#if filteredNegotiations.length === 0}
 			<h2 class="no-data-message">データがありません。</h2>
 		{:else}
 			<div class="table-wrapper">
@@ -350,7 +351,7 @@
 					</thead>
 
 					<tbody class="tbody">
-						{#each filterednegotiations as negotiation, index}
+						{#each filteredNegotiations as negotiation, index}
 							<tr class="trow">
 								{#each tableHeaders as header}
 									{#if negotiationDataIsShown[header.id]}

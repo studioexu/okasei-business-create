@@ -229,7 +229,6 @@
 	 */
 	const handleSubmit = (e: any): void => {
 		// e.preventDefault()
-		console.log('prout')
 
 		if (confirmationPageIsShown) {
 			isShown = true
@@ -730,7 +729,6 @@
 								/>
 
 								{#if initialState.outcomeHistory.length > 1}
-									<!-- <div class="btn-wrapper"> -->
 									<ButtonDelete
 										on:delete={() =>
 											handleDeleteItemFromArray(
@@ -739,7 +737,6 @@
 												'outcomeHistory'
 											)}
 									/>
-									<!-- </div> -->
 								{/if}
 							</div>
 						</div>

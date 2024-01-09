@@ -176,7 +176,7 @@
 			outcomeHistory: negotiation?.outcomeHistory,
 			numberOfBeds: 0,
 			billingEstimation: 0,
-			customerName: '',
+			customerName: customer?.custName,
 			registerBy: negotiation.register_by,
 			registerAt: negotiation.register_at,
 			updateBy: negotiation.update_by,
@@ -185,6 +185,10 @@
 			deleteAt: negotiation.delete_at
 		}
 	}
+
+	$: console.log(initialState)
+
+	$: console.log(customer)
 
 	let bedTotal: number = getTotalOfBeds(customerInfo.departments)
 </script>
@@ -227,6 +231,14 @@
 					</div>
 				{/if}
 			{/each}
+
+			<button
+				type="button"
+				class="primary"
+				on:click={() => window.open('/customers/' + customer?.id, '_blank')}
+			>
+				顧客情報を確認
+			</button>
 		</div>
 	</aside>
 

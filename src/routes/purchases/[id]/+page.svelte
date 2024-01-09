@@ -7,6 +7,17 @@
 	import { page } from '$app/stores'
 	import { toCamelCase } from '@/libs/formatters'
 	import { goto } from '$app/navigation'
+	import { CustomerFactory } from '@/Factories/CustomerFactory.js'
+
+	export let data
+
+	const customer = data.data.find(customer => {
+		if (customer.id === 1) {
+			return new CustomerFactory(customer, 'APIv1')
+		}
+	})
+
+	console.log(customer)
 
 	const purchase = $purchases.find(purchase => purchase.id.toString() === $page.params.id)
 
@@ -39,7 +50,13 @@
 	if (purchase !== undefined) {
 		initialState = {
 			orderNumber: purchase?.orderNumber,
-			customerName: purchase?.customerName,
+			corporateName: customer?.corporate_name,
+			address1: customer?.address1,
+			address2: customer?.address2,
+			prefecture: customer?.ken,
+			city: customer?.city,
+			postalCode: customer?.postal_cd,
+			customerName: customer?.name,
 			status: purchase?.status,
 			model: purchase?.model,
 			motor: purchase?.motor,
@@ -53,9 +70,34 @@
 
 	const infoFieldsets = [
 		{
+			id: 'corporateName',
+			label: '法人名'
+		},
+		{
 			id: 'customerName',
 			label: 'お客様名'
 		},
+		{
+			id: 'postalCode',
+			label: '郵便番号'
+		},
+		{
+			id: 'prefecture',
+			label: '都道府県'
+		},
+		{
+			id: 'city',
+			label: '市区町村'
+		},
+		{
+			id: 'address1',
+			label: '住所１'
+		},
+		{
+			id: 'address2',
+			label: '住所２'
+		},
+
 		{
 			id: 'model',
 			label: '機種'
@@ -159,6 +201,7 @@
 		justify-content: center;
 		flex-direction: column;
 		min-height: 260px;
+		max-height: 300px;
 		padding: 30px 18%;
 		border: 2px dashed #fff;
 		border-radius: 12px;

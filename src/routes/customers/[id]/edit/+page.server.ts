@@ -43,9 +43,7 @@ export const actions = {
 	update: async ({ request }) => {
 		console.log('Can you update please????')
 
-		const req = request
-
-		const data = await request.formData()
+		let data = await request.formData()
 		console.log(data)
 		// console.log(req.formData())
 		let initialState: CustomerEntries

@@ -138,9 +138,9 @@ export const convertDataToBase64 = (file: File): Promise<string> => {
 	return new Promise<string>((resolve, reject) => {
 		const fileReader = new FileReader()
 
-		fileReader.onload = () => {
+		fileReader.addEventListener('load', () => {
 			if (typeof fileReader.result === 'string') resolve(fileReader.result)
-		}
+		})
 
 		fileReader.onerror = error => {
 			reject(error)

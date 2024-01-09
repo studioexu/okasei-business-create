@@ -20,6 +20,7 @@ export const loadCustomerData = async (url: string) => {
 		.then(data => {
 			// console.log(data)
 
+			// return data
 			return data.results
 		})
 		.catch(error => error)
@@ -130,6 +131,7 @@ export const updateCustomer = async (
 	// }
 
 	await fetch(url + '/customer/update/' + customerId, {
+		// await fetch(url + '/customer/list/customer/' + customerId, {
 		method: 'PUT',
 		headers: {
 			Authorization: 'Token ' + currentKey,

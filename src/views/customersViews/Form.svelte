@@ -137,9 +137,14 @@
 						const convertedFile = await convertDataToBase64(event.detail.fileToUpload)
 						const escapedBase64 = escapeBase64String(convertedFile)
 
+						// const newPicture: CustomerImageFactory = {
+						// 	memo: '',
+						// 	data: escapedBase64
+						// }
+
 						const newPicture: CustomerImageFactory = {
 							memo: '',
-							data: escapedBase64
+							data: convertedFile
 						}
 
 						newArray.push(newPicture)
@@ -223,17 +228,18 @@
 	{/if}
 {/if}
 
-<!-- <form
+<form
 	class="form {confirmationPageIsShown ? 'hidden' : ''}"
 	method={'POST'}
 	action={formType === 'create'
 		? '/customers/new?/create'
 		: '/customers/' + initialState.id + '/edit?/update'}
 	id="registration-form"
+	enctype="multipart/form-data"
 	on:submit|preventDefault={handleSubmit}
 	use:enhance={({ formElement, formData, action, cancel, submitter }) => {
 		//submit the form, only once it succeeded.
-		isSubmittable ? : cancel()
+		isSubmittable ? submitter : cancel()
 		// //Don't reset the form, if there are any errors during the validation.
 		return async ({ result, update }) => {
 			// await update({ reset: false })
@@ -250,24 +256,41 @@
 			await update()
 		}
 	}}
-> -->
-<!-- <form
+>
+	<!-- <form
 	class="form {confirmationPageIsShown ? 'hidden' : ''}"
 	method={'POST'}
 	on:submit|preventDefault={handleSubmit}
 	id="registration-form"
 > -->
-<form
+	<!-- <form
 	class="form {confirmationPageIsShown ? 'hidden' : ''}"
 	method={'POST'}
 	action={formType === 'create'
 		? '/customers/new?/create'
 		: '/customers/' + initialState.id + '/edit?/update'}
 	id="registration-form"
-	on:submit={handleSubmit}
+	enctype="multipart/form-data"
 	use:enhance={({ formElement, formData, action, cancel, submitter }) => {
 		//submit the form, only once it succeeded.
-		isSubmittable ? submitter?.click() : cancel()
+		// confirmationPageIsShown ? submitter?.click() : cancel()
+		// cancel()
+
+		console.log(formData.get('initial-state'))
+
+		const updatedCustomer = formatCustomer('update', initialState)
+
+		if (initialState.id) {
+			try {
+				updateCustomer(updatedCustomer, currentApi, initialState.id)
+				isSucceeded = true
+				isShown = true
+			} catch (error) {
+				console.log(error)
+				isSucceeded = false
+				isShown = true
+			}
+		}
 
 		//Don't reset the form, if there are any errors during the validation.
 		return async ({ result, update }) => {
@@ -284,7 +307,7 @@
 			}
 		}
 	}}
->
+> -->
 	<input hidden id="initial-state" name="initial-state" value={JSON.stringify(initialState)} />
 	<input hidden id="pictures" name="pictures" value={JSON.stringify(initialState.pictures)} />
 	<p class="required-legend"><span class="required-mark">*</span> 必須</p>
